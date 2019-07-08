@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="bleInfo"
+            type="com.like.common.sample.ble.BleInfo" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingTop="20dp"
+        android:paddingRight="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{bleInfo.name}"
+                android:textColor="@color/common_text_black_1"
+                android:textSize="14sp"
+                tools:text="SJZG-TEST" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{bleInfo.address}"
+                android:textColor="@color/common_text_black_1"
+                android:textSize="14sp"
+                tools:text="XX:XX:XX:XX:XX:XX" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="@{bleInfo.isConnected?`已连接`:`未连接`}"
+                android:textColor="@{bleInfo.isConnected?@color/common_text_blue_1:@color/common_text_black_1}"
+                android:textSize="14sp"
+                tools:text="未连接" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/common_divider_gray" />
+    </LinearLayout>
+
+</layout>
+
+
+
+
+
+

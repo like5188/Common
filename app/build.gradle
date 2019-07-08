@@ -1,0 +1,129 @@
+apply plugin: 'com.android.application'// 提供了Android 编译、测试、打包等等的所有task。
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+// 是Android插件提供的一个扩展类型，可以让我们自定义Android Gradle工程，是Android Gradle工程配置的唯一入口。
+android {
+    // minSdkVersion<=targetSdkVersion<=compileSdkVersion
+    // 用哪个 Android SDK 版本编译你的应用，不涉及到运行时候的行为。
+    // 强烈推荐总是使用最新的 SDK 进行编译（默认就是最新的）
+    // 修改 compileSdkVersion 不会改变运行时的行为。当你修改了 compileSdkVersion 的时候，可能会出现新的编译警告、编译错误，
+    // 但新的 compileSdkVersion 不会被包含到 APK 中：它纯粹只是在编译的时候使用。
+    // 注意:如果使用 Support Library ，那么使用最新发布的 Support Library 就需要使用最新的 SDK 编译。
+    // 因为使用新的编译检查可以获得很多好处，可以避免弃用的API，并且为使用新的API做好准备。
+    compileSdkVersion 28
+
+    // defaultConfig就是程序的默认配置，注意，如果在AndroidMainfest.xml里面定义了与这里相同的属性，会以这里的为主。
+    // 默认的配置，它是一个ProductFlavor。ProductFlavor允许我们根据不同的情况同时生成多个不同的apk包。
+    defaultConfig {
+        // applicationId 配置我们的包名，包名是app的唯一标识，其实他跟AndroidManifest里面的package是可以不同的，他们之间并没有直接的关系。
+        // package指的是代码目录下路径；applicationId指的是app对外发布的唯一标识，会在签名、申请第三方库、发布时候用到。
+        // 修改applicationId只会修改当前程序的ID,而不会去修改源码中资源文件的引用。
+        applicationId "com.like.libcommon"
+        // 如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用
+        // 请记住：你所使用的库，如 Support Library 或 Google Play services，可能有他们自己的 minSdkVersion 。你的应用设置的
+        // minSdkVersion 必需大于等于这些库的 minSdkVersion 。
+        minSdkVersion 19
+        // 是 Android 提供向前兼容的主要依据
+        // 比如说我设置了targetSdkVersion=22，那么运行在23的手机上，不会有任何问题，只是不能享受23的新功能。
+        // 比如说我设置了targetSdkVersion=22，那么运行在21的手机上，会有问题，因为开发使用的22的api，在21上根本没有，所以需要在代码中判断版本进行兼容，如：if(targetSdkVersion<22){}。
+        targetSdkVersion 28
+        // 表明我们的app应用内部版本号，一般用于控制app升级，当然我在使用的bugly自动升级能不能接受到升级推送就是基于这个。
+        versionCode 1
+        // 表明我们的app应用的版本名称，一般是发布的时候写在app上告诉用户的
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // 用于配置该BuildType是否启用自动拆分多个Dex的功能。一般用程序中代码太多，超过了65535个方法的时候。
+        multiDexEnabled true// api 21及以上，可以只添加此配置，不需要再引用com.android.support:multidex:1.0.3
+    }
+
+    lintOptions {
+        disable 'GoogleAppIndexingWarning'// 解决AndroidManifest.xml警告。
+    }
+
+    // 签名配置，一个app只有在签名之后才能被发布、安装、使用
+    signingConfigs {
+        // storeFile签名文件，
+        // storePassword签名证书文件的密码，
+        // storeType签名证书类型，
+        // keyAlias签名证书中秘钥别名，
+        // keyPassword签名证书中改密钥的密码。
+        debug {
+            storeFile file("../like.jks")
+            storePassword "like5488"
+            keyAlias "like"
+            keyPassword "like5488"
+        }
+        release {
+            storeFile file("../like.jks")
+            storePassword "like5488"
+            keyAlias "like"
+            keyPassword "like5488"
+        }
+    }
+
+    /**
+     * 定义了编译类型，针对每个类型我们可以有不同的编译配置，不同的编译配置对应的有不同的编译命令。
+     * 默认内置了debug和release两个构建类型，两种模式主要车别在于，能否在设备上调试以及签名不一样
+     *
+     * name：build type的名字
+     * applicationIdSuffix：应用id后缀
+     * versionNameSuffix：版本名称后缀
+     * debuggable：是否生成一个debug的apk
+     * minifyEnabled：是否混淆
+     * proguardFiles：混淆文件
+     * signingConfig：签名配置
+     * manifestPlaceholders：清单占位符
+     * shrinkResources：是否去除未利用的资源，默认false，表示不去除。
+     * zipAlignEnable：是否使用zipalign工具压缩。
+     * multiDexEnabled：是否拆成多个Dex
+     * multiDexKeepFile：指定文本文件编译进主Dex文件中
+     * multiDexKeepProguard：指定混淆文件编译进主Dex文件中
+     */
+    buildTypes {
+        debug {
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            debuggable true
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dataBinding {
+        enabled true
+    }
+
+    // 解决Invoke-customs are only supported starting with Android O
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+// 定义了当前项目需要依赖的其他库。
+dependencies {
+    // gradlew app:dependencies --configuration releaseCompileClasspath 查看依赖树
+    // 这样配置之后本地libs文件夹下的扩展名为jar的都会被依赖，非常方便。
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(':common')
+}
+
+// 强制依赖版本为指定版本
+//configurations.all {
+//    // To resolve the conflict for com.android.databinding:library:1.3.1 dependency on support-v4:21.0.3
+//    resolutionStrategy.force 'com.android.support:support-v4:28.0.0'
+//}

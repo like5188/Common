@@ -1,0 +1,13 @@
+<resources>
+    <!-- Activity透明背景 -->
+    <style name="translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/common_transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <!-- ToolBar菜单样式 -->
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="actionMenuTextColor">@color/common_text_white_0</item> <!--  颜色-->
+        <item name="android:textSize">14sp</item> <!--  字体大小-->
+    </style>
+</resources>

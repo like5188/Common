@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="common_transparent">#00000000</color>
+
+    <color name="common_text_white_0">#ffffff</color>
+
+    <color name="common_text_black_0">#000000</color>
+
+    <color name="common_text_red_0">#ff0000</color>
+
+    <color name="common_divider_gray">#dbdbdb</color>
+
+</resources>
