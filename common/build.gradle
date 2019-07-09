@@ -134,12 +134,14 @@ dependencies {
     api 'com.github.like5188:LibRetrofit:1.2.0'
     api 'com.github.like5188.LiveDataBus:livedatabus:1.2.8'
 
-    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.8'
+    // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
-    kapt 'android.arch.lifecycle:compiler:1.1.1'
-    kapt 'android.arch.persistence.room:compiler:1.1.1'
-    kapt 'com.google.dagger:dagger-compiler:2.17'
-    kapt 'com.google.dagger:dagger-android-processor:2.17'
+    // 使用 com.like.common.view.update 中的更新功能时需要
+    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.8'
+//    kapt 'android.arch.lifecycle:compiler:1.1.1'
+//    kapt 'android.arch.persistence.room:compiler:1.1.1'
+//    kapt 'com.google.dagger:dagger-compiler:2.17'
+//    kapt 'com.google.dagger:dagger-android-processor:2.17'
 }
 
 // 引用脚本插件，其实这不能算一个插件，它只是一个脚本。应用脚本插件，其实就是把这个脚本加载进来，和二进制插件不同的是它使用的是from关键字.后面紧跟的坫一个脚本文件，可以是本地的，也可以是网络存在的

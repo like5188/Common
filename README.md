@@ -196,10 +196,12 @@
     api 'com.github.like5188:LibRetrofit:1.2.0'
     api 'com.github.like5188.LiveDataBus:livedatabus:1.2.8'
 
-    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.8'
+    // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
-    kapt 'android.arch.lifecycle:compiler:1.1.1'
-    kapt 'android.arch.persistence.room:compiler:1.1.1'
-    kapt 'com.google.dagger:dagger-compiler:2.17'
-    kapt 'com.google.dagger:dagger-android-processor:2.17'
+    // 使用 com.like.common.view.update 中的更新功能时需要
+    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:1.2.8'
+//    kapt 'android.arch.lifecycle:compiler:1.1.1'
+//    kapt 'android.arch.persistence.room:compiler:1.1.1'
+//    kapt 'com.google.dagger:dagger-compiler:2.17'
+//    kapt 'com.google.dagger:dagger-android-processor:2.17'
 ```
