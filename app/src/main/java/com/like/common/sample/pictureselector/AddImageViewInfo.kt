@@ -1,6 +1,6 @@
 package com.like.common.sample.pictureselector
 
-import com.like.common.R
+import com.like.common.sample.R
 import com.like.livedatarecyclerview.model.IItem
 import com.luck.picture.lib.entity.LocalMedia
 

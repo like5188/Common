@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.like.common.util.GlideUtils
-import com.like.common.R
+import com.like.common.sample.R
 
 class MyViewPagerAdapter(val context: Context, val list: List<BannerInfo>) : PagerAdapter() {
     private val layoutInflater = LayoutInflater.from(context)

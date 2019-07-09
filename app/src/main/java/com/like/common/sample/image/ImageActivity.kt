@@ -5,17 +5,20 @@ import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.like.common.ui.BaseActivity
-import com.like.common.util.*
-import com.like.common.R
-import com.like.common.databinding.ActivityImageBinding
+import com.like.common.sample.R
+import com.like.common.sample.databinding.ActivityImageBinding
+import com.like.common.util.ImageUtils
+import com.like.common.util.PermissionUtils
+import com.like.common.util.StorageUtils
+import com.like.common.util.ioThread
 import java.io.File
 
 /**
  * 图片压缩测试
  */
-class ImageActivity : BaseActivity() {
+class ImageActivity : AppCompatActivity() {
     private val mBinding: ActivityImageBinding by lazy {
         DataBindingUtil.setContentView<ActivityImageBinding>(this, R.layout.activity_image)
     }

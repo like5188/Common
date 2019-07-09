@@ -7,8 +7,8 @@ import android.support.v4.app.FragmentManager
 import android.view.KeyEvent
 import android.view.View
 import com.like.common.R
-import com.like.common.application.BaseApplication
 import com.like.common.databinding.DialogFragmentDownloadProgressBinding
+import com.like.common.util.AppUtils
 import com.like.common.util.BaseDialogFragment
 import com.like.common.util.show
 import com.like.common.util.toDataStorageUnit
@@ -41,7 +41,7 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : Sh
 
     override fun onDownloadSuccessful(totalSize: Long) {
         downloadProgressDialog.dismissAllowingStateLoss()
-        (downloadProgressDialog.context?.applicationContext as? BaseApplication)?.exitApp()
+        AppUtils.getInstance(downloadProgressDialog.context).exitApp()
     }
 
     override fun onDownloadFailed(throwable: Throwable?) {
@@ -64,7 +64,7 @@ class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : Sh
                 it.ivClose.setOnClickListener {
                     LiveDataBus.post(TAG_PAUSE)
                     dismissAllowingStateLoss()
-                    (context?.applicationContext as? BaseApplication)?.exitApp()
+                    AppUtils.getInstance(context).exitApp()
                 }
             }
             // 屏蔽返回键

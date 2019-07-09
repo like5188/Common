@@ -2,14 +2,14 @@ package com.like.common.sample.checkradio;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.like.common.ui.BaseActivity;
+import com.like.common.sample.R;
+import com.like.common.sample.databinding.ActivityCheckAndRadioBinding;
 import com.like.common.util.CheckManager;
 import com.like.common.util.RadioManager;
-import com.like.common.R;
-import com.like.common.databinding.ActivityCheckAndRadioBinding;
 
-public class CheckAndRadioActivity extends BaseActivity {
+public class CheckAndRadioActivity extends AppCompatActivity {
     private ActivityCheckAndRadioBinding mBinding;
 
     @Override

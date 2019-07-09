@@ -5,20 +5,19 @@ import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import com.like.common.ui.BaseActivity
+import com.like.common.sample.R
+import com.like.common.sample.databinding.ActivityPictureSelectorBinding
 import com.like.common.util.PermissionUtils
-import com.like.common.R
-import com.like.common.databinding.ActivityPictureSelectorBinding
 import com.like.livedatarecyclerview.layoutmanager.WrapGridLayoutManager
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.tools.PictureFileUtils
 
-
-class PictureSelectorActivity : BaseActivity() {
+class PictureSelectorActivity : AppCompatActivity() {
     private val mBinding: ActivityPictureSelectorBinding by lazy {
         DataBindingUtil.setContentView<ActivityPictureSelectorBinding>(this, R.layout.activity_picture_selector)
     }

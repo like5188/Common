@@ -20,7 +20,7 @@ android {
         // applicationId 配置我们的包名，包名是app的唯一标识，其实他跟AndroidManifest里面的package是可以不同的，他们之间并没有直接的关系。
         // package指的是代码目录下路径；applicationId指的是app对外发布的唯一标识，会在签名、申请第三方库、发布时候用到。
         // 修改applicationId只会修改当前程序的ID,而不会去修改源码中资源文件的引用。
-        applicationId "com.like.libcommon"
+        applicationId "com.like.common.sample"
         // 如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用
         // 请记住：你所使用的库，如 Support Library 或 Google Play services，可能有他们自己的 minSdkVersion 。你的应用设置的
         // minSdkVersion 必需大于等于这些库的 minSdkVersion 。
@@ -121,9 +121,3 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':common')
 }
-
-// 强制依赖版本为指定版本
-//configurations.all {
-//    // To resolve the conflict for com.android.databinding:library:1.3.1 dependency on support-v4:21.0.3
-//    resolutionStrategy.force 'com.android.support:support-v4:28.0.0'
-//}

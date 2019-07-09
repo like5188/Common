@@ -7,25 +7,25 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.like.common.application.BaseApplication
-import com.like.common.ui.BaseActivity
+import com.like.common.sample.MainActivity
+import com.like.common.sample.databinding.ActivityUpdateBinding
+import com.like.common.util.AppUtils
 import com.like.common.util.PermissionUtils
 import com.like.common.view.update.Update
 import com.like.common.view.update.shower.ForceUpdateDialogShower
 import com.like.common.view.update.shower.NotificationShower
-import com.like.common.sample.MainActivity
-import com.like.common.R
-import com.like.common.databinding.ActivityUpdateBinding
 import com.like.retrofit.RequestConfig
 import com.like.retrofit.RetrofitUtils
+
 
 /**
  * 更新测试
  */
-class UpdateActivity : BaseActivity() {
+class UpdateActivity : AppCompatActivity() {
     private val mBinding: ActivityUpdateBinding by lazy {
-        DataBindingUtil.setContentView<ActivityUpdateBinding>(this, R.layout.activity_update)
+        DataBindingUtil.setContentView<ActivityUpdateBinding>(this, com.like.common.sample.R.layout.activity_update)
     }
     private val mRetrofitUtils: RetrofitUtils by lazy {
         RetrofitUtils(
@@ -74,7 +74,7 @@ class UpdateActivity : BaseActivity() {
                                             .shower(
                                                     NotificationShower(
                                                             this,
-                                                            R.mipmap.ic_launcher,
+                                                            com.like.common.sample.R.mipmap.ic_launcher,
                                                             PendingIntent.getActivity(
                                                                     this,
                                                                     2,
@@ -126,7 +126,7 @@ class UpdateActivity : BaseActivity() {
                                 }.setNegativeButton("暂不使用") { dialog, _ ->
                                     // 需要强制更新，但是不更新
                                     dialog.dismiss()
-                                    (application as BaseApplication).exitApp()
+                                    AppUtils.getInstance(this@UpdateActivity).exitApp()
                                 }
                                 .show()
                     }

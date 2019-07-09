@@ -304,4 +304,12 @@ class AppUtils private constructor(private val mContext: Context) {
         installIntent.setDataAndType(uri, "application/vnd.android.package-archive")
         mContext.applicationContext.startActivity(installIntent)
     }
+
+    fun exitApp() {
+        val startMain = Intent(Intent.ACTION_MAIN)
+        startMain.addCategory(Intent.CATEGORY_HOME)
+        startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mContext.startActivity(startMain)
+        System.exit(0)
+    }
 }

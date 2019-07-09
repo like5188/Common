@@ -33,9 +33,10 @@
         </provider>
 
         <activity
-            android:name="com.like.common.view.dragview.view.DragViewActivity"
+            android:name=".view.dragview.view.DragViewActivity"
             android:theme="@style/translucent" />
-        <receiver android:name="com.like.common.view.update.shower.NotificationControllerBroadcastReceiver">
+
+        <receiver android:name=".view.update.shower.NotificationControllerBroadcastReceiver">
             <intent-filter>
                 <action android:name="action" />
             </intent-filter>

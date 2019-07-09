@@ -4,12 +4,12 @@ import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.like.common.ui.BaseActivity
-import com.like.common.R
-import com.like.common.databinding.ActivitySidebarViewBinding
+import com.like.common.sample.R
+import com.like.common.sample.databinding.ActivitySidebarViewBinding
 
-class SidebarViewActivity : BaseActivity() {
+class SidebarViewActivity : AppCompatActivity() {
     private val mBinding: ActivitySidebarViewBinding by lazy {
         DataBindingUtil.setContentView<ActivitySidebarViewBinding>(this, R.layout.activity_sidebar_view)
     }

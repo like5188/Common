@@ -2,16 +2,17 @@ package com.like.common.sample.flexbox
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.TextView
 import com.google.android.flexbox.FlexboxLayout
-import com.like.common.ui.BaseActivity
-import com.like.common.databinding.ActivityFlexboxBinding
+import com.like.common.sample.databinding.ActivityFlexboxBinding
+import com.like.common.sample.R
 
-class FlexBoxActivity : BaseActivity() {
+class FlexBoxActivity : AppCompatActivity() {
 
     private val mBinding: ActivityFlexboxBinding by lazy {
-        DataBindingUtil.setContentView<ActivityFlexboxBinding>(this, com.like.common.R.layout.activity_flexbox)
+        DataBindingUtil.setContentView<ActivityFlexboxBinding>(this, R.layout.activity_flexbox)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

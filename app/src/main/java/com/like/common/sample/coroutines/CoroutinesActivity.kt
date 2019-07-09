@@ -2,21 +2,24 @@ package com.like.common.sample.coroutines
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.provider.Contacts
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.like.common.ui.BaseActivity
-import com.like.common.R
-import com.like.common.databinding.ActivityCoroutinesBinding
+import com.like.common.sample.R
+import com.like.common.sample.databinding.ActivityCoroutinesBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.anko.*
+import org.jetbrains.anko.button
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.sdk27.coroutines.onClick
 
 /**
  * 协程测试
  */
-class CoroutinesActivity : BaseActivity() {
+class CoroutinesActivity : AppCompatActivity() {
     private val mBinding: ActivityCoroutinesBinding by lazy {
         DataBindingUtil.setContentView<ActivityCoroutinesBinding>(this, R.layout.activity_coroutines)
     }
@@ -48,9 +51,6 @@ class CoroutinesActivity : BaseActivity() {
             delay(2000L)  // ……我们延迟2秒来保证 JVM 的存活
         }
         doAsync {
-
-        }
-        UI {
 
         }
     }

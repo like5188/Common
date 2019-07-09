@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.like.common">
+    package="com.like.common.sample">
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name="com.like.common.sample.MyApplication"
         android:allowBackup="true"
         android:appComponentFactory="任意字符"
         android:icon="@mipmap/ic_launcher"
@@ -15,28 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
-        <activity android:name="com.like.common.sample.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.like.common.sample.banner.BannerActivity" />
-        <activity android:name="com.like.common.sample.letterlistview.SidebarViewActivity" />
-        <activity android:name="com.like.common.sample.checkradio.CheckAndRadioActivity" />
-        <activity android:name="com.like.common.sample.drag.DragViewTestActivity" />
-        <activity android:name="com.like.common.sample.pictureselector.PictureSelectorActivity" />
-        <activity android:name="com.like.common.sample.image.ImageActivity" />
-        <activity android:name="com.like.common.sample.coroutines.CoroutinesActivity" />
-        <activity android:name="com.like.common.sample.update.UpdateActivity" />
-        <activity android:name="com.like.common.sample.ble.BleActivity" />
-        <activity android:name="com.like.common.sample.flexbox.FlexBoxActivity" />
-
-        <meta-data
-            android:name="com.like.mylibrary.MyApplication"
-            android:value="IModuleApplication" />
-
+        <activity android:name=".banner.BannerActivity" />
+        <activity android:name=".letterlistview.SidebarViewActivity" />
+        <activity android:name=".checkradio.CheckAndRadioActivity" />
+        <activity android:name=".drag.DragViewTestActivity" />
+        <activity android:name=".pictureselector.PictureSelectorActivity" />
+        <activity android:name=".image.ImageActivity" />
+        <activity android:name=".coroutines.CoroutinesActivity" />
+        <activity android:name=".update.UpdateActivity" />
+        <activity android:name=".ble.BleActivity" />
+        <activity android:name=".flexbox.FlexBoxActivity" />
+        <activity android:name=".notification.NotificationActivity" />
     </application>
 
 </manifest>

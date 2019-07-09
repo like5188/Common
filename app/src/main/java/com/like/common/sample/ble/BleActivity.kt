@@ -10,8 +10,10 @@ import android.bluetooth.le.ScanResult
 import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.like.common.ui.BaseActivity
+import com.like.common.sample.R
+import com.like.common.sample.databinding.ActivityBleBinding
 import com.like.common.util.PermissionUtils
 import com.like.common.util.ble.BleManager
 import com.like.common.util.ble.model.BleCommand
@@ -20,8 +22,6 @@ import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.scanstrategy.ScanStrategy18
 import com.like.common.util.ble.scanstrategy.ScanStrategy21
 import com.like.common.view.toolbar.ToolbarUtils
-import com.like.common.R
-import com.like.common.databinding.ActivityBleBinding
 import com.like.livedatarecyclerview.adapter.BaseAdapter
 import com.like.livedatarecyclerview.layoutmanager.WrapLinearLayoutManager
 import com.like.livedatarecyclerview.listener.OnItemClickListener
@@ -32,7 +32,7 @@ import java.nio.ByteBuffer
 /**
  * 蓝牙测试
  */
-class BleActivity : BaseActivity() {
+class BleActivity : AppCompatActivity() {
     companion object {
         /**
          * 打开蓝牙请求码

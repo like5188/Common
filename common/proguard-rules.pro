@@ -23,9 +23,6 @@
 #ToolbarUtils
 -keep class com.like.lib_common.view.toolbar.CustomActionProvider{*;}
 
-# 如果在module中使用了Application，实现了 IModuleApplication 接口，就需要保护实现，用于反射。
--keep class * implements com.like.lib_common.application.IModuleApplication{*;}
-
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.module.AppGlideModule

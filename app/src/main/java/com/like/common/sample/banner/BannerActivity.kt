@@ -6,20 +6,20 @@ import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.ImageView
-import com.like.common.ui.BaseActivity
+import com.like.common.sample.R
+import com.like.common.sample.databinding.ActivityBannerBinding
 import com.like.common.util.ImageUtils
 import com.like.common.util.StatusBarUtils
 import com.like.common.view.viewPagerTransformer.AlphaPageTransformer
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
-import com.like.common.R
-import com.like.common.databinding.ActivityBannerBinding
 import java.util.*
 
-class BannerActivity : BaseActivity() {
+class BannerActivity : AppCompatActivity() {
     private val mBinding: ActivityBannerBinding by lazy {
         DataBindingUtil.setContentView<ActivityBannerBinding>(this, R.layout.activity_banner)
     }
@@ -33,13 +33,13 @@ class BannerActivity : BaseActivity() {
     private fun initBanner() {
         val bannerInfoList = ArrayList<BannerInfo>()
         val bannerInfo = BannerInfo()
-        bannerInfo.imageUrl = "https://www.114la.com/static/upd/201710/311040041f91ccea.jpg"
+        bannerInfo.imageUrl = "https://mall02.sogoucdn.com/image/2019/03/18/20190318094408_4590.png"
         bannerInfoList.add(bannerInfo)
         val bannerInfo1 = BannerInfo()
-        bannerInfo1.imageUrl = "https://www.114la.com/static/upd/201710/31105918a5901eac.jpg"
+        bannerInfo1.imageUrl = "https://mall03.sogoucdn.com/image/2019/05/13/20190513191053_4977.png"
         bannerInfoList.add(bannerInfo1)
         val bannerInfo2 = BannerInfo()
-        bannerInfo2.imageUrl = "https://123p0.sogoucdn.com/imgu/2018/01/20180122151534_866.jpg"
+        bannerInfo2.imageUrl = "https://mall03.sogoucdn.com/image/2018/12/21/20181221191646_4221.png"
         bannerInfoList.add(bannerInfo2)
 
         // 设置切换动画

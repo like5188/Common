@@ -6,43 +6,36 @@ import android.databinding.DataBindingUtil
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
-import android.os.SystemClock
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
-import com.like.common.R
-import com.like.common.application.BaseApplication
-import com.like.common.ui.BaseActivity
-import com.like.common.util.SPUtils
-import com.like.common.util.gotoNotificationChannelSetting
-import com.like.common.util.notify
-import com.like.common.view.TimerTextView
-import com.like.common.view.toolbar.ToolbarUtils
 import com.like.common.sample.banner.BannerActivity
 import com.like.common.sample.ble.BleActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
-import com.like.common.databinding.ActivityMainBinding
+import com.like.common.sample.databinding.ActivityMainBinding
 import com.like.common.sample.drag.DragViewTestActivity
 import com.like.common.sample.flexbox.FlexBoxActivity
 import com.like.common.sample.image.ImageActivity
 import com.like.common.sample.letterlistview.SidebarViewActivity
+import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.update.UpdateActivity
-import com.like.mylibrary.SecondActivity
+import com.like.common.util.SPUtils
+import com.like.common.util.createNotificationChannel
+import com.like.common.util.gotoNotificationChannelSetting
+import com.like.common.util.notify
+import com.like.common.view.TimerTextView
+import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
-import kotlin.concurrent.thread
 
-
-class MainActivity : BaseActivity() {
-    companion object {
-        val TAG = "MainActivity11"
-    }
-
+class MainActivity : AppCompatActivity() {
     private val mToolbarUtils: ToolbarUtils by lazy {
         ToolbarUtils(this, fl_toolbarContainer)
                 .showTitle("sample", R.color.common_text_white_0)
@@ -104,14 +97,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        thread {
-            SystemClock.sleep(1000)
-            Log.d(TAG, (application as BaseApplication).activities.toString())
-        }
-    }
-
     fun gotoFlexBoxActivity(view: View) {
         startActivity(Intent(this, FlexBoxActivity::class.java))
     }
@@ -148,52 +133,12 @@ class MainActivity : BaseActivity() {
         startActivity(Intent(this, BannerActivity::class.java))
     }
 
-    fun gotoSecondActivity(view: View) {
-        startActivity(Intent(this, SecondActivity::class.java))
-    }
-
     fun gotoUpdateActivity(view: View) {
         startActivity(Intent(this, UpdateActivity::class.java))
     }
 
-    fun test(view: View) {
+    fun gotoNotificationActivity(view: View) {
+        startActivity(Intent(this, NotificationActivity::class.java))
     }
 
-    fun test1(view: View) {
-    }
-
-    fun test2(view: View) {
-    }
-
-    fun test3(view: View) {
-        val contentView = RemoteViews(packageName, R.layout.view_download_progress_for_notification)
-        contentView.setImageViewResource(R.id.iv_small_icon, R.mipmap.ic_launcher)
-        contentView.setImageViewResource(R.id.iv_large_icon, R.mipmap.ic_launcher)
-        contentView.setImageViewResource(R.id.iv_controller, R.drawable.ic_placeholder)
-
-        val contentIntent = PendingIntent.getActivity(
-                this@MainActivity,
-                0,
-                Intent(this, MainActivity::class.java),
-                0
-        )
-
-        notify(
-                2,
-                NotificationCompat.Builder(this, "d")
-                        .setContentTitle("收到一条渠道d的消息")
-                        .setContentText("2d")
-                        .setSmallIcon(R.drawable.icon_0)
-                        .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.image_0))
-                        .setAutoCancel(true)
-                        .setNumber(999)
-                        .setCustomContentView(contentView)
-                        .setContentIntent(contentIntent)
-                        .build()
-        )
-    }
-
-    fun test4(view: View) {
-        gotoNotificationChannelSetting("a")
-    }
 }

@@ -1,8 +1,8 @@
 package com.like.common.sample.ble
 
 import android.databinding.ObservableBoolean
-import com.like.common.BR
-import com.like.common.R
+import com.like.common.sample.BR
+import com.like.common.sample.R
 import com.like.livedatarecyclerview.model.IItem
 
 class BleInfo(val name: String, val address: String) : IItem {

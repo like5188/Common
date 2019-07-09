@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView
 import com.like.common.util.GlideUtils
 import com.like.common.util.PermissionUtils
 import com.like.common.util.VibrateUtils
-import com.like.common.databinding.ViewAddImageBinding
-import com.like.common.databinding.ViewImageBinding
+import com.like.common.sample.databinding.ViewAddImageBinding
+import com.like.common.sample.databinding.ViewImageBinding
 import com.like.livedatarecyclerview.adapter.BaseAddImageViewAdapter
 import com.like.livedatarecyclerview.model.IRecyclerViewItem
 import com.like.livedatarecyclerview.viewholder.CommonViewHolder
