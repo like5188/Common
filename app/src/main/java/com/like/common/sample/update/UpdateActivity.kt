@@ -16,9 +16,8 @@ import com.like.common.util.PermissionUtils
 import com.like.common.view.update.Update
 import com.like.common.view.update.shower.ForceUpdateDialogShower
 import com.like.common.view.update.shower.NotificationShower
+import com.like.retrofit.DownloadRetrofitUtils
 import com.like.retrofit.RequestConfig
-import com.like.retrofit.RetrofitUtils
-
 
 /**
  * 更新测试
@@ -26,15 +25,6 @@ import com.like.retrofit.RetrofitUtils
 class UpdateActivity : AppCompatActivity() {
     private val mBinding: ActivityUpdateBinding by lazy {
         DataBindingUtil.setContentView<ActivityUpdateBinding>(this, com.like.common.sample.R.layout.activity_update)
-    }
-    private val mRetrofitUtils: RetrofitUtils by lazy {
-        RetrofitUtils(
-                RequestConfig.Builder()
-                        .application(this.application)
-                        .scheme(RequestConfig.SCHEME_HTTP)
-                        .ip("www.xxx.com")
-                        .build()
-        )
     }
 
     private val mPermissionUtils: PermissionUtils by lazy {
@@ -46,7 +36,8 @@ class UpdateActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        Update.with(this).retrofit(mRetrofitUtils)
+        Update.with(this)
+                .retrofit(DownloadRetrofitUtils(RequestConfig.Builder().application(this.application).build()))
     }
 
     @SuppressLint("MissingPermission")

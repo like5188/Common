@@ -12,7 +12,7 @@ import com.like.common.view.update.shower.ShowerDelegate
 import com.like.livedatabus.liveDataBusRegister
 import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
-import com.like.retrofit.RetrofitUtils
+import com.like.retrofit.DownloadRetrofitUtils
 import com.like.retrofit.entity.DownloadInfo
 import com.like.retrofit.livedata.BaseCallLiveData
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +29,7 @@ import java.io.File
 @SuppressLint("MissingPermission")
 class DownloadController(
         private val context: Context,
-        private val mRetrofitUtils: RetrofitUtils,
+        private val mDownloadRetrofitUtils: DownloadRetrofitUtils,
         private val mUrl: String,
         private val downloadFile: File,
         private val mShowerDelegate: ShowerDelegate
@@ -75,7 +75,7 @@ class DownloadController(
 
         // 下载
         GlobalScope.launch {
-            mCallLiveData = mRetrofitUtils.download(mUrl, downloadFile, 3).await()
+            mCallLiveData = mDownloadRetrofitUtils.download(mUrl, downloadFile, 3).await()
             launch(Dispatchers.Main) {
                 mCallLiveData?.observeForever { downloadInfo ->
                     when (downloadInfo?.status) {
