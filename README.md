@@ -131,13 +131,16 @@
 
     // 65535
     api 'com.android.support:multidex:1.0.3'
+
     // retrofit2
-    api 'com.squareup.retrofit2:retrofit:2.6.0'
     api 'com.squareup.retrofit2:converter-gson:2.6.0'
-    api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    api 'com.squareup.retrofit2:retrofit:2.6.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
+    api 'com.squareup.retrofit2:converter-scalars:2.6.0'
 
     // okhttp3
     api 'com.squareup.okhttp3:okhttp:3.12.2'
+    api 'com.squareup.okhttp3:logging-interceptor:3.12.2'
 
     // dagger
     api 'com.google.dagger:dagger:2.17'
@@ -193,7 +196,7 @@
 
     api 'com.github.like5188:Repository:1.2.5'
     api 'com.github.like5188:LiveDataRecyclerView:1.2.5'
-    api 'com.github.like5188:LibRetrofit:1.2.0'
+    api 'com.github.like5188:LibRetrofit:1.2.2'
     api 'com.github.like5188.LiveDataBus:livedatabus:1.2.8'
 
     // 使用 Glide 时需要

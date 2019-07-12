@@ -134,7 +134,7 @@ dependencies {
 
     api 'com.github.like5188:Repository:1.2.5'
     api 'com.github.like5188:LiveDataRecyclerView:1.2.5'
-    api 'com.github.like5188:LibRetrofit:1.2.1'
+    api 'com.github.like5188:LibRetrofit:1.2.2'
     api 'com.github.like5188.LiveDataBus:livedatabus:1.2.8'
 
     // 使用 Glide 时需要
