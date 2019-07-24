@@ -194,9 +194,9 @@
 
     api 'com.google.android:flexbox:1.0.0'
 
-    api 'com.github.like5188:Repository:1.2.6'
+    api 'com.github.like5188:Repository:1.2.8'
+    api 'com.github.like5188:LiveDataRecyclerView:1.2.7'
     api 'com.github.like5188:LibRetrofit:1.2.2'
-    api 'com.github.like5188:LiveDataRecyclerView:1.2.6'
     api 'com.github.like5188.LiveDataBus:livedatabus:1.2.9'
 
     // 使用 Glide 时需要
