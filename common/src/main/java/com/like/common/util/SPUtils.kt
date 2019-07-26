@@ -2,22 +2,18 @@ package com.like.common.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.io.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
  * SharedPreferences存储工具类。
- * 如果不是SharedPreferences支持的类型，就使用序列化，文件名字就是key。
  */
 class SPUtils private constructor() {
     private lateinit var prefs: SharedPreferences
-    private lateinit var serializeDir: String
 
     companion object {
         private const val NOT_INIT_EXCEPTION = "you must addNotificationChannel SPUtils by addNotificationChannel() first"
         private const val SHARED_PREFERENCES_FILE_SUFFIX = ".sharedPreferences"
-        private const val SERIALIZE_FILE_SUFFIX = ".serialize"
 
         @JvmStatic
         fun getInstance(): SPUtils {
@@ -34,13 +30,15 @@ class SPUtils private constructor() {
      */
     @JvmOverloads
     fun init(context: Context, sharedPreferencesFileName: String = context.packageName) {
-        serializeDir = context.applicationContext.filesDir.toString()
-        prefs = context.applicationContext.getSharedPreferences("$sharedPreferencesFileName$SHARED_PREFERENCES_FILE_SUFFIX", Context.MODE_PRIVATE)
+        if (!::prefs.isInitialized) {
+            prefs = context.applicationContext.getSharedPreferences("$sharedPreferencesFileName$SHARED_PREFERENCES_FILE_SUFFIX", Context.MODE_PRIVATE)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String, default: T?): T? {
-        if (!::prefs.isInitialized) throw RuntimeException(NOT_INIT_EXCEPTION)
+    @Throws(IllegalArgumentException::class)
+    fun <T> get(key: String, default: T): T {
+        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
         return with(prefs) {
             when (default) {
                 is String -> getString(key, default) as T
@@ -48,14 +46,14 @@ class SPUtils private constructor() {
                 is Int -> getInt(key, default) as T
                 is Long -> getLong(key, default) as T
                 is Float -> getFloat(key, default) as T
-                is Serializable, null -> getObject(key) ?: default
                 else -> default
             }
         }
     }
 
-    fun <T> put(key: String, value: T?) {
-        if (!::prefs.isInitialized) throw RuntimeException(NOT_INIT_EXCEPTION)
+    @Throws(IllegalArgumentException::class)
+    fun <T> put(key: String, value: T) {
+        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
         with(prefs.edit()) {
             when (value) {
                 is String -> putString(key, value)
@@ -63,10 +61,6 @@ class SPUtils private constructor() {
                 is Int -> putInt(key, value)
                 is Long -> putLong(key, value)
                 is Float -> putFloat(key, value)
-                is Serializable, null -> {
-                    saveObject(key, value)
-                    null
-                }
                 else -> null
             }?.apply()
         }
@@ -76,19 +70,19 @@ class SPUtils private constructor() {
      * 移除某个key对应的那一条数据
      * @param key
      */
+    @Throws(IllegalArgumentException::class)
     fun remove(key: String) {
-        if (!::prefs.isInitialized) throw RuntimeException(NOT_INIT_EXCEPTION)
+        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
         prefs.edit().remove(key).apply()
-        removeObject(key)
     }
 
     /**
      * 清除所有数据
      */
+    @Throws(IllegalArgumentException::class)
     fun clear() {
-        if (!::prefs.isInitialized) throw RuntimeException(NOT_INIT_EXCEPTION)
+        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
         prefs.edit().clear().apply()
-        clearObject()
     }
 
     /**
@@ -96,123 +90,50 @@ class SPUtils private constructor() {
      * @param key
      * @return
      */
+    @Throws(IllegalArgumentException::class)
     fun contains(key: String): Boolean {
-        if (!::prefs.isInitialized) throw RuntimeException(NOT_INIT_EXCEPTION)
-        var result = prefs.contains(key)
-        if (!result) {
-            try {
-                val dir = File(serializeDir)
-                val serializeFile = File(getSerializeFileName(key))
-                result = serializeFile.exists() && dir.exists() && dir.walkTopDown().contains(serializeFile)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        return result
+        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        return prefs.contains(key)
     }
 
     /**
      * 返回所有的键值对数据
      * @return
      */
+    @Throws(IllegalArgumentException::class)
     fun getAll(): Map<String, Any?> {
-        if (!::prefs.isInitialized) throw RuntimeException(NOT_INIT_EXCEPTION)
-        val result = mutableMapOf<String, Any?>()
-        try {
-            prefs.all.forEach {
-                result[it.key] = it.value
-            }
-            File(serializeDir).walkTopDown().forEachIndexed { index, file ->
-                if (index > 0)// 除开目录
-                    result[file.nameWithoutExtension] = file
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return result
+        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        return prefs.all
     }
 
     /**
-     * 序列化对象
+     * SharedPreferences属性委托
+     * 支持基本数据类型：String、Boolean、Int、Long、Float
+     *
+     * 示例：var xxx by Delegate()
+     *
+     * @property context
+     * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
+     * @property key                        存储的key
+     * @property default                    获取失败时，返回的默认值
      */
-    private fun saveObject(key: String, obj: Any?) {
-        try {
-            val dir = File(serializeDir)
-            if (!dir.exists()) {
-                dir.mkdirs()
-            }
-            ObjectOutputStream(FileOutputStream(getSerializeFileName(key))).use { it.writeObject(obj) }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    class Delegate<T>(
+            private val context: Context,
+            private val sharedPreferencesFileName: String,
+            private val key: String,
+            private val default: T
+    ) : ReadWriteProperty<Any?, T> {
+        init {
+            SPUtils.getInstance().init(context, sharedPreferencesFileName)
         }
-    }
 
-    /**
-     * 反序列化对象
-     */
-    @Suppress("UNCHECKED_CAST")
-    private fun <T> getObject(key: String): T? {
-        try {
-            ObjectInputStream(FileInputStream(getSerializeFileName(key))).use {
-                return it.readObject() as? T
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+            return SPUtils.getInstance().get(key, default)!!
         }
-        return null
-    }
 
-    /**
-     * 删除序列化的对象，即删除相应文件
-     */
-    private fun removeObject(key: String) {
-        try {
-            File(getSerializeFileName(key)).delete()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+            SPUtils.getInstance().put(key, value)
         }
+
     }
-
-    /**
-     * 清除所有序列化的对象
-     */
-    private fun clearObject() {
-        try {
-            File(serializeDir).deleteRecursively()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun getSerializeFileName(key: String) = "$serializeDir/$key$SERIALIZE_FILE_SUFFIX"
-}
-
-/**
- * SharedPreferences属性委托
- *
- * 示例：var k: Long by DelegateSharedPreferences()
- *
- * @property context
- * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
- * @property key                        存储的key
- * @property default                    获取失败时，返回的默认值
- */
-class DelegateSharedPreferences<T>(
-        private val context: Context,
-        private val sharedPreferencesFileName: String,
-        private val key: String,
-        private val default: T?
-) : ReadWriteProperty<Any?, T?> {
-    init {
-        SPUtils.getInstance().init(context, sharedPreferencesFileName)
-    }
-
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
-        return SPUtils.getInstance().get(key, default)
-    }
-
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-        SPUtils.getInstance().put(key, value)
-    }
-
 }

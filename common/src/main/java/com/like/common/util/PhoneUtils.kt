@@ -187,8 +187,16 @@ class PhoneUtils private constructor(private val mContext: Context) {
         } else false
     }
 
+    /**
+     * 获取UUID。
+     * 要使用缓存的话，就必须先初始化 SPUtils 工具类
+     */
     fun getUuid(): String {
-        var uuid = SPUtils.getInstance().get(KEY_UUID, "")
+        var uuid = try {
+            SPUtils.getInstance().get(KEY_UUID, "")
+        } catch (e: Exception) {
+            ""
+        }
         Log.d("PhoneUtils", "从sp中获取uuid：$uuid")
         if (uuid.isEmpty()) {
             uuid = readUuidFromFile(FILE_DCIM)
@@ -228,26 +236,30 @@ class PhoneUtils private constructor(private val mContext: Context) {
         if (!uuid.isNullOrEmpty()) {
             saveUuidToFile(FILE_DCIM, uuid)
             saveUuidToFile(FILE_DOWNLOADS, uuid)
-            SPUtils.getInstance().put(KEY_UUID, uuid)
+            try {
+                SPUtils.getInstance().put(KEY_UUID, uuid)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
         }
         return uuid ?: ""
     }
 
     private fun readUuidFromFile(fileName: String): String {
         var reader: BufferedReader? = null
-        try {
+        return try {
             val file = File(fileName)
             reader = BufferedReader(FileReader(file))
-            return reader.readLine()
+            reader.readLine()
         } catch (e: Exception) {
-            return ""
+            ""
         } finally {
             try {
                 reader?.close()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
         }
     }
 
