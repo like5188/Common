@@ -116,7 +116,8 @@ class SerializableUtils private constructor() {
         try {
             File(serializeDir).walkTopDown().forEachIndexed { index, file ->
                 if (index > 0) {// 除开目录
-                    result[file.nameWithoutExtension] = file
+                    val key = file.nameWithoutExtension
+                    result[key] = get(key, null)
                 }
             }
         } catch (e: Exception) {
