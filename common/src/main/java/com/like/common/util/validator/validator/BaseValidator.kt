@@ -8,9 +8,12 @@ import com.like.common.util.validator.rule.AbstractRule
 open class BaseValidator<TYPE> {
     val mRules = mutableListOf<AbstractRule<TYPE>>()
 
-    fun clone(validator: BaseValidator<TYPE>): BaseValidator<TYPE> =
+    /**
+     * 克隆一个验证器，有相同的规则
+     */
+    fun clone(): BaseValidator<TYPE> =
             BaseValidator<TYPE>().apply {
-                mRules.addAll(validator.mRules)
+                this.mRules.addAll(mRules)
             }
 
     /**
