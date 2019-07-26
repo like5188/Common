@@ -6,7 +6,24 @@ import com.like.common.util.validator.rule.AbstractRule
  * 验证器基类
  */
 open class BaseValidator<TYPE> {
-    private val mRules = mutableListOf<AbstractRule<TYPE>>()
+    val mRules = mutableListOf<AbstractRule<TYPE>>()
+
+    fun clone(validator: BaseValidator<TYPE>): BaseValidator<TYPE> =
+            BaseValidator<TYPE>().apply {
+                mRules.addAll(validator.mRules)
+            }
+
+    /**
+     * 删除满足条件的规则
+     */
+    fun removeIf(predicate: (AbstractRule<TYPE>) -> Boolean) {
+        val listIterator = mRules.listIterator()
+        listIterator.forEach {
+            if (predicate(it)) {
+                listIterator.remove()
+            }
+        }
+    }
 
     /**
      * 验证数据是否符合本规则[AbstractRule]
@@ -22,14 +39,14 @@ open class BaseValidator<TYPE> {
             success: (() -> Unit)? = null,
             failure: ((List<AbstractRule<TYPE>>) -> Unit)? = null
     ): Boolean {
-        val result = mRules.filter {
+        val failureRules = mRules.filter {
             !it.isValid(data)
         }
-        return if (result.isEmpty()) {
+        return if (failureRules.isEmpty()) {
             success?.invoke()
             true
         } else {
-            failure?.invoke(result)
+            failure?.invoke(failureRules)
             false
         }
     }
