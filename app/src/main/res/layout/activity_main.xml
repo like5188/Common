@@ -57,6 +57,7 @@
                 android:onClick="gotoBleActivity"
                 android:text="蓝牙测试"
                 android:textAllCaps="false" />
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,7 +118,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="gotoNotificationActivity"
-                android:text="启动Notification界面" />
+                android:text="启动Notification界面"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="gotoSerializableActivity"
+                android:text="启动SerializableActivity界面"
+                android:textAllCaps="false" />
 
         </LinearLayout>
     </ScrollView>

@@ -25,6 +25,7 @@ import com.like.common.sample.image.ImageActivity
 import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
+import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.update.UpdateActivity
 import com.like.common.util.SPUtils
 import com.like.common.util.createNotificationChannel
@@ -139,6 +140,10 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoNotificationActivity(view: View) {
         startActivity(Intent(this, NotificationActivity::class.java))
+    }
+
+    fun gotoSerializableActivity(view: View) {
+        startActivity(Intent(this, SerializableActivity::class.java))
     }
 
 }

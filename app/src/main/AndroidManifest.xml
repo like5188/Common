@@ -32,6 +32,7 @@
         <activity android:name=".ble.BleActivity" />
         <activity android:name=".flexbox.FlexBoxActivity" />
         <activity android:name=".notification.NotificationActivity" />
+        <activity android:name=".serializable.SerializableActivity" />
     </application>
 
 </manifest>
