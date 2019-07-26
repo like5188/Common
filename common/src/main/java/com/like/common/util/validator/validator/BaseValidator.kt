@@ -19,13 +19,22 @@ open class BaseValidator<TYPE> {
     /**
      * 删除满足条件的规则
      */
-    fun removeIf(predicate: (AbstractRule<TYPE>) -> Boolean) {
+    fun removeIf(predicate: (AbstractRule<TYPE>) -> Boolean): BaseValidator<TYPE> {
         val listIterator = mRules.listIterator()
         listIterator.forEach {
             if (predicate(it)) {
                 listIterator.remove()
             }
         }
+        return this
+    }
+
+    /**
+     * 为验证器添加[AbstractRule]
+     */
+    fun addRules(vararg rules: AbstractRule<TYPE>): BaseValidator<TYPE> {
+        mRules.addAll(rules)
+        return this
     }
 
     /**
@@ -52,12 +61,5 @@ open class BaseValidator<TYPE> {
             failure?.invoke(failureRules)
             false
         }
-    }
-
-    /**
-     * 为验证器添加[AbstractRule]
-     */
-    fun addRules(vararg rules: AbstractRule<TYPE>) {
-        mRules.addAll(rules)
     }
 }
