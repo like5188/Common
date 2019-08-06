@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.annotation.Size
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
+import androidx.annotation.RequiresApi
+import androidx.annotation.Size
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.core.content.ContextCompat
 import com.tbruyelle.rxpermissions2.RxPermissions
 
 /**
@@ -105,12 +105,12 @@ class PermissionUtils {
     private var mContext: Context? = null
     private var mRxPermissions: RxPermissions? = null
 
-    fun init(fragmentActivity: FragmentActivity) {
+    fun init(fragmentActivity: androidx.fragment.app.FragmentActivity) {
         mContext = fragmentActivity.applicationContext
         mRxPermissions = RxPermissions(fragmentActivity)
     }
 
-    fun init(fragment: Fragment) {
+    fun init(fragment: androidx.fragment.app.Fragment) {
         mContext = fragment.context
         mRxPermissions = RxPermissions(fragment)
     }

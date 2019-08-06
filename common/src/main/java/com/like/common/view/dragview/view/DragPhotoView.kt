@@ -3,8 +3,8 @@ package com.like.common.view.dragview.view
 import android.R
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -37,7 +37,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                     addRule(CENTER_IN_PARENT)
                 }
                 adapter = MyPagerAdapter(mPagerViews)
-                addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+                addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
                         curClickPosition = position
                         mConfig.setData(infos[curClickPosition])
@@ -226,7 +226,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
         }
     }
 
-    class MyPagerAdapter(private val pagerViews: List<PagerView>) : PagerAdapter() {
+    class MyPagerAdapter(private val pagerViews: List<PagerView>) : androidx.viewpager.widget.PagerAdapter() {
         override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
 
         override fun getCount(): Int = pagerViews.size

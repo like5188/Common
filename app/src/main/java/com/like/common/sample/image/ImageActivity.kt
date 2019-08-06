@@ -1,11 +1,11 @@
 package com.like.common.sample.image
 
 import android.Manifest
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityImageBinding

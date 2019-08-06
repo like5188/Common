@@ -1,7 +1,7 @@
 package com.like.common.util
 
 import android.content.res.Resources
-import android.support.design.widget.TabLayout
+import com.google.android.material.tabs.TabLayout
 import android.util.TypedValue
 import android.widget.LinearLayout
 import java.lang.reflect.Field

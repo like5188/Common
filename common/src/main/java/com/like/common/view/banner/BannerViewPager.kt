@@ -1,7 +1,7 @@
 package com.like.common.view.banner
 
 import android.content.Context
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.animation.AccelerateInterpolator
@@ -11,7 +11,7 @@ import android.widget.Scroller
 /**
  * 可以控制是否左右滑动的ViewPager[.setScrollable]，默认不能滑动
  */
-class BannerViewPager(context: Context, attrs: AttributeSet?) : ViewPager(context, attrs) {
+class BannerViewPager(context: Context, attrs: AttributeSet?) : androidx.viewpager.widget.ViewPager(context, attrs) {
     private var isScrollable = false
 
     init {
@@ -38,7 +38,7 @@ class BannerViewPager(context: Context, attrs: AttributeSet?) : ViewPager(contex
      */
     fun setScrollSpeed(duration: Int = 300) {
         try {
-            val field = ViewPager::class.java.getDeclaredField("mScroller")
+            val field = androidx.viewpager.widget.ViewPager::class.java.getDeclaredField("mScroller")
             field.isAccessible = true
             field.set(this, FixedSpeedScroller(context, AccelerateInterpolator(), duration))
         } catch (e: Exception) {

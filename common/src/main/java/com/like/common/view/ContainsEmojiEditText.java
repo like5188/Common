@@ -11,7 +11,7 @@ import android.widget.Toast;
 /**
  * 支持输入emoji的EditText
  */
-public class ContainsEmojiEditText extends android.support.v7.widget.AppCompatEditText {
+public class ContainsEmojiEditText extends androidx.appcompat.widget.AppCompatEditText {
     //输入表情前的光标位置
     private int cursorPos;
     //输入表情前EditText中的文本

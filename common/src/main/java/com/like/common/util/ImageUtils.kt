@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.NinePatchDrawable
 import android.media.ExifInterface
 import android.os.Build
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import android.util.Base64
 import android.util.Log
 import android.widget.ImageView

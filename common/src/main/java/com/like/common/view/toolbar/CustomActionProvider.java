@@ -1,11 +1,11 @@
 package com.like.common.view.toolbar;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.v4.view.ActionProvider;
-import android.support.v7.widget.ActionMenuView;
+import androidx.databinding.DataBindingUtil;
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.core.view.ActionProvider;
+import androidx.appcompat.widget.ActionMenuView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;

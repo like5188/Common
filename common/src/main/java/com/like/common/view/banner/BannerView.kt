@@ -1,14 +1,14 @@
 package com.like.common.view.banner
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.os.Handler
-import android.support.annotation.DrawableRes
-import android.support.annotation.IdRes
-import android.support.v4.view.ViewPager
+import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
+import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -117,7 +117,7 @@ class BannerView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
             mCurPosition -= mCurPosition % adapter.mRealCount
             it.currentItem = mCurPosition
 
-            it.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            it.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
                 // position当前选择的是哪个页面
                 override fun onPageSelected(position: Int) {
                     mCurPosition = position

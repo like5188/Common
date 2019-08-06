@@ -2,11 +2,11 @@ package com.like.common.view.callback
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.util.Log
 import io.reactivex.subjects.PublishSubject
 
-internal class RxCallbackFragment : Fragment() {
+internal class RxCallbackFragment : androidx.fragment.app.Fragment() {
     companion object {
         private const val REQUEST_CODE = 88
     }

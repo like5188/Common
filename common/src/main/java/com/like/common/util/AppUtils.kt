@@ -9,8 +9,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.FileProvider
+import androidx.fragment.app.FragmentActivity
+import androidx.core.content.FileProvider
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -271,7 +271,7 @@ class AppUtils private constructor(private val mContext: Context) {
                 Uri.fromFile(apkFile)
             }
             // android8.0 安装未知来源应用需要添加权限Manifest.permission.REQUEST_INSTALL_PACKAGES
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mContext is FragmentActivity) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mContext is androidx.fragment.app.FragmentActivity) {
                 if (!mContext.packageManager.canRequestPackageInstalls()) {
                     AlertDialog.Builder(mContext)
                             .setTitle("权限申请")

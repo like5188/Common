@@ -2,13 +2,13 @@ package com.like.common.view
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.os.Handler
-import android.support.annotation.IdRes
+import androidx.annotation.IdRes
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout

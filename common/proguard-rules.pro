@@ -30,7 +30,7 @@
 # Layout布局使用的View构造函数（自定义控件）、android:onClick等。
 
 #ToolbarUtils
--keep class com.like.lib_common.view.toolbar.CustomActionProvider{*;}
+-keep class com.like.common.view.toolbar.CustomActionProvider{*;}
 
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule

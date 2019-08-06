@@ -2,14 +2,14 @@ package com.like.common.view.toolbar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.annotation.MenuRes
-import android.support.v4.app.ActivityCompat
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.widget.Toolbar
+import androidx.databinding.DataBindingUtil
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.MenuRes
+import androidx.core.app.ActivityCompat
+import androidx.core.view.MenuItemCompat
+import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater

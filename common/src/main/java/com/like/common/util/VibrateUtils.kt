@@ -2,7 +2,7 @@ package com.like.common.util
 
 import android.content.Context
 import android.os.Vibrator
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 
 /**
  * 震动相关

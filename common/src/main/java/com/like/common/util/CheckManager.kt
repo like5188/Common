@@ -1,6 +1,6 @@
 package com.like.common.util
 
-import android.databinding.ObservableBoolean
+import androidx.databinding.ObservableBoolean
 
 /**
  * 复选控制器，默认不选择，用实体来控制唯一，所以实体必须实现equals()和hashCode()方法

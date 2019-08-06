@@ -5,8 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import android.widget.ImageView
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DataSource
@@ -47,7 +47,7 @@ class GlideUtils {
         glideRequest = glideRequests.asDrawable()
     }
 
-    constructor(fragment: Fragment) {
+    constructor(fragment: androidx.fragment.app.Fragment) {
         glideRequests = GlideApp.with(fragment)
         glideRequest = glideRequests.asDrawable()
     }
@@ -57,7 +57,7 @@ class GlideUtils {
         glideRequest = glideRequests.asDrawable()
     }
 
-    constructor(activity: FragmentActivity) {
+    constructor(activity: androidx.fragment.app.FragmentActivity) {
         glideRequests = GlideApp.with(activity)
         glideRequest = glideRequests.asDrawable()
     }

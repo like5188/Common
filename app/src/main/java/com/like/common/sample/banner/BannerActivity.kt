@@ -2,12 +2,12 @@ package com.like.common.sample.banner
 
 import android.animation.ArgbEvaluator
 import android.content.Context
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.graphics.Palette
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.palette.graphics.Palette
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.ImageView
@@ -70,7 +70,7 @@ class BannerActivity : AppCompatActivity() {
         val argbEvaluator = ArgbEvaluator()
         StatusBarUtils.setStatusBarTranslucent(this)
         mBinding.viewPager.addOnPageChangeListener(
-                object : ViewPager.OnPageChangeListener {
+                object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
                     override fun onPageScrollStateChanged(p0: Int) {
                     }
 
@@ -105,7 +105,7 @@ class BannerActivity : AppCompatActivity() {
 
     fun getColor(bitmap: Bitmap?): Int {
         bitmap ?: R.color.colorPrimary
-        val palette = Palette.from(bitmap!!).generate()
+        val palette = androidx.palette.graphics.Palette.from(bitmap!!).generate()
         val vibrant = palette.getVibrantColor(0x000000)
         val vibrantLight = palette.getLightVibrantColor(0x000000)
         val vibrantDark = palette.getDarkVibrantColor(0x000000)

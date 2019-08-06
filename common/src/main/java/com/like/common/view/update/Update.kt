@@ -3,9 +3,9 @@ package com.like.common.view.update
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.annotation.RequiresPermission
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.RequiresPermission
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.like.common.util.SingletonHolder
 import com.like.common.view.update.controller.DownloadController
 import com.like.common.view.update.shower.Shower
@@ -34,12 +34,12 @@ class Update {
         @SuppressLint("StaticFieldLeak")
         private var mContext: Context? = null
 
-        fun with(activity: FragmentActivity): Update {
+        fun with(activity: androidx.fragment.app.FragmentActivity): Update {
             mContext = activity.applicationContext
             return getInstance()
         }
 
-        fun with(fragment: Fragment): Update {
+        fun with(fragment: androidx.fragment.app.Fragment): Update {
             mContext = fragment.activity?.applicationContext
             return getInstance()
         }

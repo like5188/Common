@@ -3,7 +3,7 @@ package com.like.common.view.update.controller
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.like.common.util.AppUtils
 import com.like.common.view.update.TAG_CONTINUE
 import com.like.common.view.update.TAG_PAUSE

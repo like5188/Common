@@ -9,7 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.PowerManager
 import android.provider.Settings
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import android.telephony.TelephonyManager
 import android.text.TextUtils
 import android.util.DisplayMetrics

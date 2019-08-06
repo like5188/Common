@@ -1,7 +1,7 @@
 package com.like.common.view.badgeview;
 
 import android.content.Context;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import android.view.View;
 
 /**

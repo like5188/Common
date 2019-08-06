@@ -3,13 +3,13 @@ package com.like.common.util.ble
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.support.annotation.RequiresPermission
+import androidx.annotation.RequiresPermission
 import com.like.common.util.ble.blestate.ConnectedState
 import com.like.common.util.ble.blestate.IBleState
 import com.like.common.util.ble.blestate.InitedState

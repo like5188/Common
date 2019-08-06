@@ -9,7 +9,7 @@ import com.like.common.R
 /**
  * 能旋转角度的TextView
  */
-class RotateTextView(context: Context, attrs: AttributeSet) : android.support.v7.widget.AppCompatTextView(context, attrs, android.R.attr.textViewStyle) {
+class RotateTextView(context: Context, attrs: AttributeSet) : androidx.appcompat.widget.AppCompatTextView(context, attrs, android.R.attr.textViewStyle) {
     private val mDegrees: Float
 
     init {

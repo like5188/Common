@@ -1,6 +1,6 @@
 package com.like.common.sample.pictureselector
 
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import com.like.common.sample.R
 import com.like.livedatarecyclerview.model.IItem
 

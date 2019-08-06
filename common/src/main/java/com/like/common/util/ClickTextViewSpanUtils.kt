@@ -1,7 +1,7 @@
 package com.like.common.util
 
 import android.graphics.Color
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned

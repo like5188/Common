@@ -33,7 +33,7 @@ android {
         versionCode 1
         // 表明我们的app应用的版本名称，一般是发布的时候写在app上告诉用户的
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // 用于配置该BuildType是否启用自动拆分多个Dex的功能。一般用程序中代码太多，超过了65535个方法的时候。
         multiDexEnabled true// api 21及以上，可以只添加此配置，不需要再引用com.android.support:multidex:1.0.3
@@ -117,7 +117,7 @@ dependencies {
     // 这样配置之后本地libs文件夹下的扩展名为jar的都会被依赖，非常方便。
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation project(':common')
 }

@@ -1,9 +1,9 @@
 package com.like.common.sample.coroutines
 
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import android.provider.Contacts
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityCoroutinesBinding

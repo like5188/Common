@@ -1,9 +1,9 @@
 package com.like.common.view.callback
 
 import android.content.Intent
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.like.common.util.SingletonHolder
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -22,17 +22,17 @@ class RxCallback private constructor() {
 
     private var mFragment: RxCallbackFragment? = null
 
-    fun init(fragment: Fragment): RxCallback {
+    fun init(fragment: androidx.fragment.app.Fragment): RxCallback {
         mFragment = getRxCallbackFragment(fragment.childFragmentManager)
         return this
     }
 
-    fun init(fragmentActivity: FragmentActivity): RxCallback {
+    fun init(fragmentActivity: androidx.fragment.app.FragmentActivity): RxCallback {
         mFragment = getRxCallbackFragment(fragmentActivity.supportFragmentManager)
         return this
     }
 
-    private fun getRxCallbackFragment(fm: FragmentManager): RxCallbackFragment {
+    private fun getRxCallbackFragment(fm: androidx.fragment.app.FragmentManager): RxCallbackFragment {
         var rxCallbackFragment = findRxCallbackFragment(fm)
         if (rxCallbackFragment == null) {
             rxCallbackFragment = RxCallbackFragment()
@@ -41,7 +41,7 @@ class RxCallback private constructor() {
         return rxCallbackFragment
     }
 
-    private fun findRxCallbackFragment(fm: FragmentManager): RxCallbackFragment? {
+    private fun findRxCallbackFragment(fm: androidx.fragment.app.FragmentManager): RxCallbackFragment? {
         return fm.findFragmentByTag(TAG) as RxCallbackFragment?
     }
 

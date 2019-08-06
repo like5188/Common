@@ -1,7 +1,7 @@
 package com.like.common.sample.banner
 
 import android.content.Context
-import android.support.v4.view.PagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,7 @@ import android.widget.ImageView
 import com.like.common.util.GlideUtils
 import com.like.common.sample.R
 
-class MyViewPagerAdapter(val context: Context, val list: List<BannerInfo>) : PagerAdapter() {
+class MyViewPagerAdapter(val context: Context, val list: List<BannerInfo>) : androidx.viewpager.widget.PagerAdapter() {
     private val layoutInflater = LayoutInflater.from(context)
     private val mGlideUtils = GlideUtils(context)
 

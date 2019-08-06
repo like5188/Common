@@ -1,10 +1,10 @@
 package com.like.common.sample.pictureselector
 
 import android.Manifest
-import android.databinding.ObservableBoolean
-import android.support.annotation.DrawableRes
-import android.support.v4.app.FragmentActivity
-import android.support.v7.widget.RecyclerView
+import androidx.databinding.ObservableBoolean
+import androidx.annotation.DrawableRes
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.like.common.util.GlideUtils
 import com.like.common.util.PermissionUtils
 import com.like.common.util.VibrateUtils
@@ -18,7 +18,7 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
 
-class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView: RecyclerView, @DrawableRes addImageResId: Int)
+class MyAddImageViewAdapter(private val activity: androidx.fragment.app.FragmentActivity, recyclerView: androidx.recyclerview.widget.RecyclerView, @DrawableRes addImageResId: Int)
     : BaseAddImageViewAdapter(recyclerView, AddInfo(addImageResId), 9) {
     private val deleteButtonShown: ObservableBoolean = ObservableBoolean()
     private val mGlideUtils = GlideUtils(activity)

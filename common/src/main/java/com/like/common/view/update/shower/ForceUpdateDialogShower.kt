@@ -3,7 +3,7 @@ package com.like.common.view.update.shower
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.FragmentManager
 import android.view.KeyEvent
 import android.view.View
 import com.like.common.R
@@ -20,7 +20,7 @@ import com.like.retrofit.util.getCustomNetworkMessage
 /**
  * 强制更新使用对话框显示进度条
  */
-class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : Shower {
+class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app.FragmentManager) : Shower {
     private val downloadProgressDialog = DefaultDownloadProgressDialog()
 
     override fun onDownloadPending() {

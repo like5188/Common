@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 /**
  * 圆形TextView
  */
-public class CircleTextView extends android.support.v7.widget.AppCompatTextView {
+public class CircleTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     private Paint mBgPaint = new Paint();
 

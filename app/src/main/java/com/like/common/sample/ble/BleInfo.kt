@@ -1,6 +1,6 @@
 package com.like.common.sample.ble
 
-import android.databinding.ObservableBoolean
+import androidx.databinding.ObservableBoolean
 import com.like.common.sample.BR
 import com.like.common.sample.R
 import com.like.livedatarecyclerview.model.IItem

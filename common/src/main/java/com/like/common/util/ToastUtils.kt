@@ -6,8 +6,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
@@ -115,22 +115,22 @@ inline fun Context.longToastCenter(message: CharSequence?) = this.toast(message,
 inline fun Context.longToastCenter(view: View) = this.toast(view, Toast.LENGTH_LONG, Gravity.CENTER)
 
 
-inline fun Fragment.toast(@StringRes resId: Int, duration: Int, gravity: Int) = activity?.toast(resId, duration, gravity)
-inline fun Fragment.toast(message: CharSequence?, duration: Int, gravity: Int) = activity?.toast(message, duration, gravity)
-inline fun Fragment.toast(view: View, duration: Int, gravity: Int) = activity?.toast(view, duration, gravity)
+inline fun androidx.fragment.app.Fragment.toast(@StringRes resId: Int, duration: Int, gravity: Int) = activity?.toast(resId, duration, gravity)
+inline fun androidx.fragment.app.Fragment.toast(message: CharSequence?, duration: Int, gravity: Int) = activity?.toast(message, duration, gravity)
+inline fun androidx.fragment.app.Fragment.toast(view: View, duration: Int, gravity: Int) = activity?.toast(view, duration, gravity)
 
-inline fun Fragment.shortToastBottom(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_SHORT, Gravity.BOTTOM)
-inline fun Fragment.shortToastBottom(message: CharSequence?) = this.toast(message, Toast.LENGTH_SHORT, Gravity.BOTTOM)
-inline fun Fragment.shortToastBottom(view: View) = this.toast(view, Toast.LENGTH_SHORT, Gravity.BOTTOM)
+inline fun androidx.fragment.app.Fragment.shortToastBottom(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_SHORT, Gravity.BOTTOM)
+inline fun androidx.fragment.app.Fragment.shortToastBottom(message: CharSequence?) = this.toast(message, Toast.LENGTH_SHORT, Gravity.BOTTOM)
+inline fun androidx.fragment.app.Fragment.shortToastBottom(view: View) = this.toast(view, Toast.LENGTH_SHORT, Gravity.BOTTOM)
 
-inline fun Fragment.shortToastCenter(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_SHORT, Gravity.CENTER)
-inline fun Fragment.shortToastCenter(message: CharSequence?) = this.toast(message, Toast.LENGTH_SHORT, Gravity.CENTER)
-inline fun Fragment.shortToastCenter(view: View) = this.toast(view, Toast.LENGTH_SHORT, Gravity.CENTER)
+inline fun androidx.fragment.app.Fragment.shortToastCenter(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_SHORT, Gravity.CENTER)
+inline fun androidx.fragment.app.Fragment.shortToastCenter(message: CharSequence?) = this.toast(message, Toast.LENGTH_SHORT, Gravity.CENTER)
+inline fun androidx.fragment.app.Fragment.shortToastCenter(view: View) = this.toast(view, Toast.LENGTH_SHORT, Gravity.CENTER)
 
-inline fun Fragment.longToastBottom(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_LONG, Gravity.BOTTOM)
-inline fun Fragment.longToastBottom(message: CharSequence?) = this.toast(message, Toast.LENGTH_LONG, Gravity.BOTTOM)
-inline fun Fragment.longToastBottom(view: View) = this.toast(view, Toast.LENGTH_LONG, Gravity.BOTTOM)
+inline fun androidx.fragment.app.Fragment.longToastBottom(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_LONG, Gravity.BOTTOM)
+inline fun androidx.fragment.app.Fragment.longToastBottom(message: CharSequence?) = this.toast(message, Toast.LENGTH_LONG, Gravity.BOTTOM)
+inline fun androidx.fragment.app.Fragment.longToastBottom(view: View) = this.toast(view, Toast.LENGTH_LONG, Gravity.BOTTOM)
 
-inline fun Fragment.longToastCenter(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_LONG, Gravity.CENTER)
-inline fun Fragment.longToastCenter(message: CharSequence?) = this.toast(message, Toast.LENGTH_LONG, Gravity.CENTER)
-inline fun Fragment.longToastCenter(view: View) = this.toast(view, Toast.LENGTH_LONG, Gravity.CENTER)
+inline fun androidx.fragment.app.Fragment.longToastCenter(@StringRes resId: Int) = this.toast(resId, Toast.LENGTH_LONG, Gravity.CENTER)
+inline fun androidx.fragment.app.Fragment.longToastCenter(message: CharSequence?) = this.toast(message, Toast.LENGTH_LONG, Gravity.CENTER)
+inline fun androidx.fragment.app.Fragment.longToastCenter(view: View) = this.toast(view, Toast.LENGTH_LONG, Gravity.CENTER)

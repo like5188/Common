@@ -1,6 +1,6 @@
 package com.like.common.util.ble.blestate
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.bluetooth.*
 import android.content.Context
 import com.like.common.util.Logger

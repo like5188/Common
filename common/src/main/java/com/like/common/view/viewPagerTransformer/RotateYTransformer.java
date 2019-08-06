@@ -1,7 +1,7 @@
 package com.like.common.view.viewPagerTransformer;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;

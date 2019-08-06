@@ -1,8 +1,8 @@
 package com.like.common.sample.flexbox
 
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.TextView
 import com.google.android.flexbox.FlexboxLayout
