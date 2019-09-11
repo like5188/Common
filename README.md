@@ -54,6 +54,7 @@
     InputSoftKeybordUtils
     JsonEx.kt
     LifecycleEx.kt
+    ListEx.kt
     Logger
     MD5Utils
     NetWorkUtils
@@ -64,8 +65,9 @@
     RadioManager
     RunningTaskUtils
     RxJavaUtils
+    SerializableUtils
     SingletonHolder
-    SPUtils.kt
+    SPUtils
     StatusBarUtils
     StorageUtils
     TabLayoutUtils
@@ -102,11 +104,12 @@
 
 4、常用第三方库的引用
 ```java
+    testImplementation 'junit:junit:4.12'
     // constraint
     api 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // support
-    api 'androidx.appcompat:appcompat:1.0.2'
+    api 'androidx.appcompat:appcompat:1.1.0'
     api 'com.google.android.material:material:1.0.0'
     api 'androidx.recyclerview:recyclerview:1.0.0'
     api 'androidx.palette:palette:1.0.0'// 调色板
@@ -146,14 +149,14 @@
     api 'com.google.dagger:dagger-android-support:2.17'
 
     // arouter
-    api 'com.alibaba:arouter-api:1.4.0'
+    api 'com.alibaba:arouter-api:1.5.0'
 
     // room
     api 'androidx.room:room-runtime:2.1.0'
     api 'androidx.room:room-rxjava2:2.1.0'
 
-    // lifecycle
-    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    // ViewModelProviders
+    api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
     // paging
     api 'androidx.paging:paging-runtime:2.1.0'
@@ -193,7 +196,7 @@
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
     // 使用 com.like.common.view.update 中的更新功能时需要
     kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.1'
-//    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+//    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
 //    kapt 'androidx.room:room-compiler:2.1.0'
 //    kapt 'com.google.dagger:dagger-compiler:2.17'
 //    kapt 'com.google.dagger:dagger-android-processor:2.17'
