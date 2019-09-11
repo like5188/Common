@@ -3,7 +3,6 @@ package com.like.common.view.update.shower
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.FragmentManager
 import android.view.KeyEvent
 import android.view.View
 import com.like.common.R
@@ -68,7 +67,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
                 }
             }
             // 屏蔽返回键
-            dialog.setOnKeyListener(DialogInterface.OnKeyListener { dialog, keyCode, event ->
+            dialog?.setOnKeyListener(DialogInterface.OnKeyListener { dialog, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     return@OnKeyListener true
                 }
