@@ -187,8 +187,8 @@
 
     api 'com.google.android:flexbox:1.0.0'
 
-    api 'com.github.like5188:Repository:2.0.5'
-    api 'com.github.like5188:LiveDataRecyclerView:2.0.3'
+    api 'com.github.like5188:Repository:2.0.6'
+    api 'com.github.like5188:LiveDataRecyclerView:2.0.4'
     api 'com.github.like5188:LibRetrofit:2.0.1'
     api 'com.github.like5188.LiveDataBus:livedatabus:2.0.1'
 
