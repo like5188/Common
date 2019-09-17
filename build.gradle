@@ -1,7 +1,7 @@
 // buildscript中的声明是gradle脚本自身需要使用的资源。可以声明的资源包括依赖项、第三方插件、maven仓库地址等
 buildscript {
     // ext是自定义属性，通常用于统一管理所有第三方插件的版本号
-    ext.kotlin_version = '1.3.31'
+    ext.kotlin_version = '1.3.50'
     // 顾名思义就是仓库的意思啦，而jcenter()、maven()和google()就是托管第三方插件的平台
     repositories {
         google()
