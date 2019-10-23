@@ -5,4 +5,8 @@
         <attr name="degree" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="AspectRatioImageView">
+        <attr name="width_ratio" format="float" />
+        <attr name="height_ratio" format="float" />
+    </declare-styleable>
 </resources>
