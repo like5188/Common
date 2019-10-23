@@ -42,7 +42,6 @@
     ClickUtils
     CloseableEx.kt
     DateUtils
-    DialogFragmentEx.kt
     DimensionUtils
     DoubleFormatUtils
     Executors.kt
