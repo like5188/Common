@@ -1,15 +1,16 @@
 package com.like.common.view.update.shower
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import com.like.common.R
+import com.like.common.base.BaseDialogFragment
 import com.like.common.databinding.DialogFragmentDownloadProgressBinding
 import com.like.common.util.AppUtils
-import com.like.common.util.BaseDialogFragment
-import com.like.common.util.show
 import com.like.common.util.toDataStorageUnit
 import com.like.common.view.update.TAG_CONTINUE
 import com.like.common.view.update.TAG_PAUSE
@@ -48,11 +49,15 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
         downloadProgressDialog.setMessage(throwable.getCustomNetworkMessage())
     }
 
-    class DefaultDownloadProgressDialog : BaseDialogFragment<DialogFragmentDownloadProgressBinding>() {
+    class DefaultDownloadProgressDialog : BaseDialogFragment() {
+        private var mBinding: DialogFragmentDownloadProgressBinding? = null
 
-        override fun getDialogFragmentLayoutResId(): Int = R.layout.dialog_fragment_download_progress
-
-        override fun initData(arguments: Bundle?) {
+        override fun getViewDataBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, args: Bundle?): ViewDataBinding? {
+            mBinding = DataBindingUtil.inflate(
+                    inflater,
+                    R.layout.dialog_fragment_download_progress,
+                    null, false
+            )
             mBinding?.also {
                 it.btnPause.setOnClickListener {
                     LiveDataBus.post(TAG_PAUSE)
@@ -66,13 +71,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
                     AppUtils.getInstance(context).exitApp()
                 }
             }
-            // 屏蔽返回键
-            dialog?.setOnKeyListener(DialogInterface.OnKeyListener { dialog, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    return@OnKeyListener true
-                }
-                false
-            })
+            return mBinding
         }
 
         @SuppressLint("SetTextI18n")
