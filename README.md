@@ -63,6 +63,7 @@
     PermissionUtils
     PhoneUtils
     RadioManager
+    RectEx.kt
     RunningTaskUtils
     RxJavaUtils
     SerializableUtils
@@ -90,6 +91,7 @@
     toolbar
     update
     viewPagerTransformer
+    AspectRatioImageView
     CircleTextView
     ContainsEmojiEditText
     ExpandView
