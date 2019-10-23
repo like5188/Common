@@ -75,7 +75,7 @@ dependencies {
     api 'com.squareup.retrofit2:converter-scalars:2.6.0'
 
     // okhttp3
-    api 'com.squareup.okhttp3:okhttp:3.13.1'
+    api 'com.squareup.okhttp3:okhttp:3.12.2'
     api 'com.squareup.okhttp3:logging-interceptor:3.12.2'
 
     // dagger
@@ -87,8 +87,8 @@ dependencies {
     api 'com.alibaba:arouter-api:1.5.0'
 
     // room
-    api 'androidx.room:room-runtime:2.2.0'
-    api 'androidx.room:room-rxjava2:2.2.0'
+    api 'androidx.room:room-runtime:2.1.0'
+    api 'androidx.room:room-rxjava2:2.1.0'
 
     // ViewModelProviders
     api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
