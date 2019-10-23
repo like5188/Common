@@ -5,10 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import android.widget.RemoteViews
 import com.like.common.R
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
@@ -51,12 +51,10 @@ class NotificationShower(
                     context.createNotificationChannel(channelId, channelName, NotificationManagerCompat.IMPORTANCE_LOW)
                     NotificationCompat.Builder(context, channelId)
                 } else {
-                    NotificationCompat.Builder(context)
-                            .setCustomBigContentView(remoteViews)// 避免显示不完全。
+                    NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
                 }
-        builder
-                .setCustomContentView(remoteViews)
-                .setOngoing(true)// 将Ongoing设为true 那么notification将不能滑动删除
+        builder.setCustomContentView(remoteViews)
+//                .setOngoing(true)// 将Ongoing设为true 那么notification将不能滑动删除
                 .setSmallIcon(smallIcon)
                 .setContentIntent(clickPendingIntent)
                 .build()
