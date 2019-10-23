@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentManager
 
 abstract class BaseDialogFragment : DialogFragment() {
     private var mBinding: ViewDataBinding? = null
+    private var cancelableOnClickViewOrBackKey = false
+    private var animStyleId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,15 +23,23 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = getViewDataBinding(inflater, container, savedInstanceState, arguments)
-        setCancelableOnClickViewOrBackKey(cancelable())
+        cancelableOnClickViewOrBackKey()
+        anim()
         return mBinding?.root
     }
 
     /**
      * 设置单击对话框或者返回键时隐藏对话框
      */
-    private fun setCancelableOnClickViewOrBackKey(cancelable: Boolean) {
-        if (cancelable) {
+    fun setCancelableOnClickViewOrBackKey(cancelable: Boolean) {
+        cancelableOnClickViewOrBackKey = cancelable
+        if (mBinding != null && dialog != null) {
+            cancelableOnClickViewOrBackKey()
+        }
+    }
+
+    private fun cancelableOnClickViewOrBackKey() {
+        if (cancelableOnClickViewOrBackKey) {
             // 单击对话框隐藏
             mBinding?.root?.setOnClickListener {
                 this.dismissAllowingStateLoss()
@@ -72,9 +82,20 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     /**
-     * 是否在单击对话框或者返回键时隐藏对话框
+     * 设置显示隐藏的动画
      */
-    open fun cancelable() = false
+    fun setAnim(animStyleId: Int) {
+        this.animStyleId = animStyleId
+        if (animStyleId > 0 && dialog != null) {
+            anim()
+        }
+    }
+
+    private fun anim() {
+        dialog?.window?.attributes?.let {
+            it.windowAnimations = animStyleId
+        }
+    }
 
     abstract fun getViewDataBinding(
             inflater: LayoutInflater,

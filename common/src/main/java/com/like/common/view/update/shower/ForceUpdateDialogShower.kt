@@ -25,6 +25,8 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
 
     override fun onDownloadPending() {
         downloadProgressDialog.show(fragmentManager)
+        downloadProgressDialog.setCancelableOnClickViewOrBackKey(false)
+        downloadProgressDialog.setAnim(R.style.dialogFragment_anim_bottom_in_bottom_out)
         downloadProgressDialog.setTitle("正在连接服务器...")
         downloadProgressDialog.setMessage("")// 避免中途网络断开，然后重新连接后点击继续时，错误信息还是存在
     }
