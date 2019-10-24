@@ -32,14 +32,6 @@
 #ToolbarUtils
 -keep class com.like.common.view.toolbar.CustomActionProvider{*;}
 
-#glide
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public class * extends com.bumptech.glide.module.AppGlideModule
--keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
- **[] $VALUES;
- public *;
-}
-
 #matisse 知乎图片选择器
 -dontwarn com.squareup.picasso.**
 
