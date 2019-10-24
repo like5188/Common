@@ -1,18 +1,20 @@
 package com.like.common.base
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
-abstract class BaseDialogFragment : DialogFragment() {
-    private var mBinding: ViewDataBinding? = null
+abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
+    protected var mBinding: T? = null
     private var cancelableOnClickViewOrBackKey = false
     private var animStyleId = -1
 
@@ -22,10 +24,18 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mBinding = getViewDataBinding(inflater, container, savedInstanceState, arguments)
-        cancelableOnClickViewOrBackKey()
-        anim()
-        return mBinding?.root
+        val binding = DataBindingUtil.inflate<T>(inflater, getLayoutId(), container, false)
+                ?: return null
+        mBinding = binding
+        dialog?.let {
+            cancelableOnClickViewOrBackKey(binding, it)
+            anim(it)
+        }
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initData()
     }
 
     /**
@@ -33,21 +43,21 @@ abstract class BaseDialogFragment : DialogFragment() {
      */
     fun setCancelableOnClickViewOrBackKey(cancelable: Boolean) {
         cancelableOnClickViewOrBackKey = cancelable
-        if (mBinding != null && dialog != null) {
-            cancelableOnClickViewOrBackKey()
-        }
+        val b = mBinding ?: return
+        val d = dialog ?: return
+        cancelableOnClickViewOrBackKey(b, d)
     }
 
-    private fun cancelableOnClickViewOrBackKey() {
+    private fun cancelableOnClickViewOrBackKey(binding: T, dialog: Dialog) {
         if (cancelableOnClickViewOrBackKey) {
             // 单击对话框隐藏
-            mBinding?.root?.setOnClickListener {
-                this.dismissAllowingStateLoss()
+            binding.root.setOnClickListener {
+                onClickViewOrBackKey()
             }
             // 单击返回键隐藏
-            dialog?.setOnKeyListener { dialog, keyCode, event ->
+            dialog.setOnKeyListener { _, keyCode, _ ->
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    this.dismissAllowingStateLoss()
+                    onClickViewOrBackKey()
                     true
                 } else {
                     false
@@ -55,9 +65,9 @@ abstract class BaseDialogFragment : DialogFragment() {
             }
         } else {
             // 屏蔽单击对话框
-            mBinding?.root?.setOnClickListener(null)
+            binding.root.setOnClickListener(null)
             // 屏蔽返回键
-            dialog?.setOnKeyListener { dialog, keyCode, event ->
+            dialog.setOnKeyListener { _, keyCode, _ ->
                 keyCode == KeyEvent.KEYCODE_BACK
             }
         }
@@ -86,22 +96,24 @@ abstract class BaseDialogFragment : DialogFragment() {
      */
     fun setAnim(animStyleId: Int) {
         this.animStyleId = animStyleId
-        if (animStyleId > 0 && dialog != null) {
-            anim()
+        if (animStyleId <= 0) return
+        dialog?.let {
+            anim(it)
         }
     }
 
-    private fun anim() {
-        dialog?.window?.attributes?.let {
+    private fun anim(dialog: Dialog) {
+        dialog.window?.attributes?.let {
             it.windowAnimations = animStyleId
         }
     }
 
-    abstract fun getViewDataBinding(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?,
-            args: Bundle?
-    ): ViewDataBinding?
+    open fun onClickViewOrBackKey() {
+        this.dismiss()
+    }
+
+    abstract fun getLayoutId(): Int
+
+    abstract fun initData()
 
 }

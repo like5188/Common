@@ -1,12 +1,7 @@
 package com.like.common.view.update.shower
 
 import android.annotation.SuppressLint
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import com.like.common.R
 import com.like.common.base.BaseDialogFragment
 import com.like.common.databinding.DialogFragmentDownloadProgressBinding
@@ -51,16 +46,13 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
         downloadProgressDialog.setMessage(throwable.getCustomNetworkMessage())
     }
 
-    class DefaultDownloadProgressDialog : BaseDialogFragment() {
-        private var mBinding: DialogFragmentDownloadProgressBinding? = null
+    class DefaultDownloadProgressDialog : BaseDialogFragment<DialogFragmentDownloadProgressBinding>() {
+        override fun getLayoutId(): Int {
+            return R.layout.dialog_fragment_download_progress
+        }
 
-        override fun getViewDataBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, args: Bundle?): ViewDataBinding? {
-            mBinding = DataBindingUtil.inflate(
-                    inflater,
-                    R.layout.dialog_fragment_download_progress,
-                    null, false
-            )
-            mBinding?.also {
+        override fun initData() {
+            mBinding?.let {
                 it.btnPause.setOnClickListener {
                     LiveDataBus.post(TAG_PAUSE)
                 }
@@ -73,7 +65,6 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
                     AppUtils.getInstance(context).exitApp()
                 }
             }
-            return mBinding
         }
 
         @SuppressLint("SetTextI18n")
