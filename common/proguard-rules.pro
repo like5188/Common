@@ -32,8 +32,5 @@
 #ToolbarUtils
 -keep class com.like.common.view.toolbar.CustomActionProvider{*;}
 
-#matisse 知乎图片选择器
--dontwarn com.squareup.picasso.**
-
 # 如果组件化时，在 module 中使用了自定义的 Application，它又实现了 IModuleApplication 接口，为了反射获取其实例，就需要保护这个实现。
--keep class * implements com.like.base.IModuleApplication
+-keep class * implements com.like.common.base.IModuleApplication
