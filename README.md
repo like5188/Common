@@ -163,8 +163,8 @@
     api 'com.alibaba:arouter-api:1.5.0'
 
     // room
-    api 'androidx.room:room-runtime:2.1.0'
-    api 'androidx.room:room-rxjava2:2.1.0'
+    api 'androidx.room:room-runtime:2.2.0'
+    api 'androidx.room:room-rxjava2:2.2.0'
 
     // ViewModelProviders
     api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
@@ -198,17 +198,17 @@
 
     api 'com.google.android:flexbox:1.0.0'
 
-    api 'com.github.like5188:Repository:2.0.8'
-    api 'com.github.like5188:LiveDataRecyclerView:2.0.5'
-    api 'com.github.like5188:LibRetrofit:2.0.1'
-    api 'com.github.like5188.LiveDataBus:livedatabus:2.0.1'
+    api 'com.github.like5188:Repository:2.0.9'
+    api 'com.github.like5188:LiveDataRecyclerView:2.0.6'
+    api 'com.github.like5188:LibRetrofit:2.0.2'
+    api 'com.github.like5188.LiveDataBus:livedatabus:2.0.2'
 
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
     // 使用 com.like.common.view.update 中的更新功能时需要
-    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.1'
+    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.2'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
-//    kapt 'androidx.room:room-compiler:2.1.0'
+//    kapt 'androidx.room:room-compiler:2.2.0'
 //    kapt 'com.google.dagger:dagger-compiler:2.17'
 //    kapt 'com.google.dagger:dagger-android-processor:2.17'
 ```
