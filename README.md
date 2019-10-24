@@ -5,8 +5,7 @@
 最新版本|[![Download](https://jitpack.io/v/like5188/Common.svg)](https://jitpack.io/#like5188/Common)
 
 ## 功能介绍
-1、提供了 BaseActivity、BaseFragment、BaseApplication、BaseComponentApplication 四个基类。
-其中前三个用于正常的开发，BaseComponentApplication 用于组件化开发。
+1、base包中提供了 BaseActivity、BaseFragment、BaseDialogFragment、BaseApplication、BaseComponentApplication 五个基类。
 
 2、BaseComponentApplication 用于组件化时主程序使用。其中的 IModuleApplication，是组件的application类必须实现的接口。
 注意：组件的 application 类并没有真正继承 Application 类。只是功能类似而已，都用于一些功能的初始化。
@@ -16,7 +15,7 @@
 注意：①组件实现了此接口后，还必须要有一个 public 的无参构造函数，用于反射构造组件 Application 的实例。
 ②必须在组件的 AndroidManifest.xml 文件中进行如下配置：<meta-data android:name="实现类的全限定类名" android:value="IModuleApplication" />
 
-4、常用工具类、自定义View。
+4、提供了很多常用工具类、自定义View。
 
 5、常用第三方库的引用。
 
