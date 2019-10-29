@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
-
 abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     private var mBinding: T? = null
     private var mWidth = WindowManager.LayoutParams.WRAP_CONTENT
