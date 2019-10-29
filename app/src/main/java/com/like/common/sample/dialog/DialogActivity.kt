@@ -28,7 +28,7 @@ class DialogActivity : AppCompatActivity() {
     fun showDialogFragment1(view: View) {
         mDialogFragment1.setTitle("title")
         mDialogFragment1.setMessage("message")
-        mDialogFragment1.show(this)
+        mDialogFragment1.show(supportFragmentManager, "1")
     }
 
 }

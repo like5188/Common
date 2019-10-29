@@ -3,104 +3,93 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-        android:id="@+id/rl_outer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#77440044">
+        android:background="#aa4444"
+        android:orientation="vertical">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:src="@drawable/dialog_close" />
+
+        <TextView
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:background="@drawable/rounded_rectangle_shap"
-            android:orientation="vertical">
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:maxLength="14"
+            android:textColor="#333333"
+            android:textSize="13sp"
+            tools:text="标题" />
 
-            <ImageView
-                android:id="@+id/iv_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:padding="10dp"
-                android:src="@drawable/dialog_close" />
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="46dp"
+            android:background="#f0f0f0" />
 
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:gravity="center_horizontal"
+            android:padding="20dp"
+            android:textColor="#333333"
+            android:textSize="12sp"
+            tools:text="消息内容" />
+
+        <View
+            android:id="@+id/divider_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/tv_message"
+            android:background="#f0f0f0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider_1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:ellipsize="end"
-                android:maxLength="14"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="取消"
                 android:textColor="#333333"
-                android:textSize="13sp"
-                tools:text="标题" />
+                android:textSize="13sp" />
 
             <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="46dp"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="#f0f0f0" />
 
-            <TextView
-                android:id="@+id/tv_message"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/divider"
-                android:layout_centerHorizontal="true"
-                android:padding="20dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="确定"
                 android:textColor="#333333"
-                android:textSize="12sp"
-                tools:text="消息内容" />
-
-            <View
-                android:id="@+id/divider_1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@id/tv_message"
-                android:background="#f0f0f0" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider_1"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_cancel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/transparent"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:text="取消"
-                    android:textColor="#333333"
-                    android:textSize="13sp" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="#f0f0f0" />
-
-                <Button
-                    android:id="@+id/btn_confirm"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/transparent"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:text="确定"
-                    android:textColor="#333333"
-                    android:textSize="13sp" />
-            </LinearLayout>
-
-        </RelativeLayout>
+                android:textSize="13sp" />
+        </LinearLayout>
 
     </RelativeLayout>
 </layout>
