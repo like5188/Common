@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- DialogFragment 动画 -->
+    <style name="dialogFragment_anim_bottom_in_bottom_out" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_fragment_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_fragment_out</item>
+    </style>
 </resources>

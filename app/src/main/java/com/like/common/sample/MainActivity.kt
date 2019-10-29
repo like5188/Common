@@ -1,24 +1,20 @@
 package com.like.common.sample
 
-import android.app.PendingIntent
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.RemoteViews
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.banner.BannerActivity
 import com.like.common.sample.ble.BleActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
+import com.like.common.sample.dialog.DialogActivity
 import com.like.common.sample.drag.DragViewTestActivity
 import com.like.common.sample.flexbox.FlexBoxActivity
 import com.like.common.sample.image.ImageActivity
@@ -28,9 +24,6 @@ import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.update.UpdateActivity
 import com.like.common.util.SPUtils
-import com.like.common.util.createNotificationChannel
-import com.like.common.util.gotoNotificationChannelSetting
-import com.like.common.util.notify
 import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
@@ -144,6 +137,10 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoSerializableActivity(view: View) {
         startActivity(Intent(this, SerializableActivity::class.java))
+    }
+
+    fun gotoDialogActivity(view: View) {
+        startActivity(Intent(this, DialogActivity::class.java))
     }
 
 }

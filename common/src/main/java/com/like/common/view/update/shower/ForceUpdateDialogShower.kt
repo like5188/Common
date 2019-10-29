@@ -1,6 +1,7 @@
 package com.like.common.view.update.shower
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.view.View
 import com.like.common.R
 import com.like.common.base.BaseDialogFragment
@@ -20,8 +21,6 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
 
     override fun onDownloadPending() {
         downloadProgressDialog.show(fragmentManager)
-        downloadProgressDialog.setCancelableOnClickViewOrBackKey(false)
-        downloadProgressDialog.setAnim(R.style.dialogFragment_anim_bottom_in_bottom_out)
         downloadProgressDialog.setTitle("正在连接服务器...")
         downloadProgressDialog.setMessage("")// 避免中途网络断开，然后重新连接后点击继续时，错误信息还是存在
     }
@@ -47,29 +46,28 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
     }
 
     class DefaultDownloadProgressDialog : BaseDialogFragment<DialogFragmentDownloadProgressBinding>() {
-        override fun getLayoutId(): Int {
+        override fun getLayoutResId(): Int {
             return R.layout.dialog_fragment_download_progress
         }
 
-        override fun initData() {
-            mBinding?.let {
-                it.btnPause.setOnClickListener {
-                    LiveDataBus.post(TAG_PAUSE)
-                }
-                it.btnContinue.setOnClickListener {
-                    LiveDataBus.post(TAG_CONTINUE)
-                }
-                it.ivClose.setOnClickListener {
-                    LiveDataBus.post(TAG_PAUSE)
-                    dismissAllowingStateLoss()
-                    AppUtils.getInstance(context).exitApp()
-                }
+        override fun initView(binding: DialogFragmentDownloadProgressBinding, dialog: Dialog) {
+            binding.btnPause.setOnClickListener {
+                LiveDataBus.post(TAG_PAUSE)
             }
+            binding.btnContinue.setOnClickListener {
+                LiveDataBus.post(TAG_CONTINUE)
+            }
+            binding.ivClose.setOnClickListener {
+                LiveDataBus.post(TAG_PAUSE)
+                dismissAllowingStateLoss()
+                AppUtils.getInstance(context).exitApp()
+            }
+            isCancelable = false
         }
 
         @SuppressLint("SetTextI18n")
         fun setProgress(currentSize: Long, totalSize: Long) {
-            mBinding?.apply {
+            getBinding()?.apply {
                 val progress = Math.round(currentSize.toFloat() / totalSize.toFloat() * 100)
                 pbProgress.progress = progress
                 tvPercent.text = "$progress%"
@@ -78,13 +76,13 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
         }
 
         fun setTitle(title: String) {
-            mBinding?.apply {
+            getBinding()?.apply {
                 tvTitle.text = title
             }
         }
 
         fun setMessage(msg: String) {
-            mBinding?.apply {
+            getBinding()?.apply {
                 tvMessage.visibility = if (msg.isEmpty()) View.GONE else View.VISIBLE
                 tvMessage.text = msg
             }
