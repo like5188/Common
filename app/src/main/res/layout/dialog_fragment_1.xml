@@ -46,11 +46,19 @@
             android:textSize="12sp"
             tools:text="消息内容" />
 
+        <EditText
+            android:id="@+id/et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_message"
+            android:imeOptions="actionDone"
+            android:inputType="text" />
+
         <View
             android:id="@+id/divider_1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/tv_message"
+            android:layout_below="@id/et"
             android:background="#f0f0f0" />
 
         <LinearLayout
