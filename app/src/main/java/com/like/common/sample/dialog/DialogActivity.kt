@@ -28,8 +28,6 @@ class DialogActivity : AppCompatActivity() {
     }
 
     fun showDialogFragment1(view: View) {
-        val screenWidth = resources.displayMetrics?.widthPixels ?: 200
-        mDialogFragment1.mWidth = (screenWidth * 0.75).toInt()
         mDialogFragment1.setTitle("title")
         mDialogFragment1.setMessage("message")
         mDialogFragment1.show(supportFragmentManager, "1")

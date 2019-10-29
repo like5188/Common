@@ -14,10 +14,10 @@ import androidx.fragment.app.FragmentManager
 
 abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     private var mBinding: T? = null
-    var mWidth = WindowManager.LayoutParams.WRAP_CONTENT
-    var mHeight = WindowManager.LayoutParams.WRAP_CONTENT
-    var mGravity = Gravity.CENTER
-    var mDimAmount = 0.6f
+    private var mWidth = WindowManager.LayoutParams.WRAP_CONTENT
+    private var mHeight = WindowManager.LayoutParams.WRAP_CONTENT
+    private var mGravity = Gravity.CENTER
+    private var mDimAmount = 0.6f
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layoutResId = getLayoutResId()
@@ -74,6 +74,22 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     }
 
     fun getBinding() = mBinding
+
+    fun setWidth(width: Int) {
+        mWidth = width
+    }
+
+    fun setHeight(height: Int) {
+        mHeight = height
+    }
+
+    fun setGravity(gravity: Int) {
+        mGravity = gravity
+    }
+
+    fun setDimAmount(dimAmount: Float) {
+        mDimAmount = dimAmount
+    }
 
     abstract fun getLayoutResId(): Int
     abstract fun onBindView(binding: T, dialog: Dialog)
