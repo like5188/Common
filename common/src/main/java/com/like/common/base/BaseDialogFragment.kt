@@ -27,16 +27,12 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         val layoutResId = getLayoutResId()
         if (layoutResId <= 0) return null
         mBinding = DataBindingUtil.inflate(inflater, layoutResId, container, false) ?: return null
-        return mBinding?.root
-    }
-
-    override fun onStart() {
-        super.onStart()
         val b = mBinding
         val d = dialog
         if (b != null && d != null) {
             initView(b, d)
         }
+        return mBinding?.root
     }
 
     fun show(activity: FragmentActivity) {
