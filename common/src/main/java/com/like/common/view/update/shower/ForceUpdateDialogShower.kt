@@ -50,7 +50,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
             return R.layout.dialog_fragment_download_progress
         }
 
-        override fun initView(binding: DialogFragmentDownloadProgressBinding, dialog: Dialog) {
+        override fun onBindView(binding: DialogFragmentDownloadProgressBinding, dialog: Dialog) {
             binding.btnPause.setOnClickListener {
                 LiveDataBus.post(TAG_PAUSE)
             }

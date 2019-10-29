@@ -16,7 +16,9 @@ class DialogActivity : AppCompatActivity() {
     private val mBinding: ActivityDialogBinding by lazy {
         DataBindingUtil.setContentView<ActivityDialogBinding>(this, R.layout.activity_dialog)
     }
-    private val mDialogFragment1 = DialogFragment1()
+    private val mDialogFragment1: DialogFragment1 by lazy {
+        DialogFragment1()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +28,8 @@ class DialogActivity : AppCompatActivity() {
     }
 
     fun showDialogFragment1(view: View) {
+        val screenWidth = resources.displayMetrics?.widthPixels ?: 200
+        mDialogFragment1.mWidth = (screenWidth * 0.75).toInt()
         mDialogFragment1.setTitle("title")
         mDialogFragment1.setMessage("message")
         mDialogFragment1.show(supportFragmentManager, "1")

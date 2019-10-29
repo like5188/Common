@@ -1,10 +1,9 @@
 package com.like.common.base
 
 import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
@@ -12,16 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
-/**
- * 全屏、背景透明、没有标题栏
- */
+
 abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     private var mBinding: T? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen)
-    }
+    var mWidth = WindowManager.LayoutParams.WRAP_CONTENT
+    var mHeight = WindowManager.LayoutParams.WRAP_CONTENT
+    var mGravity = Gravity.CENTER
+    var mDimAmount = 0.6f
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layoutResId = getLayoutResId()
@@ -35,7 +31,27 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         val b = mBinding
         val d = dialog
         if (b != null && d != null) {
-            initView(b, d)
+            // 去除Dialog默认头部
+            d.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            onBindView(b, d)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // 设置 window 相关，必须放到 onStart() 里面才有效。
+        dialog?.window?.let {
+            // 宽高
+            val layoutParams = it.attributes
+            layoutParams.width = mWidth
+            layoutParams.height = mHeight
+            // 位置
+            layoutParams.gravity = mGravity
+            // 透明度
+            layoutParams.dimAmount = mDimAmount
+            it.attributes = layoutParams
+            // 设置背景透明，并去掉 dialog 默认的 padding ，默认是 24
+            it.setBackgroundDrawable(ColorDrawable())
         }
     }
 
@@ -60,5 +76,5 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     fun getBinding() = mBinding
 
     abstract fun getLayoutResId(): Int
-    abstract fun initView(binding: T, dialog: Dialog)
+    abstract fun onBindView(binding: T, dialog: Dialog)
 }
