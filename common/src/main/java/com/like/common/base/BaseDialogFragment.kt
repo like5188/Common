@@ -13,14 +13,14 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
 /**
- * 背景透明、去掉了自带的标题栏
+ * 全屏、背景透明、没有标题栏
  */
 abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     private var mBinding: T? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Translucent_NoTitleBar)
+        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
