@@ -31,7 +31,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         val b = mBinding
         val d = dialog
         if (b != null && d != null) {
-            // 去除Dialog默认头部
+            // 去除 Dialog 默认头部。不能放到 onStart() 方法中，因为 requestFeature() must be called before adding content
             d.requestWindowFeature(Window.FEATURE_NO_TITLE)
             onBindView(b, d)
         }
