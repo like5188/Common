@@ -1,7 +1,6 @@
 package com.like.common.base
 
 import android.app.Dialog
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -53,8 +52,8 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
             // 透明度
             layoutParams.dimAmount = mDimAmount
             it.attributes = layoutParams
-            // 设置背景透明，并去掉 dialog 默认的 padding ，默认是 24
-            it.setBackgroundDrawable(ColorDrawable())
+            // 设置背景透明，并去掉 dialog 默认的 padding
+            it.setBackgroundDrawableResource(android.R.color.transparent)
             initWindow(it)
         }
     }
