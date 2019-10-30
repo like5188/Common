@@ -70,11 +70,31 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         }
     }
 
+    /**
+     * bug：Can not perform this action after onSaveInstanceState
+     * onSaveInstanceState方法是在该Activity即将被销毁前调用，来保存Activity数据的，如果在保存玩状态后再给它添加Fragment就会出错
+     * 解决方法就是把show()方法中的 commit（）方法替换成 commitAllowingStateLoss()、或者直接try
+     */
     fun show(fragmentManager: FragmentManager) {
         val tag = this::class.java.simpleName
-        val fragment = fragmentManager.findFragmentByTag(tag)
-        if (fragment == null || !fragment.isAdded || fragment.isHidden) {
+        try {
             this.show(fragmentManager, tag)
+        } catch (e: Exception) {
+            val ft = fragmentManager.beginTransaction()
+            ft.add(this, tag)
+            ft.commitAllowingStateLoss()
+        }
+    }
+
+    override fun dismiss() {
+        //防止横竖屏切换时 getFragmentManager置空引起的问题：
+        //Attempt to invoke virtual method 'android.app.FragmentTransaction
+        //android.app.FragmentManager.beginTransaction()' on a null object reference
+        fragmentManager ?: return
+        try {
+            super.dismiss()
+        } catch (e: Exception) {
+            dismissAllowingStateLoss()
         }
     }
 
