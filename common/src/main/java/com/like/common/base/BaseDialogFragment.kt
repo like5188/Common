@@ -20,7 +20,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        // 隐藏标题栏。不能放到 onStart() 方法中，因为 requestFeature() must be called before adding content
+        // 去掉 dialog 的标题栏。不能放到 onStart() 方法中，因为 requestFeature() must be called before adding content
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         initDialog(dialog)
         return dialog
