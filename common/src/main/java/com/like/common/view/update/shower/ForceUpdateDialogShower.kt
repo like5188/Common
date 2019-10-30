@@ -1,7 +1,6 @@
 package com.like.common.view.update.shower
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.view.View
 import com.like.common.R
 import com.like.common.base.BaseDialogFragment
@@ -12,6 +11,7 @@ import com.like.common.view.update.TAG_CONTINUE
 import com.like.common.view.update.TAG_PAUSE
 import com.like.livedatabus.LiveDataBus
 import com.like.retrofit.util.getCustomNetworkMessage
+import kotlin.math.roundToInt
 
 /**
  * 强制更新使用对话框显示进度条
@@ -46,11 +46,12 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
     }
 
     class DefaultDownloadProgressDialog : BaseDialogFragment<DialogFragmentDownloadProgressBinding>() {
+
         override fun getLayoutResId(): Int {
             return R.layout.dialog_fragment_download_progress
         }
 
-        override fun onBindView(binding: DialogFragmentDownloadProgressBinding, dialog: Dialog) {
+        override fun initView(binding: DialogFragmentDownloadProgressBinding) {
             binding.btnPause.setOnClickListener {
                 LiveDataBus.post(TAG_PAUSE)
             }
@@ -68,7 +69,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
         @SuppressLint("SetTextI18n")
         fun setProgress(currentSize: Long, totalSize: Long) {
             getBinding()?.apply {
-                val progress = Math.round(currentSize.toFloat() / totalSize.toFloat() * 100)
+                val progress = (currentSize.toFloat() / totalSize.toFloat() * 100).roundToInt()
                 pbProgress.progress = progress
                 tvPercent.text = "$progress%"
                 tvSize.text = "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}"

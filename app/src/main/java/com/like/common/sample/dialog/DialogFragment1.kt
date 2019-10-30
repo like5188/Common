@@ -1,11 +1,5 @@
 package com.like.common.sample.dialog
 
-import android.app.Dialog
-import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
-import android.view.*
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import com.like.common.base.BaseDialogFragment
 import com.like.common.sample.R
 import com.like.common.sample.databinding.DialogFragment1Binding
@@ -30,15 +24,15 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
         return R.layout.dialog_fragment_1
     }
 
-    override fun onBindView(binding: DialogFragment1Binding, dialog: Dialog) {
-        binding.btnCancel?.setOnClickListener {
+    override fun initView(binding: DialogFragment1Binding) {
+        binding.btnCancel.setOnClickListener {
             dismiss()
         }
-        binding.btnConfirm?.setOnClickListener {
+        binding.btnConfirm.setOnClickListener {
             setTitle("新的标题")
             setMessage("新的消息")
         }
-        binding.ivClose?.setOnClickListener {
+        binding.ivClose.setOnClickListener {
             dismiss()
         }
         setTitle(mTitle)

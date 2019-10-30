@@ -18,6 +18,14 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     private var mGravity = Gravity.CENTER
     private var mDimAmount = 0.6f
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        // 去除 Dialog 默认头部。不能放到 onStart() 方法中，因为 requestFeature() must be called before adding content
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        initDialog(dialog)
+        return dialog
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layoutResId = getLayoutResId()
         if (layoutResId <= 0) return null
@@ -27,12 +35,8 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val b = mBinding
-        val d = dialog
-        if (b != null && d != null) {
-            // 去除 Dialog 默认头部。不能放到 onStart() 方法中，因为 requestFeature() must be called before adding content
-            d.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            onBindView(b, d)
+        mBinding?.let {
+            initView(it)
         }
     }
 
@@ -51,6 +55,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
             it.attributes = layoutParams
             // 设置背景透明，并去掉 dialog 默认的 padding ，默认是 24
             it.setBackgroundDrawable(ColorDrawable())
+            initWindow(it)
         }
     }
 
@@ -90,6 +95,8 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         mDimAmount = dimAmount
     }
 
+    open fun initDialog(dialog: Dialog) {}
+    open fun initView(binding: T) {}
+    open fun initWindow(window: Window) {}
     abstract fun getLayoutResId(): Int
-    abstract fun onBindView(binding: T, dialog: Dialog)
 }
