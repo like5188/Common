@@ -37,7 +37,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
     }
 
     override fun onDownloadSuccessful(totalSize: Long) {
-        downloadProgressDialog.dismissAllowingStateLoss()
+        downloadProgressDialog.dismiss()
         AppUtils.getInstance(downloadProgressDialog.context).exitApp()
     }
 
@@ -61,7 +61,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
             }
             binding.ivClose.setOnClickListener {
                 LiveDataBus.post(TAG_PAUSE)
-                dismissAllowingStateLoss()
+                dismiss()
                 AppUtils.getInstance(context).exitApp()
             }
             resources.displayMetrics?.widthPixels?.let { screenWidth ->
