@@ -36,14 +36,15 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
         binding.ivClose.setOnClickListener {
             dismiss()
         }
-        setTitle(mTitle)
-        setMessage(mMessage)
         resources.displayMetrics?.widthPixels?.let { screenWidth ->
             setWidth((screenWidth * 0.9).toInt())
         }
-        savedInstanceState?.let {
-            setTitle(it.getString("mTitle") ?: "")
-            setMessage(it.getString("mMessage") ?: "")
+        if (savedInstanceState != null) {
+            setTitle(savedInstanceState.getString("mTitle") ?: "")
+            setMessage(savedInstanceState.getString("mMessage") ?: "")
+        } else {
+            setTitle(mTitle)
+            setMessage(mMessage)
         }
     }
 
