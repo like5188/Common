@@ -81,7 +81,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         if (fragment == null || !fragment.isAdded || fragment.isHidden) {
             try {
                 this.show(fragmentManager, tag)
-            } catch (e: Exception) {
+            } catch (e: Exception) {// 相当于重写了 show() 方法，至于其中的 mDismissed、mShownByMe 这两个变量的值，在 try 中已经设置好了。
                 val ft = fragmentManager.beginTransaction()
                 ft.add(this, tag)
                 ft.commitAllowingStateLoss()
