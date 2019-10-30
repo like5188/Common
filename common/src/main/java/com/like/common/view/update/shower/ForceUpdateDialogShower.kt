@@ -64,6 +64,9 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
                 dismissAllowingStateLoss()
                 AppUtils.getInstance(context).exitApp()
             }
+            resources.displayMetrics?.widthPixels?.let { screenWidth ->
+                setWidth((screenWidth * 0.9).toInt())
+            }
             isCancelable = false
         }
 
