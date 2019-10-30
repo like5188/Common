@@ -1,6 +1,7 @@
 package com.like.common.view.update.shower
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.view.View
 import com.like.common.R
 import com.like.common.base.BaseDialogFragment
@@ -51,7 +52,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
             return R.layout.dialog_fragment_download_progress
         }
 
-        override fun initView(binding: DialogFragmentDownloadProgressBinding) {
+        override fun initView(binding: DialogFragmentDownloadProgressBinding, savedInstanceState: Bundle?) {
             binding.btnPause.setOnClickListener {
                 LiveDataBus.post(TAG_PAUSE)
             }

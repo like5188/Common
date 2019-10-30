@@ -1,5 +1,6 @@
 package com.like.common.sample.dialog
 
+import android.os.Bundle
 import com.like.common.base.BaseDialogFragment
 import com.like.common.sample.R
 import com.like.common.sample.databinding.DialogFragment1Binding
@@ -24,7 +25,7 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
         return R.layout.dialog_fragment_1
     }
 
-    override fun initView(binding: DialogFragment1Binding) {
+    override fun initView(binding: DialogFragment1Binding, savedInstanceState: Bundle?) {
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
@@ -40,6 +41,16 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
         resources.displayMetrics?.widthPixels?.let { screenWidth ->
             setWidth((screenWidth * 0.9).toInt())
         }
+        savedInstanceState?.let {
+            setTitle(it.getString("mTitle") ?: "")
+            setMessage(it.getString("mMessage") ?: "")
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("mTitle", mTitle)
+        outState.putString("mMessage", mMessage)
     }
 
     fun setTitle(title: String) {

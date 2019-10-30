@@ -37,7 +37,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding?.let {
-            initView(it)
+            initView(it, savedInstanceState)
         }
     }
 
@@ -97,7 +97,7 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     }
 
     open fun initDialog(dialog: Dialog) {}
-    open fun initView(binding: T) {}
+    open fun initView(binding: T, savedInstanceState: Bundle?) {}
     open fun initWindow(window: Window) {}
     abstract fun getLayoutResId(): Int
 }
