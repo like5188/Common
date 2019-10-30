@@ -77,12 +77,15 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
      */
     fun show(fragmentManager: FragmentManager) {
         val tag = this::class.java.simpleName
-        try {
-            this.show(fragmentManager, tag)
-        } catch (e: Exception) {
-            val ft = fragmentManager.beginTransaction()
-            ft.add(this, tag)
-            ft.commitAllowingStateLoss()
+        val fragment = fragmentManager.findFragmentByTag(tag)
+        if (fragment == null || !fragment.isAdded || fragment.isHidden) {
+            try {
+                this.show(fragmentManager, tag)
+            } catch (e: Exception) {
+                val ft = fragmentManager.beginTransaction()
+                ft.add(this, tag)
+                ft.commitAllowingStateLoss()
+            }
         }
     }
 
