@@ -38,7 +38,7 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
         setTitle(mTitle)
         setMessage(mMessage)
         resources.displayMetrics?.widthPixels?.let { screenWidth ->
-            setWidth((screenWidth * 0.75).toInt())
+            setWidth((screenWidth * 0.9).toInt())
         }
     }
 
