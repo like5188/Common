@@ -29,6 +29,7 @@ class TestActivity : AppCompatActivity() {
         }
     }
 
+    /***************************生命周期方法***************************/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
@@ -61,13 +62,18 @@ class TestActivity : AppCompatActivity() {
         Log.v(TAG, "onDestroy")
     }
 
+    /***************************非生命周期方法，需要一定的条件来触发***************************/
     override fun onRestart() {
         super.onRestart()
+        // 有 onStop() 状态恢复的时候触发
         Log.v(TAG, "onRestart")
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        // 1、设置了启动模式
+        // 2、实例已经存在，并且此时的启动模式为 SingleTask 和 SingleInstance，再次启动该 Activity 会触发。
+        // 3、实例已经存在，且这个实例位于栈顶，且启动模式为 SingleTop，再次启动该 Activity 会触发。
         // 重新设置 intent
         setIntent(intent)
         // 重新初始化数据
@@ -77,7 +83,20 @@ class TestActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        // 当设置android:configChanges="orientation"时，横竖屏切换就会触发，并且不会触发其它生命周期方法。
         Log.v(TAG, "onConfigurationChanged")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // 当不设置android:configChanges="orientation"时，横竖屏切换就会触发，并且会触发其它生命周期方法。
+        Log.v(TAG, "onSaveInstanceState")
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // 当不设置android:configChanges="orientation"时，横竖屏切换就会触发，并且会触发其它生命周期方法。
+        Log.v(TAG, "onRestoreInstanceState")
     }
 
     fun click0(view: View) {
