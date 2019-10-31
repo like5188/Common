@@ -40,6 +40,7 @@
         <activity
             android:name=".activitytest.TestActivity1"
             android:theme="@style/Base.Theme.AppCompat.Dialog" />
+        <activity android:name=".activitytest.TestActivity2" />
     </application>
 
 </manifest>

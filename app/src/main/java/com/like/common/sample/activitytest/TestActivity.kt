@@ -71,9 +71,10 @@ class TestActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        // 1、设置了启动模式
-        // 2、实例已经存在，并且此时的启动模式为 SingleTask 和 SingleInstance，再次启动该 Activity 会触发。
-        // 3、实例已经存在，且这个实例位于栈顶，且启动模式为 SingleTop，再次启动该 Activity 会触发。
+        // 触发条件：首先是设置了启动模式，并且实例已经存在
+        // 1、如果启动模式为 SingleTask 和 SingleInstance，再次启动该 Activity。
+        // 2、这个实例位于栈顶，且启动模式为 SingleTop，再次启动该 Activity。
+
         // 重新设置 intent
         setIntent(intent)
         // 重新初始化数据
@@ -83,19 +84,25 @@ class TestActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        // 当设置android:configChanges="orientation"时，横竖屏切换就会触发，并且不会触发其它生命周期方法。
+        // 触发条件：
+        // 1、当设置android:configChanges="orientation"时，横竖屏切换。注意：不会触发其它生命周期方法。
         Log.v(TAG, "onConfigurationChanged")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // 当不设置android:configChanges="orientation"时，横竖屏切换就会触发，并且会触发其它生命周期方法。
+        // 触发条件：
+        // 1、当不设置android:configChanges="orientation"时，横竖屏切换。
+        // 2、按 home、menu、锁屏 键
+        // 3、启动其它 Activity
+        // 但是当用户主动去销毁一个 Activity 时，例如在应用中按返回键，onSaveInstanceState() 就不会被调用，所以用做数据的持久化保存，更应该在 onPause() 方法中进行。
         Log.v(TAG, "onSaveInstanceState")
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        // 当不设置android:configChanges="orientation"时，横竖屏切换就会触发，并且会触发其它生命周期方法。
+        // 触发条件：
+        // 1、当不设置android:configChanges="orientation"时，横竖屏切换
         Log.v(TAG, "onRestoreInstanceState")
     }
 
@@ -109,6 +116,10 @@ class TestActivity : AppCompatActivity() {
 
     fun click1(view: View) {
         startActivity(Intent(this, TestActivity1::class.java))
+    }
+
+    fun click2(view: View) {
+        startActivity(Intent(this, TestActivity2::class.java))
     }
 
 }
