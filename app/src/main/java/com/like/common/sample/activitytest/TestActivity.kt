@@ -122,4 +122,8 @@ class TestActivity : AppCompatActivity() {
         startActivity(Intent(this, TestActivity2::class.java))
     }
 
+    fun click3(view: View) {
+        startActivity(Intent(this, TestActivity3::class.java))
+    }
+
 }

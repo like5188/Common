@@ -37,10 +37,13 @@
         <activity
             android:name=".activitytest.TestActivity"
             android:launchMode="singleTop" />
+        <activity android:name=".activitytest.TestActivity1" />
         <activity
-            android:name=".activitytest.TestActivity1"
+            android:name=".activitytest.TestActivity2"
             android:theme="@style/Base.Theme.AppCompat.Dialog" />
-        <activity android:name=".activitytest.TestActivity2" />
+        <activity
+            android:name=".activitytest.TestActivity3"
+            android:theme="@style/translucent" />
     </application>
 
 </manifest>

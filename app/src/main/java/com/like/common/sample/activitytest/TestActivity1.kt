@@ -7,7 +7,7 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest1Binding
 
 /**
- * 窗口模式的 Activity
+ * 正常的 Activity
  */
 class TestActivity1 : AppCompatActivity() {
     private val mBinding: ActivityTest1Binding by lazy {

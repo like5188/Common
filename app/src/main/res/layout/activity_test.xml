@@ -17,14 +17,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="click1"
-            android:text="启动窗口模式的Activity"
+            android:text="启动正常的Activity"
             android:textAllCaps="false" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="click2"
-            android:text="启动非窗口模式的Activity"
+            android:text="启动窗口模式的Activity"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click3"
+            android:text="启动透明的Activity"
             android:textAllCaps="false" />
 
         <TextView
