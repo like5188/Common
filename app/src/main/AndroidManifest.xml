@@ -34,6 +34,9 @@
         <activity android:name=".notification.NotificationActivity" />
         <activity android:name=".serializable.SerializableActivity" />
         <activity android:name=".dialog.DialogActivity" />
+        <activity
+            android:name=".activitytest.TestActivity"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

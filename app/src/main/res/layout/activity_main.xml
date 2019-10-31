@@ -54,6 +54,13 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="gotoTestActivity"
+                android:text="Activity相关的测试"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:onClick="gotoFlexBoxActivity"
                 android:text="FlexBox测试"
                 android:textAllCaps="false" />

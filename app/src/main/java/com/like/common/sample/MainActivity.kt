@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.banner.BannerActivity
 import com.like.common.sample.ble.BleActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
@@ -141,6 +142,12 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoDialogActivity(view: View) {
         startActivity(Intent(this, DialogActivity::class.java))
+    }
+
+    fun gotoTestActivity(view: View) {
+        val intent = Intent(this, TestActivity::class.java)
+        intent.putExtra("name", "从 MainActivity 跳转过来")
+        startActivity(intent)
     }
 
 }
