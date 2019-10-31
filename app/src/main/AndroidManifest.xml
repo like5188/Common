@@ -36,7 +36,11 @@
         <activity android:name=".dialog.DialogActivity" />
         <activity
             android:name=".activitytest.TestActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop" />
+        <activity
+            android:name=".activitytest.TestActivity1"
+            android:theme="@style/Base.Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>

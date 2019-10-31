@@ -7,11 +7,17 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="click0"
             android:text="启动自己"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click1"
+            android:text="启动窗口模式的Activity"
             android:textAllCaps="false" />
 
         <TextView

@@ -1,6 +1,7 @@
 package com.like.common.sample.activitytest
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,9 +11,13 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
 
 /**
- * 对话框测试
+ * Activity 相关的测试
  */
 class TestActivity : AppCompatActivity() {
+    companion object {
+        private val TAG = TestActivity::class.java.simpleName
+    }
+
     private val mBinding: ActivityTestBinding by lazy {
         DataBindingUtil.setContentView<ActivityTestBinding>(this, R.layout.activity_test)
     }
@@ -28,37 +33,37 @@ class TestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding
         initView()
-        Log.d("tag", "onCreate")
+        Log.v(TAG, "onCreate")
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d("tag", "onStart")
+        Log.v(TAG, "onStart")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("tag", "onResume")
+        Log.v(TAG, "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("tag", "onPause")
+        Log.v(TAG, "onPause")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d("tag", "onStop")
+        Log.v(TAG, "onStop")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("tag", "onDestroy")
+        Log.v(TAG, "onDestroy")
     }
 
     override fun onRestart() {
         super.onRestart()
-        Log.d("tag", "onRestart")
+        Log.v(TAG, "onRestart")
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -67,7 +72,12 @@ class TestActivity : AppCompatActivity() {
         setIntent(intent)
         // 重新初始化数据
         initView()
-        Log.d("tag", "onNewIntent")
+        Log.v(TAG, "onNewIntent")
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.v(TAG, "onConfigurationChanged")
     }
 
     fun click0(view: View) {
@@ -76,6 +86,10 @@ class TestActivity : AppCompatActivity() {
         val intent = Intent(this, TestActivity::class.java)
         intent.putExtra("name", "自己启动自己")
         startActivity(intent)
+    }
+
+    fun click1(view: View) {
+        startActivity(Intent(this, TestActivity1::class.java))
     }
 
 }
