@@ -87,9 +87,9 @@ class DownloadController(
                         mShowerDelegate.onDownloadPaused(downloadInfo.cachedSize, downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_SUCCESSFUL -> {
-                        mShowerDelegate.onDownloadSuccessful(downloadInfo.totalSize)
-                        mCallLiveData = null
                         AppUtils.getInstance(context).install(downloadFile)
+                        mCallLiveData = null
+                        mShowerDelegate.onDownloadSuccessful(downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_FAILED -> {
                         mShowerDelegate.onDownloadFailed(downloadInfo.throwable)

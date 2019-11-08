@@ -38,7 +38,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
 
     override fun onDownloadSuccessful(totalSize: Long) {
         downloadProgressDialog.dismiss()
-        AppUtils.getInstance(downloadProgressDialog.context).exitApp()
+//        AppUtils.getInstance(downloadProgressDialog.context).exitApp()
     }
 
     override fun onDownloadFailed(throwable: Throwable?) {
