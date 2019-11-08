@@ -1,20 +1,15 @@
 package com.like.common.sample.coroutines
 
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.provider.Contacts
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityCoroutinesBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.anko.button
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.relativeLayout
-import org.jetbrains.anko.sdk27.coroutines.onClick
 
 /**
  * 协程测试
@@ -50,18 +45,9 @@ class CoroutinesActivity : AppCompatActivity() {
             // 但是这个函数阻塞了主线程。在主线程中调用了 runBlocking， 阻塞 会持续到 runBlocking 中的协程执行完毕。
             delay(2000L)  // ……我们延迟2秒来保证 JVM 的存活
         }
-        doAsync {
-
-        }
     }
 
     fun test2(view: View) {
-        relativeLayout {
-            button("哈哈哈哈"){
-                onClick {
-                }
-            }
-        }
     }
 
     fun test3(view: View) {

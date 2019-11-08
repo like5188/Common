@@ -5,10 +5,10 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.MainActivity
 import com.like.common.sample.databinding.ActivityUpdateBinding
 import com.like.common.util.AppUtils
@@ -16,8 +16,6 @@ import com.like.common.util.PermissionUtils
 import com.like.common.view.update.Update
 import com.like.common.view.update.shower.ForceUpdateDialogShower
 import com.like.common.view.update.shower.NotificationShower
-import com.like.retrofit.DownloadRetrofitUtils
-import com.like.retrofit.RequestConfig
 
 /**
  * 更新测试
@@ -36,8 +34,7 @@ class UpdateActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        Update.with(this)
-                .retrofit(DownloadRetrofitUtils(RequestConfig.Builder().application(this.application).build()))
+        Update.with(this).setDownloader(RetrofitDownloader(application))
     }
 
     @SuppressLint("MissingPermission")

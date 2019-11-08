@@ -11,7 +11,7 @@ import com.like.common.util.toDataStorageUnit
 import com.like.common.view.update.TAG_CONTINUE
 import com.like.common.view.update.TAG_PAUSE
 import com.like.livedatabus.LiveDataBus
-import com.like.retrofit.util.getCustomNetworkMessage
+import com.like.retrofit.utils.getCustomNetworkMessage
 import kotlin.math.roundToInt
 
 /**

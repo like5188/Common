@@ -125,9 +125,6 @@
     api 'androidx.recyclerview:recyclerview:1.0.0'
     api 'androidx.palette:palette:1.0.0'// 调色板
 
-    // anko 包含了协程相关的库
-    api 'org.jetbrains.anko:anko:0.10.8'
-
     // kotlin
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"

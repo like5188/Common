@@ -25,17 +25,17 @@ import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.update.UpdateActivity
 import com.like.common.util.SPUtils
+import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity() {
     private val mToolbarUtils: ToolbarUtils by lazy {
         ToolbarUtils(this, fl_toolbarContainer)
                 .showTitle("sample", R.color.common_text_white_0)
-                .showNavigationButton(R.drawable.icon_back, View.OnClickListener { toast("返回") })
-                .showCustomNavigationView(R.drawable.icon_back, "拍照", View.OnClickListener { toast("拍照啦！") })
+                .showNavigationButton(R.drawable.icon_back, View.OnClickListener { shortToastCenter("返回") })
+                .showCustomNavigationView(R.drawable.icon_back, "拍照", View.OnClickListener { shortToastCenter("拍照啦！") })
                 .setCustomNavigationViewTextColor(ActivityCompat.getColor(this, R.color.common_text_white_0))
                 .setCustomNavigationViewMessageCount("99+")
                 .setCustomNavigationViewMessageBackgroundColor(ContextCompat.getColor(this, R.color.common_text_red_0))
@@ -43,10 +43,10 @@ class MainActivity : AppCompatActivity() {
                 .setDividerHeight(30)
                 .setRightMenu(R.menu.toolbar_right_menu_main)
                 .setRightMenuMargin(R.id.action_0, 10, 0)
-                .replaceMenuWithCustomView(R.id.action_0, R.drawable.icon_0, "消息1", listener = View.OnClickListener { toast("消息") })
+                .replaceMenuWithCustomView(R.id.action_0, R.drawable.icon_0, "消息1", listener = View.OnClickListener { shortToastCenter("消息") })
                 .setRightMenuTextColor(R.id.action_0, ActivityCompat.getColor(this, R.color.common_text_white_0))
                 .setRightMenuMessageCount(R.id.action_0, "1").setDividerColor(Color.RED)
-                .replaceMenuWithCustomView(R.id.action_1, R.drawable.icon_0, "添加1", listener = View.OnClickListener { toast("添加") })
+                .replaceMenuWithCustomView(R.id.action_1, R.drawable.icon_0, "添加1", listener = View.OnClickListener { shortToastCenter("添加") })
                 .setRightMenuMessageCount(R.id.action_1, "2").setDividerColor(Color.RED)
     }
     private val mBinding: ActivityMainBinding by lazy {
@@ -85,10 +85,10 @@ class MainActivity : AppCompatActivity() {
             mBinding.tv2.text = it.second
         })
         mBinding.tv1.setOnClickListener {
-            toast(list[mBinding.verticalMarqueeView.getCurPosition()].first)
+            shortToastCenter(list[mBinding.verticalMarqueeView.getCurPosition()].first)
         }
         mBinding.tv2.setOnClickListener {
-            toast(list[mBinding.verticalMarqueeView.getCurPosition()].second)
+            shortToastCenter(list[mBinding.verticalMarqueeView.getCurPosition()].second)
         }
     }
 

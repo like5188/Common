@@ -16,7 +16,7 @@ import com.like.common.util.notify
 import com.like.common.util.toDataStorageUnit
 import com.like.common.view.update.TAG_PAUSE_OR_CONTINUE
 import com.like.livedatabus.LiveDataBus
-import com.like.retrofit.util.getCustomNetworkMessage
+import com.like.retrofit.utils.getCustomNetworkMessage
 
 /**
  * 普通更新使用通知栏显示进度条

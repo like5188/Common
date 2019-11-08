@@ -4,13 +4,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import androidx.annotation.ColorInt
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.annotation.ColorInt
+import com.like.common.util.DimensionUtils
 import com.like.common.util.onPreDrawListener
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.sp
 
 /**
  * 侧边栏
@@ -60,8 +59,8 @@ class SidebarView(context: Context, attrs: AttributeSet?) : View(context, attrs)
         this.normalTextColor = normalTextColor
         this.touchTextColor = touchTextColor
         this.selectedTextColor = selectedTextColor
-        this.textGap = dip(textGap)
-        this.textSize = sp(textSize)
+        this.textGap = DimensionUtils.px2dp(context, textGap.toFloat())
+        this.textSize = DimensionUtils.px2sp(context, textSize.toFloat())
         this.selectedTextChangedListener = selectedTextChangedListener
         paint = Paint().apply {
             this.textSize = textSize.toFloat()

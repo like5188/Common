@@ -4,13 +4,11 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.RequiresPermission
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.like.common.util.SingletonHolder
 import com.like.common.view.update.controller.DownloadController
 import com.like.common.view.update.shower.Shower
 import com.like.common.view.update.shower.ShowerDelegate
-import com.like.retrofit.DownloadRetrofitUtils
+import com.like.retrofit.RetrofitUtil
 import java.io.File
 import kotlin.jvm.functions.FunctionN
 
@@ -19,7 +17,7 @@ class Update {
     private var mShowerDelegate: ShowerDelegate = ShowerDelegate()
     private lateinit var mDownloadController: DownloadController
     // 必须初始化才能使用
-    private lateinit var mDownloadRetrofitUtils: DownloadRetrofitUtils
+    private lateinit var mDownloader: IDownloader
     private lateinit var mUrl: String
     // 可以不用初始化
     private var mVersionName: String = ""
@@ -54,10 +52,10 @@ class Update {
     }
 
     /**
-     * @param downloadRetrofitUtils 下载工具类。必须设置
+     * @param downloader 下载工具类。必须设置
      */
-    fun retrofit(downloadRetrofitUtils: DownloadRetrofitUtils): Update {
-        mDownloadRetrofitUtils = downloadRetrofitUtils
+    fun setDownloader(downloader: IDownloader): Update {
+        mDownloader = downloader
         return this
     }
 
@@ -82,13 +80,13 @@ class Update {
     @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     fun download() {
         if (mContext == null) throw UnsupportedOperationException("mContext must be initialize before calling download()")
-        if (!::mDownloadRetrofitUtils.isInitialized) throw UnsupportedOperationException("mDownloadRetrofitUtils must be initialize before calling download()")
+        if (!::mDownloader.isInitialized) throw UnsupportedOperationException("mDownloadRetrofitUtils must be initialize before calling download()")
         if (!::mUrl.isInitialized) throw UnsupportedOperationException("mUrl must be initialize before calling download()")
         if (mUrl.isEmpty()) throw IllegalArgumentException("mUrl must not be empty")
         val downloadFile = createDownloadFile(mUrl, mVersionName)
                 ?: throw IllegalArgumentException("wrong download mUrl")
         if (!::mDownloadController.isInitialized)
-            mDownloadController = DownloadController(mContext!!, mDownloadRetrofitUtils, mUrl, downloadFile, mShowerDelegate)
+            mDownloadController = DownloadController(mContext!!, mDownloader, mUrl, downloadFile, mShowerDelegate)
         mDownloadController.cont()
     }
 

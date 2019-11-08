@@ -109,6 +109,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    // 同时引用：
+    // implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
+    // implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
+    // 造成bug：More than one file was found with OS independent path 'META-INF/xxx'
+    packagingOptions {
+        exclude 'META-INF/proguard/coroutines.pro'
+        exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
+    }
 }
 
 // 定义了当前项目需要依赖的其他库。
