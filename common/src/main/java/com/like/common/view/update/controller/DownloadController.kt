@@ -13,8 +13,8 @@ import com.like.common.view.update.shower.ShowerDelegate
 import com.like.livedatabus.liveDataBusRegister
 import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
-import com.like.retrofit.common.livedata.PauseCancelLiveData
 import com.like.retrofit.download.DownloadInfo
+import com.like.retrofit.download.livedata.DownloadLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ class DownloadController(
         private val downloadFile: File,
         private val mShowerDelegate: ShowerDelegate
 ) {
-    private var mCallLiveData: PauseCancelLiveData<DownloadInfo>? = null
+    private var mCallLiveData: DownloadLiveData? = null
 
     init {
         liveDataBusRegister()

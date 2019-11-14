@@ -3,8 +3,7 @@ package com.like.common.sample.update
 import android.app.Application
 import com.like.common.view.update.IDownloader
 import com.like.retrofit.RetrofitUtil
-import com.like.retrofit.common.livedata.PauseCancelLiveData
-import com.like.retrofit.download.DownloadInfo
+import com.like.retrofit.download.livedata.DownloadLiveData
 import com.like.retrofit.utils.RequestConfig
 import java.io.File
 
@@ -15,7 +14,7 @@ class RetrofitDownloader(application: Application) : IDownloader {
         }
     }
 
-    override suspend fun download(url: String, downloadFile: File, threadCount: Int, deleteCache: Boolean, callbackInterval: Long): PauseCancelLiveData<DownloadInfo> {
+    override suspend fun download(url: String, downloadFile: File, threadCount: Int, deleteCache: Boolean, callbackInterval: Long): DownloadLiveData {
         return RetrofitUtil.getInstance().download(url, downloadFile, threadCount, deleteCache, callbackInterval)
     }
 

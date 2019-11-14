@@ -1,7 +1,6 @@
 package com.like.common.view.update
 
-import com.like.retrofit.common.livedata.PauseCancelLiveData
-import com.like.retrofit.download.DownloadInfo
+import com.like.retrofit.download.livedata.DownloadLiveData
 import java.io.File
 
 interface IDownloader {
@@ -11,5 +10,5 @@ interface IDownloader {
             threadCount: Int = 1,
             deleteCache: Boolean = false,
             callbackInterval: Long = 200L
-    ): PauseCancelLiveData<DownloadInfo>
+    ): DownloadLiveData
 }
