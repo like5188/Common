@@ -5,7 +5,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
+import retrofit2.Call
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -42,6 +43,20 @@ class AutoClearedValue<T : Any>(lifecycleOwner: LifecycleOwner) : ReadWritePrope
 }
 
 @JvmOverloads
+fun <T> Call<T>?.bindToLifecycleOwner(
+        lifecycleOwner: LifecycleOwner,
+        vararg events: Lifecycle.Event = arrayOf(Lifecycle.Event.ON_DESTROY)
+): Call<T>? {
+    this ?: return this
+    bindToLifecycleOwner(lifecycleOwner, events) {
+        if (!this.isCanceled) {
+            this.cancel()
+        }
+    }
+    return this
+}
+
+@JvmOverloads
 fun Disposable?.bindToLifecycleOwner(
         lifecycleOwner: LifecycleOwner,
         vararg events: Lifecycle.Event = arrayOf(Lifecycle.Event.ON_DESTROY)
@@ -56,10 +71,10 @@ fun Disposable?.bindToLifecycleOwner(
 }
 
 @JvmOverloads
-fun <T> Deferred<T>?.bindToLifecycleOwner(
+fun <T> Job?.bindToLifecycleOwner(
         lifecycleOwner: LifecycleOwner,
         vararg events: Lifecycle.Event = arrayOf(Lifecycle.Event.ON_DESTROY)
-): Deferred<T>? {
+): Job? {
     this ?: return this
     bindToLifecycleOwner(lifecycleOwner, events) {
         if (!this.isCancelled) {
