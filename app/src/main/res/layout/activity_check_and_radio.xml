@@ -150,10 +150,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@{isChecked0.get()?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
+                android:background="@{isChecked0?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
                 android:gravity="center"
                 android:text="复选0"
-                android:textColor="@{isChecked0.get()?@color/common_text_white_0:@color/common_text_black_1}"
+                android:textColor="@{isChecked0?@color/common_text_white_0:@color/common_text_black_1}"
                 android:textSize="16sp" />
 
             <TextView
@@ -163,10 +163,10 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:background="@{isChecked1.get()?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
+                android:background="@{isChecked1?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
                 android:gravity="center"
                 android:text="复选1"
-                android:textColor="@{isChecked1.get()?@color/common_text_white_0:@color/common_text_black_1}"
+                android:textColor="@{isChecked1?@color/common_text_white_0:@color/common_text_black_1}"
                 android:textSize="16sp" />
 
             <TextView
@@ -174,10 +174,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@{isChecked2.get()?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
+                android:background="@{isChecked2?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
                 android:gravity="center"
                 android:text="复选2"
-                android:textColor="@{isChecked2.get()?@color/common_text_white_0:@color/common_text_black_1}"
+                android:textColor="@{isChecked2?@color/common_text_white_0:@color/common_text_black_1}"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -194,10 +194,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@{isChecked3.get()?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
+                android:background="@{isChecked3?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
                 android:gravity="center"
                 android:text="复选3"
-                android:textColor="@{isChecked3.get()?@color/common_text_white_0:@color/common_text_black_1}"
+                android:textColor="@{isChecked3?@color/common_text_white_0:@color/common_text_black_1}"
                 android:textSize="16sp" />
 
             <TextView
@@ -207,10 +207,10 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:background="@{isChecked4.get()?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
+                android:background="@{isChecked4?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
                 android:gravity="center"
                 android:text="复选4"
-                android:textColor="@{isChecked4.get()?@color/common_text_white_0:@color/common_text_black_1}"
+                android:textColor="@{isChecked4?@color/common_text_white_0:@color/common_text_black_1}"
                 android:textSize="16sp" />
 
             <TextView
@@ -218,10 +218,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@{isChecked5.get()?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
+                android:background="@{isChecked5?@drawable/btn_press_shap:@drawable/btn_normal_shap}"
                 android:gravity="center"
                 android:text="复选5"
-                android:textColor="@{isChecked5.get()?@color/common_text_white_0:@color/common_text_black_1}"
+                android:textColor="@{isChecked5?@color/common_text_white_0:@color/common_text_black_1}"
                 android:textSize="16sp" />
         </LinearLayout>
 
