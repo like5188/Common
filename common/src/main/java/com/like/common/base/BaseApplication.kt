@@ -2,9 +2,7 @@ package com.like.common.base
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.os.Bundle
-import androidx.multidex.MultiDex
 import java.util.*
 
 open class BaseApplication : Application() {
@@ -37,11 +35,6 @@ open class BaseApplication : Application() {
             activities.add(activity)
         }
 
-    }
-
-    override fun attachBaseContext(base: Context?) {
-        super.attachBaseContext(base)
-        MultiDex.install(this)
     }
 
     override fun onCreate() {

@@ -13,8 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
 
-        multiDexEnabled true// api 21及以上，可以只添加此配置，不需要再引用com.android.support:multidex:1.0.3
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -61,9 +59,6 @@ dependencies {
 
     // fastjson
     api 'com.alibaba:fastjson:1.2.51'
-
-    // 65535
-    api 'androidx.multidex:multidex:2.0.1'
 
     // retrofit2
     api 'com.squareup.retrofit2:retrofit:2.6.2'
