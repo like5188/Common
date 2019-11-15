@@ -6,12 +6,14 @@ apply plugin: 'kotlin-kapt'
 // 是Android插件提供的一个扩展类型，可以让我们自定义Android Gradle工程，是Android Gradle工程配置的唯一入口。
 android {
     // minSdkVersion<=targetSdkVersion<=compileSdkVersion
+    // compileSdkVersion和buildToolsVersion作用于项目的编译，minSdkVersion和targetSdkVersion控制项目的运行版本。
+
     // 代表着编译的时候，会采用该api的规范进行代码检查和警告，但是并不会编译进apk中。
-    // 强烈推荐总是使用最新的 SDK 进行编译（默认就是最新的）
-    // 修改 compileSdkVersion 不会改变运行时的行为。当你修改了 compileSdkVersion 的时候，可能会出现新的编译警告、编译错误，
-    // 但新的 compileSdkVersion 不会被包含到 APK 中：它纯粹只是在编译的时候使用。
+    // 强烈推荐总是使用最新的 SDK 进行编译（默认就是最新的），好处如下：
+    // 1、可以让我们在编码的过程中编译器以最新的SDK的api去要求我们的编码，即让你可以调用高版本的api；
+    // 2、它会有最新的一些编译警告、编译错误提示，这样可以避免弃用的API，并且为使用新的API做好准备；
+    // 3、当我们的项目有其他第三方sdk或者supperLib时，compileSdkVersion低于这些库的编译版本时就无法编译打包。
     // 注意:如果使用 Support Library ，那么使用最新发布的 Support Library 就需要使用最新的 SDK 编译。
-    // 因为使用新的编译检查可以获得很多好处，可以避免弃用的API，并且为使用新的API做好准备。
     compileSdkVersion 28
 
     // defaultConfig就是程序的默认配置，注意，如果在AndroidMainfest.xml里面定义了与这里相同的属性，会以这里的为主。
@@ -27,6 +29,7 @@ android {
         // minSdkVersion 必需大于等于这些库的 minSdkVersion 。
         minSdkVersion 19
         // 代表着目标版本，在编译的时候会将该版本的api编译进apk中。
+        // 建议设置为最新的版本最好，因为不需要让系统对app进行前向兼容了，提高了性能，同时也可以使用高版本的一些新特性。
         // 决定了Android系统的运行版本，是 Android 提供向前兼容的主要依据
         // 比如说我设置了targetSdkVersion=22，那么运行在23的手机上，不会有任何问题，只是不能享受23的新功能。即由系统自动向下兼容了，因为23的手机上包含低于它的api。
         // 比如说我设置了targetSdkVersion=22，那么运行在21的手机上，会有问题，因为开发使用的22的api，在21上根本没有，所以需要在代码中判断版本进行兼容，如：if(targetSdkVersion<22){}。
