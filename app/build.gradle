@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 // 是Android插件提供的一个扩展类型，可以让我们自定义Android Gradle工程，是Android Gradle工程配置的唯一入口。
 android {
     // minSdkVersion<=targetSdkVersion<=compileSdkVersion
-    // 用哪个 Android SDK 版本编译你的应用，不涉及到运行时候的行为。
+    // 代表着编译的时候，会采用该api的规范进行代码检查和警告，但是并不会编译进apk中。
     // 强烈推荐总是使用最新的 SDK 进行编译（默认就是最新的）
     // 修改 compileSdkVersion 不会改变运行时的行为。当你修改了 compileSdkVersion 的时候，可能会出现新的编译警告、编译错误，
     // 但新的 compileSdkVersion 不会被包含到 APK 中：它纯粹只是在编译的时候使用。
@@ -21,12 +21,14 @@ android {
         // package指的是代码目录下路径；applicationId指的是app对外发布的唯一标识，会在签名、申请第三方库、发布时候用到。
         // 修改applicationId只会修改当前程序的ID,而不会去修改源码中资源文件的引用。
         applicationId "com.like.common.sample"
+        // 代表着最低版本，在编译的时候兼容到该参数指定最低版本api。
         // 如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用
         // 请记住：你所使用的库，如 Support Library 或 Google Play services，可能有他们自己的 minSdkVersion 。你的应用设置的
         // minSdkVersion 必需大于等于这些库的 minSdkVersion 。
         minSdkVersion 19
-        // 是 Android 提供向前兼容的主要依据
-        // 比如说我设置了targetSdkVersion=22，那么运行在23的手机上，不会有任何问题，只是不能享受23的新功能。
+        // 代表着目标版本，在编译的时候会将该版本的api编译进apk中。
+        // 决定了Android系统的运行版本，是 Android 提供向前兼容的主要依据
+        // 比如说我设置了targetSdkVersion=22，那么运行在23的手机上，不会有任何问题，只是不能享受23的新功能。即由系统自动向下兼容了，因为23的手机上包含低于它的api。
         // 比如说我设置了targetSdkVersion=22，那么运行在21的手机上，会有问题，因为开发使用的22的api，在21上根本没有，所以需要在代码中判断版本进行兼容，如：if(targetSdkVersion<22){}。
         targetSdkVersion 28
         // 表明我们的app应用内部版本号，一般用于控制app升级，当然我在使用的bugly自动升级能不能接受到升级推送就是基于这个。
