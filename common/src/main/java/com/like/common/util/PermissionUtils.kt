@@ -6,9 +6,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.Size
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.core.content.ContextCompat
 import com.tbruyelle.rxpermissions2.RxPermissions
 
 /**
@@ -105,54 +105,54 @@ class PermissionUtils {
     private var mContext: Context? = null
     private var mRxPermissions: RxPermissions? = null
 
-    fun init(fragmentActivity: androidx.fragment.app.FragmentActivity) {
+    fun init(fragmentActivity: FragmentActivity) {
         mContext = fragmentActivity.applicationContext
         mRxPermissions = RxPermissions(fragmentActivity)
     }
 
-    fun init(fragment: androidx.fragment.app.Fragment) {
-        mContext = fragment.context
+    fun init(fragment: Fragment) {
+        mContext = fragment.context?.applicationContext
         mRxPermissions = RxPermissions(fragment)
     }
 
     fun checkCalendarPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *CALENDAR)
     }
 
     fun checkCameraPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *CAMERA)
     }
 
     fun checkContactsPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *CONTACTS)
     }
 
     fun checkLocationPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *LOCATION)
     }
 
     fun checkMicrophonePermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *MICROPHONE)
     }
 
     fun checkPhonePermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             checkPermissions(onGranted = onGranted, onError = onError, perms = *PHONE_26)
@@ -163,7 +163,7 @@ class PermissionUtils {
 
     fun checkSensorsPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             checkPermissions(onGranted = onGranted, onError = onError, perms = *SENSORS_20)
@@ -172,14 +172,14 @@ class PermissionUtils {
 
     fun checkSmsPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *SMS)
     }
 
     fun checkStoragePermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null
+            onError: ((Throwable) -> Unit)? = null
     ) {
         checkPermissions(onGranted = onGranted, onError = onError, perms = *STORAGE)
     }
@@ -194,7 +194,7 @@ class PermissionUtils {
     @SuppressLint("CheckResult")
     fun checkPermissions(
             onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable?) -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
             @Size(min = 1) vararg perms: String
     ) {
         if (!hasPermissions(mContext, *perms)) {
