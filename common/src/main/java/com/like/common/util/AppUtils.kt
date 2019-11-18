@@ -234,7 +234,6 @@ class AppUtils private constructor(private val mContext: Context) {
                 installIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             } else {
                 installIntent.action = Intent.ACTION_VIEW
-                installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 // android7.0需要通过FileProvider来获取文件uri。
@@ -274,6 +273,7 @@ class AppUtils private constructor(private val mContext: Context) {
 
     private fun install(installIntent: Intent, uri: Uri) {
         installIntent.setDataAndType(uri, "application/vnd.android.package-archive")
+        installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         mContext.applicationContext.startActivity(installIntent)
     }
 
