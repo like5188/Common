@@ -1,7 +1,6 @@
 package com.like.common.util
 
 import android.graphics.Color
-import androidx.annotation.ColorInt
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
@@ -12,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
+import androidx.annotation.ColorInt
 
 
 /**
@@ -102,14 +102,15 @@ object ClickTextViewSpanUtils {
      * 一个TextView空间内设置不同颜色的文字，并使得该部分的文字有着单独的点击事件
      */
     class ClickTextViewSpan(@ColorInt val textColor: Int, private val clickListener: (() -> Unit)? = null) : ClickableSpan() {
-        override fun onClick(widget: View?) {
+
+        override fun onClick(widget: View) {
             clickListener?.invoke()
         }
 
-        override fun updateDrawState(ds: TextPaint?) {
+        override fun updateDrawState(ds: TextPaint) {
             super.updateDrawState(ds)
-            ds?.color = textColor// 设置可以点击文本部分的颜色
-            ds?.isUnderlineText = false // 设置该文本部分是否显示超链接形式的下划线
+            ds.color = textColor// 设置可以点击文本部分的颜色
+            ds.isUnderlineText = false // 设置该文本部分是否显示超链接形式的下划线
         }
     }
 

@@ -9,11 +9,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.fragment.app.FragmentActivity
-import androidx.core.content.FileProvider
 import android.util.Log
 import android.view.View
 import android.view.Window
+import androidx.core.content.FileProvider
 import com.like.common.view.callback.RxCallback
 import java.io.File
 import kotlin.jvm.functions.FunctionN
@@ -109,10 +108,10 @@ class AppUtils private constructor(private val mContext: Context) {
      * @param context     上下文
      * @return 是否存在
      */
-    fun isRunForeground(context: Context?, packageName: String = context?.packageName
-            ?: ""): Boolean = getActivityManager(context)?.runningAppProcesses?.any {
-        it.processName == packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
-    } ?: false
+    fun isRunForeground(context: Context?, packageName: String = context?.packageName ?: ""): Boolean =
+            getActivityManager(context)?.runningAppProcesses?.any {
+                it.processName == packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+            } ?: false
 
     /**
      * 检测应用是否在后台运行
@@ -121,22 +120,10 @@ class AppUtils private constructor(private val mContext: Context) {
      * @param context     上下文
      * @return 是否存在
      */
-    fun isRunBackground(context: Context?, packageName: String = context?.packageName
-            ?: ""): Boolean =
+    fun isRunBackground(context: Context?, packageName: String = context?.packageName ?: ""): Boolean =
             getActivityManager(context)?.runningAppProcesses?.any {
                 it.processName == packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND
             } ?: false
-
-    fun getBaseActivityName(context: Context): String {
-        val am = getActivityManager(context) ?: return ""
-        val list = am.getRunningTasks(100)
-        for (info in list) {
-            if (info.baseActivity.packageName == mAppStatus.packageName) {
-                return info.baseActivity.className
-            }
-        }
-        return ""
-    }
 
     /**
      * 判断服务是否启动, 注意只要名称相同, 会检测任何服务.
@@ -183,21 +170,6 @@ class AppUtils private constructor(private val mContext: Context) {
             }
         }
         return -1
-    }
-
-    /**
-     * 判断某个activity是否处于前台
-     * <uses-permission android:name = "android.permission.GET_TASKS"></uses-permission>
-     *
-     * @param context
-     * @param cls     需要判断的activity的全类名
-     * @return
-     */
-    fun isTopActivity(context: Context, cls: String): Boolean {
-        val applicationContext = context.applicationContext
-        val am = getActivityManager(context) ?: return false
-        val cn = am.getRunningTasks(1)[0].topActivity
-        return !(applicationContext.packageName != cn.packageName || cls != cn.className)
     }
 
     /**

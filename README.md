@@ -39,7 +39,16 @@
     }
 ```
 
-2、常用工具类
+2、基类
+```java
+    BaseActivity
+    BaseApplication
+    BaseComponentApplication.kt
+    BaseDialogFragment
+    BaseFragment
+```
+
+3、常用工具类
 ```java
     ble
     validator
@@ -73,7 +82,6 @@
     PhoneUtils
     RadioManager
     RectEx.kt
-    RunningTaskUtils
     RxJavaUtils
     SerializableUtils
     SingletonHolder
@@ -90,7 +98,7 @@
     ZxingUtils
 ```
 
-3、自定义View
+4、自定义View
 ```java
     badgeview
     banner
@@ -113,7 +121,7 @@
     VerticalMarqueeView
 ```
 
-4、常用第三方库的引用
+5、常用第三方库的引用
 ```java
    // constraint
    api 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -136,9 +144,6 @@
 
    // fastjson
    api 'com.alibaba:fastjson:1.2.51'
-
-   // 65535
-   api 'androidx.multidex:multidex:2.0.1'
 
    // retrofit2
    api 'com.squareup.retrofit2:retrofit:2.6.2'
@@ -195,15 +200,16 @@
 
    api 'com.google.android:flexbox:1.0.0'
 
-   api 'com.github.like5188:Repository:2.1.1'
-   api 'com.github.like5188:LiveDataRecyclerView:2.0.6'
-   api 'com.github.like5188:LibRetrofit:2.0.3'
-   api 'com.github.like5188.LiveDataBus:livedatabus:2.0.2'
+   api 'com.github.like5188:Repository:2.1.6'
+   api 'com.github.like5188:LiveDataRecyclerView:2.0.9'
+   api 'com.github.like5188:LibRetrofit:2.0.5'
+   api 'com.github.like5188.LiveDataBus:livedatabus:2.0.4'
+   api 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.4'// gradle 3.2.1 不需要添加这个引用，升级到 3.5.2 后必须添加，否则会提示找不到其中的类。
 
+   // 使用 com.like.common.view.update 中的更新功能时需要
+   kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.4'
    // 使用 Glide 时需要
    kapt 'com.github.bumptech.glide:compiler:4.8.0'
-   // 使用 com.like.common.view.update 中的更新功能时需要
-   kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.2'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
 //    kapt 'androidx.room:room-compiler:2.2.1'
 //    kapt 'com.google.dagger:dagger-compiler:2.17'

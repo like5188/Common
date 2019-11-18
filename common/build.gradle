@@ -5,11 +5,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -115,16 +115,16 @@ dependencies {
 
     api 'com.google.android:flexbox:1.0.0'
 
-    api 'com.github.like5188:Repository:2.1.5'
-    api 'com.github.like5188:LiveDataRecyclerView:2.0.8'
-    api 'com.github.like5188:LibRetrofit:2.0.4'
-    api 'com.github.like5188.LiveDataBus:livedatabus:2.0.3'
-    api 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.3'// gradle 3.2.1 不需要添加这个引用，升级到 3.5.2 后必须添加，否则会提示找不到其中的类。
+    api 'com.github.like5188:Repository:2.1.6'
+    api 'com.github.like5188:LiveDataRecyclerView:2.0.9'
+    api 'com.github.like5188:LibRetrofit:2.0.5'
+    api 'com.github.like5188.LiveDataBus:livedatabus:2.0.4'
+    api 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.4'// gradle 3.2.1 不需要添加这个引用，升级到 3.5.2 后必须添加，否则会提示找不到其中的类。
 
+    // 使用 com.like.common.view.update 中的更新功能时需要
+    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.4'
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
-    // 使用 com.like.common.view.update 中的更新功能时需要
-    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.3'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
 //    kapt 'androidx.room:room-compiler:2.2.1'
 //    kapt 'com.google.dagger:dagger-compiler:2.17'
