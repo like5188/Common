@@ -1,12 +1,17 @@
 package com.like.common.view.update
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.like.common.util.PermissionUtils
 import com.like.common.view.update.controller.DownloadController
-import com.like.common.view.update.shower.Shower
+import com.like.common.view.update.downloader.IDownloader
+import com.like.common.view.update.downloader.RetrofitDownloader
+import com.like.common.view.update.shower.ForceUpdateDialogShower
+import com.like.common.view.update.shower.IShower
 import java.io.File
 
 class Update {
@@ -18,20 +23,39 @@ class Update {
         mContext = fragmentActivity.applicationContext
         mDownloadController = DownloadController(fragmentActivity)
         mPermissionUtils = PermissionUtils(fragmentActivity)
+        init(fragmentActivity.supportFragmentManager, fragmentActivity.application)
     }
 
     constructor(fragment: Fragment) {
         mContext = fragment.context?.applicationContext ?: throw IllegalArgumentException("can not get context from fragment")
         mDownloadController = DownloadController(fragment)
         mPermissionUtils = PermissionUtils(fragment)
+        val fragmentManager = fragment.fragmentManager
+        val application = fragment.activity?.application
+        if (fragmentManager != null && application != null) {
+            init(fragmentManager, application)
+        }
+    }
+
+    private fun init(fragmentManager: FragmentManager, application: Application) {
+        setShower(ForceUpdateDialogShower(fragmentManager))
+        setDownloader(RetrofitDownloader(application))
     }
 
     /**
      *
-     * @param shower        显示者
+     * @param shower        显示者。默认为[com.like.common.view.update.shower.ForceUpdateDialogShower]
      */
-    fun setShower(shower: Shower) {
-        mDownloadController.mShowerDelegate.shower = shower
+    fun setShower(shower: IShower) {
+        mDownloadController.mShower = shower
+    }
+
+    /**
+     *
+     * @param downloader    下载工具类。默认为[com.like.common.view.update.downloader.RetrofitDownloader]
+     */
+    fun setDownloader(downloader: IDownloader) {
+        mDownloadController.mDownloader = downloader
     }
 
     /**
@@ -45,14 +69,6 @@ class Update {
         val downloadFile = createDownloadFile(context, url, versionName) ?: throw IllegalArgumentException("wrong download url")
         mDownloadController.mUrl = url
         mDownloadController.mDownloadFile = downloadFile
-    }
-
-    /**
-     *
-     * @param downloader    下载工具类。必须设置
-     */
-    fun setDownloader(downloader: IDownloader) {
-        mDownloadController.mDownloader = downloader
     }
 
     @SuppressLint("MissingPermission")

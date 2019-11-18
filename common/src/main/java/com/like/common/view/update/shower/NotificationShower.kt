@@ -27,7 +27,7 @@ class NotificationShower(
         clickPendingIntent: PendingIntent,
         channelId: String,
         channelName: String
-) : Shower {
+) : IShower {
     companion object {
         private const val NOTIFICATION_ID = 1111
     }

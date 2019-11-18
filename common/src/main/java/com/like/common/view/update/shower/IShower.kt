@@ -3,7 +3,7 @@ package com.like.common.view.update.shower
 /**
  * 显示者
  */
-interface Shower {
+interface IShower {
 
     /**
      * 即将开始下载数据

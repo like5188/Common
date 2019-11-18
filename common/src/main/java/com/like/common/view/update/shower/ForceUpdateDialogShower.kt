@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 /**
  * 强制更新使用对话框显示进度条
  */
-class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app.FragmentManager) : Shower {
+class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app.FragmentManager) : IShower {
     private val downloadProgressDialog = DefaultDownloadProgressDialog()
 
     override fun onDownloadPending() {

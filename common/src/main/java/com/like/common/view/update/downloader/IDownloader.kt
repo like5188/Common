@@ -1,4 +1,4 @@
-package com.like.common.view.update
+package com.like.common.view.update.downloader
 
 import com.like.retrofit.download.livedata.DownloadLiveData
 import java.io.File

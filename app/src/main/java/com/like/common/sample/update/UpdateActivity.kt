@@ -31,7 +31,6 @@ class UpdateActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        mUpdate.setDownloader(RetrofitDownloader(application))
     }
 
     @SuppressLint("MissingPermission")

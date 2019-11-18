@@ -6,11 +6,11 @@ import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.like.common.util.ApkUtils
-import com.like.common.view.update.IDownloader
 import com.like.common.view.update.TAG_CONTINUE
 import com.like.common.view.update.TAG_PAUSE
 import com.like.common.view.update.TAG_PAUSE_OR_CONTINUE
-import com.like.common.view.update.shower.ShowerDelegate
+import com.like.common.view.update.downloader.IDownloader
+import com.like.common.view.update.shower.IShower
 import com.like.livedatabus.liveDataBusRegister
 import com.like.livedatabus.liveDataBusUnRegister
 import com.like.livedatabus_annotations.BusObserver
@@ -31,10 +31,10 @@ import java.io.File
 class DownloadController {
     private var mCallLiveData: DownloadLiveData? = null
     private val mApkUtils: ApkUtils
+    var mShower: IShower? = null
     var mDownloader: IDownloader? = null
     var mUrl: String = ""
     var mDownloadFile: File? = null
-    var mShowerDelegate: ShowerDelegate = ShowerDelegate()
 
     constructor(fragmentActivity: FragmentActivity) {
         mApkUtils = ApkUtils(fragmentActivity)
@@ -77,13 +77,13 @@ class DownloadController {
     fun cont() {
         val downloader = mDownloader ?: return
         val downloadFile = mDownloadFile ?: return
-        mShowerDelegate.shower ?: return
+        val shower = mShower ?: return
         val url = mUrl
         if (url.isEmpty()) return
 
         if (mCallLiveData != null) return// 正在下载
 
-        mShowerDelegate.onDownloadPending()
+        shower.onDownloadPending()
 
         // 下载
         GlobalScope.launch(Dispatchers.Main) {
@@ -93,18 +93,18 @@ class DownloadController {
                     DownloadInfo.Status.STATUS_PENDING -> {
                     }
                     DownloadInfo.Status.STATUS_RUNNING -> {
-                        mShowerDelegate.onDownloadRunning(downloadInfo.cachedSize, downloadInfo.totalSize)
+                        shower.onDownloadRunning(downloadInfo.cachedSize, downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_PAUSED -> {
-                        mShowerDelegate.onDownloadPaused(downloadInfo.cachedSize, downloadInfo.totalSize)
+                        shower.onDownloadPaused(downloadInfo.cachedSize, downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_SUCCESSFUL -> {
                         mApkUtils.install(downloadFile)
                         mCallLiveData = null
-                        mShowerDelegate.onDownloadSuccessful(downloadInfo.totalSize)
+                        shower.onDownloadSuccessful(downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_FAILED -> {
-                        mShowerDelegate.onDownloadFailed(downloadInfo.throwable)
+                        shower.onDownloadFailed(downloadInfo.throwable)
                         mCallLiveData = null// 用于点击继续重试
                     }
                 }
