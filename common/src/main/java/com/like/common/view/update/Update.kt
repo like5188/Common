@@ -1,102 +1,73 @@
 package com.like.common.view.update
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.annotation.RequiresPermission
-import com.like.common.util.SingletonHolder
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.like.common.util.PermissionUtils
 import com.like.common.view.update.controller.DownloadController
 import com.like.common.view.update.shower.Shower
-import com.like.common.view.update.shower.ShowerDelegate
-import com.like.retrofit.RetrofitUtil
 import java.io.File
-import kotlin.jvm.functions.FunctionN
 
-@SuppressLint("MissingPermission")
 class Update {
-    private var mShowerDelegate: ShowerDelegate = ShowerDelegate()
-    private lateinit var mDownloadController: DownloadController
-    // 必须初始化才能使用
-    private lateinit var mDownloader: IDownloader
-    private lateinit var mUrl: String
-    // 可以不用初始化
-    private var mVersionName: String = ""
+    private val mContext: Context?
+    private val mDownloadController: DownloadController
+    private val mPermissionUtils: PermissionUtils
 
-    companion object : SingletonHolder<Update>(object : FunctionN<Update> {
-        override val arity: Int = 0 // number of arguments that must be passed to constructor
+    constructor(fragmentActivity: FragmentActivity) {
+        mContext = fragmentActivity.applicationContext
+        mDownloadController = DownloadController(fragmentActivity)
+        mPermissionUtils = PermissionUtils(fragmentActivity)
+    }
 
-        override fun invoke(vararg args: Any?): Update {
-            return Update()
-        }
-    }) {
-        @SuppressLint("StaticFieldLeak")
-        private var mContext: Context? = null
-
-        fun with(activity: androidx.fragment.app.FragmentActivity): Update {
-            mContext = activity.applicationContext
-            return getInstance()
-        }
-
-        fun with(fragment: androidx.fragment.app.Fragment): Update {
-            mContext = fragment.activity?.applicationContext
-            return getInstance()
-        }
+    constructor(fragment: Fragment) {
+        mContext = fragment.context?.applicationContext ?: throw IllegalArgumentException("can not get context from fragment")
+        mDownloadController = DownloadController(fragment)
+        mPermissionUtils = PermissionUtils(fragment)
     }
 
     /**
-     * 设置显示者
-     */
-    fun shower(shower: Shower): Update {
-        mShowerDelegate.shower = shower
-        return this
-    }
-
-    /**
-     * @param downloader 下载工具类。必须设置
-     */
-    fun setDownloader(downloader: IDownloader): Update {
-        mDownloader = downloader
-        return this
-    }
-
-    /**
-     * 下载地址。必须设置。可以是完整路径或者子路径
-     */
-    fun url(url: String): Update {
-        mUrl = url
-        return this
-    }
-
-    /**
-     * 下载的文件的版本号。可以不设置
      *
-     * 用于区分下载的文件的版本。如果url中包括了版本号，可以不传。
+     * @param shower        显示者
      */
-    fun versionName(versionName: String): Update {
-        mVersionName = versionName
-        return this
+    fun setShower(shower: Shower) {
+        mDownloadController.mShowerDelegate.shower = shower
     }
 
-    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    /**
+     *
+     * @param url           下载地址。必须设置。可以是完整路径或者子路径
+     * @param versionName   下载的文件的版本号。可以不设置。用于区分下载的文件的版本。如果url中包括了版本号，可以不传。
+     */
+    fun setUrl(url: String, versionName: String = "") {
+        require(url.isNotEmpty()) { "url can not be empty" }
+        val context = mContext ?: throw IllegalArgumentException("can not get context from fragment")
+        val downloadFile = createDownloadFile(context, url, versionName) ?: throw IllegalArgumentException("wrong download url")
+        mDownloadController.mUrl = url
+        mDownloadController.mDownloadFile = downloadFile
+    }
+
+    /**
+     *
+     * @param downloader    下载工具类。必须设置
+     */
+    fun setDownloader(downloader: IDownloader) {
+        mDownloadController.mDownloader = downloader
+    }
+
+    @SuppressLint("MissingPermission")
     fun download() {
-        if (mContext == null) throw UnsupportedOperationException("mContext must be initialize before calling download()")
-        if (!::mDownloader.isInitialized) throw UnsupportedOperationException("mDownloadRetrofitUtils must be initialize before calling download()")
-        if (!::mUrl.isInitialized) throw UnsupportedOperationException("mUrl must be initialize before calling download()")
-        if (mUrl.isEmpty()) throw IllegalArgumentException("mUrl must not be empty")
-        val downloadFile = createDownloadFile(mUrl, mVersionName)
-                ?: throw IllegalArgumentException("wrong download mUrl")
-        if (!::mDownloadController.isInitialized)
-            mDownloadController = DownloadController(mContext!!, mDownloader, mUrl, downloadFile, mShowerDelegate)
-        mDownloadController.cont()
+        mPermissionUtils.checkStoragePermissions({
+            if (!it) return@checkStoragePermissions
+            mDownloadController.cont()
+        })
     }
 
     fun cancel() {
-        if (::mDownloadController.isInitialized) {
-            mDownloadController.cancel()
-        }
+        mDownloadController.cancel()
     }
 
-    private fun createDownloadFile(url: String, versionName: String): File? = try {
+    private fun createDownloadFile(context: Context, url: String, versionName: String): File? = try {
         val downloadFileName = if (versionName.isNotEmpty()) {
             val lastPointPosition = url.lastIndexOf(".")// 最后一个"."的位置
             val fileName = url.substring(url.lastIndexOf("/") + 1, lastPointPosition)// 从url获取的文件名，不包括后缀。"xxx"
@@ -105,7 +76,7 @@ class Update {
         } else {
             url.substring(url.lastIndexOf("/") + 1)// 从url获取的文件名，包括后缀。"xxx.xxx"
         }
-        File(mContext?.cacheDir, downloadFileName)
+        File(context.cacheDir, downloadFileName)
     } catch (e: Exception) {
         null
     }

@@ -24,9 +24,7 @@ class MyAddImageViewAdapter(private val activity: androidx.fragment.app.Fragment
     private val mGlideUtils = GlideUtils(activity)
 
     private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils().apply {
-            init(activity)
-        }
+        PermissionUtils(activity)
     }
 
     fun add(localMedias: List<LocalMedia>) {

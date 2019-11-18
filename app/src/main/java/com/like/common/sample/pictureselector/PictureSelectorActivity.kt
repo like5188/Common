@@ -26,9 +26,7 @@ class PictureSelectorActivity : AppCompatActivity() {
     }
 
     private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils().apply {
-            init(this@PictureSelectorActivity)
-        }
+        PermissionUtils(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

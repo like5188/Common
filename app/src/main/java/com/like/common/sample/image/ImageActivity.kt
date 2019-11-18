@@ -29,9 +29,7 @@ class ImageActivity : AppCompatActivity() {
         BitmapFactory.decodeFile(file.absolutePath)
     }
     private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils().apply {
-            init(this@ImageActivity)
-        }
+        PermissionUtils(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

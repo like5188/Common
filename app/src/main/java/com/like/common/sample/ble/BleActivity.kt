@@ -1,17 +1,17 @@
 package com.like.common.sample.ble
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import androidx.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBleBinding
 import com.like.common.util.PermissionUtils
@@ -66,11 +66,7 @@ class BleActivity : AppCompatActivity() {
                     finish()
                 })
     }
-    private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils().apply {
-            init(this@BleActivity)
-        }
-    }
+    private val mPermissionUtils: PermissionUtils by lazy { PermissionUtils(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

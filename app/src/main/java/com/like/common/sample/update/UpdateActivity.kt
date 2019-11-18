@@ -25,16 +25,13 @@ class UpdateActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityUpdateBinding>(this, com.like.common.sample.R.layout.activity_update)
     }
 
-    private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils().apply {
-            init(this@UpdateActivity)
-        }
-    }
+    private val mPermissionUtils: PermissionUtils by lazy { PermissionUtils(this) }
+    private val mUpdate: Update by lazy { Update(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        Update.with(this).setDownloader(RetrofitDownloader(application))
+        mUpdate.setDownloader(RetrofitDownloader(application))
     }
 
     @SuppressLint("MissingPermission")
@@ -57,23 +54,20 @@ class UpdateActivity : AppCompatActivity() {
                                 .setCancelable(false)
                                 .setPositiveButton("马上更新") { dialog, _ ->
                                     // 开始更新
-                                    Update.with(this).url(updateInfo.downUrl)
-                                            .versionName(updateInfo.versionName)
-                                            .shower(
-                                                    NotificationShower(
-                                                            this,
-                                                            com.like.common.sample.R.mipmap.ic_launcher,
-                                                            PendingIntent.getActivity(
-                                                                    this,
-                                                                    2,
-                                                                    Intent(this, MainActivity::class.java),
-                                                                    PendingIntent.FLAG_UPDATE_CURRENT
-                                                            ),
-                                                            "a",
-                                                            "更新"
-                                                    )
-                                            )
-                                            .download()
+                                    mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
+                                    mUpdate.setShower(NotificationShower(
+                                            this,
+                                            com.like.common.sample.R.mipmap.ic_launcher,
+                                            PendingIntent.getActivity(
+                                                    this,
+                                                    2,
+                                                    Intent(this, MainActivity::class.java),
+                                                    PendingIntent.FLAG_UPDATE_CURRENT
+                                            ),
+                                            "a",
+                                            "更新"
+                                    ))
+                                    mUpdate.download()
                                     dialog.dismiss()
                                 }
                                 .setNegativeButton("下次再说") { dialog, _ ->
@@ -106,15 +100,14 @@ class UpdateActivity : AppCompatActivity() {
                                 .setCancelable(false)
                                 .setPositiveButton("马上更新") { dialog, _ ->
                                     // 开始更新
-                                    Update.with(this).url(updateInfo.downUrl)
-                                            .versionName(updateInfo.versionName)
-                                            .shower(ForceUpdateDialogShower(this.supportFragmentManager))
-                                            .download()
+                                    mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
+                                    mUpdate.setShower(ForceUpdateDialogShower(this.supportFragmentManager))
+                                    mUpdate.download()
                                     dialog.dismiss()
                                 }.setNegativeButton("暂不使用") { dialog, _ ->
                                     // 需要强制更新，但是不更新
                                     dialog.dismiss()
-                                    AppUtils.getInstance(this@UpdateActivity).exitApp()
+                                    AppUtils.exitApp(this)
                                 }
                                 .show()
                     }

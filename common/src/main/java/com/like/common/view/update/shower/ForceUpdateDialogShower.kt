@@ -39,8 +39,8 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
     override fun onDownloadSuccessful(totalSize: Long) {
         downloadProgressDialog.setTitle("下载完成！")
         downloadProgressDialog.setProgress(totalSize, totalSize)
-//        downloadProgressDialog.dismiss()
-//        AppUtils.getInstance(downloadProgressDialog.context).exitApp()
+        downloadProgressDialog.dismiss()
+        AppUtils.exitApp(downloadProgressDialog.context)
     }
 
     override fun onDownloadFailed(throwable: Throwable?) {
@@ -64,7 +64,7 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
             binding.ivClose.setOnClickListener {
                 LiveDataBus.post(TAG_PAUSE)
                 dismiss()
-                AppUtils.getInstance(context).exitApp()
+                AppUtils.exitApp(context)
             }
             resources.displayMetrics?.widthPixels?.let { screenWidth ->
                 setWidth((screenWidth * 0.9).toInt())
