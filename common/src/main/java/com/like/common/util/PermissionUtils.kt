@@ -103,12 +103,12 @@ class PermissionUtils {
     private var mContext: Context? = null
     private var mRxPermissions: RxPermissions? = null
 
-    fun init(fragmentActivity: FragmentActivity) {
+    constructor(fragmentActivity: FragmentActivity) {
         mContext = fragmentActivity.applicationContext
         mRxPermissions = RxPermissions(fragmentActivity)
     }
 
-    fun init(fragment: Fragment) {
+    constructor(fragment: Fragment) {
         mContext = fragment.context?.applicationContext
         mRxPermissions = RxPermissions(fragment)
     }
