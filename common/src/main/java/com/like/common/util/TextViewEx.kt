@@ -38,14 +38,14 @@ inline fun TextView.setSpan(content: String, startEndPairs: List<Pair<Int, Int>>
 
 inline fun TextView.setSpan(content: String, start: Int, end: Int, @ColorRes color: Int) {
     val string = SpannableString(content)
-    string.setSpan(ForegroundColorSpan(this.context.resources.getColor(color)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    string.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, color)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     this.text = string
 }
 
 inline fun TextView.setSpan(content: String, positions: IntArray, @ColorRes color: Int) {
     val string = SpannableString(content)
     positions.forEach {
-        string.setSpan(ForegroundColorSpan(this.context.resources.getColor(color)), it, it + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        string.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, color)), it, it + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
     this.text = string
 }

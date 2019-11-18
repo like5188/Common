@@ -77,13 +77,13 @@ class DownloadController {
     fun cont() {
         val downloader = mDownloader ?: return
         val downloadFile = mDownloadFile ?: return
-        val showerDelegate = mShowerDelegate ?: return
+        mShowerDelegate.shower ?: return
         val url = mUrl
         if (url.isEmpty()) return
 
         if (mCallLiveData != null) return// 正在下载
 
-        showerDelegate.onDownloadPending()
+        mShowerDelegate.onDownloadPending()
 
         // 下载
         GlobalScope.launch(Dispatchers.Main) {
@@ -93,18 +93,18 @@ class DownloadController {
                     DownloadInfo.Status.STATUS_PENDING -> {
                     }
                     DownloadInfo.Status.STATUS_RUNNING -> {
-                        showerDelegate.onDownloadRunning(downloadInfo.cachedSize, downloadInfo.totalSize)
+                        mShowerDelegate.onDownloadRunning(downloadInfo.cachedSize, downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_PAUSED -> {
-                        showerDelegate.onDownloadPaused(downloadInfo.cachedSize, downloadInfo.totalSize)
+                        mShowerDelegate.onDownloadPaused(downloadInfo.cachedSize, downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_SUCCESSFUL -> {
                         mApkUtils.install(downloadFile)
                         mCallLiveData = null
-                        showerDelegate.onDownloadSuccessful(downloadInfo.totalSize)
+                        mShowerDelegate.onDownloadSuccessful(downloadInfo.totalSize)
                     }
                     DownloadInfo.Status.STATUS_FAILED -> {
-                        showerDelegate.onDownloadFailed(downloadInfo.throwable)
+                        mShowerDelegate.onDownloadFailed(downloadInfo.throwable)
                         mCallLiveData = null// 用于点击继续重试
                     }
                 }

@@ -24,7 +24,7 @@ fun mainThread(f: () -> Unit) {
 class MainThreadExecutor : Executor {
     private val mainThreadHandler: Handler by lazy { Handler(Looper.getMainLooper()) }
 
-    override fun execute(command: Runnable?) {
+    override fun execute(command: Runnable) {
         mainThreadHandler.post(command)
     }
 
