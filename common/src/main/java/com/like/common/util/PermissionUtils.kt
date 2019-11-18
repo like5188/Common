@@ -88,9 +88,7 @@ class PermissionUtils {
                 return true
             }
 
-            if (context == null) {
-                throw IllegalArgumentException("Can't check permissions for null context")
-            }
+            requireNotNull(context) { "Can't check permissions for null context" }
 
             for (perm in perms) {
                 if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
