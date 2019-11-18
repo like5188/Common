@@ -37,6 +37,8 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
     }
 
     override fun onDownloadSuccessful(totalSize: Long) {
+        downloadProgressDialog.setTitle("下载完成！")
+        downloadProgressDialog.setProgress(totalSize, totalSize)
 //        downloadProgressDialog.dismiss()
 //        AppUtils.getInstance(downloadProgressDialog.context).exitApp()
     }

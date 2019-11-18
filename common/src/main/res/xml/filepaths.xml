@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
+    name：只是名字，无意义。
+    path：是指定目录下在子路径。
+
     root-path	        .
     files-path	        Context.getFilesDir()
     cache-path	        Context.getCacheDir()
@@ -9,6 +12,10 @@
     external-cache-path	Context.getExternalCacheDir()
     -->
     <paths>
+        <!--在android8.0以上的手机上，读取共享文件时，如apk更新的编程中，我们把apk下载后，要安装时，去读取这个apk文件就出现如下错误：Failed to find configured root that contains-->
+        <root-path
+            name="root_path"
+            path="." />
         <!--拍照需要-->
         <external-path
             name="camera_photos"
