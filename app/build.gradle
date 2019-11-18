@@ -41,7 +41,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // 用于配置该BuildType是否启用自动拆分多个Dex的功能。一般用程序中代码太多，超过了65535个方法的时候。
-//        multiDexEnabled true// api 21及以上，可以只添加此配置，不需要再引用com.android.support:multidex:1.0.3
+        multiDexEnabled true// api 21及以上，可以只添加此配置，不需要再引用com.android.support:multidex:1.0.3
     }
 
     lintOptions {
