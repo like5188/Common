@@ -30,10 +30,8 @@ class Update {
         mContext = fragment.context?.applicationContext ?: throw IllegalArgumentException("can not get context from fragment")
         mDownloadController = DownloadController(fragment)
         mPermissionUtils = PermissionUtils(fragment)
-        val fragmentManager = fragment.fragmentManager
-        val application = fragment.activity?.application
-        if (fragmentManager != null && application != null) {
-            init(fragmentManager, application)
+        fragment.activity?.application?.let {
+            init(fragment.childFragmentManager, it)
         }
     }
 

@@ -80,10 +80,8 @@ dependencies {
 
     // paging
     api 'androidx.paging:paging-runtime:2.1.0'
-    api "android.arch.paging:rxjava2:1.0.1"
 
     // work
-    api 'android.arch.work:work-runtime-ktx:1.0.1'
     api 'androidx.work:work-runtime-ktx:2.2.0'// workmanager 对协程的支持：suspend
 
     // room
