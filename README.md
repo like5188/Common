@@ -123,6 +123,7 @@
 
 5、常用第三方库的引用
 ```java
+   testImplementation 'junit:junit:4.12'
    // constraint
    api 'androidx.constraintlayout:constraintlayout:1.1.3'
 
@@ -160,23 +161,26 @@
    // arouter
    api 'com.alibaba:arouter-api:1.5.0'
 
-   // room
-   api 'androidx.room:room-runtime:2.2.1'
-   api 'androidx.room:room-rxjava2:2.2.1'
-
    // ViewModelProviders
    api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
    // paging
    api 'androidx.paging:paging-runtime:2.1.0'
-   api "android.arch.paging:rxjava2:1.0.1"
 
    // work
-   api 'android.arch.work:work-runtime-ktx:1.0.1'
+   api 'androidx.work:work-runtime-ktx:2.2.0'// workmanager 对协程的支持：suspend
+
+   // room
+   api 'androidx.room:room-runtime:2.2.1'
+   api 'androidx.room:room-rxjava2:2.2.1'
+   api 'androidx.room:room-ktx:2.2.1'// room 对协程的支持：suspend
 
    // coroutines
    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
+   api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02'// Activity 或 Fragment 对协程的支持：lifecycleScope
+   api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc02'// ViewModel 对协程的支持：viewModelScope
+   api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc02'// livedata 对协程的支持：liveData{}
 
    // glide
    api "com.github.bumptech.glide:glide:4.8.0"
@@ -200,11 +204,12 @@
 
    api 'com.google.android:flexbox:1.0.0'
 
-   api 'com.github.like5188:Repository:2.1.6'
-   api 'com.github.like5188:LiveDataRecyclerView:2.0.9'
+   api 'com.github.like5188:Repository:2.1.7'
+   api 'com.github.like5188:LiveDataRecyclerView:2.1.0'
    api 'com.github.like5188:LibRetrofit:2.0.5'
    api 'com.github.like5188.LiveDataBus:livedatabus:2.0.4'
-   api 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.4'// gradle 3.2.1 不需要添加这个引用，升级到 3.5.2 后必须添加，否则会提示找不到其中的类。
+   api 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.4'
+// gradle 3.2.1 不需要添加这个引用，升级到 3.5.2 后必须添加，否则会提示找不到其中的类。
 
    // 使用 com.like.common.view.update 中的更新功能时需要
    kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.4'
