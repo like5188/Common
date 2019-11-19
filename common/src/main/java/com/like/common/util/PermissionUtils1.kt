@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -182,7 +181,6 @@ class PermissionUtils1 {
      * @param onError           出错后需要执行的代码
      * @param perms             需要申请的所有权限
      */
-    @SuppressLint("CheckResult")
     fun checkPermissions(
             onGranted: (() -> Unit),
             onDenied: (() -> Unit)? = null,
