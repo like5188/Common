@@ -22,7 +22,7 @@ class ImageActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityImageBinding>(this, R.layout.activity_image)
     }
     private val file: File by lazy {
-        File(StorageUtils.InternalStorageHelper.getBaseDir(this), "cache3.jpg")
+        File(StorageUtils.InternalStorageHelper.getCacheDir(this), "cache3.jpg")
     }
     private val bitmap: Bitmap by lazy {
         BitmapFactory.decodeFile(file.absolutePath)
