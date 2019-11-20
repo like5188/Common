@@ -1,6 +1,5 @@
 package com.like.common.util;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -64,11 +63,14 @@ public class StorageUtils {
          * 获取根目录
          *
          * @param context
-         * @return /data/data/packagename
+         * @return /data/data(user/0)/packagename
          */
-        @SuppressLint("SdCardPath")
         public static String getBaseDir(Context context) {
-            return "/data/data/" + context.getApplicationContext().getPackageName();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                return context.getApplicationContext().getDataDir().getAbsolutePath();
+            } else {
+                return context.getApplicationContext().getFilesDir().getParent();
+            }
         }
 
         /**
@@ -105,32 +107,21 @@ public class StorageUtils {
         }
 
         /**
-         * 获取数据库默认存储路径
+         * 获取数据库所在的路径
          *
          * @param context
-         * @return /data/data/packagename/databases
+         * @param name    子路径或者文件名
+         * @return /data/data(user/0)/packagename/databases/name
          */
-        @SuppressLint("SdCardPath")
-        public static String getDatabaseDir(Context context) {
-            return "/data/data/" + context.getApplicationContext().getPackageName() + "/databases";
-        }
-
-        /**
-         * 获取指定数据库名称的文件
-         *
-         * @param context
-         * @param databaseName
-         * @return /data/data/packagename/databases/databaseName
-         */
-        public static File getDatabaseFile(Context context, String databaseName) {
-            return context.getApplicationContext().getDatabasePath(databaseName);
+        public static File getDatabasePath(Context context, String name) {
+            return context.getApplicationContext().getDatabasePath(name);
         }
 
         /**
          * 获取Files目录
          *
          * @param context
-         * @return /data/data/packagename/files
+         * @return /data/data(user/0)/packagename/files
          */
         public static File getFilesDir(Context context) {
             return context.getApplicationContext().getFilesDir();
@@ -140,7 +131,7 @@ public class StorageUtils {
          * 获取Cache目录
          *
          * @param context
-         * @return /data/data/packagename/cache
+         * @return /data/data(user/0)/packagename/cache
          */
         public static File getCacheDir(Context context) {
             return context.getApplicationContext().getCacheDir();
@@ -229,8 +220,7 @@ public class StorageUtils {
          *
          * @param context
          * @param type    Environment.DIRECTORY_DCIM、Environment.DIRECTORY_DOWNLOADS、Environment.DIRECTORY_PICTURES 等等
-         * @return /storage/emulated/(0/1/...)/Android/data/packagename/files/(
-         * DCIM/Download/Pictures/...)
+         * @return /storage/emulated/(0/1/...)/Android/data/packagename/files/(DCIM/Download/Pictures/...)
          */
         public static File getPrivateFilesDir(Context context, String type) {
             if (isMounted()) {
