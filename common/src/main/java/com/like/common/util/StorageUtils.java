@@ -65,7 +65,7 @@ public class StorageUtils {
          * @param context
          * @return /data/data(user/0)/packagename
          */
-        public static String getBaseDir(Context context) {
+        private static String getBaseDir(Context context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 return context.getApplicationContext().getDataDir().getAbsolutePath();
             } else {
@@ -156,7 +156,7 @@ public class StorageUtils {
          *
          * @return /storage/emulated/(0/1/...)或者/mnt/sdcard
          */
-        public static String getBaseDir() {
+        private static String getBaseDir() {
             if (isMounted()) {
                 return Environment.getExternalStorageDirectory().getAbsolutePath();
             }
