@@ -203,26 +203,13 @@ public class StorageUtils {
         }
 
         /**
-         * 获取公共目录下的指定类型的文件目录
-         *
-         * @param type Environment.DIRECTORY_DCIM、Environment.DIRECTORY_DOWNLOADS、Environment.DIRECTORY_PICTURES 等等
-         * @return /storage/emulated/(0/1/...)/(DCIM/Download/Pictures/...)
-         */
-        public static File getPublicDir(String type) {
-            if (isMounted()) {
-                return Environment.getExternalStoragePublicDirectory(type);
-            }
-            return null;
-        }
-
-        /**
          * 获取私有目录下的Files目录
          *
          * @param context
          * @param type    Environment.DIRECTORY_DCIM、Environment.DIRECTORY_DOWNLOADS、Environment.DIRECTORY_PICTURES 等等
          * @return /storage/emulated/(0/1/...)/Android/data/packagename/files/(DCIM/Download/Pictures/...)
          */
-        public static File getPrivateFilesDir(Context context, String type) {
+        public static File getExternalFilesDir(Context context, String type) {
             if (isMounted()) {
                 return context.getApplicationContext().getExternalFilesDir(type);
             }
@@ -235,7 +222,7 @@ public class StorageUtils {
          * @param context
          * @return /storage/emulated/(0/1/...)/Android/data/packagename/cache
          */
-        public static File getPrivateCacheDir(Context context) {
+        public static File getExternalCacheDir(Context context) {
             if (isMounted()) {
                 return context.getApplicationContext().getExternalCacheDir();
             }
