@@ -3,6 +3,7 @@ package com.like.common.sample
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -24,11 +25,13 @@ import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.update.UpdateActivity
+import com.like.common.util.PermissionUtils
 import com.like.common.util.SPUtils
 import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private val mToolbarUtils: ToolbarUtils by lazy {
@@ -94,6 +97,19 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoFlexBoxActivity(view: View) {
         startActivity(Intent(this, FlexBoxActivity::class.java))
+
+//        val p = PermissionUtils(this)
+//        p.checkStoragePermissionGroup {
+//            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "1.txt")
+//            if (file.exists()) {
+//                Log.v("tag", "读取文件:$file ${file.readText()}")
+//                file.delete()
+//            } else {
+//                Log.i("tag", "创建文件:$file")
+//                file.createNewFile()
+//                file.writeText("123")
+//            }
+//        }
     }
 
     fun gotoBleActivity(view: View) {
