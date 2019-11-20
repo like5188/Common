@@ -3,13 +3,13 @@ package com.like.common.util.ble
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
-import androidx.lifecycle.MutableLiveData
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.annotation.RequiresPermission
+import androidx.lifecycle.MutableLiveData
 import com.like.common.util.ble.blestate.ConnectedState
 import com.like.common.util.ble.blestate.IBleState
 import com.like.common.util.ble.blestate.InitedState
@@ -175,7 +175,11 @@ class BleManager(
      */
     fun close() {
         mBleState?.close()
-        context.unregisterReceiver(mReceiver)
+        try {
+            context.unregisterReceiver(mReceiver)
+        } catch (e: Exception) {// 避免 java.lang.IllegalArgumentException: Receiver not registered
+            e.printStackTrace()
+        }
     }
 
     /**

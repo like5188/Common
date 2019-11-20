@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -23,10 +22,11 @@ import com.tbruyelle.rxpermissions2.RxPermissions
  * 因为该权限也属于同一 STORAGE 权限组并且也在清单中注册过。如果该应用针对的是 Android 8.0，
  * 则系统此时仅会授予 READ_EXTERNAL_STORAGE；不过，如果该应用后来又请求 WRITE_EXTERNAL_STORAGE，则系统会立即授予该权限，而不会提示用户。
  *
- * ②申请的权限必须在AndroidManifest.xml中申明，否则不会弹出系统权限授权的对话框。<br/>
+ * ②申请的危险权限必须在AndroidManifest.xml中申明，否则不会弹出系统权限授权的对话框。<br/>
  */
 class PermissionUtils {
     companion object {
+        // 以下是所有危险权限分组。便于后面的 checkXxxPermissionGroup() 方法分组请求权限。
         private val CALENDAR = arrayOf(
                 android.Manifest.permission.READ_CALENDAR,
                 android.Manifest.permission.WRITE_CALENDAR
@@ -82,26 +82,10 @@ class PermissionUtils {
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-
-        fun hasPermissions(context: Context?, @Size(min = 1) vararg perms: String): Boolean {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                return true
-            }
-
-            requireNotNull(context) { "Can't check permissions for null context" }
-
-            for (perm in perms) {
-                if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
-                    return false
-                }
-            }
-
-            return true
-        }
     }
 
-    private var mContext: Context? = null
-    private var mRxPermissions: RxPermissions? = null
+    private val mContext: Context?
+    private val mRxPermissions: RxPermissions
 
     constructor(fragmentActivity: FragmentActivity) {
         mContext = fragmentActivity.applicationContext
@@ -113,101 +97,147 @@ class PermissionUtils {
         mRxPermissions = RxPermissions(fragment)
     }
 
-    fun checkCalendarPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkCalendarPermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *CALENDAR)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *CALENDAR)
     }
 
-    fun checkCameraPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkCameraPermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *CAMERA)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *CAMERA)
     }
 
-    fun checkContactsPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkContactsPermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *CONTACTS)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *CONTACTS)
     }
 
-    fun checkLocationPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkLocationPermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *LOCATION)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *LOCATION)
     }
 
-    fun checkMicrophonePermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkMicrophonePermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *MICROPHONE)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *MICROPHONE)
     }
 
-    fun checkPhonePermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkPhonePermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            checkPermissions(onGranted = onGranted, onError = onError, perms = *PHONE_26)
+            checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *PHONE_26)
         } else {
-            checkPermissions(onGranted = onGranted, onError = onError, perms = *PHONE)
+            checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *PHONE)
         }
     }
 
-    fun checkSensorsPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    @RequiresApi(Build.VERSION_CODES.KITKAT_WATCH)
+    fun checkSensorsPermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            checkPermissions(onGranted = onGranted, onError = onError, perms = *SENSORS_20)
-        }
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *SENSORS_20)
     }
 
-    fun checkSmsPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkSmsPermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *SMS)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *SMS)
     }
 
-    fun checkStoragePermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
-            onError: ((Throwable) -> Unit)? = null
+    fun checkStoragePermissionGroup(
+            onDenied: (() -> Unit)? = null,
+            onError: ((Throwable) -> Unit)? = null,
+            onGranted: (() -> Unit)
     ) {
-        checkPermissions(onGranted = onGranted, onError = onError, perms = *STORAGE)
+        checkPermissions(onGranted = onGranted, onDenied = onDenied, onError = onError, perms = *STORAGE)
     }
 
     /**
      * 检查权限并执行代码
      *
-     * @param onGranted         权限是否通过，然后需要执行的代码
+     * @param onGranted         权限通过，然后需要执行的代码
+     * @param onDenied          权限被拒绝，然后需要执行的代码
      * @param onError           出错后需要执行的代码
      * @param perms             需要申请的所有权限
      */
-    @SuppressLint("CheckResult")
     fun checkPermissions(
-            onGranted: ((Boolean) -> Unit)? = null,
+            @Size(min = 1) vararg perms: String,
+            onDenied: (() -> Unit)? = null,
             onError: ((Throwable) -> Unit)? = null,
-            @Size(min = 1) vararg perms: String
+            onGranted: (() -> Unit)
     ) {
-        if (!hasPermissions(mContext, *perms)) {
-            mRxPermissions?.request(*perms)
-                    ?.subscribe(
+        when {
+            mContext == null -> {
+                onError?.invoke(UnsupportedOperationException("context is null"))
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {// 6.0 及其以上
+                if (hasPermissions(mContext, *perms)) {
+                    // 如果是普通权限：说明在 AndroidManifest.xml 中声明了。
+                    // 如果是危险权限：说明在 AndroidManifest.xml 中声明，并且授予了权限。
+                    onGranted.invoke()
+                } else {
+                    // 如果是普通权限：说明在 AndroidManifest.xml 中没有声明，调用 request() 方法都会返回 false。
+                    // 如果是危险权限：如果在 AndroidManifest.xml 中没有声明，调用 request() 方法都会返回 false；如果声明了，调用该方法会弹出权限授权框。
+                    mRxPermissions.request(*perms).subscribe(
                             {
-                                onGranted?.invoke(it)
+                                if (it) {
+                                    onGranted.invoke()
+                                } else {
+                                    onDenied?.invoke()
+                                }
                             },
                             {
                                 onError?.invoke(it)
                             }
                     )
-        } else {
-            onGranted?.invoke(true)
+                }
+            }
+            else -> {// 6.0 以下
+                if (hasPermissions(mContext, *perms)) {// 在 AndroidManifest.xml 中声明了。
+                    onGranted.invoke()
+                } else {// 在 AndroidManifest.xml 中没有声明。
+                    onDenied?.invoke()
+                }
+            }
         }
+    }
+
+    /**
+     * 检查是否拥有指定权限。
+     * 普通权限：只是检查是否在 AndroidManifest.xml 中声明了权限。
+     * 危险权限：
+     *      ①、6.0 以下：只是检查是否在 AndroidManifest.xml 中声明了权限。
+     *      ②、6.0 以上：除了要检查是否在 AndroidManifest.xml 中声明了权限外，还检查是否授予了权限。
+     */
+    private fun hasPermissions(context: Context, @Size(min = 1) vararg perms: String): Boolean {
+        for (perm in perms) {
+            if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
     }
 
 }

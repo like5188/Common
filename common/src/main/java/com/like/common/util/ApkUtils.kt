@@ -47,8 +47,7 @@ class ApkUtils {
 
         // android6.0以上需要申请危险权限：<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            permissionUtils.checkStoragePermissions({
-                if (!it) return@checkStoragePermissions
+            permissionUtils.checkStoragePermissionGroup {
                 // android8.0 安装未知来源应用需要添加权限Manifest.permission.REQUEST_INSTALL_PACKAGES
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     if (!context.packageManager.canRequestPackageInstalls()) {
@@ -72,7 +71,7 @@ class ApkUtils {
                 } else {
                     install(context, apkFile)
                 }
-            })
+            }
         } else {
             GlobalScope.launch {
                 // 通过device file explorer来查看这个下载下来的cache中的文件时，发现这个文件本身的权限是600，即使是文件拥有者只有读写权限，而没有运行权限。所以无法进行安装

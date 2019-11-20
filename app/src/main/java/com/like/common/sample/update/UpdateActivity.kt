@@ -1,6 +1,5 @@
 package com.like.common.sample.update
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.PendingIntent
@@ -35,83 +34,79 @@ class UpdateActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun update(view: View) {
-        mPermissionUtils.checkPermissions(
-                {
-                    val updateInfo = UpdateInfo().apply {
-                        // 是否需要更新。0：不需要；1：需要；2：必须更新
-                        isUpdate = 1
-                        versionName = "1.0"
-                        versionCode = 1
-                        downUrl = "http://shouji.360tpcdn.com/181222/f31d56919d5dfbdb479a8e5746a75146/com.snda.wifilocating_181219.apk"
-                        message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
-                    }
-                    when (updateInfo.isUpdate) {
-                        // 需要更新
-                        1 -> AlertDialog.Builder(this)
-                                .setTitle("发现新版本，是否更新？")
-                                .setMessage(updateInfo.message)
-                                .setCancelable(false)
-                                .setPositiveButton("马上更新") { dialog, _ ->
-                                    // 开始更新
-                                    mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                                    mUpdate.setShower(NotificationShower(
+        mPermissionUtils.checkStoragePermissionGroup {
+            val updateInfo = UpdateInfo().apply {
+                // 是否需要更新。0：不需要；1：需要；2：必须更新
+                isUpdate = 1
+                versionName = "1.0"
+                versionCode = 1
+                downUrl = "http://shouji.360tpcdn.com/181222/f31d56919d5dfbdb479a8e5746a75146/com.snda.wifilocating_181219.apk"
+                message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
+            }
+            when (updateInfo.isUpdate) {
+                // 需要更新
+                1 -> AlertDialog.Builder(this)
+                        .setTitle("发现新版本，是否更新？")
+                        .setMessage(updateInfo.message)
+                        .setCancelable(false)
+                        .setPositiveButton("马上更新") { dialog, _ ->
+                            // 开始更新
+                            mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
+                            mUpdate.setShower(NotificationShower(
+                                    this,
+                                    com.like.common.sample.R.mipmap.ic_launcher,
+                                    PendingIntent.getActivity(
                                             this,
-                                            com.like.common.sample.R.mipmap.ic_launcher,
-                                            PendingIntent.getActivity(
-                                                    this,
-                                                    2,
-                                                    Intent(this, MainActivity::class.java),
-                                                    PendingIntent.FLAG_UPDATE_CURRENT
-                                            ),
-                                            "a",
-                                            "更新"
-                                    ))
-                                    mUpdate.download()
-                                    dialog.dismiss()
-                                }
-                                .setNegativeButton("下次再说") { dialog, _ ->
-                                    // 需要更新，但是不更新
-                                    dialog.dismiss()
-                                }
-                                .show()
-                    }
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+                                            2,
+                                            Intent(this, MainActivity::class.java),
+                                            PendingIntent.FLAG_UPDATE_CURRENT
+                                    ),
+                                    "a",
+                                    "更新"
+                            ))
+                            mUpdate.download()
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton("下次再说") { dialog, _ ->
+                            // 需要更新，但是不更新
+                            dialog.dismiss()
+                        }
+                        .show()
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
     fun forceUpdate(view: View) {
-        mPermissionUtils.checkPermissions(
-                {
-                    val updateInfo = UpdateInfo().apply {
-                        // 是否需要更新。0：不需要；1：需要；2：必须更新
-                        isUpdate = 2
-                        versionName = "1.0"
-                        versionCode = 1
-                        downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
-                        message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
-                    }
-                    when (updateInfo.isUpdate) {
-                        // 必须强制更新
-                        2 -> AlertDialog.Builder(this)
-                                .setTitle("发现新版本，您必须更新后才能继续使用！")
-                                .setMessage(updateInfo.message)
-                                .setCancelable(false)
-                                .setPositiveButton("马上更新") { dialog, _ ->
-                                    // 开始更新
-                                    mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                                    mUpdate.setShower(ForceUpdateDialogShower(this.supportFragmentManager))
-                                    mUpdate.download()
-                                    dialog.dismiss()
-                                }.setNegativeButton("暂不使用") { dialog, _ ->
-                                    // 需要强制更新，但是不更新
-                                    dialog.dismiss()
-                                    AppUtils.exitApp(this)
-                                }
-                                .show()
-                    }
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        mPermissionUtils.checkStoragePermissionGroup {
+            val updateInfo = UpdateInfo().apply {
+                // 是否需要更新。0：不需要；1：需要；2：必须更新
+                isUpdate = 2
+                versionName = "1.0"
+                versionCode = 1
+                downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
+                message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
+            }
+            when (updateInfo.isUpdate) {
+                // 必须强制更新
+                2 -> AlertDialog.Builder(this)
+                        .setTitle("发现新版本，您必须更新后才能继续使用！")
+                        .setMessage(updateInfo.message)
+                        .setCancelable(false)
+                        .setPositiveButton("马上更新") { dialog, _ ->
+                            // 开始更新
+                            mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
+                            mUpdate.setShower(ForceUpdateDialogShower(this.supportFragmentManager))
+                            mUpdate.download()
+                            dialog.dismiss()
+                        }.setNegativeButton("暂不使用") { dialog, _ ->
+                            // 需要强制更新，但是不更新
+                            dialog.dismiss()
+                            AppUtils.exitApp(this)
+                        }
+                        .show()
+            }
+        }
     }
 
 }

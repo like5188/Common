@@ -138,13 +138,18 @@ class BleActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun initBle() {
         mPermissionUtils.checkPermissions(
-                {
-                    mBleManager.initBle()
-                },
-                {
+                android.Manifest.permission.BLUETOOTH_ADMIN,
+                android.Manifest.permission.BLUETOOTH,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                onDenied = {
                     mBinding.tvStatus.text = BleStatus.INIT_FAILURE.des
                 },
-                android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                onError = {
+                    mBinding.tvStatus.text = BleStatus.INIT_FAILURE.des
+                },
+                onGranted = {
+                    mBleManager.initBle()
+                })
     }
 
     override fun onDestroy() {
