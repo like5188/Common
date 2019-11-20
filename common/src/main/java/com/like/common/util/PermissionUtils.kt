@@ -177,10 +177,10 @@ class PermissionUtils {
     /**
      * 检查权限并执行代码
      *
-     * @param onGranted         权限通过，然后需要执行的代码
+     * @param perms             需要申请的所有权限
      * @param onDenied          权限被拒绝，然后需要执行的代码
      * @param onError           出错后需要执行的代码
-     * @param perms             需要申请的所有权限
+     * @param onGranted         权限通过，然后需要执行的代码
      */
     fun checkPermissions(
             @Size(min = 1) vararg perms: String,
