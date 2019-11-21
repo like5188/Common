@@ -447,9 +447,11 @@ object ImageUtils {
         if (null == bitmap || bitmap.isRecycled) {
             Log.i(TAG, "原图：$bitmap")
         } else {
-            val file = File(StorageUtils.ExternalStorageHelper.getPublicDir(Environment.DIRECTORY_PICTURES), "cache1.jpg")
-            store(bitmap, file)
-            Log.v(TAG, "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
+                val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "cache1.jpg")
+                store(bitmap, file)
+                Log.v(TAG, "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            }
         }
     }
 
@@ -457,9 +459,11 @@ object ImageUtils {
         if (null == bitmap || bitmap.isRecycled) {
             Log.d(TAG, "缩略图：$bitmap")
         } else {
-            val file = File(StorageUtils.ExternalStorageHelper.getPublicDir(Environment.DIRECTORY_PICTURES), "cache2.jpg")
-            store(bitmap, file)
-            Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
+                val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "cache2.jpg")
+                store(bitmap, file)
+                Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            }
         }
     }
 
