@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.like.common.view.callback.RxCallback
@@ -88,17 +87,14 @@ class ApkUtils {
     private fun install(context: Context, apkFile: File) {
         try {
             val installIntent = Intent()
-            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 // android7.0 需要通过FileProvider来获取文件uri。并开始强制启用StrictMode“严苛模式”，这个策略禁止在app外暴露 “file://“URI。
                 // 为了与其他应用共享文件，你应该发送"content://"URI ，并授予临时访问权限。授予这个临时访问权限的最签单方法就是使用FileProvider类。
                 installIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION // 授予目录临时共享权限
-                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile) // 格式：content://xxx
-            } else {// android7.0 之前
-                Uri.fromFile(apkFile)// 格式：file://xxx
             }
             installIntent.action = Intent.ACTION_VIEW
             installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            installIntent.setDataAndType(uri, "application/vnd.android.package-archive")
+            installIntent.setDataAndType(apkFile.getUri(context), "application/vnd.android.package-archive")
             context.startActivity(installIntent)
         } catch (e: Exception) {
             e.printStackTrace()
