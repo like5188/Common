@@ -12,7 +12,7 @@ class SPUtils private constructor() {
     private lateinit var prefs: SharedPreferences
 
     companion object {
-        private const val NOT_INIT_EXCEPTION = "you must addNotificationChannel SPUtils by addNotificationChannel() first"
+        private const val NOT_INIT_EXCEPTION = "you must init SPUtils by init() first"
         private const val SHARED_PREFERENCES_FILE_SUFFIX = ".sharedPreferences"
 
         @JvmStatic
@@ -38,8 +38,8 @@ class SPUtils private constructor() {
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalArgumentException::class)
     fun <T> get(key: String, default: T): T {
-        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
-        if (default == null) throw IllegalArgumentException("default can not be null")
+        require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
+        default ?: throw IllegalArgumentException("default can not be null")
         return with(prefs) {
             when (default) {
                 is String -> getString(key, default) as T
@@ -54,8 +54,8 @@ class SPUtils private constructor() {
 
     @Throws(IllegalArgumentException::class)
     fun <T> put(key: String, value: T) {
-        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
-        if (value == null) throw IllegalArgumentException("value can not be null")
+        require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
+        value ?: throw IllegalArgumentException("value can not be null")
         with(prefs.edit()) {
             when (value) {
                 is String -> putString(key, value)
@@ -74,7 +74,7 @@ class SPUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun remove(key: String) {
-        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
         prefs.edit().remove(key).apply()
     }
 
@@ -83,7 +83,7 @@ class SPUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun clear() {
-        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
         prefs.edit().clear().apply()
     }
 
@@ -94,7 +94,7 @@ class SPUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun contains(key: String): Boolean {
-        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
         return prefs.contains(key)
     }
 
@@ -104,7 +104,7 @@ class SPUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun getAll(): Map<String, Any?> {
-        if (!::prefs.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
         return prefs.all
     }
 
@@ -112,29 +112,29 @@ class SPUtils private constructor() {
      * SharedPreferences属性委托
      * 支持基本数据类型：String、Boolean、Int、Long、Float
      *
-     * 示例：var xxx by Delegate()
+     * 示例：var xxx by SharedPreferencesDelegate()
      *
      * @property context
      * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
      * @property key                        存储的key
      * @property default                    获取失败时，返回的默认值
      */
-    class Delegate<T>(
+    class SharedPreferencesDelegate<T>(
             private val context: Context,
             private val sharedPreferencesFileName: String,
             private val key: String,
             private val default: T
     ) : ReadWriteProperty<Any?, T> {
         init {
-            SPUtils.getInstance().init(context, sharedPreferencesFileName)
+            getInstance().init(context, sharedPreferencesFileName)
         }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            return SPUtils.getInstance().get(key, default)!!
+            return getInstance().get(key, default)!!
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            SPUtils.getInstance().put(key, value)
+            getInstance().put(key, value)
         }
 
     }
