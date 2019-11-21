@@ -1,5 +1,7 @@
 package com.like.common.view.update.shower
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,11 +10,10 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.like.common.R
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
-import com.like.common.util.notify
+import com.like.common.util.notifyNotification
 import com.like.common.util.toDataStorageUnit
 import com.like.common.view.update.TAG_PAUSE_OR_CONTINUE
 import com.like.livedatabus.LiveDataBus
@@ -48,7 +49,8 @@ class NotificationShower(
     private val notification by lazy {
         val builder =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && channelId.isNotEmpty() && channelName.isNotEmpty()) {
-                    context.createNotificationChannel(channelId, channelName, NotificationManagerCompat.IMPORTANCE_LOW)
+                    val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+                    context.createNotificationChannel(channel)
                     NotificationCompat.Builder(context, channelId)
                 } else {
                     NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
@@ -90,7 +92,7 @@ class NotificationShower(
             remoteViews.setTextViewText(R.id.tv_size, "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}")
             remoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
         }
-        context.notify(NOTIFICATION_ID, notification)
+        context.notifyNotification(NOTIFICATION_ID, notification)
     }
 
 }

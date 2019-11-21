@@ -1,21 +1,23 @@
 package com.like.common.sample.notification
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.RemoteViews
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.MainActivity
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityNotificationBinding
 import com.like.common.util.createNotificationChannel
-import com.like.common.util.gotoNotificationChannelSetting
-import com.like.common.util.notify
+import com.like.common.util.gotoChannelNotificationSetting
+import com.like.common.util.notifyNotification
 
 class NotificationActivity : AppCompatActivity() {
     private val mBinding: ActivityNotificationBinding by lazy {
@@ -27,11 +29,13 @@ class NotificationActivity : AppCompatActivity() {
         mBinding
     }
 
+    @SuppressLint("NewApi")
     fun createNotificationChannel(view: View) {
-        createNotificationChannel("d", "通知测试", NotificationManagerCompat.IMPORTANCE_LOW)
+        val channel = NotificationChannel("d", "通知测试", NotificationManager.IMPORTANCE_LOW)
+        createNotificationChannel(channel)
     }
 
-    fun notify(view: View) {
+    fun notifyNotification(view: View) {
         val contentView = RemoteViews(packageName, R.layout.view_download_progress_for_notification)
         contentView.setImageViewResource(R.id.iv_small_icon, R.mipmap.ic_launcher)
         contentView.setImageViewResource(R.id.iv_large_icon, R.mipmap.ic_launcher)
@@ -44,7 +48,7 @@ class NotificationActivity : AppCompatActivity() {
                 0
         )
 
-        notify(
+        notifyNotification(
                 2,
                 NotificationCompat.Builder(this, "d")
                         .setContentTitle("收到一条渠道d的消息")
@@ -59,8 +63,8 @@ class NotificationActivity : AppCompatActivity() {
         )
     }
 
-    fun gotoNotificationChannelSetting(view: View) {
-        gotoNotificationChannelSetting("d")
+    fun gotoChannelNotificationSetting(view: View) {
+        gotoChannelNotificationSetting("d")
     }
 
 }
