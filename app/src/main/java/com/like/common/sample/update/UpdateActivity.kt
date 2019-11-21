@@ -6,9 +6,12 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.RemoteViews
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.MainActivity
+import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityUpdateBinding
 import com.like.common.util.AppUtils
 import com.like.common.util.PermissionUtils
@@ -52,18 +55,24 @@ class UpdateActivity : AppCompatActivity() {
                         .setPositiveButton("马上更新") { dialog, _ ->
                             // 开始更新
                             mUpdate.setUrl(updateInfo.downUrl, updateInfo.versionName)
-                            mUpdate.setShower(NotificationShower(
-                                    this,
-                                    com.like.common.sample.R.mipmap.ic_launcher,
-                                    PendingIntent.getActivity(
-                                            this,
-                                            2,
-                                            Intent(this, MainActivity::class.java),
-                                            PendingIntent.FLAG_UPDATE_CURRENT
-                                    ),
-                                    "a",
-                                    "更新"
-                            ))
+                            mUpdate.setShower(
+                                    object : NotificationShower(this@UpdateActivity) {
+                                        override fun onBuilderCreated(builder: NotificationCompat.Builder) {
+                                            builder.setSmallIcon(R.mipmap.ic_launcher)
+                                                    .setContentIntent(PendingIntent.getActivity(
+                                                            this@UpdateActivity,
+                                                            2,
+                                                            Intent(this@UpdateActivity, MainActivity::class.java),
+                                                            PendingIntent.FLAG_UPDATE_CURRENT
+                                                    ))
+                                        }
+
+                                        override fun onRemoteViewsCreated(remoteViews: RemoteViews) {
+                                            remoteViews.setImageViewResource(R.id.iv_small_icon, R.drawable.icon_0)
+                                            remoteViews.setImageViewResource(R.id.iv_large_icon, R.drawable.banner)
+                                        }
+                                    }
+                            )
                             mUpdate.download()
                             dialog.dismiss()
                         }
