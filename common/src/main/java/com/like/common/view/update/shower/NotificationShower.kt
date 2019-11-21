@@ -51,13 +51,12 @@ class NotificationShower(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && channelId.isNotEmpty() && channelName.isNotEmpty()) {
                     val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
                     context.createNotificationChannel(channel)
-                    NotificationCompat.Builder(context, channelId)
+                    NotificationCompat.Builder(context, channelId).setCustomContentView(remoteViews)
                 } else {
                     NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
                 }
-        builder.setCustomContentView(remoteViews)
+        builder.setSmallIcon(smallIcon)
 //                .setOngoing(true)// 将Ongoing设为true 那么notification将不能滑动删除
-                .setSmallIcon(smallIcon)
                 .setContentIntent(clickPendingIntent)
                 .build()
     }

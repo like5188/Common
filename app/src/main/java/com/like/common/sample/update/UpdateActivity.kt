@@ -40,7 +40,7 @@ class UpdateActivity : AppCompatActivity() {
                 isUpdate = 1
                 versionName = "1.0"
                 versionCode = 1
-                downUrl = "http://shouji.360tpcdn.com/181222/f31d56919d5dfbdb479a8e5746a75146/com.snda.wifilocating_181219.apk"
+                downUrl = "https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk"
                 message = "bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改bug修改"
             }
             when (updateInfo.isUpdate) {
