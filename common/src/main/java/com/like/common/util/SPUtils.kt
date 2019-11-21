@@ -108,34 +108,35 @@ class SPUtils private constructor() {
         return prefs.all
     }
 
-    /**
-     * SharedPreferences属性委托
-     * 支持基本数据类型：String、Boolean、Int、Long、Float
-     *
-     * 示例：var xxx by SharedPreferencesDelegate()
-     *
-     * @property context
-     * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
-     * @property key                        存储的key
-     * @property default                    获取失败时，返回的默认值
-     */
-    class SharedPreferencesDelegate<T>(
-            private val context: Context,
-            private val sharedPreferencesFileName: String,
-            private val key: String,
-            private val default: T
-    ) : ReadWriteProperty<Any?, T> {
-        init {
-            getInstance().init(context, sharedPreferencesFileName)
-        }
+}
 
-        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            return getInstance().get(key, default)!!
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            getInstance().put(key, value)
-        }
-
+/**
+ * SharedPreferences属性委托
+ * 支持基本数据类型：String、Boolean、Int、Long、Float
+ *
+ * 示例：var xxx by SharedPreferencesDelegate()
+ *
+ * @property context
+ * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
+ * @property key                        存储的key
+ * @property default                    获取失败时，返回的默认值
+ */
+class SharedPreferencesDelegate<T>(
+        private val context: Context,
+        private val sharedPreferencesFileName: String,
+        private val key: String,
+        private val default: T
+) : ReadWriteProperty<Any?, T> {
+    init {
+        SPUtils.getInstance().init(context, sharedPreferencesFileName)
     }
+
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return SPUtils.getInstance().get(key, default)!!
+    }
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        SPUtils.getInstance().put(key, value)
+    }
+
 }
