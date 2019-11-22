@@ -1,7 +1,6 @@
 package com.like.common.view.banner
 
 import android.content.Context
-import androidx.viewpager.widget.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 

@@ -12,17 +12,17 @@ object PhoneUtils {
     /**
      * android系统版本
      */
-    fun getReleaseVersion() = Build.VERSION.RELEASE
+    fun getReleaseVersion(): String = Build.VERSION.RELEASE
 
     /**
      * 手机品牌
      */
-    fun getBrand() = Build.BRAND
+    fun getBrand(): String = Build.BRAND
 
     /**
      * 手机型号
      */
-    fun getModel() = Build.MODEL
+    fun getModel(): String = Build.MODEL
 
     /**
      * SDK版本号

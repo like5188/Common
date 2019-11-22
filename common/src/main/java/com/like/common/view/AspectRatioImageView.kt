@@ -2,7 +2,8 @@ package com.like.common.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.ImageView
+import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import com.like.common.R
 
 /**
@@ -16,7 +17,7 @@ import com.like.common.R
     app:height_ratio="3.5"
     app:width_ratio="2.5"/>
  */
-class AspectRatioImageView(context: Context, attrs: AttributeSet?) : ImageView(context, attrs) {
+class AspectRatioImageView(context: Context, attrs: AttributeSet?) : AppCompatImageView(context, attrs) {
     companion object {
         private const val DEFAULT_WIDTH_RATIO = 2.5f
         private const val DEFAULT_HEIGHT_RATIO = 3.5f

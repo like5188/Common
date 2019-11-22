@@ -5,7 +5,7 @@ import android.os.Looper
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-val IO_EXECUTOR = Executors.newSingleThreadExecutor()!!
+val IO_EXECUTOR = Executors.newSingleThreadExecutor()
 val NETWORK_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors().coerceAtLeast(2))!!// 至少为 2 最大与 CPU 数相同
 val MAIN_EXECUTOR = MainThreadExecutor()
 

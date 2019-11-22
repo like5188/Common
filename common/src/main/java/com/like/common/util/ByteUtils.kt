@@ -4,7 +4,7 @@ import java.util.*
 
 object ByteUtils {
 
-    fun bytes2String(bytes: ByteArray?) = Arrays.toString(bytes)
+    fun bytes2String(bytes: ByteArray?): String = Arrays.toString(bytes)
 
     /**
      * 把地址转换成字节数组

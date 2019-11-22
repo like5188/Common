@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
@@ -19,7 +20,7 @@ object RxJavaUtils {
      * @param callbackInMain 回调，在UI线程执行
      */
     @JvmStatic
-    fun timer(interval: Long, callbackInMain: (Long) -> Unit) = timer(interval, AndroidSchedulers.mainThread(), callbackInMain)
+    fun timer(interval: Long, callbackInMain: (Long) -> Unit): Disposable = timer(interval, AndroidSchedulers.mainThread(), callbackInMain)
 
     /**
      * 延时执行某任务
@@ -28,7 +29,7 @@ object RxJavaUtils {
      * @param callback 回调，在scheduler线程执行
      */
     @JvmStatic
-    fun timer(interval: Long, scheduler: Scheduler, callback: (Long) -> Unit) =
+    fun timer(interval: Long, scheduler: Scheduler, callback: (Long) -> Unit): Disposable =
             Observable.timer(interval, TimeUnit.MILLISECONDS)
                     .observeOn(scheduler)
                     .subscribe { callback(it) }
@@ -40,7 +41,7 @@ object RxJavaUtils {
      * @param callbackInMain 回调，在UI线程执行
      */
     @JvmStatic
-    fun interval(interval: Long, callbackInMain: (Long) -> Unit) = interval(interval, AndroidSchedulers.mainThread(), callbackInMain)
+    fun interval(interval: Long, callbackInMain: (Long) -> Unit): Disposable = interval(interval, AndroidSchedulers.mainThread(), callbackInMain)
 
     /**
      * 周期性执行某任务
@@ -49,7 +50,7 @@ object RxJavaUtils {
      * @param callback 回调，在scheduler线程执行
      */
     @JvmStatic
-    fun interval(interval: Long, scheduler: Scheduler, callback: (Long) -> Unit) =
+    fun interval(interval: Long, scheduler: Scheduler, callback: (Long) -> Unit): Disposable =
             Observable.interval(interval, TimeUnit.MILLISECONDS)// 隔一段时间产生一个数字，然后就结束，可以理解为延迟产生数字
                     .observeOn(scheduler)
                     .subscribe { callback(it) }
@@ -62,7 +63,7 @@ object RxJavaUtils {
      * @param period       周期，毫秒
      */
     @JvmStatic
-    fun interval(initialDelay: Long, period: Long, callbackInMain: (Long) -> Unit) =
+    fun interval(initialDelay: Long, period: Long, callbackInMain: (Long) -> Unit): Disposable =
             interval(initialDelay, period, AndroidSchedulers.mainThread(), callbackInMain)
 
     /**
@@ -73,7 +74,7 @@ object RxJavaUtils {
      * @param period       周期，毫秒
      */
     @JvmStatic
-    fun interval(initialDelay: Long, period: Long, scheduler: Scheduler, callback: (Long) -> Unit) =
+    fun interval(initialDelay: Long, period: Long, scheduler: Scheduler, callback: (Long) -> Unit): Disposable =
             Observable.interval(initialDelay, period, TimeUnit.MILLISECONDS)
                     .observeOn(scheduler)
                     .subscribe { callback(it) }
@@ -87,7 +88,7 @@ object RxJavaUtils {
      * @param <T>
     </T> */
     @JvmStatic
-    fun <T> runAndUpdate(invoke: () -> T, callback: (T) -> Unit, scheduler: Scheduler, error: ((Throwable) -> Unit)? = null) =
+    fun <T> runAndUpdate(invoke: () -> T, callback: (T) -> Unit, scheduler: Scheduler, error: ((Throwable) -> Unit)? = null): Disposable =
             Observable.create(ObservableOnSubscribe<T> { emitter ->
                 emitter.onNext(invoke())
                 emitter.onComplete()
@@ -106,7 +107,7 @@ object RxJavaUtils {
      * @param callback 回调，在UI线程
     </T> */
     @JvmStatic
-    fun <T> runComputationAndUpdate(invoke: () -> T, callback: (T) -> Unit, error: ((Throwable) -> Unit)? = null) =
+    fun <T> runComputationAndUpdate(invoke: () -> T, callback: (T) -> Unit, error: ((Throwable) -> Unit)? = null): Disposable =
             runAndUpdate(invoke, callback, Schedulers.computation(), error)
 
     /**
@@ -116,7 +117,7 @@ object RxJavaUtils {
      * @param callback 回调，在UI线程
     </T> */
     @JvmStatic
-    fun <T> runIoAndUpdate(invoke: () -> T, callback: (T) -> Unit, error: ((Throwable) -> Unit)? = null) =
+    fun <T> runIoAndUpdate(invoke: () -> T, callback: (T) -> Unit, error: ((Throwable) -> Unit)? = null): Disposable =
             runAndUpdate(invoke, callback, Schedulers.io(), error)
 
     /**
@@ -127,7 +128,7 @@ object RxJavaUtils {
      * @param callback 结果回调，在UI线程
      */
     @JvmStatic
-    fun <T> addTextChangedListener(searchEditText: TextView, searchObservable: (String) -> Observable<T>, callback: (T) -> Unit, error: ((Throwable) -> Unit)? = null) =
+    fun <T> addTextChangedListener(searchEditText: TextView, searchObservable: (String) -> Observable<T>, callback: (T) -> Unit, error: ((Throwable) -> Unit)? = null): Disposable =
             RxTextView.textChanges(searchEditText)
                     .debounce(300, TimeUnit.MILLISECONDS, Schedulers.io())
                     //对用户输入的关键字进行过滤
@@ -150,7 +151,7 @@ object RxJavaUtils {
      * @param clickListener
      */
     @JvmStatic
-    fun addOnClickListener(interval: Long, view: View, clickListener: View.OnClickListener) =
+    fun addOnClickListener(interval: Long, view: View, clickListener: View.OnClickListener): Disposable =
             RxView.clicks(view)
                     .throttleFirst(interval, TimeUnit.MILLISECONDS)
                     .subscribe { clickListener.onClick(view) }

@@ -24,7 +24,7 @@ import com.like.common.view.update.shower.NotificationShower
  */
 class UpdateActivity : AppCompatActivity() {
     private val mBinding: ActivityUpdateBinding by lazy {
-        DataBindingUtil.setContentView<ActivityUpdateBinding>(this, com.like.common.sample.R.layout.activity_update)
+        DataBindingUtil.setContentView<ActivityUpdateBinding>(this, R.layout.activity_update)
     }
 
     private val mPermissionUtils: PermissionUtils by lazy { PermissionUtils(this) }

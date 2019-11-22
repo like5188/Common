@@ -96,7 +96,7 @@ object ImageUtils {
     fun drawable2Bitmap(drawable: Drawable): Bitmap? = when (drawable) {
         is BitmapDrawable -> drawable.bitmap
         is NinePatchDrawable -> {
-            val bitmap = Bitmap.createBitmap(
+            val bitmap = createBitmap(
                     drawable.getIntrinsicWidth(),
                     drawable.getIntrinsicHeight(),
                     if (drawable.getOpacity() != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565)
@@ -124,7 +124,7 @@ object ImageUtils {
             val width = bitmap.width
             val height = bitmap.height
 
-            val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val result = createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(result)
             canvas.drawARGB(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
 
@@ -398,7 +398,7 @@ object ImageUtils {
             val matrix = Matrix()
             matrix.postRotate(degree.toFloat())
             // 创建新的图片
-            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            return createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         }
         return bitmap
     }

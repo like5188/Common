@@ -1,7 +1,6 @@
 package com.like.common.sample.activitytest
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R

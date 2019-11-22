@@ -1,10 +1,7 @@
 package com.like.common.view.dragview.view
 
-import android.R
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -13,6 +10,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -37,7 +35,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                     addRule(CENTER_IN_PARENT)
                 }
                 adapter = MyPagerAdapter(mPagerViews)
-                addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
+                addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
                         curClickPosition = position
                         mConfig.setData(infos[curClickPosition])
@@ -177,7 +175,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
             }
         }
         val progressBar: ProgressBar by lazy {
-            ProgressBar(context, null, R.attr.progressBarStyleInverse).apply {
+            ProgressBar(context, null, android.R.attr.progressBarStyleInverse).apply {
                 layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                     addRule(CENTER_IN_PARENT)
                 }

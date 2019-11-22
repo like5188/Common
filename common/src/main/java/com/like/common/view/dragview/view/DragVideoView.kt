@@ -1,6 +1,5 @@
 package com.like.common.view.dragview.view
 
-import android.R
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -32,7 +31,7 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
         }
     }
     private val progressBar: ProgressBar by lazy {
-        ProgressBar(context, null, R.attr.progressBarStyleInverse).apply {
+        ProgressBar(context, null, android.R.attr.progressBarStyleInverse).apply {
             layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
                 addRule(CENTER_IN_PARENT)
             }
