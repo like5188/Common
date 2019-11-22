@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -46,20 +45,20 @@ fun Context.isWiFiConnected(): Boolean {
 /**
  * 打开无线网络设置界面
  */
-fun Activity.openWirelessSettings() {
+fun Context.openWirelessSettings() {
     startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
 }
 
 /**
  * 打开wifi设置界面
  */
-fun Activity.openWifiSettings() {
+fun Context.openWifiSettings() {
     startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
 }
 
 /**
  * 打开移动数据设置界面
  */
-fun Activity.openDataRoamingSettings() {
+fun Context.openDataRoamingSettings() {
     startActivity(Intent(Settings.ACTION_DATA_ROAMING_SETTINGS))
 }
