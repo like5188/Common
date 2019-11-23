@@ -38,12 +38,10 @@ object ToastHelper {
     fun show(context: Context, text: CharSequence?, duration: Int = Toast.LENGTH_SHORT, gravity: Int = Gravity.BOTTOM) {
         context.runOnUiThread {
             if (toast == null) {
-                toast = Toast.makeText(context.applicationContext, text?.toString()
-                        ?: "null", duration)
+                toast = Toast.makeText(context.applicationContext, text?.toString() ?: "null", duration)
             } else {
                 // 替换Toast的mNextView，避免gravity无效
-                toast?.view = Toast.makeText(context.applicationContext, text?.toString()
-                        ?: "null", Toast.LENGTH_SHORT).view
+                toast?.view = Toast.makeText(context.applicationContext, text?.toString() ?: "null", Toast.LENGTH_SHORT).view
             }
             toast?.setGravity(gravity, 0, 0)
             toast?.show()
@@ -69,9 +67,6 @@ object ToastHelper {
         }
     }
 
-    /**
-     * Execute [f] on the application UI thread.
-     */
     private fun Context.runOnUiThread(f: Context.() -> Unit) {
         if (Looper.getMainLooper() === Looper.myLooper()) f() else handler.post { f() }
     }
