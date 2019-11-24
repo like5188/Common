@@ -6,10 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityCoroutinesBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 /**
  * 协程测试
@@ -26,12 +23,18 @@ class CoroutinesActivity : AppCompatActivity() {
 
     fun test0(view: View) {
         GlobalScope.launch {
-            // 在后台启动一个新的协程并继续
-            delay(1000L) // 无阻塞的等待1秒钟（默认时间单位是毫秒）
-            println("World!") // 在延迟后打印输出
+            println("1 ${Thread.currentThread().name}") // 在延迟后打印输出
+            launch(Dispatchers.Main) {
+                println("2 ${Thread.currentThread().name}") // 在延迟后打印输出
+            }
+            println("3 ${Thread.currentThread().name}") // 在延迟后打印输出
+            delay(100)
+            launch(Dispatchers.Main) {
+                delay(100)
+                println("4 ${Thread.currentThread().name}") // 在延迟后打印输出
+            }
+            println("5 ${Thread.currentThread().name}") // 在延迟后打印输出
         }
-        println("Hello,") // 主线程的协程将会继续等待
-        Thread.sleep(2000L) // 阻塞主线程2秒钟来保证 JVM 存活
     }
 
     fun test1(view: View) {
