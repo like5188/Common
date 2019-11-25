@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 小圆点指示器控制器
  */
-public class DotIndicatorControl implements IIndicatorControl {
+public class DotIndicatorController implements IIndicatorController {
     private Context mContext;
     private int mPreSelectedPosition = 0;
     private LinearLayout mIndicatorContainer;
@@ -28,7 +28,7 @@ public class DotIndicatorControl implements IIndicatorControl {
      * @param selectedIndicatorResIds 选中状态的指示器图片id，可以为多个，比如每个选中状态对应一种颜色。
      * @param indicatorPadding        指示器之间的间隔，默认10dp
      */
-    public DotIndicatorControl(Context context, LinearLayout indicatorContainer, int indicatorCount, int normalIndicatorResId, List<Integer> selectedIndicatorResIds, int indicatorPadding) {
+    public DotIndicatorController(Context context, LinearLayout indicatorContainer, int indicatorCount, int normalIndicatorResId, List<Integer> selectedIndicatorResIds, int indicatorPadding) {
         mContext = context;
         mIndicatorContainer = indicatorContainer;
         mIndicatorCount = indicatorCount;

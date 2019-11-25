@@ -43,7 +43,7 @@ class BannerView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
     /**
      * 指示器控制器
      */
-    private var mIndicatorControl: IIndicatorControl? = null
+    private var mIndicatorController: IIndicatorController? = null
     /**
      * ViewPager的当前位置
      */
@@ -122,7 +122,7 @@ class BannerView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
                 override fun onPageSelected(position: Int) {
                     mCurPosition = position
                     // 设置指示器
-                    mIndicatorControl?.select(mCurPosition % adapter.mRealCount)
+                    mIndicatorController?.select(mCurPosition % adapter.mRealCount)
                 }
 
                 // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
@@ -157,7 +157,7 @@ class BannerView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
             else -> {
                 // 初始化指示器视图
                 if (indicatorContainer != null) {
-                    mIndicatorControl = DotIndicatorControl(context, indicatorContainer, adapter.mRealCount, normalIndicatorResId, selectedIndicatorResIds, indicatorPadding)
+                    mIndicatorController = DotIndicatorController(context, indicatorContainer, adapter.mRealCount, normalIndicatorResId, selectedIndicatorResIds, indicatorPadding)
                 }
                 viewPager!!.setScrollable(true)
                 if (cycleInterval > 0) {
@@ -187,7 +187,7 @@ class BannerView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
 
     fun destroy() {
         mCycleHandler.removeCallbacksAndMessages(null)
-        mIndicatorControl?.destroy()
+        mIndicatorController?.destroy()
     }
 
 }
