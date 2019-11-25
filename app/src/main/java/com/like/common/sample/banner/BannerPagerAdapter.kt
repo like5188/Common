@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.like.common.sample.R
 import com.like.common.util.GlideUtils
 import com.like.common.view.banner.BaseBannerPagerAdapter
-import com.like.common.sample.R
 
-class BannerPagerAdapter(context: Context, list: List<BannerInfo>) : BaseBannerPagerAdapter<BannerInfo>(context, list) {
+class BannerPagerAdapter(context: Context, list: List<BannerInfo>) : BaseBannerPagerAdapter<BannerInfo>(list) {
     private val layoutInflater = LayoutInflater.from(context)
     private val mGlideUtils = GlideUtils(context)
 

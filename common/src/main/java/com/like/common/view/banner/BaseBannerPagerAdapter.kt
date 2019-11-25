@@ -1,10 +1,9 @@
 package com.like.common.view.banner
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 
-abstract class BaseBannerPagerAdapter<T>(val context: Context, val list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
+abstract class BaseBannerPagerAdapter<T>(val list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
     val mRealCount = list.size
 
     override fun getCount(): Int = Int.MAX_VALUE
