@@ -1,14 +1,13 @@
 package com.like.common.sample.banner
 
 import android.content.Context
-import androidx.viewpager.widget.PagerAdapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.like.common.util.GlideUtils
 import com.like.common.sample.R
+import com.like.common.util.GlideUtils
 
 class MyViewPagerAdapter(val context: Context, val list: List<BannerInfo>) : androidx.viewpager.widget.PagerAdapter() {
     private val layoutInflater = LayoutInflater.from(context)

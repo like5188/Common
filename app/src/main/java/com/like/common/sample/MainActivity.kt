@@ -94,6 +94,19 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoFlexBoxActivity(view: View) {
         startActivity(Intent(this, FlexBoxActivity::class.java))
+
+//        val p = PermissionUtils(this)
+//        p.checkStoragePermissionGroup {
+//            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "1.txt")
+//            if (file.exists()) {
+//                Log.v("tag", "读取文件:$file ${file.readText()}")
+//                file.delete()
+//            } else {
+//                Log.i("tag", "创建文件:$file")
+//                file.createNewFile()
+//                file.writeText("123")
+//            }
+//        }
     }
 
     fun gotoBleActivity(view: View) {

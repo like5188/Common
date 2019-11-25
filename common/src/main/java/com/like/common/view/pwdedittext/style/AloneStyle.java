@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import com.like.common.view.pwdedittext.textshap.CircleShape;
 import com.like.common.view.pwdedittext.textshap.ITextShape;
 
 /**
@@ -21,11 +22,11 @@ public class AloneStyle implements IStyle {
 
     /**
      * @param pwdRectSpacing 每个密码框间隔,单位px，默认为5px
-     * @param textShap       密码的形状{@link com.like.commonlib.view.pwdedittext.textshap.CircleShap}
+     * @param textShape       密码的形状{@link CircleShape}
      */
-    public AloneStyle(int pwdRectSpacing, ITextShape textShap) {
+    public AloneStyle(int pwdRectSpacing, ITextShape textShape) {
         mPwdRectSpacing = pwdRectSpacing;
-        mTextShap = textShap;
+        mTextShap = textShape;
     }
 
     @Override

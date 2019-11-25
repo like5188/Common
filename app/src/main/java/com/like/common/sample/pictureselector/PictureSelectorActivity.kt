@@ -1,13 +1,12 @@
 package com.like.common.sample.pictureselector
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityPictureSelectorBinding
 import com.like.common.util.PermissionUtils
@@ -63,12 +62,10 @@ class PictureSelectorActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mPermissionUtils.checkPermissions(
-                {
-                    //包括裁剪和压缩后的缓存，要在上传成功后调用，注意：需要系统sd卡权限
-                    PictureFileUtils.deleteCacheDirFile(this)
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        mPermissionUtils.checkStoragePermissionGroup {
+            //包括裁剪和压缩后的缓存，要在上传成功后调用，注意：需要系统sd卡权限
+            PictureFileUtils.deleteCacheDirFile(this)
+        }
     }
 
 }

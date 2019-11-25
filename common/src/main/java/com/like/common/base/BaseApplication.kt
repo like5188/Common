@@ -57,7 +57,7 @@ open class BaseApplication : Application() {
         System.exit(0)
     }
 
-    fun getAllActivities() = activities
+    fun getAllActivities(): List<Activity> = activities
 
     /**
      * 关闭所有Activity

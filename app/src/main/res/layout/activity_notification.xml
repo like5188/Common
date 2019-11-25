@@ -15,13 +15,13 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="notify"
+            android:onClick="notifyNotification"
             android:text="发送通知" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="gotoNotificationChannelSetting"
+            android:onClick="gotoChannelNotificationSetting"
             android:text="设置通知" />
 
     </LinearLayout>

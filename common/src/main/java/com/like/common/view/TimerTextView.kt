@@ -1,13 +1,13 @@
 package com.like.common.view
 
+import android.content.Context
+import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import android.content.Context
-import androidx.appcompat.widget.AppCompatTextView
-import android.util.AttributeSet
-import com.like.common.util.SPUtils
+import com.like.common.util.SharedPreferencesDelegate
 import java.util.*
 
 /**
@@ -21,7 +21,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     /**
      * 倒计时总时长(毫秒)
      */
-    private var totalTime: Long by SPUtils.Delegate(
+    private var totalTime: Long by SharedPreferencesDelegate(
             context,
             "${context.packageName}${this::class.java.simpleName}",
             "totalTime",
@@ -30,7 +30,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     /**
      * 开始倒计时的时间（毫秒），用于退出界面后，重新计时时候的计算。
      */
-    private var startTime: Long by SPUtils.Delegate(
+    private var startTime: Long by SharedPreferencesDelegate(
             context,
             "${context.packageName}${this::class.java.simpleName}",
             "startTime",
@@ -39,7 +39,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     /**
      * 倒计时的步长（毫秒）
      */
-    private var step: Long by SPUtils.Delegate(
+    private var step: Long by SharedPreferencesDelegate(
             context,
             "${context.packageName}${this::class.java.simpleName}",
             "step",

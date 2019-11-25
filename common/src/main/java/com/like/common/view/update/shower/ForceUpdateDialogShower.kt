@@ -3,6 +3,7 @@ package com.like.common.view.update.shower
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.FragmentManager
 import com.like.common.R
 import com.like.common.base.BaseDialogFragment
 import com.like.common.databinding.DialogFragmentDownloadProgressBinding
@@ -17,7 +18,7 @@ import kotlin.math.roundToInt
 /**
  * 强制更新使用对话框显示进度条
  */
-class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app.FragmentManager) : IShower {
+class ForceUpdateDialogShower(private val fragmentManager: FragmentManager) : IShower {
     private val downloadProgressDialog = DefaultDownloadProgressDialog()
 
     override fun onDownloadPending() {
@@ -39,8 +40,6 @@ class ForceUpdateDialogShower(private val fragmentManager: androidx.fragment.app
     override fun onDownloadSuccessful(totalSize: Long) {
         downloadProgressDialog.setTitle("下载完成！")
         downloadProgressDialog.setProgress(totalSize, totalSize)
-        downloadProgressDialog.dismiss()
-        AppUtils.exitApp(downloadProgressDialog.context)
     }
 
     override fun onDownloadFailed(throwable: Throwable?) {

@@ -52,6 +52,7 @@
 ```java
     ble
     validator
+    ApkUtils
     AppUtils
     ArrayUtils
     BcdUtils
@@ -75,9 +76,8 @@
     ListEx.kt
     Logger
     MD5Utils
-    NetWorkUtils
+    NetWorkEx.kt
     NotificationEx.kt
-    PathUtils
     PermissionUtils
     PhoneUtils
     RadioManager
@@ -85,7 +85,7 @@
     RxJavaUtils
     SerializableUtils
     SingletonHolder
-    SPUtils
+    SPUtils.kt
     StatusBarUtils
     StorageUtils
     TabLayoutUtils
@@ -93,6 +93,7 @@
     TimerUtils
     ToastUtils.kt
     UnitEx.kt
+    UriEx.kt
     VibrateUtils
     ViewEx.kt
     ZxingUtils

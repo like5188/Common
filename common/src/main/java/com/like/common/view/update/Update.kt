@@ -71,10 +71,9 @@ class Update {
 
     @SuppressLint("MissingPermission")
     fun download() {
-        mPermissionUtils.checkStoragePermissions({
-            if (!it) return@checkStoragePermissions
+        mPermissionUtils.checkStoragePermissionGroup {
             mDownloadController.cont()
-        })
+        }
     }
 
     fun cancel() {

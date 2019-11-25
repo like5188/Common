@@ -11,10 +11,11 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.NinePatchDrawable
 import android.media.ExifInterface
 import android.os.Build
-import androidx.annotation.RequiresPermission
+import android.os.Environment
 import android.util.Base64
 import android.util.Log
 import android.widget.ImageView
+import androidx.annotation.RequiresPermission
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -95,7 +96,7 @@ object ImageUtils {
     fun drawable2Bitmap(drawable: Drawable): Bitmap? = when (drawable) {
         is BitmapDrawable -> drawable.bitmap
         is NinePatchDrawable -> {
-            val bitmap = Bitmap.createBitmap(
+            val bitmap = createBitmap(
                     drawable.getIntrinsicWidth(),
                     drawable.getIntrinsicHeight(),
                     if (drawable.getOpacity() != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565)
@@ -123,7 +124,7 @@ object ImageUtils {
             val width = bitmap.width
             val height = bitmap.height
 
-            val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val result = createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(result)
             canvas.drawARGB(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
 
@@ -397,7 +398,7 @@ object ImageUtils {
             val matrix = Matrix()
             matrix.postRotate(degree.toFloat())
             // 创建新的图片
-            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            return createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         }
         return bitmap
     }
@@ -446,9 +447,11 @@ object ImageUtils {
         if (null == bitmap || bitmap.isRecycled) {
             Log.i(TAG, "原图：$bitmap")
         } else {
-            val file = File(StorageUtils.ExternalStorageHelper.getBaseDir(), "cache1.jpg")
-            store(bitmap, file)
-            Log.v(TAG, "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
+                val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "cache1.jpg")
+                store(bitmap, file)
+                Log.v(TAG, "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            }
         }
     }
 
@@ -456,9 +459,11 @@ object ImageUtils {
         if (null == bitmap || bitmap.isRecycled) {
             Log.d(TAG, "缩略图：$bitmap")
         } else {
-            val file = File(StorageUtils.ExternalStorageHelper.getBaseDir(), "cache2.jpg")
-            store(bitmap, file)
-            Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
+                val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "cache2.jpg")
+                store(bitmap, file)
+                Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            }
         }
     }
 

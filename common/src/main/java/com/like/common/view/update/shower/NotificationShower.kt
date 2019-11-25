@@ -1,18 +1,18 @@
 package com.like.common.view.update.shower
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.RemoteViews
-import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.like.common.R
 import com.like.common.util.cancelNotification
 import com.like.common.util.createNotificationChannel
-import com.like.common.util.notify
+import com.like.common.util.notifyNotification
 import com.like.common.util.toDataStorageUnit
 import com.like.common.view.update.TAG_PAUSE_OR_CONTINUE
 import com.like.livedatabus.LiveDataBus
@@ -21,18 +21,13 @@ import com.like.retrofit.utils.getCustomNetworkMessage
 /**
  * 普通更新使用通知栏显示进度条
  */
-class NotificationShower(
-        private val context: Context,
-        @DrawableRes smallIcon: Int,
-        clickPendingIntent: PendingIntent,
-        channelId: String,
-        channelName: String
-) : IShower {
+abstract class NotificationShower(private val context: Context) : IShower {
     companion object {
         private const val NOTIFICATION_ID = 1111
     }
 
     private val remoteViews by lazy {
+        val remoteViews = RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
         val controlIntent = PendingIntent.getBroadcast(
                 context,
                 1,
@@ -42,23 +37,27 @@ class NotificationShower(
                 },
                 PendingIntent.FLAG_UPDATE_CURRENT
         )
-        RemoteViews(context.packageName, R.layout.view_download_progress_for_notification)
-                .apply { setOnClickPendingIntent(R.id.iv_controller, controlIntent) }
+        remoteViews.setOnClickPendingIntent(R.id.iv_controller, controlIntent)
+        onRemoteViewsCreated(remoteViews)
+        remoteViews
     }
     private val notification by lazy {
-        val builder =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && channelId.isNotEmpty() && channelName.isNotEmpty()) {
-                    context.createNotificationChannel(channelId, channelName, NotificationManagerCompat.IMPORTANCE_LOW)
-                    NotificationCompat.Builder(context, channelId)
-                } else {
-                    NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
-                }
-        builder.setCustomContentView(remoteViews)
-//                .setOngoing(true)// 将Ongoing设为true 那么notification将不能滑动删除
-                .setSmallIcon(smallIcon)
-                .setContentIntent(clickPendingIntent)
-                .build()
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "update"
+            val channelName = "更新"
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            context.createNotificationChannel(channel)
+            NotificationCompat.Builder(context, channelId).setCustomContentView(remoteViews)
+        } else {
+            NotificationCompat.Builder(context).setCustomBigContentView(remoteViews)// 避免显示不完全。
+        }
+        onBuilderCreated(builder)
+        builder.build()
     }
+
+    abstract fun onBuilderCreated(builder: NotificationCompat.Builder)
+
+    abstract fun onRemoteViewsCreated(remoteViews: RemoteViews)
 
     override fun onDownloadPending() {
         updateNotification("正在连接服务器...")
@@ -90,7 +89,7 @@ class NotificationShower(
             remoteViews.setTextViewText(R.id.tv_size, "${currentSize.toDataStorageUnit()}/${totalSize.toDataStorageUnit()}")
             remoteViews.setProgressBar(R.id.pb_progress, 100, progress, false)
         }
-        context.notify(NOTIFICATION_ID, notification)
+        context.notifyNotification(NOTIFICATION_ID, notification)
     }
 
 }

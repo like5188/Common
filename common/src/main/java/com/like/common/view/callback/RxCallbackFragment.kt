@@ -2,7 +2,6 @@ package com.like.common.view.callback
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.util.Log
 import io.reactivex.subjects.PublishSubject
 

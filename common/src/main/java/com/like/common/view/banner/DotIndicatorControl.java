@@ -10,9 +10,9 @@ import com.like.common.util.ImageUtils;
 import java.util.List;
 
 /**
- * 指示器控制器
+ * 小圆点指示器控制器
  */
-public class IndicatorViewControl {
+public class DotIndicatorControl implements IIndicatorControl {
     private Context mContext;
     private int mPreSelectedPosition = 0;
     private LinearLayout mIndicatorContainer;
@@ -28,7 +28,7 @@ public class IndicatorViewControl {
      * @param selectedIndicatorResIds 选中状态的指示器图片id，可以为多个，比如每个选中状态对应一种颜色。
      * @param indicatorPadding        指示器之间的间隔，默认10dp
      */
-    public IndicatorViewControl(Context context, LinearLayout indicatorContainer, int indicatorCount, int normalIndicatorResId, List<Integer> selectedIndicatorResIds, int indicatorPadding) {
+    public DotIndicatorControl(Context context, LinearLayout indicatorContainer, int indicatorCount, int normalIndicatorResId, List<Integer> selectedIndicatorResIds, int indicatorPadding) {
         mContext = context;
         mIndicatorContainer = indicatorContainer;
         mIndicatorCount = indicatorCount;
@@ -78,6 +78,7 @@ public class IndicatorViewControl {
         }
     }
 
+    @Override
     public void select(int position) {
         mIndicatorContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId);
         int selectResId = 0;
@@ -90,11 +91,11 @@ public class IndicatorViewControl {
         mPreSelectedPosition = position;
     }
 
+    @Override
     public void destroy() {
         for (int i = 0; i < mIndicatorContainer.getChildCount(); i++) {
             ImageView imageView = (ImageView) mIndicatorContainer.getChildAt(i);
             ImageUtils.releaseImageViewResource(imageView);
         }
     }
-
 }

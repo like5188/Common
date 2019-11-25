@@ -2,19 +2,19 @@ package com.like.common.view.toolbar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.databinding.DataBindingUtil
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.MenuRes
-import androidx.core.app.ActivityCompat
-import androidx.core.view.MenuItemCompat
-import androidx.appcompat.widget.Toolbar
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.MenuRes
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.view.MenuItemCompat
+import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.ToolbarBinding
 import com.like.common.view.badgeview.BadgeViewHelper
@@ -30,7 +30,7 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
         mBinding.toolbar.title = ""// 屏蔽掉原来的标题
     }
 
-    fun getToolbar() = mBinding.toolbar
+    fun getToolbar(): Toolbar = mBinding.toolbar
 
     fun getToolbarHeight() = mBinding.root.height
 

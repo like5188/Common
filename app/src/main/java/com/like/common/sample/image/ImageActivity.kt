@@ -1,12 +1,11 @@
 package com.like.common.sample.image
 
-import android.Manifest
-import androidx.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityImageBinding
 import com.like.common.util.ImageUtils
@@ -23,7 +22,7 @@ class ImageActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityImageBinding>(this, R.layout.activity_image)
     }
     private val file: File by lazy {
-        File(StorageUtils.InternalStorageHelper.getBaseDir(this), "cache3.jpg")
+        File(StorageUtils.InternalStorageHelper.getCacheDir(this), "cache3.jpg")
     }
     private val bitmap: Bitmap by lazy {
         BitmapFactory.decodeFile(file.absolutePath)
@@ -44,52 +43,44 @@ class ImageActivity : AppCompatActivity() {
     }
 
     fun matrix1(view: View) {
-        mPermissionUtils.checkPermissions(
-                {
-                    ioThread {
-                        showOriginBitmap(bitmap)
-                        val compressBitmap = ImageUtils.scaleByMatrix(bitmap, 1000)
-                        showCompressBitmap(compressBitmap)
-                    }
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        mPermissionUtils.checkStoragePermissionGroup {
+            ioThread {
+                showOriginBitmap(bitmap)
+                val compressBitmap = ImageUtils.scaleByMatrix(bitmap, 1000)
+                showCompressBitmap(compressBitmap)
+            }
+        }
     }
 
     fun matrix2(view: View) {
-        mPermissionUtils.checkPermissions(
-                {
-                    ioThread {
-                        showOriginBitmap(bitmap)
-                        val compressBitmap = ImageUtils.scaleByMatrix(bitmap, 480, 800)
-                        showCompressBitmap(compressBitmap)
-                    }
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        mPermissionUtils.checkStoragePermissionGroup {
+            ioThread {
+                showOriginBitmap(bitmap)
+                val compressBitmap = ImageUtils.scaleByMatrix(bitmap, 480, 800)
+                showCompressBitmap(compressBitmap)
+            }
+        }
     }
 
     fun options(view: View) {
-        mPermissionUtils.checkPermissions(
-                {
-                    ioThread {
-                        showOriginBitmap(bitmap)
-                        val compressBitmap = ImageUtils.scaleByOptions(file.absolutePath, 480, 800)
-                        showCompressBitmap(compressBitmap)
-                    }
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        mPermissionUtils.checkStoragePermissionGroup {
+            ioThread {
+                showOriginBitmap(bitmap)
+                val compressBitmap = ImageUtils.scaleByOptions(file.absolutePath, 480, 800)
+                showCompressBitmap(compressBitmap)
+            }
+        }
     }
 
     fun quality(view: View) {
-        mPermissionUtils.checkPermissions(
-                {
-                    ioThread {
-                        showOriginBitmap(bitmap)
-                        val compressFile = File(StorageUtils.InternalStorageHelper.getCacheDir(this), "cache2.jpg")
-                        ImageUtils.compressByQualityAndStore(bitmap, 1000, compressFile)
-                        showCompressBitmap(BitmapFactory.decodeFile(compressFile.absolutePath))
-                    }
-                }, {}, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        mPermissionUtils.checkStoragePermissionGroup {
+            ioThread {
+                showOriginBitmap(bitmap)
+                val compressFile = File(StorageUtils.InternalStorageHelper.getCacheDir(this), "cache2.jpg")
+                ImageUtils.compressByQualityAndStore(bitmap, 1000, compressFile)
+                showCompressBitmap(BitmapFactory.decodeFile(compressFile.absolutePath))
+            }
+        }
     }
 
     private fun showOriginBitmap(bitmap: Bitmap?) {
