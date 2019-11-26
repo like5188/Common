@@ -27,8 +27,8 @@ class DotIndicator(
     private var mPreSelectedPosition = 0
 
     init {
-        require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
         require(mCount > 0) { "mCount 必须大于0" }
+        require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
         require(mSelectedIndicatorResIds.isNotEmpty()) { "mSelectedIndicatorResIds 不能为空" }
         mSelectedIndicatorResIds.forEach {
             require(it > 0) { "mSelectedIndicatorResIds 中的小圆点图片资源 id 无效" }
