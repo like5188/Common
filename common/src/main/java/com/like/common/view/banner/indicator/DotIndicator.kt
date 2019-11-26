@@ -10,7 +10,7 @@ import androidx.viewpager.widget.ViewPager
  * 小圆点指示器
  *
  * @param mContext
- * @param mCount                    小圆点的数量
+ * @param mCount                    指示器的数量
  * @param mIndicatorContainer       小圆点的容器
  * @param mIndicatorPadding         小圆点之间的间隔
  * @param mNormalIndicatorResId     正常状态的小圆点图片资源id
