@@ -9,7 +9,7 @@ import com.like.common.sample.R
 import com.like.common.util.GlideUtils
 import com.like.common.view.banner.BannerViewPagerAdapter
 
-class BannerPagerAdapter(context: Context, private val mList: List<BannerInfo>) : BannerViewPagerAdapter<BannerInfo>(mList) {
+class BannerPagerAdapter(context: Context, private val mList: List<BannerInfo>) : BannerViewPagerAdapter(mList.size) {
     private val mLayoutInflater = LayoutInflater.from(context)
     private val mGlideUtils = GlideUtils(context)
 

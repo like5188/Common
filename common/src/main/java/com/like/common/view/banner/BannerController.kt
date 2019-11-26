@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * 控制 [BannerViewPager] 进行自动无限循环
- * 原理：在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
+ * 原理：当数据量大于1时，在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
  *
  * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法。用于使用者控制指示器
  * @param mCycleInterval    循环的时间间隔，毫秒。如果<=0，表示不循环播放
@@ -45,7 +45,7 @@ class BannerController(
 
     init {
         val viewPagerAdapter = mViewPager.adapter ?: throw IllegalArgumentException("mViewPager 的 adapter 不能为 null")
-        require(viewPagerAdapter is BannerViewPagerAdapter<*>) { "mViewPager 的 adapter 必须是 com.like.common.view.banner.BannerViewPagerAdapter" }
+        require(viewPagerAdapter is BannerViewPagerAdapter) { "mViewPager 的 adapter 必须是 com.like.common.view.banner.BannerViewPagerAdapter" }
         if (mCount > 0) {
             init()
         }
