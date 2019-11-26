@@ -1,7 +1,6 @@
 package com.like.common.view.banner
 
 import android.os.Handler
-import android.util.Log
 import androidx.viewpager.widget.ViewPager
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -35,7 +34,7 @@ class BannerController(
                     mViewPager.setCurrentItem(mCurPosition, false)
                     mCycleHandler.sendEmptyMessage(0)
                 } else {
-                    mViewPager.setCurrentItem(mCurPosition)
+                    mViewPager.currentItem = mCurPosition
                     mCycleHandler.sendEmptyMessageDelayed(0, mCycleInterval)
                 }
             }
@@ -53,13 +52,11 @@ class BannerController(
             override fun onPageSelected(position: Int) {
                 mCurPosition = position
                 mIndicator?.onPageSelected(getRealPosition(position))
-                Log.d("BannerController", "onPageSelected position=$position realPosition=${getRealPosition(position)}")
             }
 
             // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 mIndicator?.onPageScrolled(getRealPosition(position), positionOffset, positionOffsetPixels)
-                Log.v("BannerController", "onPageScrolled position=$position realPosition=${getRealPosition(position)} positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -79,7 +76,6 @@ class BannerController(
                     }
                 }
                 mIndicator?.onPageScrollStateChanged(state)
-                Log.i("BannerController", "onPageScrollStateChanged state=$state")
             }
         })
 
@@ -98,10 +94,10 @@ class BannerController(
         }
     }
 
-    private fun getRealPosition(position: Int) = if (position == 0) {
-        mCount - 2 - 1
-    } else {
-        (position - 1) % (mCount - 2)
+    private fun getRealPosition(position: Int): Int = when {
+        mCount == 1 -> 0
+        position == 0 -> mCount - 2 - 1
+        else -> (position - 1) % (mCount - 2)
     }
 
     fun play() {

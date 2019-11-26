@@ -9,7 +9,7 @@ abstract class BaseBannerPagerAdapter<T>(list: List<T>) : androidx.viewpager.wid
             1 -> {
                 addAll(list)
             }
-            else -> {
+            else -> {// 在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
                 add(list.last())
                 addAll(list)
                 add(list.first())
