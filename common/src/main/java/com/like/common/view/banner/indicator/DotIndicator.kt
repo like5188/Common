@@ -10,7 +10,7 @@ import androidx.viewpager.widget.ViewPager
  * 小圆点指示器
  *
  * @param mContext
- * @param mIndicatorCount           小圆点的数量
+ * @param mCount                    小圆点的数量
  * @param mIndicatorContainer       小圆点的容器
  * @param mIndicatorPadding         小圆点之间的间隔
  * @param mNormalIndicatorResId     正常状态的小圆点图片资源id
@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager
  */
 class DotIndicator(
         private val mContext: Context,
-        private val mIndicatorCount: Int,
+        private val mCount: Int,
         private val mIndicatorContainer: LinearLayout,
         private val mIndicatorPadding: Int,
         @DrawableRes private val mNormalIndicatorResId: Int,
@@ -28,14 +28,14 @@ class DotIndicator(
 
     init {
         require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
-        require(mIndicatorCount > 0) { "mIndicatorCount 必须大于0" }
+        require(mCount > 0) { "mCount 必须大于0" }
         require(mSelectedIndicatorResIds.isNotEmpty()) { "mSelectedIndicatorResIds 不能为空" }
         mSelectedIndicatorResIds.forEach {
             require(it > 0) { "mSelectedIndicatorResIds 中的小圆点图片资源 id 无效" }
         }
 
         mIndicatorContainer.removeAllViews()
-        for (i in 0 until mIndicatorCount) {
+        for (i in 0 until mCount) {
             // 加载指示器图片
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
             val iv = ImageView(mContext)
