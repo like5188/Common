@@ -63,7 +63,7 @@ class BannerActivity : AppCompatActivity() {
 
 //        val indicator = DotIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
         val indicator = NumberIndicator(this, data.size, indicatorContainer)
-        mBannerController = BannerController(mBinding.vp, data.size, {
+        mBannerController = BannerController(mBinding.vp, data.size, indicator, 1000L) {
             mLayoutInflater.inflate(R.layout.item_banner, null).apply {
                 val iv = findViewById<ImageView>(R.id.iv)
                 val info = data[it]
@@ -72,7 +72,7 @@ class BannerActivity : AppCompatActivity() {
                     Log.d("BannerPagerAdapter", info.toString())
                 }
             }
-        }, indicator, 3000L)
+        }
     }
 
     private fun initBanner(data: List<BannerInfo>) {
