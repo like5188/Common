@@ -76,7 +76,6 @@ class BannerController(
             }
             else -> {
                 mViewPager.setScrollable(true)
-                play()
             }
         }
     }
