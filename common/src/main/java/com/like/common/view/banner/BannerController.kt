@@ -7,12 +7,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * 控制 [BannerViewPager] 进行自动无限循环
  *
- * @param mIndicatorController  在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法。用于使用者控制指示器
- * @param mCycleInterval        循环的时间间隔，毫秒。如果<=0，表示不循环播放
+ * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法。用于使用者控制指示器
+ * @param mCycleInterval    循环的时间间隔，毫秒。如果<=0，表示不循环播放
  */
 class BannerController(
         private val mViewPager: BannerViewPager,
-        private val mIndicatorController: ViewPager.OnPageChangeListener? = null,
+        private val mIndicator: ViewPager.OnPageChangeListener? = null,
         private val mCycleInterval: Long = 3000L
 ) {
     /**
@@ -47,13 +47,13 @@ class BannerController(
                 mCurPosition = position
                 val realPosition = position % realCount
                 // 设置指示器
-                mIndicatorController?.onPageSelected(realPosition)
+                mIndicator?.onPageSelected(realPosition)
             }
 
             // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 val realPosition = position % realCount
-                mIndicatorController?.onPageScrolled(realPosition, positionOffset, positionOffsetPixels)
+                mIndicator?.onPageScrolled(realPosition, positionOffset, positionOffsetPixels)
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -67,7 +67,7 @@ class BannerController(
                     ViewPager.SCROLL_STATE_SETTLING -> {// 页面开始自动滑动
                     }
                 }
-                mIndicatorController?.onPageScrollStateChanged(state)
+                mIndicator?.onPageScrollStateChanged(state)
             }
         })
 
