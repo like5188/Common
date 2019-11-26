@@ -4,6 +4,8 @@ import android.animation.ArgbEvaluator
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.ViewPager
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBannerBinding
+import com.like.common.util.GlideUtils
 import com.like.common.util.ImageUtils
 import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
@@ -25,6 +28,12 @@ class BannerActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityBannerBinding>(this, R.layout.activity_banner)
     }
     private var mBannerController: BannerController? = null
+    private val mLayoutInflater by lazy {
+        LayoutInflater.from(this)
+    }
+    private val mGlideUtils by lazy {
+        GlideUtils(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +56,6 @@ class BannerActivity : AppCompatActivity() {
 
     private fun initAutoPlayBanner(data: List<BannerInfo>) {
         mBinding.vp.setScrollSpeed()
-        mBinding.vp.adapter = BannerPagerAdapter(this, data)
 
         mBinding.vp.onPreDrawListener {
             it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
@@ -55,7 +63,16 @@ class BannerActivity : AppCompatActivity() {
 
 //        val indicator = DotIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
         val indicator = NumberIndicator(this, data.size, indicatorContainer)
-        mBannerController = BannerController(mBinding.vp, indicator, 3000L)
+        mBannerController = BannerController(mBinding.vp, data.size, {
+            mLayoutInflater.inflate(R.layout.item_banner, null).apply {
+                val iv = findViewById<ImageView>(R.id.iv)
+                val info = data[it]
+                mGlideUtils.display(info.imageUrl, iv)
+                iv.setOnClickListener {
+                    Log.d("BannerPagerAdapter", info.toString())
+                }
+            }
+        }, indicator, 3000L)
     }
 
     private fun initBanner(data: List<BannerInfo>) {
