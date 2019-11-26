@@ -15,7 +15,7 @@ import com.like.common.util.ImageUtils
 import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.banner.BannerController
-import com.like.common.view.banner.indicator.DotIndicator
+import com.like.common.view.banner.indicator.NumberIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*
 import java.util.*
@@ -53,8 +53,9 @@ class BannerActivity : AppCompatActivity() {
             it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
         }
 
-        val dotIndicatorController = DotIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
-        mBannerController = BannerController(mBinding.vp, dotIndicatorController, 3000L)
+//        val indicator = DotIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
+        val indicator = NumberIndicator(this, data.size, indicatorContainer)
+        mBannerController = BannerController(mBinding.vp, indicator, 3000L)
     }
 
     private fun initBanner(data: List<BannerInfo>) {
