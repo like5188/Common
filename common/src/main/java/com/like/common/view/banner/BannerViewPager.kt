@@ -10,7 +10,7 @@ import android.widget.Scroller
 /**
  * 可以控制是否左右滑动的ViewPager[.setScrollable]，默认不能滑动
  */
-class BannerViewPager(context: Context, attrs: AttributeSet?) : androidx.viewpager.widget.ViewPager(context, attrs) {
+open class BannerViewPager(context: Context, attrs: AttributeSet?) : androidx.viewpager.widget.ViewPager(context, attrs) {
     private var isScrollable = false
 
     init {

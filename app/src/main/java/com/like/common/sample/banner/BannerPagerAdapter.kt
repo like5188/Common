@@ -9,12 +9,12 @@ import com.like.common.sample.R
 import com.like.common.util.GlideUtils
 import com.like.common.view.banner.BannerViewPagerAdapter
 
-class BannerPagerAdapter(context: Context, list: List<BannerInfo>) : BannerViewPagerAdapter<BannerInfo>(list) {
-    private val layoutInflater = LayoutInflater.from(context)
+class BannerPagerAdapter(context: Context, private val mList: List<BannerInfo>) : BannerViewPagerAdapter<BannerInfo>(mList) {
+    private val mLayoutInflater = LayoutInflater.from(context)
     private val mGlideUtils = GlideUtils(context)
 
     override fun getView(position: Int): View {
-        val view = layoutInflater.inflate(R.layout.item_banner, null)
+        val view = mLayoutInflater.inflate(R.layout.item_banner, null)
         val iv = view.findViewById<ImageView>(R.id.iv)
         val info = mList[position]
         mGlideUtils.display(info.imageUrl, iv)
