@@ -20,13 +20,14 @@ class NumberIndicator(
     private val mCircleTextView = CircleTextView(mContext)
 
     init {
-        require(mCount > 0) { "mCount 必须大于0" }
-
-        mContainer.removeAllViews()
-        mContainer.addView(mCircleTextView)
+        if (mCount > 0) {
+            mContainer.removeAllViews()
+            mContainer.addView(mCircleTextView)
+        }
     }
 
     override fun onPageSelected(position: Int) {
+        if (mCount <= 0) return
         mCircleTextView.text = "${position + 1}/$mCount"
     }
 

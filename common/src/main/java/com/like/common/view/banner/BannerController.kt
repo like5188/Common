@@ -46,8 +46,12 @@ class BannerController(
     init {
         val viewPagerAdapter = mViewPager.adapter ?: throw IllegalArgumentException("mViewPager 的 adapter 不能为 null")
         require(viewPagerAdapter is BannerViewPagerAdapter<*>) { "mViewPager 的 adapter 必须是 com.like.common.view.banner.BannerViewPagerAdapter" }
-        require(mCount > 0) { "数据不能为空" }
+        if (mCount > 0) {
+            init()
+        }
+    }
 
+    private fun init() {
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             // position当前选择的是哪个页面。注意：如果mCount=1，那么默认会显示第0页，此时不会触发此方法，只会触发onPageScrolled方法。
             override fun onPageSelected(position: Int) {

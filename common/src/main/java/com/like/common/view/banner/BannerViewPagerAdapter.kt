@@ -10,6 +10,8 @@ import android.view.ViewGroup
 abstract class BannerViewPagerAdapter<T>(list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
     private val mList = mutableListOf<T>().apply {
         when (list.size) {
+            0 -> {
+            }
             1 -> {
                 addAll(list)
             }

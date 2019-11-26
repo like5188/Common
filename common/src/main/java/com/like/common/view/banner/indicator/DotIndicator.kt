@@ -27,31 +27,33 @@ class DotIndicator(
     private var mPreSelectedPosition = 0
 
     init {
-        require(mCount > 0) { "mCount 必须大于0" }
-        require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
-        require(mSelectedIndicatorResIds.isNotEmpty()) { "mSelectedIndicatorResIds 不能为空" }
-        mSelectedIndicatorResIds.forEach {
-            require(it > 0) { "mSelectedIndicatorResIds 中的小圆点图片资源 id 无效" }
-        }
-
-        mContainer.removeAllViews()
-        for (i in 0 until mCount) {
-            // 加载指示器图片
-            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
-            val iv = ImageView(mContext)
-            if (i == 0) {
-                iv.setBackgroundResource(mSelectedIndicatorResIds[0])
-                params.setMargins(0, 0, 0, 0)// 设置指示器边距
-            } else {
-                iv.setBackgroundResource(mNormalIndicatorResId)
-                params.setMargins(mIndicatorPadding, 0, 0, 0)// 设置指示器边距
+        if (mCount > 0) {
+            require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
+            require(mSelectedIndicatorResIds.isNotEmpty()) { "mSelectedIndicatorResIds 不能为空" }
+            mSelectedIndicatorResIds.forEach {
+                require(it > 0) { "mSelectedIndicatorResIds 中的小圆点图片资源 id 无效" }
             }
-            iv.layoutParams = params
-            mContainer.addView(iv)
+
+            mContainer.removeAllViews()
+            for (i in 0 until mCount) {
+                // 加载指示器图片
+                val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
+                val iv = ImageView(mContext)
+                if (i == 0) {
+                    iv.setBackgroundResource(mSelectedIndicatorResIds[0])
+                    params.setMargins(0, 0, 0, 0)// 设置指示器边距
+                } else {
+                    iv.setBackgroundResource(mNormalIndicatorResId)
+                    params.setMargins(mIndicatorPadding, 0, 0, 0)// 设置指示器边距
+                }
+                iv.layoutParams = params
+                mContainer.addView(iv)
+            }
         }
     }
 
     override fun onPageSelected(position: Int) {
+        if (mCount <= 0) return
         mContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId)
         val selectResId = if (position >= mSelectedIndicatorResIds.size) {
             mSelectedIndicatorResIds[mSelectedIndicatorResIds.size - 1]
