@@ -13,18 +13,23 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBannerBinding
 import com.like.common.util.ImageUtils
 import com.like.common.util.StatusBarUtils
-import com.like.common.view.viewPagerTransformer.AlphaPageTransformer
+import com.like.common.util.onPreDrawListener
+import com.like.common.view.banner.BannerController
+import com.like.common.view.banner.DotIndicatorController
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
+import kotlinx.android.synthetic.main.activity_banner.*
 import java.util.*
 
 class BannerActivity : AppCompatActivity() {
     private val mBinding: ActivityBannerBinding by lazy {
         DataBindingUtil.setContentView<ActivityBannerBinding>(this, R.layout.activity_banner)
     }
+    private var mBannerController: BannerController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
+
         val bannerInfoList = ArrayList<BannerInfo>()
         val bannerInfo = BannerInfo()
         bannerInfo.imageUrl = "https://mall02.sogoucdn.com/image/2019/03/18/20190318094408_4590.png"
@@ -35,17 +40,22 @@ class BannerActivity : AppCompatActivity() {
         val bannerInfo2 = BannerInfo()
         bannerInfo2.imageUrl = "https://mall03.sogoucdn.com/image/2018/12/21/20181221191646_4221.png"
         bannerInfoList.add(bannerInfo2)
+
         initAutoPlayBanner(bannerInfoList)
-        initBanner(bannerInfoList)
+//        initBanner(bannerInfoList)
     }
 
     private fun initAutoPlayBanner(data: List<BannerInfo>) {
-        // 设置切换动画
-        mBinding.vp.setPageTransformer(true, AlphaPageTransformer())
         mBinding.vp.setScrollSpeed()
-        mBinding.bannerView
-                .init(0.4f, R.drawable.store_point1, listOf(R.drawable.store_point2), R.id.vp, R.id.indicatorContainer, 10, 3000)
-                .setAdapterAndPlay(BannerPagerAdapter(this, data))
+        mBinding.vp.setScrollable(true)
+        mBinding.vp.adapter = BannerPagerAdapter(this, data)
+
+        mBinding.vp.onPreDrawListener {
+            it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
+        }
+
+        val dotIndicatorController = DotIndicatorController(this, indicatorContainer, data.size, R.drawable.store_point2, listOf(R.drawable.store_point1), 10)
+        mBannerController = BannerController(mBinding.vp, dotIndicatorController, 3000L)
     }
 
     private fun initBanner(data: List<BannerInfo>) {
@@ -102,7 +112,16 @@ class BannerActivity : AppCompatActivity() {
                     }
 
                 })
+    }
 
+    override fun onResume() {
+        super.onResume()
+//        mBannerController?.play()
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        mBannerController?.pause()
     }
 
 }

@@ -16,10 +16,10 @@
             android:layout_marginRight="20dp"
             android:clipChildren="false" />
 
-        <com.like.common.view.banner.BannerView
-            android:id="@+id/bannerView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/common_text_red_0">
 
             <com.like.common.view.banner.BannerViewPager
                 android:id="@+id/vp"
@@ -35,7 +35,7 @@
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp" />
-        </com.like.common.view.banner.BannerView>
+        </RelativeLayout>
 
     </LinearLayout>
 
