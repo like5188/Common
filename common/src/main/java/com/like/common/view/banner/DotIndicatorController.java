@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.like.common.util.DimensionUtils;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
 /**
  * 小圆点指示器控制器
  */
-public class DotIndicatorController implements IIndicatorController {
+public class DotIndicatorController implements ViewPager.OnPageChangeListener {
     private Context mContext;
     private int mPreSelectedPosition = 0;
     private LinearLayout mIndicatorContainer;
@@ -78,7 +80,12 @@ public class DotIndicatorController implements IIndicatorController {
     }
 
     @Override
-    public void select(int position) {
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
         mIndicatorContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId);
         int selectResId = 0;
         if (position >= mSelectedIndicatorResIds.size()) {
@@ -90,4 +97,8 @@ public class DotIndicatorController implements IIndicatorController {
         mPreSelectedPosition = position;
     }
 
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

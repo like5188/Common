@@ -1,19 +1,18 @@
 package com.like.common.view.banner
 
 import android.os.Handler
-import android.util.Log
 import androidx.viewpager.widget.ViewPager
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * 控制 [BannerViewPager] 进行自动无限循环
  *
- * @param mIndicatorController  指示器控制器
+ * @param mOnPageChangeListener 在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法。用于使用者控制指示器
  * @param mCycleInterval        循环的时间间隔，毫秒。如果<=0，表示不循环播放
  */
 class BannerController(
         private val mViewPager: BannerViewPager,
-        private val mIndicatorController: IIndicatorController? = null,
+        private val mOnPageChangeListener: ViewPager.OnPageChangeListener? = null,
         private val mCycleInterval: Long = 3000L
 ) {
     /**
@@ -46,15 +45,15 @@ class BannerController(
             // position当前选择的是哪个页面
             override fun onPageSelected(position: Int) {
                 mCurPosition = position
-                val realPosition = mCurPosition % realCount
+                val realPosition = position % realCount
                 // 设置指示器
-                mIndicatorController?.select(realPosition)
-                Log.i("BannerController", "onPageSelected position=$position")
+                mOnPageChangeListener?.onPageSelected(realPosition)
             }
 
             // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                Log.v("BannerController", "onPageScrolled position=$position positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
+                val realPosition = position % realCount
+                mOnPageChangeListener?.onPageScrolled(realPosition, positionOffset, positionOffsetPixels)
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -68,7 +67,7 @@ class BannerController(
                     ViewPager.SCROLL_STATE_SETTLING -> {// 页面开始自动滑动
                     }
                 }
-                Log.d("BannerController", "onPageScrollStateChanged state=$state")
+                mOnPageChangeListener?.onPageScrollStateChanged(state)
             }
         })
 
