@@ -101,4 +101,5 @@ public class DotIndicatorController implements ViewPager.OnPageChangeListener {
     public void onPageScrollStateChanged(int state) {
 
     }
+
 }
