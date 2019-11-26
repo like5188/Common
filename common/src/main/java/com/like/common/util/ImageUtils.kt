@@ -16,6 +16,7 @@ import android.util.Base64
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
+import androidx.palette.graphics.Palette
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -36,6 +37,29 @@ object ImageUtils {
     const val CORNER_BOTTOM = CORNER_BOTTOM_LEFT or CORNER_BOTTOM_RIGHT
     const val CORNER_LEFT = CORNER_TOP_LEFT or CORNER_BOTTOM_LEFT
     const val CORNER_RIGHT = CORNER_TOP_RIGHT or CORNER_BOTTOM_RIGHT
+
+    /**
+     * 从 Drawable 中提取颜色
+     */
+    fun getColor(drawable: Drawable?, defaultColor: Int): Int {
+        drawable ?: return defaultColor
+        return getColor(drawable2Bitmap(drawable), defaultColor)
+    }
+
+    /**
+     * 从 Bitmap 中提取颜色
+     */
+    fun getColor(bitmap: Bitmap?, defaultColor: Int): Int {
+        bitmap ?: return defaultColor
+        val palette = Palette.from(bitmap).generate()
+        val vibrant = palette.getVibrantColor(defaultColor)
+        val vibrantLight = palette.getLightVibrantColor(defaultColor)
+        val vibrantDark = palette.getDarkVibrantColor(defaultColor)
+        val muted = palette.getMutedColor(defaultColor)
+        val mutedLight = palette.getLightMutedColor(defaultColor)
+        val mutedDark = palette.getDarkMutedColor(defaultColor)
+        return vibrantDark
+    }
 
     /**
      * Byte[]转换到Bitmap
