@@ -1,6 +1,7 @@
 package com.like.common.view.banner
 
 import android.os.Handler
+import android.util.Log
 import androidx.viewpager.widget.ViewPager
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -48,22 +49,26 @@ class BannerController(
                 val realPosition = mCurPosition % realCount
                 // 设置指示器
                 mIndicatorController?.select(realPosition)
+                Log.i("BannerController", "onPageSelected position=$position")
             }
 
             // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                Log.v("BannerController", "onPageScrolled position=$position positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
+            }
 
             override fun onPageScrollStateChanged(state: Int) {
                 when (state) {
-                    0 -> {// 页面停止在了某页，有可能是手指滑动一页结束，有可能是自动滑动一页结束，开始自动播放。
+                    ViewPager.SCROLL_STATE_IDLE -> {// 页面停止在了某页，有可能是手指滑动一页结束，有可能是自动滑动一页结束，开始自动播放。
                         play()
                     }
-                    1 -> {// 手指按下开始滑动，停止自动播放。
+                    ViewPager.SCROLL_STATE_DRAGGING -> {// 手指按下开始滑动，停止自动播放。
                         pause()
                     }
-                    2 -> {// 页面开始自动滑动
+                    ViewPager.SCROLL_STATE_SETTLING -> {// 页面开始自动滑动
                     }
                 }
+                Log.d("BannerController", "onPageScrollStateChanged state=$state")
             }
         })
 
