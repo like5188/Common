@@ -11,7 +11,7 @@ import androidx.viewpager.widget.ViewPager
  *
  * @param mContext
  * @param mCount                    指示器的数量
- * @param mIndicatorContainer       小圆点的容器
+ * @param mContainer                指示器的容器
  * @param mIndicatorPadding         小圆点之间的间隔
  * @param mNormalIndicatorResId     正常状态的小圆点图片资源id
  * @param mSelectedIndicatorResIds  选中状态的小圆点图片资源id，可以为多个，比如每个选中状态对应一种颜色。
@@ -19,7 +19,7 @@ import androidx.viewpager.widget.ViewPager
 class DotIndicator(
         private val mContext: Context,
         private val mCount: Int,
-        private val mIndicatorContainer: LinearLayout,
+        private val mContainer: LinearLayout,
         private val mIndicatorPadding: Int,
         @DrawableRes private val mNormalIndicatorResId: Int,
         private val mSelectedIndicatorResIds: List<Int>
@@ -34,7 +34,7 @@ class DotIndicator(
             require(it > 0) { "mSelectedIndicatorResIds 中的小圆点图片资源 id 无效" }
         }
 
-        mIndicatorContainer.removeAllViews()
+        mContainer.removeAllViews()
         for (i in 0 until mCount) {
             // 加载指示器图片
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
@@ -47,18 +47,18 @@ class DotIndicator(
                 params.setMargins(mIndicatorPadding, 0, 0, 0)// 设置指示器边距
             }
             iv.layoutParams = params
-            mIndicatorContainer.addView(iv)
+            mContainer.addView(iv)
         }
     }
 
     override fun onPageSelected(position: Int) {
-        mIndicatorContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId)
+        mContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId)
         val selectResId = if (position >= mSelectedIndicatorResIds.size) {
             mSelectedIndicatorResIds[mSelectedIndicatorResIds.size - 1]
         } else {
             mSelectedIndicatorResIds[position]
         }
-        mIndicatorContainer.getChildAt(position).setBackgroundResource(selectResId)
+        mContainer.getChildAt(position).setBackgroundResource(selectResId)
         mPreSelectedPosition = position
     }
 
