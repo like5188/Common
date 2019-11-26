@@ -5,7 +5,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.like.common.util.DimensionUtils;
-import com.like.common.util.ImageUtils;
 
 import java.util.List;
 
@@ -91,11 +90,4 @@ public class DotIndicatorController implements IIndicatorController {
         mPreSelectedPosition = position;
     }
 
-    @Override
-    public void destroy() {
-        for (int i = 0; i < mIndicatorContainer.getChildCount(); i++) {
-            ImageView imageView = (ImageView) mIndicatorContainer.getChildAt(i);
-            ImageUtils.releaseImageViewResource(imageView);
-        }
-    }
 }

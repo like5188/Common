@@ -5,5 +5,4 @@ package com.like.common.view.banner
  */
 interface IIndicatorController {
     fun select(position: Int)
-    fun destroy()
 }
