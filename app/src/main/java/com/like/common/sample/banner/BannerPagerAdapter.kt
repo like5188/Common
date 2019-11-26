@@ -16,8 +16,7 @@ class BannerPagerAdapter(context: Context, list: List<BannerInfo>) : BaseBannerP
     override fun getView(position: Int): View {
         val view = layoutInflater.inflate(R.layout.item_banner, null)
         val iv = view.findViewById<ImageView>(R.id.iv)
-        val dataPosition = position % list.size
-        val info = list[dataPosition]
+        val info = mList[position]
         mGlideUtils.display(info.imageUrl, iv)
         iv.setOnClickListener {
             Log.d("BannerPagerAdapter", info.toString())

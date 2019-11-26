@@ -3,13 +3,21 @@ package com.like.common.view.banner
 import android.view.View
 import android.view.ViewGroup
 
-/**
- * 持有[mRealCount]，并且[getCount]方法返回[Int.MAX_VALUE]
- */
-abstract class BaseBannerPagerAdapter<T>(val list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
-    val mRealCount = list.size
+abstract class BaseBannerPagerAdapter<T>(list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
+    val mList = mutableListOf<T>().apply {
+        when (list.size) {
+            1 -> {
+                addAll(list)
+            }
+            else -> {
+                add(list.last())
+                addAll(list)
+                add(list.first())
+            }
+        }
+    }
 
-    final override fun getCount(): Int = Int.MAX_VALUE
+    final override fun getCount(): Int = mList.size
 
     final override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
 
