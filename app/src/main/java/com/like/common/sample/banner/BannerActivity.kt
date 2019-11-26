@@ -31,15 +31,15 @@ class BannerActivity : AppCompatActivity() {
         mBinding
 
         val bannerInfoList = ArrayList<BannerInfo>()
-//        val bannerInfo1 = BannerInfo()
-//        bannerInfo1.imageUrl = "https://mall02.sogoucdn.com/image/2019/03/18/20190318094408_4590.png"
-//        bannerInfoList.add(bannerInfo1)
-//        val bannerInfo2 = BannerInfo()
-//        bannerInfo2.imageUrl = "https://mall03.sogoucdn.com/image/2019/05/13/20190513191053_4977.png"
-//        bannerInfoList.add(bannerInfo2)
-//        val bannerInfo3 = BannerInfo()
-//        bannerInfo3.imageUrl = "https://mall03.sogoucdn.com/image/2018/12/21/20181221191646_4221.png"
-//        bannerInfoList.add(bannerInfo3)
+        val bannerInfo1 = BannerInfo()
+        bannerInfo1.imageUrl = "https://mall02.sogoucdn.com/image/2019/03/18/20190318094408_4590.png"
+        bannerInfoList.add(bannerInfo1)
+        val bannerInfo2 = BannerInfo()
+        bannerInfo2.imageUrl = "https://mall03.sogoucdn.com/image/2019/05/13/20190513191053_4977.png"
+        bannerInfoList.add(bannerInfo2)
+        val bannerInfo3 = BannerInfo()
+        bannerInfo3.imageUrl = "https://mall03.sogoucdn.com/image/2018/12/21/20181221191646_4221.png"
+        bannerInfoList.add(bannerInfo3)
 
         initAutoPlayBanner(bannerInfoList)
 //        initBanner(bannerInfoList)

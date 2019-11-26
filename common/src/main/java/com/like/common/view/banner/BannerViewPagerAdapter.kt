@@ -7,23 +7,16 @@ import android.view.ViewGroup
  * 无限轮播 ViewPager 的辅助 PagerAdapter
  * 原理：在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
  */
-abstract class BannerViewPagerAdapter<T>(list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
-    private val mList = mutableListOf<T>().apply {
-        when (list.size) {
-            0 -> {
-            }
-            1 -> {
-                addAll(list)
-            }
-            else -> {
-                add(list.last())
-                addAll(list)
-                add(list.first())
-            }
+abstract class BannerViewPagerAdapter<T>(private val mList: List<T>) : androidx.viewpager.widget.PagerAdapter() {
+
+    final override fun getCount(): Int = when (mList.size) {
+        0, 1 -> {
+            mList.size
+        }
+        else -> {
+            mList.size + 2
         }
     }
-
-    final override fun getCount(): Int = mList.size
 
     final override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
 
