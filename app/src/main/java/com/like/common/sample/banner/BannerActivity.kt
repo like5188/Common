@@ -47,7 +47,6 @@ class BannerActivity : AppCompatActivity() {
 
     private fun initAutoPlayBanner(data: List<BannerInfo>) {
         mBinding.vp.setScrollSpeed()
-        mBinding.vp.setScrollable(true)
         mBinding.vp.adapter = BannerPagerAdapter(this, data)
 
         mBinding.vp.onPreDrawListener {
@@ -116,12 +115,12 @@ class BannerActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-//        mBannerController?.play()
+        mBannerController?.play()
     }
 
     override fun onPause() {
         super.onPause()
-//        mBannerController?.pause()
+        mBannerController?.pause()
     }
 
 }

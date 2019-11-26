@@ -1,8 +1,8 @@
 package com.like.common.view.banner
 
 import android.os.Handler
-import android.util.Log
 import androidx.viewpager.widget.ViewPager
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * 控制 [BannerViewPager] 进行自动无限循环
@@ -22,11 +22,11 @@ class BannerController(
     /**
      * 是否正在自动循环播放
      */
-    private var mIsAutoPlaying: Boolean = false
+    private var mIsAutoPlaying = AtomicBoolean(false)
 
     private val mCycleHandler: Handler by lazy {
         Handler {
-            if (mIsAutoPlaying) {
+            if (mIsAutoPlaying.get()) {
                 mCurPosition++
                 mViewPager.setCurrentItem(mCurPosition, true)
                 mCycleHandler.sendEmptyMessageDelayed(0, mCycleInterval)
@@ -40,8 +40,6 @@ class BannerController(
         require(viewPagerAdapter is BaseBannerPagerAdapter<*>) { "adapter of mViewPager must be com.like.common.view.banner.BaseBannerPagerAdapter" }
 
         val realCount = viewPagerAdapter.mRealCount
-        mCurPosition -= mCurPosition % realCount// 取余处理，避免默认值不能被 realCount 整除
-        mViewPager.currentItem = mCurPosition
 
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             // position当前选择的是哪个页面
@@ -50,59 +48,51 @@ class BannerController(
                 val realPosition = mCurPosition % realCount
                 // 设置指示器
                 mIndicatorController?.select(realPosition)
-                Log.i("BannerController", "onPageSelected position=$position")
             }
 
             // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                Log.v("BannerController", "onPageScrolled position=$position positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
-            }
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageScrollStateChanged(state: Int) {
                 when (state) {
-                    0 -> {// 手指停止在某页
-                        if (!mIsAutoPlaying)
-                            play()
+                    0 -> {// 页面停止在了某页，有可能是手指滑动一页结束，有可能是自动滑动一页结束，开始自动播放。
+                        play()
                     }
-                    1 -> {// 手指开始滑动
-                        if (mIsAutoPlaying)
-                            pause()
+                    1 -> {// 手指按下开始滑动，停止自动播放。
+                        pause()
                     }
-                    2 -> {// 手指松开了页面自动滑动
+                    2 -> {// 页面开始自动滑动
                     }
                 }
-                Log.d("BannerController", "onPageScrollStateChanged state=$state")
             }
         })
 
+        mCurPosition -= mCurPosition % realCount// 取余处理，避免默认值不能被 realCount 整除
+        mViewPager.currentItem = mCurPosition// 这个方法不能触发 onPageScrollStateChanged，所以要单独启动自动播放
+
         when (realCount) {
-            1 -> {
+            1 -> { // 如果只有一个页面，就限制 ViewPager 不能手动滑动
                 mViewPager.setScrollable(false)
             }
             else -> {
                 mViewPager.setScrollable(true)
-                if (mCycleInterval > 0) {
-                    play()
-                }
+                play()
             }
         }
     }
 
     fun play() {
-        if (mIsAutoPlaying) {
-            return
+        if (mCycleInterval <= 0) return
+        if (mIsAutoPlaying.compareAndSet(false, true)) {
+            mCycleHandler.removeCallbacksAndMessages(null)
+            mCycleHandler.sendEmptyMessageDelayed(0, mCycleInterval)
         }
-        mIsAutoPlaying = true
-        mCycleHandler.removeCallbacksAndMessages(null)
-        mCycleHandler.sendEmptyMessageDelayed(0, mCycleInterval)
     }
 
     fun pause() {
-        if (!mIsAutoPlaying) {
-            return
+        if (mIsAutoPlaying.compareAndSet(true, false)) {
+            mCycleHandler.removeCallbacksAndMessages(null)
         }
-        mIsAutoPlaying = false
-        mCycleHandler.removeCallbacksAndMessages(null)
     }
 
 }
