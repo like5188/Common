@@ -45,7 +45,7 @@ class BannerController(
 
     init {
         val viewPagerAdapter = mViewPager.adapter ?: throw IllegalArgumentException("mViewPager 的 adapter 不能为 null")
-        require(viewPagerAdapter is BaseBannerPagerAdapter<*>) { "mViewPager 的 adapter 必须是 com.like.common.view.banner.BaseBannerPagerAdapter" }
+        require(viewPagerAdapter is BannerViewPagerAdapter<*>) { "mViewPager 的 adapter 必须是 com.like.common.view.banner.BannerViewPagerAdapter" }
         require(mCount > 0) { "数据不能为空" }
 
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

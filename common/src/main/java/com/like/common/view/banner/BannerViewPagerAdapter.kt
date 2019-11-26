@@ -3,7 +3,7 @@ package com.like.common.view.banner
 import android.view.View
 import android.view.ViewGroup
 
-abstract class BaseBannerPagerAdapter<T>(list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
+abstract class BannerViewPagerAdapter<T>(list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
     val mList = mutableListOf<T>().apply {
         when (list.size) {
             1 -> {
