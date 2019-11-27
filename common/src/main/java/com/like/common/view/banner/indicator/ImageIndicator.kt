@@ -5,7 +5,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 
 /**
- * 图片指示器，每个位置一张图片。包含正常状态和选中状态两种图片。
+ * 图片指示器
+ * 每个位置一张图片。包含正常状态和选中状态两种图片。
  *
  * @param mContext
  * @param mDataCount                指示器的数量

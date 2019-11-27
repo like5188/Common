@@ -6,13 +6,14 @@ import androidx.annotation.ColorInt
 import com.like.common.view.CircleTextView
 
 /**
- * 数字指示器
+ * 文本指示器
+ * 一个圆形的 TextView，显示内容为 1/3
  *
  * @param mContext
  * @param mDataCount    指示器的数量
  * @param mContainer    指示器的容器
  */
-class NumberIndicator(
+class TextIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: ViewGroup

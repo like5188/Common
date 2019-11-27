@@ -2,7 +2,6 @@ package com.like.common.sample.banner
 
 import android.animation.ArgbEvaluator
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -17,7 +16,7 @@ import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.banner.BannerController
 import com.like.common.view.banner.indicator.BannerIndicator
-import com.like.common.view.banner.indicator.NumberIndicator
+import com.like.common.view.banner.indicator.ImageIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*
 import java.util.*
@@ -50,13 +49,13 @@ class BannerActivity : AppCompatActivity() {
 
         mBinding.vp.adapter = MyBannerPagerAdapter(this, data)
 
-        val indicator: BannerIndicator = NumberIndicator(this, data.size, indicatorContainer).apply {
-            setPadding(10, 10, 10, 10)
-            setTextSize(12f)
-            setTextColor(Color.WHITE)
-            setBackgroundColor(Color.DKGRAY)
-        }
-//        val indicator: BannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+//        val indicator: BannerIndicator = TextIndicator(this, data.size, indicatorContainer).apply {
+//            setPadding(10, 10, 10, 10)
+//            setTextSize(12f)
+//            setTextColor(Color.WHITE)
+//            setBackgroundColor(Color.DKGRAY)
+//        }
+        val indicator: BannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
         indicator.setViewPager(mBinding.vp)
 
         mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)
