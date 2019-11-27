@@ -2,7 +2,12 @@ package com.like.common.view.banner.indicator
 
 import androidx.viewpager.widget.ViewPager
 import com.like.common.view.banner.BannerPagerAdapter
+import com.like.common.view.banner.BannerViewPager
 
+/**
+ * Banner 的指示器基类。
+ * 使用方式：调用 [setViewPager] 方法，和 [com.like.common.view.banner.BannerController] 设置同一个 [com.like.common.view.banner.BannerViewPager] 即可。
+ */
 open class BannerIndicator {
     private var mAdapterCount = 0
     private val mOnPageChangeListener = object : ViewPager.OnPageChangeListener {
@@ -25,7 +30,7 @@ open class BannerIndicator {
         }
     }
 
-    fun setViewPager(viewPager: ViewPager) {
+    fun setViewPager(viewPager: BannerViewPager) {
         val adapter = viewPager.adapter ?: throw IllegalArgumentException("viewPager 没有设置 adapter")
         require(adapter is BannerPagerAdapter) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }
         mAdapterCount = adapter.count
