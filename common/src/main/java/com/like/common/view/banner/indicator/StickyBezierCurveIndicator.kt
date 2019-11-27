@@ -21,7 +21,8 @@ import com.like.common.util.DimensionUtils
  * @param mDataCount        指示器的数量
  * @param mContainer        指示器的容器
  * @param indicatorPadding  指示器之间的间隔，单位 dp
- * @param mColors           指示器的颜色，至少一个，少于[mDataCount]时，循环使用。
+ * @param normalColor       正常状态的指示器颜色
+ * @param mSelectedColors   选中状态的指示器颜色，至少一个，少于[mDataCount]时，循环使用。
  */
 @SuppressLint("ViewConstructor")
 class StickyBezierCurveIndicator(
@@ -29,7 +30,8 @@ class StickyBezierCurveIndicator(
         private val mDataCount: Int,
         private val mContainer: ViewGroup,
         indicatorPadding: Float,
-        private val mColors: List<Int>
+        normalColor: Int,
+        private val mSelectedColors: List<Int>
 ) : View(mContext), IBannerIndicator {
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
     private val mPositionList = mutableListOf<Rect>()
@@ -45,6 +47,10 @@ class StickyBezierCurveIndicator(
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
     }
+    private val mPaint1: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = normalColor
+    }
     private val mPath = Path()
 
     private val mStartInterpolator = AccelerateInterpolator()
@@ -55,7 +61,7 @@ class StickyBezierCurveIndicator(
     init {
         if (mDataCount > 0) {
             require(mIndicatorPaddingPx > 0) { "indicatorPadding 必须大于0" }
-            require(mColors.isNotEmpty()) { "mColors 不能为空" }
+            require(mSelectedColors.isNotEmpty()) { "mSelectedColors 不能为空" }
 
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             mMaxCircleRadius = containerHeight / 2f
@@ -82,8 +88,14 @@ class StickyBezierCurveIndicator(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        // 画占位圆点
+        mPositionList.forEach {
+            canvas.drawCircle(it.left + mMaxCircleRadius, mMaxCircleRadius, mMaxCircleRadius, mPaint1)
+        }
+        // 画过度圆点
         canvas.drawCircle(mLeftCircleCenterX, mMaxCircleRadius, mLeftCircleRadius, mPaint)
         canvas.drawCircle(mRightCircleCenterX, mMaxCircleRadius, mRightCircleRadius, mPaint)
+        // 画贝塞尔曲线
         drawBezierCurve(canvas)
     }
 
@@ -107,8 +119,8 @@ class StickyBezierCurveIndicator(
         }
 
         // 计算颜色
-        val currentColor = mColors[position % mColors.size]
-        val nextColor = mColors[(position + 1) % mColors.size]
+        val currentColor = mSelectedColors[position % mSelectedColors.size]
+        val nextColor = mSelectedColors[(position + 1) % mSelectedColors.size]
         mPaint.color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
 
         // 计算锚点位置
