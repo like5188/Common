@@ -18,6 +18,7 @@ import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.banner.BannerController
 import com.like.common.view.banner.indicator.IBannerIndicator
+import com.like.common.view.banner.indicator.ImageIndicator
 import com.like.common.view.banner.indicator.StickyBezierCurveIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*

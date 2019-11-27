@@ -39,7 +39,6 @@ class StickyBezierCurveIndicator(
     private var mRightCircleRadius: Float = 0f
     private var mRightCircleX: Float = 0f
 
-    private var mYOffset: Float = 0f
     private var mMaxCircleRadius: Float = 0f
     private var mMinCircleRadius: Float = 0f
 
@@ -57,7 +56,6 @@ class StickyBezierCurveIndicator(
             mPaint.style = Paint.Style.FILL
             mMaxCircleRadius = DimensionUtils.dp2px(context, 5f).toFloat()
             mMinCircleRadius = DimensionUtils.dp2px(context, 2.5f).toFloat()
-            mYOffset = DimensionUtils.dp2px(context, 1.5f).toFloat()
 
             mContainer.removeAllViews()
             var startLeft = mContainer.left
@@ -76,8 +74,8 @@ class StickyBezierCurveIndicator(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawCircle(mLeftCircleX, height - mYOffset - mMaxCircleRadius, mLeftCircleRadius, mPaint)
-        canvas.drawCircle(mRightCircleX, height - mYOffset - mMaxCircleRadius, mRightCircleRadius, mPaint)
+        canvas.drawCircle(mLeftCircleX, height - mMaxCircleRadius, mLeftCircleRadius, mPaint)
+        canvas.drawCircle(mRightCircleX, height - mMaxCircleRadius, mRightCircleRadius, mPaint)
         drawBezierCurve(canvas)
     }
 
@@ -86,7 +84,7 @@ class StickyBezierCurveIndicator(
      */
     private fun drawBezierCurve(canvas: Canvas) {
         mPath.reset()
-        val y = height.toFloat() - mYOffset - mMaxCircleRadius
+        val y = height.toFloat() - mMaxCircleRadius
         mPath.moveTo(mRightCircleX, y)
         mPath.lineTo(mRightCircleX, y - mRightCircleRadius)
         mPath.quadTo(mRightCircleX + (mLeftCircleX - mRightCircleX) / 2.0f, y, mLeftCircleX, y - mLeftCircleRadius)

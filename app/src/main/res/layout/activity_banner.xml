@@ -31,10 +31,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/vp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/bar_grey"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
+                android:orientation="horizontal" />
         </RelativeLayout>
 
     </LinearLayout>
