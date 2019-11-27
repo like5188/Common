@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -19,7 +20,7 @@ import com.like.common.util.DimensionUtils
  * @param mContext
  * @param mDataCount        指示器的数量
  * @param mContainer        指示器的容器
- * @param indicatorPadding  指示器之间的间隔
+ * @param indicatorPadding  指示器之间的间隔，单位 dp
  * @param mColors           指示器的颜色，至少一个，少于[mDataCount]时，循环使用。
  */
 @SuppressLint("ViewConstructor")
@@ -31,7 +32,7 @@ class StickyBezierCurveIndicator(
         private val mColors: List<Int>
 ) : View(mContext), IBannerIndicator {
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
-    private val mPositionDataList = mutableListOf<PositionData>()
+    private val mPositionList = mutableListOf<Rect>()
 
     private var mLeftCircleRadius: Float = 0f
     private var mLeftCircleX: Float = 0f
@@ -61,13 +62,13 @@ class StickyBezierCurveIndicator(
             mContainer.removeAllViews()
             var startLeft = mContainer.left
             for (i in 0 until mDataCount) {
-                val positionData = PositionData()
-                positionData.mLeft = startLeft
-                positionData.mTop = mContainer.top
-                positionData.mRight = startLeft + mMaxCircleRadius.toInt() * 2
-                positionData.mBottom = mContainer.bottom
-                mPositionDataList.add(positionData)
-                startLeft = positionData.mRight + mIndicatorPaddingPx
+                val position = Rect()
+                position.left = startLeft
+                position.top = mContainer.top
+                position.right = startLeft + mMaxCircleRadius.toInt() * 2
+                position.bottom = mContainer.bottom
+                mPositionList.add(position)
+                startLeft = position.right + mIndicatorPaddingPx
             }
             mContainer.addView(this)
         }
@@ -82,8 +83,6 @@ class StickyBezierCurveIndicator(
 
     /**
      * 绘制贝塞尔曲线
-     *
-     * @param canvas
      */
     private fun drawBezierCurve(canvas: Canvas) {
         mPath.reset()
@@ -98,7 +97,7 @@ class StickyBezierCurveIndicator(
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        if (mPositionDataList.isEmpty()) {
+        if (mPositionList.isEmpty()) {
             return
         }
 
@@ -110,11 +109,11 @@ class StickyBezierCurveIndicator(
         }
 
         // 计算锚点位置
-        val current = getImitativePositionData(mPositionDataList, position)
-        val next = getImitativePositionData(mPositionDataList, position + 1)
+        val current = getImitativePosition(position)
+        val next = getImitativePosition(position + 1)
 
-        val leftX = (current.mLeft + (current.mRight - current.mLeft) / 2).toFloat()
-        val rightX = (next.mLeft + (next.mRight - next.mLeft) / 2).toFloat()
+        val leftX = (current.left + (current.right - current.left) / 2).toFloat()
+        val rightX = (next.left + (next.right - next.left) / 2).toFloat()
 
         mLeftCircleX = leftX + (rightX - leftX) * mStartInterpolator.getInterpolation(positionOffset)
         mRightCircleX = leftX + (rightX - leftX) * mEndInterpolator.getInterpolation(positionOffset)
@@ -125,48 +124,28 @@ class StickyBezierCurveIndicator(
     }
 
     /**
-     * IPagerIndicator支持弹性效果的辅助方法
-     *
-     * @param positionDataList
-     * @param index
-     * @return
+     * 获取指定位置锚点的坐标信息
      */
-    private fun getImitativePositionData(positionDataList: List<PositionData>, index: Int): PositionData {
-        if (index >= 0 && index <= positionDataList.size - 1) { // 越界后，返回假的PositionData
-            return positionDataList[index]
+    private fun getImitativePosition(index: Int): Rect {
+        return if (index >= 0 && index <= mPositionList.size - 1) { // 越界后，返回假的PositionData
+            mPositionList[index]
         } else {
-            val result = PositionData()
-            val referenceData: PositionData
+            val referenceData: Rect
             val offset: Int
             if (index < 0) {
                 offset = index
-                referenceData = positionDataList[0]
+                referenceData = mPositionList[0]
             } else {
-                offset = index - positionDataList.size + 1
-                referenceData = positionDataList[positionDataList.size - 1]
+                offset = index - mPositionList.size + 1
+                referenceData = mPositionList[mPositionList.size - 1]
             }
-            result.mLeft = referenceData.mLeft + offset * referenceData.width()
-            result.mTop = referenceData.mTop
-            result.mRight = referenceData.mRight + offset * referenceData.width()
-            result.mBottom = referenceData.mBottom
-            return result
+            val result = Rect()
+            result.left = referenceData.left + offset * referenceData.width()
+            result.top = referenceData.top
+            result.right = referenceData.right + offset * referenceData.width()
+            result.bottom = referenceData.bottom
+            result
         }
-    }
-
-    class PositionData {
-        var mLeft: Int = 0
-        var mTop: Int = 0
-        var mRight: Int = 0
-        var mBottom: Int = 0
-
-        fun width(): Int {
-            return mRight - mLeft
-        }
-
-        fun height(): Int {
-            return mBottom - mTop
-        }
-
     }
 
 }
