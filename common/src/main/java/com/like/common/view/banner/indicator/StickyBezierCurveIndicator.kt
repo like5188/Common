@@ -66,7 +66,7 @@ class StickyBezierCurveIndicator(
 
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             mMaxCircleRadius = containerHeight / 2f
-            mMinCircleRadius = mMaxCircleRadius / 4f
+            mMinCircleRadius = 0f
 
             // 设置本控制器的宽高
             val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * (mDataCount - 1)).toInt()
@@ -97,13 +97,6 @@ class StickyBezierCurveIndicator(
         canvas.drawCircle(mLeftCircleCenterX, mMaxCircleRadius, mLeftCircleRadius, mPaint)
         canvas.drawCircle(mRightCircleCenterX, mMaxCircleRadius, mRightCircleRadius, mPaint)
         // 画贝塞尔曲线
-        drawBezierCurve(canvas)
-    }
-
-    /**
-     * 绘制贝塞尔曲线
-     */
-    private fun drawBezierCurve(canvas: Canvas) {
         mPath.reset()
         mPath.moveTo(mRightCircleCenterX, mMaxCircleRadius)
         mPath.lineTo(mRightCircleCenterX, mMaxCircleRadius - mRightCircleRadius)
