@@ -13,6 +13,18 @@ import android.widget.Scroller
 open class BannerViewPager(context: Context, attrs: AttributeSet?) : androidx.viewpager.widget.ViewPager(context, attrs) {
     private var isScrollable = false
 
+    init {
+        // 避免在BannerController中的onPageScrollStateChanged()方法中切换页面时闪烁
+        /*
+            if (mCurPosition == 0) {
+                mViewPager.setCurrentItem(mAdapterCount - 2, false)
+            } else if (mCurPosition == mAdapterCount - 1) {
+                mViewPager.setCurrentItem(1, false)
+            }
+         */
+        offscreenPageLimit = 2
+    }
+
     fun setScrollable(isScrollable: Boolean) {
         this.isScrollable = isScrollable
     }
