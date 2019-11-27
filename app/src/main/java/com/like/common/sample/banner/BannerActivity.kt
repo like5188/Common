@@ -2,6 +2,7 @@ package com.like.common.sample.banner
 
 import android.animation.ArgbEvaluator
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -17,7 +18,7 @@ import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.banner.BannerController
 import com.like.common.view.banner.indicator.IBannerIndicator
-import com.like.common.view.banner.indicator.ImageIndicator
+import com.like.common.view.banner.indicator.StickyBezierCurveIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*
 import java.util.*
@@ -38,7 +39,7 @@ class BannerActivity : AppCompatActivity() {
         bannerInfoList.add(BannerInfo("https://mall03.sogoucdn.com/image/2018/12/21/20181221191646_4221.png"))
 
         initAutoPlayBanner(bannerInfoList)
-        initBanner(bannerInfoList)
+//        initBanner(bannerInfoList)
     }
 
     private fun initAutoPlayBanner(data: List<BannerInfo>) {
@@ -56,7 +57,8 @@ class BannerActivity : AppCompatActivity() {
 //            setTextColor(Color.WHITE)
 //            setBackgroundColor(Color.DKGRAY)
 //        }
-        val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+//        val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+        val indicator: IBannerIndicator = StickyBezierCurveIndicator(this, data.size, indicatorContainer, 10, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4"), Color.parseColor("#76b0ff"), Color.parseColor("#c683fe")))
         indicator.setViewPager(mBinding.vp)
 
         mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)

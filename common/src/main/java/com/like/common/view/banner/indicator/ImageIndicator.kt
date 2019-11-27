@@ -12,8 +12,8 @@ import android.widget.LinearLayout
  * @param mDataCount                指示器的数量
  * @param mContainer                指示器的容器
  * @param mIndicatorPadding         指示器之间的间隔
- * @param mNormalIndicatorResIds    正常状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，后面的位置都有最后一张图片。
- * @param mSelectedIndicatorResIds  选中状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，后面的位置都有最后一张图片。
+ * @param mNormalIndicatorResIds    正常状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，循环使用。
+ * @param mSelectedIndicatorResIds  选中状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，循环使用。
  */
 class ImageIndicator(
         private val mContext: Context,
@@ -62,18 +62,8 @@ class ImageIndicator(
         mPreSelectedPosition = position
     }
 
-    private fun getNormalIndicatorResId(position: Int): Int =
-            if (position >= mNormalIndicatorResIds.size) {
-                mNormalIndicatorResIds[mNormalIndicatorResIds.size - 1]
-            } else {
-                mNormalIndicatorResIds[position]
-            }
+    private fun getNormalIndicatorResId(position: Int): Int = mNormalIndicatorResIds[position % mNormalIndicatorResIds.size]
 
-    private fun getSelectedIndicatorResId(position: Int): Int =
-            if (position >= mSelectedIndicatorResIds.size) {
-                mSelectedIndicatorResIds[mSelectedIndicatorResIds.size - 1]
-            } else {
-                mSelectedIndicatorResIds[position]
-            }
+    private fun getSelectedIndicatorResId(position: Int): Int = mSelectedIndicatorResIds[position % mSelectedIndicatorResIds.size]
 
 }
