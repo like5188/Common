@@ -81,40 +81,40 @@ class BannerActivity : AppCompatActivity() {
         })
         mBinding.viewPager.adapter = MyViewPagerAdapter(this, data)
         StatusBarUtils.setStatusBarTranslucent(this)
-        mBinding.viewPager.addOnPageChangeListener(
-                object : ViewPager.OnPageChangeListener {
-                    private val argbEvaluator = ArgbEvaluator()
+        mBinding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            private val argbEvaluator = ArgbEvaluator()
 
-                    override fun onPageScrollStateChanged(p0: Int) {
-                    }
+            override fun onPageScrollStateChanged(state: Int) {
+            }
 
-                    override fun onPageScrolled(p0: Int, positionOffset: Float, p2: Int) {
-                        when (p0) {
-                            data.size - 1 -> {
-                                val iv = mBinding.viewPager.getChildAt(p0).findViewById<ImageView>(R.id.iv)
-                                if (iv != null && iv.drawable != null) {
-                                    val color1 = ImageUtils.getColor(iv.drawable, 0x000000)
-                                    val color2 = ImageUtils.getColor(iv.drawable, 0x000000)
-                                    // 根据 positionOffset 计算 color1 到 color2 的渐变颜色值。使得 root 的背景色随着滑动渐变。
-                                    mBinding.root.setBackgroundColor(argbEvaluator.evaluate(positionOffset, color1, color2).toString().toInt())
-                                }
-                            }
-                            else -> {
-                                val iv0 = mBinding.viewPager.getChildAt(p0).findViewById<ImageView>(R.id.iv)
-                                val iv1 = mBinding.viewPager.getChildAt(p0 + 1).findViewById<ImageView>(R.id.iv)
-                                if (iv0 != null && iv0.drawable != null && iv1 != null && iv1.drawable != null) {
-                                    val color1 = ImageUtils.getColor(iv0.drawable, 0x000000)
-                                    val color2 = ImageUtils.getColor(iv1.drawable, 0x000000)
-                                    mBinding.root.setBackgroundColor(argbEvaluator.evaluate(positionOffset, color1, color2).toString().toInt())
-                                }
-                            }
+            // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                when (position) {
+                    data.size - 1 -> {
+                        val iv = mBinding.viewPager.getChildAt(position).findViewById<ImageView>(R.id.iv)
+                        if (iv != null && iv.drawable != null) {
+                            val color1 = ImageUtils.getColor(iv.drawable, 0x000000)
+                            val color2 = ImageUtils.getColor(iv.drawable, 0x000000)
+                            // 根据 positionOffset 计算 color1 到 color2 的渐变颜色值。使得 root 的背景色随着滑动渐变。
+                            mBinding.root.setBackgroundColor(argbEvaluator.evaluate(positionOffset, color1, color2).toString().toInt())
                         }
                     }
-
-                    override fun onPageSelected(p0: Int) {
+                    else -> {
+                        val iv0 = mBinding.viewPager.getChildAt(position).findViewById<ImageView>(R.id.iv)
+                        val iv1 = mBinding.viewPager.getChildAt(position + 1).findViewById<ImageView>(R.id.iv)
+                        if (iv0 != null && iv0.drawable != null && iv1 != null && iv1.drawable != null) {
+                            val color1 = ImageUtils.getColor(iv0.drawable, 0x000000)
+                            val color2 = ImageUtils.getColor(iv1.drawable, 0x000000)
+                            mBinding.root.setBackgroundColor(argbEvaluator.evaluate(positionOffset, color1, color2).toString().toInt())
+                        }
                     }
+                }
+            }
 
-                })
+            override fun onPageSelected(position: Int) {
+            }
+
+        })
     }
 
     override fun onResume() {
