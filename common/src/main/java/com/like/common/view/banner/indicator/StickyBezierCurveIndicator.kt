@@ -3,7 +3,10 @@ package com.like.common.view.banner.indicator
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -55,23 +58,23 @@ class StickyBezierCurveIndicator(
 
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             mMaxCircleRadius = containerHeight / 2f
-            mMinCircleRadius = mMaxCircleRadius / 2f
+            mMinCircleRadius = mMaxCircleRadius / 1.75f
 
+            // 设置本控制器的宽高
             val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * (mDataCount - 1)).toInt()
             this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
-            this.setBackgroundColor(Color.GREEN)
 
-            mContainer.removeAllViews()
-            var startLeft = mContainer.left
+            var startLeft = left
             for (i in 0 until mDataCount) {
                 val position = Rect()
                 position.left = startLeft
-                position.top = mContainer.top
+                position.top = top
                 position.right = startLeft + mMaxCircleRadius.toInt() * 2
-                position.bottom = mContainer.bottom
+                position.bottom = bottom
                 mPositionList.add(position)
                 startLeft = position.right + mIndicatorPaddingPx
             }
+
             mContainer.addView(this)
         }
     }

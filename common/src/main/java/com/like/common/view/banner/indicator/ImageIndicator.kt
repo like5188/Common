@@ -39,7 +39,6 @@ class ImageIndicator(
                 require(it > 0) { "mSelectedIndicatorResIds 中的图片资源 id 无效" }
             }
 
-            mContainer.removeAllViews()
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             for (i in 0 until mDataCount) {
                 // 加载指示器图片
