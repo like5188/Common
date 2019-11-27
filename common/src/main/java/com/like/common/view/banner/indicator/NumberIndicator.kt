@@ -16,7 +16,9 @@ class NumberIndicator(
         private val mDataCount: Int,
         private val mContainer: ViewGroup
 ) : BannerIndicator() {
-    private val mCircleTextView = CircleTextView(mContext)
+    private val mCircleTextView = CircleTextView(mContext).apply {
+        setPadding(10, 10, 10, 10)
+    }
 
     init {
         if (mDataCount > 0) {
