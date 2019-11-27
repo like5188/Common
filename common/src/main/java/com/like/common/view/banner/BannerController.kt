@@ -85,8 +85,8 @@ class BannerController {
      * @param viewPager [BannerViewPager] 类型，它必须已经设置了 [BannerPagerAdapter]。
      */
     fun setViewPager(viewPager: BannerViewPager): BannerController {
-        val adapter = viewPager.adapter ?: throw IllegalArgumentException("viewPager 没有设置 adapter")
-        require(adapter is BannerPagerAdapter) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }
+        val adapter = viewPager.adapter ?: throw IllegalArgumentException("ViewPager does not have adapter instance.")
+        require(adapter is BannerPagerAdapter) { "adapter of viewPager must be com.like.common.view.banner.BannerPagerAdapter" }
         mViewPager = viewPager
         mAdapterCount = adapter.count
         if (mAdapterCount > 0) {
