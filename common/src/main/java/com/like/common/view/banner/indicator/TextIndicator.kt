@@ -26,7 +26,7 @@ class TextIndicator(
     init {
         if (mDataCount > 0) {
             mContainer.removeAllViews()
-            val containerHeight = mContainer.height
+            val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             mCircleTextView.layoutParams = ViewGroup.LayoutParams(containerHeight, containerHeight)
             mContainer.addView(mCircleTextView)
         }

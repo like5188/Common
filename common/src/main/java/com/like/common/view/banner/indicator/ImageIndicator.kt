@@ -40,9 +40,9 @@ class ImageIndicator(
             }
 
             mContainer.removeAllViews()
+            val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             for (i in 0 until mDataCount) {
                 // 加载指示器图片
-                val containerHeight = mContainer.height
                 val params = LinearLayout.LayoutParams(containerHeight, containerHeight)// 设置指示器宽高
                 val iv = ImageView(mContext)
                 iv.scaleType = ImageView.ScaleType.FIT_CENTER
