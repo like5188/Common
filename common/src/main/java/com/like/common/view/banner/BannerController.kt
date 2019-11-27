@@ -11,17 +11,17 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 控制 [BannerViewPager] 进行自动无限循环
  * 原理：当数据量大于1时，在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
  *
- * @param dataCount         数据条数
- * @param mCycleInterval    循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
- * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法，用于使用者控制指示器。默认null
- * @param mOnCreateView     创建指定位置的视图
+ * @param dataCount             数据条数
+ * @param mCycleInterval        循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
+ * @param mIndicator            在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法，用于使用者控制指示器。默认null
+ * @param mOnInstantiateItem    创建指定位置的视图
  */
 class BannerController(
         private val mViewPager: BannerViewPager,
         @IntRange(from = 0) dataCount: Int,
         private val mCycleInterval: Long = 3000L,
         private val mIndicator: ViewPager.OnPageChangeListener? = null,
-        private val mOnCreateView: (Int) -> View
+        private val mOnInstantiateItem: (Int) -> View
 ) {
     /**
      * ViewPager的当前位置
@@ -136,7 +136,7 @@ class BannerController(
         override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val view = mOnCreateView(getRealPosition(position))
+            val view = mOnInstantiateItem(getRealPosition(position))
             container.addView(view)
             return view
         }
