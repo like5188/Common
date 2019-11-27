@@ -18,7 +18,7 @@ open class BannerIndicator {
         override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
             if (mAdapterCount == 1) {
                 // 如果只有一个页面，那么setCurrentItem(0)无法触发onPageSelected方法，因为页面没有变化，只能触发onPageScrolled()方法。
-                // 所以要单独处理来触发指示器的显示效果。
+                // 所以要单独处理来触发指示器的显示效果，因为一般指示器的操作都是在onPageSelected方法中的。
                 this@BannerIndicator.onPageSelected(getRealPosition(position))
             } else {
                 this@BannerIndicator.onPageScrolled(getRealPosition(position), positionOffset, positionOffsetPixels)
