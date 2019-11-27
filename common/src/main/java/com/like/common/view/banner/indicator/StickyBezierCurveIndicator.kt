@@ -38,9 +38,9 @@ class StickyBezierCurveIndicator(
     private var mMinCircleRadius: Float = 0f
 
     private var mLeftCircleRadius: Float = 0f
-    private var mLeftCircleX: Float = 0f
+    private var mLeftCircleCenterX: Float = 0f
     private var mRightCircleRadius: Float = 0f
-    private var mRightCircleX: Float = 0f
+    private var mRightCircleCenterX: Float = 0f
 
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -55,6 +55,7 @@ class StickyBezierCurveIndicator(
     init {
         if (mDataCount > 0) {
             require(mIndicatorPaddingPx > 0) { "indicatorPadding 必须大于0" }
+            require(mColors.isNotEmpty()) { "mColors 不能为空" }
 
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             mMaxCircleRadius = containerHeight / 2f
@@ -81,8 +82,8 @@ class StickyBezierCurveIndicator(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawCircle(mLeftCircleX, height - mMaxCircleRadius, mLeftCircleRadius, mPaint)
-        canvas.drawCircle(mRightCircleX, height - mMaxCircleRadius, mRightCircleRadius, mPaint)
+        canvas.drawCircle(mLeftCircleCenterX, mMaxCircleRadius, mLeftCircleRadius, mPaint)
+        canvas.drawCircle(mRightCircleCenterX, mMaxCircleRadius, mRightCircleRadius, mPaint)
         drawBezierCurve(canvas)
     }
 
@@ -91,12 +92,11 @@ class StickyBezierCurveIndicator(
      */
     private fun drawBezierCurve(canvas: Canvas) {
         mPath.reset()
-        val y = height.toFloat() - mMaxCircleRadius
-        mPath.moveTo(mRightCircleX, y)
-        mPath.lineTo(mRightCircleX, y - mRightCircleRadius)
-        mPath.quadTo(mRightCircleX + (mLeftCircleX - mRightCircleX) / 2.0f, y, mLeftCircleX, y - mLeftCircleRadius)
-        mPath.lineTo(mLeftCircleX, y + mLeftCircleRadius)
-        mPath.quadTo(mRightCircleX + (mLeftCircleX - mRightCircleX) / 2.0f, y, mRightCircleX, y + mRightCircleRadius)
+        mPath.moveTo(mRightCircleCenterX, mMaxCircleRadius)
+        mPath.lineTo(mRightCircleCenterX, mMaxCircleRadius - mRightCircleRadius)
+        mPath.quadTo(mRightCircleCenterX + (mLeftCircleCenterX - mRightCircleCenterX) / 2.0f, mMaxCircleRadius, mLeftCircleCenterX, mMaxCircleRadius - mLeftCircleRadius)
+        mPath.lineTo(mLeftCircleCenterX, mMaxCircleRadius + mLeftCircleRadius)
+        mPath.quadTo(mRightCircleCenterX + (mLeftCircleCenterX - mRightCircleCenterX) / 2.0f, mMaxCircleRadius, mRightCircleCenterX, mMaxCircleRadius + mRightCircleRadius)
         mPath.close()  // 闭合
         canvas.drawPath(mPath, mPaint)
     }
@@ -107,21 +107,19 @@ class StickyBezierCurveIndicator(
         }
 
         // 计算颜色
-        if (mColors.isNotEmpty()) {
-            val currentColor = mColors[position % mColors.size]
-            val nextColor = mColors[(position + 1) % mColors.size]
-            mPaint.color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
-        }
+        val currentColor = mColors[position % mColors.size]
+        val nextColor = mColors[(position + 1) % mColors.size]
+        mPaint.color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
 
         // 计算锚点位置
         val current = getImitativePosition(position)
         val next = getImitativePosition(position + 1)
 
-        val leftX = (current.left + (current.right - current.left) / 2).toFloat()
-        val rightX = (next.left + (next.right - next.left) / 2).toFloat()
+        val leftCircleCenterX = (current.left + (current.right - current.left) / 2).toFloat()
+        val rightCircleCenterX = (next.left + (next.right - next.left) / 2).toFloat()
 
-        mLeftCircleX = leftX + (rightX - leftX) * mStartInterpolator.getInterpolation(positionOffset)
-        mRightCircleX = leftX + (rightX - leftX) * mEndInterpolator.getInterpolation(positionOffset)
+        mLeftCircleCenterX = leftCircleCenterX + (rightCircleCenterX - leftCircleCenterX) * mStartInterpolator.getInterpolation(positionOffset)
+        mRightCircleCenterX = leftCircleCenterX + (rightCircleCenterX - leftCircleCenterX) * mEndInterpolator.getInterpolation(positionOffset)
         mLeftCircleRadius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
         mRightCircleRadius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
 
