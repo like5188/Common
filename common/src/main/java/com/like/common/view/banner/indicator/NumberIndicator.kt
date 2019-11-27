@@ -2,7 +2,6 @@ package com.like.common.view.banner.indicator
 
 import android.content.Context
 import android.view.ViewGroup
-import androidx.viewpager.widget.ViewPager
 import com.like.common.view.CircleTextView
 
 /**
@@ -16,7 +15,7 @@ class NumberIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: ViewGroup
-) : ViewPager.OnPageChangeListener {
+) : BannerIndicator() {
     private val mCircleTextView = CircleTextView(mContext)
 
     init {
@@ -29,12 +28,6 @@ class NumberIndicator(
     override fun onPageSelected(position: Int) {
         if (mDataCount <= 0) return
         mCircleTextView.text = "${position + 1}/$mDataCount"
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {
     }
 
 }

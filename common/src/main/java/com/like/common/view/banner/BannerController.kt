@@ -2,6 +2,7 @@ package com.like.common.view.banner
 
 import android.os.Handler
 import androidx.viewpager.widget.ViewPager
+import com.like.common.view.banner.indicator.BannerIndicator
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -10,12 +11,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * @param mViewPager        [BannerViewPager] 类型，它必须设置了 [BannerPagerAdapter]。
  * @param mCycleInterval    循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
- * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法，用于使用者控制指示器。默认null
+ * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调[BannerIndicator]的相关方法，用于使用者控制指示器。默认null
  */
 class BannerController(
         private val mViewPager: BannerViewPager,
         private val mCycleInterval: Long = 3000L,
-        private val mIndicator: ViewPager.OnPageChangeListener? = null
+        private val mIndicator: BannerIndicator? = null
 ) {
     /**
      * 是否正在自动循环播放

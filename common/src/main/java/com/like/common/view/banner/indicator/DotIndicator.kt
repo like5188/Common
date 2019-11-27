@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
-import androidx.viewpager.widget.ViewPager
 
 /**
  * 小圆点指示器
@@ -23,7 +22,7 @@ class DotIndicator(
         private val mIndicatorPadding: Int,
         @DrawableRes private val mNormalIndicatorResId: Int,
         private val mSelectedIndicatorResIds: List<Int>
-) : ViewPager.OnPageChangeListener {
+) : BannerIndicator() {
     private var mPreSelectedPosition = 0
 
     init {
@@ -62,12 +61,6 @@ class DotIndicator(
         }
         mContainer.getChildAt(position).setBackgroundResource(selectResId)
         mPreSelectedPosition = position
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {
     }
 
 }
