@@ -2,6 +2,7 @@ package com.like.common.sample.banner
 
 import android.animation.ArgbEvaluator
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -53,7 +54,13 @@ class BannerActivity : AppCompatActivity() {
         }
 
 //        val indicator = ImageIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
-        val indicator = NumberIndicator(this, data.size, indicatorContainer)
+        val indicator = NumberIndicator(this, data.size, indicatorContainer).apply {
+            setPadding(10, 10, 10, 10)
+            setTextSize(12f)
+            setTextColor(Color.WHITE)
+            setBackgroundColor(Color.DKGRAY)
+        }
+
         mBinding.vp.adapter = MyBannerPagerAdapter(this, data)
         mBannerController = BannerController(mBinding.vp, 3000L, indicator)
     }

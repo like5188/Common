@@ -3,7 +3,6 @@ package com.like.common.view.banner.indicator
 import android.content.Context
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.annotation.DrawableRes
 
 /**
  * 图片指示器，每个位置一张图片。包含正常状态和选中状态两种图片。
@@ -12,15 +11,15 @@ import androidx.annotation.DrawableRes
  * @param mDataCount                指示器的数量
  * @param mContainer                指示器的容器
  * @param mIndicatorPadding         指示器之间的间隔
- * @param mNormalIndicatorResId     正常状态的指示器图片资源id
- * @param mSelectedIndicatorResIds  选中状态的指示器图片资源id，可以为多个，比如每个选中状态对应一种颜色。
+ * @param mNormalIndicatorResIds    正常状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，后面的位置都有最后一张图片。
+ * @param mSelectedIndicatorResIds  选中状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，后面的位置都有最后一张图片。
  */
 class ImageIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: LinearLayout,
         private val mIndicatorPadding: Int,
-        @DrawableRes private val mNormalIndicatorResId: Int,
+        private val mNormalIndicatorResIds: List<Int>,
         private val mSelectedIndicatorResIds: List<Int>
 ) : BannerIndicator() {
     private var mPreSelectedPosition = 0
@@ -28,9 +27,13 @@ class ImageIndicator(
     init {
         if (mDataCount > 0) {
             require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
+            require(mNormalIndicatorResIds.isNotEmpty()) { "mNormalIndicatorResIds 不能为空" }
+            mNormalIndicatorResIds.forEach {
+                require(it > 0) { "mNormalIndicatorResIds 中的图片资源 id 无效" }
+            }
             require(mSelectedIndicatorResIds.isNotEmpty()) { "mSelectedIndicatorResIds 不能为空" }
             mSelectedIndicatorResIds.forEach {
-                require(it > 0) { "mSelectedIndicatorResIds 中的小圆点图片资源 id 无效" }
+                require(it > 0) { "mSelectedIndicatorResIds 中的图片资源 id 无效" }
             }
 
             mContainer.removeAllViews()
@@ -39,10 +42,10 @@ class ImageIndicator(
                 val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
                 val iv = ImageView(mContext)
                 if (i == 0) {
-                    iv.setBackgroundResource(mSelectedIndicatorResIds[0])
+                    iv.setBackgroundResource(getSelectedIndicatorResId(i))
                     params.setMargins(0, 0, 0, 0)// 设置指示器边距
                 } else {
-                    iv.setBackgroundResource(mNormalIndicatorResId)
+                    iv.setBackgroundResource(getNormalIndicatorResId(i))
                     params.setMargins(mIndicatorPadding, 0, 0, 0)// 设置指示器边距
                 }
                 iv.layoutParams = params
@@ -53,14 +56,23 @@ class ImageIndicator(
 
     override fun onPageSelected(position: Int) {
         if (mDataCount <= 0) return
-        mContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId)
-        val selectResId = if (position >= mSelectedIndicatorResIds.size) {
-            mSelectedIndicatorResIds[mSelectedIndicatorResIds.size - 1]
-        } else {
-            mSelectedIndicatorResIds[position]
-        }
-        mContainer.getChildAt(position).setBackgroundResource(selectResId)
+        mContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(getNormalIndicatorResId(mPreSelectedPosition))
+        mContainer.getChildAt(position).setBackgroundResource(getSelectedIndicatorResId(position))
         mPreSelectedPosition = position
     }
+
+    private fun getNormalIndicatorResId(position: Int): Int =
+            if (position >= mNormalIndicatorResIds.size) {
+                mNormalIndicatorResIds[mNormalIndicatorResIds.size - 1]
+            } else {
+                mNormalIndicatorResIds[position]
+            }
+
+    private fun getSelectedIndicatorResId(position: Int): Int =
+            if (position >= mSelectedIndicatorResIds.size) {
+                mSelectedIndicatorResIds[mSelectedIndicatorResIds.size - 1]
+            } else {
+                mSelectedIndicatorResIds[position]
+            }
 
 }
