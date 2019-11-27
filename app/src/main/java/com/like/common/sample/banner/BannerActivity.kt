@@ -2,6 +2,7 @@ package com.like.common.sample.banner
 
 import android.animation.ArgbEvaluator
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -15,7 +16,8 @@ import com.like.common.util.ImageUtils
 import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.banner.BannerController
-import com.like.common.view.banner.indicator.ImageIndicator
+import com.like.common.view.banner.indicator.BannerIndicator
+import com.like.common.view.banner.indicator.NumberIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*
 import java.util.*
@@ -24,7 +26,7 @@ class BannerActivity : AppCompatActivity() {
     private val mBinding: ActivityBannerBinding by lazy {
         DataBindingUtil.setContentView<ActivityBannerBinding>(this, R.layout.activity_banner)
     }
-    private var mBannerController: BannerController? = null
+    private val mBannerController: BannerController by lazy { BannerController() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,17 +54,18 @@ class BannerActivity : AppCompatActivity() {
             it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
         }
 
-        val indicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
-
-//        val indicator = NumberIndicator(this, data.size, indicatorContainer).apply {
-//            setPadding(10, 10, 10, 10)
-//            setTextSize(12f)
-//            setTextColor(Color.WHITE)
-//            setBackgroundColor(Color.DKGRAY)
-//        }
-
         mBinding.vp.adapter = MyBannerPagerAdapter(this, data)
-        mBannerController = BannerController(mBinding.vp, 3000L, indicator)
+
+        val indicator: BannerIndicator = NumberIndicator(this, data.size, indicatorContainer).apply {
+            setPadding(10, 10, 10, 10)
+            setTextSize(12f)
+            setTextColor(Color.WHITE)
+            setBackgroundColor(Color.DKGRAY)
+        }
+//        val indicator: BannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+        indicator.setViewPager(mBinding.vp)
+
+        mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)
     }
 
     private fun initBanner(data: List<BannerInfo>) {

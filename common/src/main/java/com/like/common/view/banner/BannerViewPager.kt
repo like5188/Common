@@ -22,7 +22,7 @@ open class BannerViewPager(context: Context, attrs: AttributeSet?) : androidx.vi
                 mViewPager.setCurrentItem(1, false)
             }
          */
-        offscreenPageLimit = 2
+        offscreenPageLimit = 3
     }
 
     fun setScrollable(isScrollable: Boolean) {
