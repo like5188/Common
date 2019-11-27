@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -65,7 +66,7 @@ class StickyBezierCurveIndicator(
 
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
             mMaxCircleRadius = containerHeight / 2f
-            mMinCircleRadius = mMaxCircleRadius / 1.75f
+            mMinCircleRadius = mMaxCircleRadius / 4f
 
             // 设置本控制器的宽高
             val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * (mDataCount - 1)).toInt()
@@ -114,6 +115,7 @@ class StickyBezierCurveIndicator(
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        Log.d("Tag", "position=$position")
         if (mPositionList.isEmpty()) {
             return
         }
@@ -124,11 +126,22 @@ class StickyBezierCurveIndicator(
         mPaint.color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
 
         // 计算锚点位置
-        val current = getImitativePosition(position)
-        val next = getImitativePosition(position + 1)
+        val current = mPositionList[position]
+        val next = if (position == mDataCount - 1) {
+//            mPositionList[0]// 这种算法和下面的算法效果不一样
+            Rect().apply {
+                // 在最后一个圆点后面创建一个假的圆点位置
+                left = current.right + mIndicatorPaddingPx
+                top = current.top
+                right = left + current.width()
+                bottom = current.bottom
+            }
+        } else {
+            mPositionList[position + 1]
+        }
 
-        val leftCircleCenterX = (current.left + (current.right - current.left) / 2).toFloat()
-        val rightCircleCenterX = (next.left + (next.right - next.left) / 2).toFloat()
+        val leftCircleCenterX = current.left + current.width() / 2f
+        val rightCircleCenterX = next.left + next.width() / 2f
 
         mLeftCircleCenterX = leftCircleCenterX + (rightCircleCenterX - leftCircleCenterX) * mStartInterpolator.getInterpolation(positionOffset)
         mRightCircleCenterX = leftCircleCenterX + (rightCircleCenterX - leftCircleCenterX) * mEndInterpolator.getInterpolation(positionOffset)
@@ -136,31 +149,6 @@ class StickyBezierCurveIndicator(
         mRightCircleRadius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
 
         invalidate()
-    }
-
-    /**
-     * 获取指定位置锚点的坐标信息
-     */
-    private fun getImitativePosition(index: Int): Rect {
-        return if (index >= 0 && index <= mPositionList.size - 1) { // 越界后，返回假的PositionData
-            mPositionList[index]
-        } else {
-            val referenceData: Rect
-            val offset: Int
-            if (index < 0) {
-                offset = index
-                referenceData = mPositionList[0]
-            } else {
-                offset = index - mPositionList.size + 1
-                referenceData = mPositionList[mPositionList.size - 1]
-            }
-            val result = Rect()
-            result.left = referenceData.left + offset * referenceData.width()
-            result.top = referenceData.top
-            result.right = referenceData.right + offset * referenceData.width()
-            result.bottom = referenceData.bottom
-            result
-        }
     }
 
 }
