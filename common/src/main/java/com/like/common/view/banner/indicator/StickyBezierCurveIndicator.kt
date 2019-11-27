@@ -108,7 +108,7 @@ class StickyBezierCurveIndicator(
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        Log.d("Tag", "position=$position")
+        Log.d("tag", "position=$position positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
         if (mPositionList.isEmpty()) {
             return
         }
