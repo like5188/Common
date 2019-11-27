@@ -3,11 +3,7 @@ package com.like.common.view.banner.indicator
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Rect
-import android.util.Log
+import android.graphics.*
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -35,15 +31,17 @@ class StickyBezierCurveIndicator(
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
     private val mPositionList = mutableListOf<Rect>()
 
+    private var mMaxCircleRadius: Float = 0f
+    private var mMinCircleRadius: Float = 0f
+
     private var mLeftCircleRadius: Float = 0f
     private var mLeftCircleX: Float = 0f
     private var mRightCircleRadius: Float = 0f
     private var mRightCircleX: Float = 0f
 
-    private var mMaxCircleRadius: Float = 0f
-    private var mMinCircleRadius: Float = 0f
-
-    private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
     private val mPath = Path()
 
     private val mStartInterpolator = AccelerateInterpolator()
@@ -54,10 +52,15 @@ class StickyBezierCurveIndicator(
     init {
         if (mDataCount > 0) {
             require(mIndicatorPaddingPx > 0) { "indicatorPadding 必须大于0" }
-            mPaint.style = Paint.Style.FILL
-            mMaxCircleRadius = DimensionUtils.dp2px(context, 5f).toFloat()
-            mMinCircleRadius = DimensionUtils.dp2px(context, 2.5f).toFloat()
-            Log.d("tag", "width=${mContainer.width} height=${mContainer.height}")
+
+            val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
+            mMaxCircleRadius = containerHeight / 2f
+            mMinCircleRadius = mMaxCircleRadius / 2f
+
+            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * (mDataCount - 1)).toInt()
+            this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
+            this.setBackgroundColor(Color.GREEN)
+
             mContainer.removeAllViews()
             var startLeft = mContainer.left
             for (i in 0 until mDataCount) {
