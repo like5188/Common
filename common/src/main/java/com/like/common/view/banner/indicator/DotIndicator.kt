@@ -10,7 +10,7 @@ import androidx.viewpager.widget.ViewPager
  * 小圆点指示器
  *
  * @param mContext
- * @param mCount                    指示器的数量
+ * @param mDataCount                指示器的数量
  * @param mContainer                指示器的容器
  * @param mIndicatorPadding         小圆点之间的间隔
  * @param mNormalIndicatorResId     正常状态的小圆点图片资源id
@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager
  */
 class DotIndicator(
         private val mContext: Context,
-        private val mCount: Int,
+        private val mDataCount: Int,
         private val mContainer: LinearLayout,
         private val mIndicatorPadding: Int,
         @DrawableRes private val mNormalIndicatorResId: Int,
@@ -27,7 +27,7 @@ class DotIndicator(
     private var mPreSelectedPosition = 0
 
     init {
-        if (mCount > 0) {
+        if (mDataCount > 0) {
             require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
             require(mSelectedIndicatorResIds.isNotEmpty()) { "mSelectedIndicatorResIds 不能为空" }
             mSelectedIndicatorResIds.forEach {
@@ -35,7 +35,7 @@ class DotIndicator(
             }
 
             mContainer.removeAllViews()
-            for (i in 0 until mCount) {
+            for (i in 0 until mDataCount) {
                 // 加载指示器图片
                 val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
                 val iv = ImageView(mContext)
@@ -53,7 +53,7 @@ class DotIndicator(
     }
 
     override fun onPageSelected(position: Int) {
-        if (mCount <= 0) return
+        if (mDataCount <= 0) return
         mContainer.getChildAt(mPreSelectedPosition).setBackgroundResource(mNormalIndicatorResId)
         val selectResId = if (position >= mSelectedIndicatorResIds.size) {
             mSelectedIndicatorResIds[mSelectedIndicatorResIds.size - 1]

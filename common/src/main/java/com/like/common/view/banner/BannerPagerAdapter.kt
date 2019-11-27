@@ -3,15 +3,15 @@ package com.like.common.view.banner
 import android.view.View
 import android.view.ViewGroup
 
-abstract class BannerPagerAdapter<T>(private val list: List<T>) : androidx.viewpager.widget.PagerAdapter() {
+abstract class BannerPagerAdapter(dataCount: Int) : androidx.viewpager.widget.PagerAdapter() {
     /**
      * Adapter 中的实际数据数量
      * 当数据量大于1时，在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
      */
-    private val mAdapterCount = if (list.size > 1) {
-        list.size + 2
+    private val mAdapterCount = if (dataCount > 1) {
+        dataCount + 2
     } else {
-        list.size
+        dataCount
     }
 
     final override fun getCount(): Int = mAdapterCount
@@ -20,7 +20,7 @@ abstract class BannerPagerAdapter<T>(private val list: List<T>) : androidx.viewp
 
     final override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val realPosition = getRealPosition(position)// 在原始数据列表中的位置
-        val view = onInstantiateItem(list[realPosition])
+        val view = onInstantiateItem(realPosition)
         container.addView(view)
         return view
     }
@@ -35,6 +35,6 @@ abstract class BannerPagerAdapter<T>(private val list: List<T>) : androidx.viewp
         else -> (position - 1) % (mAdapterCount - 2)
     }
 
-    abstract fun onInstantiateItem(data: T): View
+    abstract fun onInstantiateItem(position: Int): View
 
 }

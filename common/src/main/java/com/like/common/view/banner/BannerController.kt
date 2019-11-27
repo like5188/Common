@@ -80,7 +80,7 @@ class BannerController(
 
     init {
         val adapter = mViewPager.adapter ?: throw IllegalArgumentException("viewPager 没有设置 adapter")
-        require(adapter is BannerPagerAdapter<*>) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }
+        require(adapter is BannerPagerAdapter) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }
         mAdapterCount = adapter.count
         if (mAdapterCount > 0) {
             mViewPager.addOnPageChangeListener(mOnPageChangeListener)
