@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -62,7 +63,7 @@ class BannerActivity : AppCompatActivity() {
     }
 
     private fun initBanner(data: List<BannerInfo>) {
-        mBinding.viewPager.offscreenPageLimit = 3
+        mBinding.viewPager.offscreenPageLimit = 2// 必须设置，因为要读取相邻图片的颜色值
         mBinding.viewPager.setPageTransformer(true, object : RotateYTransformer() {
             override fun getRotate(context: Context): Float {
                 var rotate = 0.5f
@@ -89,12 +90,13 @@ class BannerActivity : AppCompatActivity() {
 
             // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                Log.e("BannerActivity", "position=$position positionOffset=$positionOffset")
                 when (position) {
                     data.size - 1 -> {
-                        val iv = mBinding.viewPager.getChildAt(position).findViewById<ImageView>(R.id.iv)
-                        if (iv != null && iv.drawable != null) {
-                            val color1 = ImageUtils.getColor(iv.drawable, 0x000000)
-                            val color2 = ImageUtils.getColor(iv.drawable, 0x000000)
+                        val iv0 = mBinding.viewPager.getChildAt(position).findViewById<ImageView>(R.id.iv)
+                        if (iv0 != null && iv0.drawable != null) {
+                            val color1 = ImageUtils.getColor(iv0.drawable, 0x000000)
+                            val color2 = ImageUtils.getColor(iv0.drawable, 0x000000)
                             // 根据 positionOffset 计算 color1 到 color2 的渐变颜色值。使得 root 的背景色随着滑动渐变。
                             mBinding.root.setBackgroundColor(argbEvaluator.evaluate(positionOffset, color1, color2).toString().toInt())
                         }
