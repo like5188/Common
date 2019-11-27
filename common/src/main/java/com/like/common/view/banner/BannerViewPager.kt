@@ -13,11 +13,6 @@ import android.widget.Scroller
 open class BannerViewPager(context: Context, attrs: AttributeSet?) : androidx.viewpager.widget.ViewPager(context, attrs) {
     private var isScrollable = false
 
-    init {
-        // 设置缓存，这样左右拖动即可看见后面的Fragment。
-        this.offscreenPageLimit = 3
-    }
-
     fun setScrollable(isScrollable: Boolean) {
         this.isScrollable = isScrollable
     }

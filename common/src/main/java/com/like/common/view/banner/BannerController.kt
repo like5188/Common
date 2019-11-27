@@ -1,49 +1,38 @@
 package com.like.common.view.banner
 
 import android.os.Handler
-import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.IntRange
 import androidx.viewpager.widget.ViewPager
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * 控制 [BannerViewPager] 进行自动无限循环
+ * 通过 [BannerViewPager]、[BannerPagerAdapter] 控制 Banner 进行无限轮播
  * 原理：当数据量大于1时，在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
  *
- * @param dataCount             数据条数
- * @param mCycleInterval        循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
- * @param mIndicator            在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法，用于使用者控制指示器。默认null
- * @param mOnInstantiateItem    创建指定位置的视图
+ * @param mViewPager        [BannerViewPager] 类型，它必须设置了 [BannerPagerAdapter]。
+ * @param mCycleInterval    循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
+ * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调此属性的相关方法，用于使用者控制指示器。默认null
  */
 class BannerController(
         private val mViewPager: BannerViewPager,
-        @IntRange(from = 0) dataCount: Int,
         private val mCycleInterval: Long = 3000L,
-        private val mIndicator: ViewPager.OnPageChangeListener? = null,
-        private val mOnInstantiateItem: (Int) -> View
+        private val mIndicator: ViewPager.OnPageChangeListener? = null
 ) {
+    /**
+     * 是否正在自动循环播放
+     */
+    private val mIsAutoPlaying = AtomicBoolean(false)
     /**
      * ViewPager的当前位置
      */
     private var mCurPosition = 1
     /**
-     * 是否正在自动循环播放
-     */
-    private var mIsAutoPlaying = AtomicBoolean(false)
-    /**
      * Adapter 中的实际数据数量
-     * 当数据量大于1时，在数据的前后两端各添加一条数据。前端添加的是最后一条数据，尾端添加的是第一条数据。
      */
-    private val mAdapterCount = if (dataCount > 1) {
-        dataCount + 2
-    } else {
-        dataCount
-    }
+    private var mAdapterCount = 0
 
     private val mCycleHandler: Handler by lazy {
         Handler {
-            if (mIsAutoPlaying.get()) {
+            if (mIsAutoPlaying.get() && mCycleInterval > 0 && mAdapterCount > 1) {
                 mCurPosition = mCurPosition % (mAdapterCount - 1) + 1
                 if (mCurPosition == 1) {
                     mViewPager.setCurrentItem(mCurPosition, false)
@@ -57,40 +46,44 @@ class BannerController(
         }
     }
 
-    init {
-        if (mAdapterCount > 0) {
-            mViewPager.adapter = BannerViewPagerAdapter()
-            mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                // position当前选择的是哪个页面。注意：如果mCount=1，那么默认会显示第0页，此时不会触发此方法，只会触发onPageScrolled方法。
-                override fun onPageSelected(position: Int) {
-                    mCurPosition = position
-                    mIndicator?.onPageSelected(getRealPosition(position))
-                }
+    private val mOnPageChangeListener = object : ViewPager.OnPageChangeListener {
+        // position当前选择的是哪个页面。注意：如果mCount=1，那么默认会显示第0页，此时不会触发此方法，只会触发onPageScrolled方法。
+        override fun onPageSelected(position: Int) {
+            mCurPosition = position
+            mIndicator?.onPageSelected(getRealPosition(position))
+        }
 
-                // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                    mIndicator?.onPageScrolled(getRealPosition(position), positionOffset, positionOffsetPixels)
-                }
+        // position表示目标位置，positionOffset表示偏移的百分比，positionOffsetPixels表示偏移的像素
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            mIndicator?.onPageScrolled(getRealPosition(position), positionOffset, positionOffsetPixels)
+        }
 
-                override fun onPageScrollStateChanged(state: Int) {
-                    when (state) {
-                        ViewPager.SCROLL_STATE_IDLE -> {// 页面停止在了某页，有可能是手指滑动一页结束，有可能是自动滑动一页结束，开始自动播放。
-                            if (mCurPosition == 0) {
-                                mViewPager.setCurrentItem(mAdapterCount - 2, false)
-                            } else if (mCurPosition == mAdapterCount - 1) {
-                                mViewPager.setCurrentItem(1, false)
-                            }
-                            play()
-                        }
-                        ViewPager.SCROLL_STATE_DRAGGING -> {// 手指按下开始滑动，停止自动播放。
-                            pause()
-                        }
-                        ViewPager.SCROLL_STATE_SETTLING -> {// 页面开始自动滑动
-                        }
+        override fun onPageScrollStateChanged(state: Int) {
+            when (state) {
+                ViewPager.SCROLL_STATE_IDLE -> {// 页面停止在了某页，有可能是手指滑动一页结束，有可能是自动滑动一页结束，开始自动播放。
+                    if (mCurPosition == 0) {
+                        mViewPager.setCurrentItem(mAdapterCount - 2, false)
+                    } else if (mCurPosition == mAdapterCount - 1) {
+                        mViewPager.setCurrentItem(1, false)
                     }
-                    mIndicator?.onPageScrollStateChanged(state)
+                    play()
                 }
-            })
+                ViewPager.SCROLL_STATE_DRAGGING -> {// 手指按下开始滑动，停止自动播放。
+                    pause()
+                }
+                ViewPager.SCROLL_STATE_SETTLING -> {// 页面开始自动滑动
+                }
+            }
+            mIndicator?.onPageScrollStateChanged(state)
+        }
+    }
+
+    init {
+        val adapter = mViewPager.adapter ?: throw IllegalArgumentException("viewPager 没有设置 adapter")
+        require(adapter is BannerPagerAdapter<*>) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }
+        mAdapterCount = adapter.count
+        if (mAdapterCount > 0) {
+            mViewPager.addOnPageChangeListener(mOnPageChangeListener)
 
             when (mAdapterCount) {
                 1 -> { // 如果只有一个页面，就限制 ViewPager 不能手动滑动
@@ -127,24 +120,6 @@ class BannerController(
         mAdapterCount == 1 -> 0
         position == 0 -> mAdapterCount - 2 - 1
         else -> (position - 1) % (mAdapterCount - 2)
-    }
-
-    inner class BannerViewPagerAdapter : androidx.viewpager.widget.PagerAdapter() {
-
-        override fun getCount(): Int = mAdapterCount
-
-        override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val view = mOnInstantiateItem(getRealPosition(position))
-            container.addView(view)
-            return view
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            container.removeView(`object` as View)
-        }
-
     }
 
 }
