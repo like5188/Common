@@ -9,24 +9,24 @@ import android.widget.ImageView
 import com.like.common.sample.R
 import com.like.common.util.GlideUtils
 
-class MyViewPagerAdapter(val context: Context, val list: List<BannerInfo>) : androidx.viewpager.widget.PagerAdapter() {
+class MyViewPagerAdapter(context: Context, private val list: List<BannerInfo>) : androidx.viewpager.widget.PagerAdapter() {
     private val layoutInflater = LayoutInflater.from(context)
     private val mGlideUtils = GlideUtils(context)
 
-    override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
-
     override fun getCount(): Int = list.size
 
+    override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
+
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = layoutInflater.inflate(R.layout.item_banner, null)
-        val iv = view.findViewById<ImageView>(R.id.iv)
-        val info = list[position]
-        mGlideUtils.display(info.imageUrl, iv)
-        iv.setOnClickListener {
-            Log.d("BannerPagerAdapter", info.toString())
+        return layoutInflater.inflate(R.layout.item_banner, null).apply {
+            val iv = findViewById<ImageView>(R.id.iv)
+            val info = list[position]
+            mGlideUtils.display(info.imageUrl, iv)
+            iv.setOnClickListener {
+                Log.d("BannerPagerAdapter", info.toString())
+            }
+            container.addView(this)
         }
-        container.addView(view)
-        return view
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
