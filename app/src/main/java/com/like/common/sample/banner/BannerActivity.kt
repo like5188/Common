@@ -20,6 +20,7 @@ import com.like.common.view.banner.BannerController
 import com.like.common.view.banner.indicator.IBannerIndicator
 import com.like.common.view.banner.indicator.ImageIndicator
 import com.like.common.view.banner.indicator.StickyBezierCurveIndicator
+import com.like.common.view.banner.indicator.TextIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*
 import java.util.*
@@ -45,24 +46,23 @@ class BannerActivity : AppCompatActivity() {
 
     private fun initAutoPlayBanner(data: List<BannerInfo>) {
         mBinding.vp.setScrollSpeed()
+        mBinding.vp.adapter = MyBannerPagerAdapter(this, data)
 
         mBinding.vp.onPreDrawListener {
             it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
+
+            val indicator: IBannerIndicator = TextIndicator(this, data.size, indicatorContainer).apply {
+                setTextSize(12f)
+                setTextColor(Color.WHITE)
+                setBackgroundColor(Color.DKGRAY)
+            }
+//            val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10f, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+//            val indicator: IBannerIndicator = StickyBezierCurveIndicator(this, data.size, indicatorContainer, 10f, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4"), Color.parseColor("#76b0ff"), Color.parseColor("#c683fe")))
+            indicator.setViewPager(mBinding.vp)
+
+            mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)
         }
 
-        mBinding.vp.adapter = MyBannerPagerAdapter(this, data)
-
-//        val indicator: IBannerIndicator = TextIndicator(this, data.size, indicatorContainer).apply {
-//            setPadding(10, 10, 10, 10)
-//            setTextSize(12f)
-//            setTextColor(Color.WHITE)
-//            setBackgroundColor(Color.DKGRAY)
-//        }
-//        val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10f, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
-        val indicator: IBannerIndicator = StickyBezierCurveIndicator(this, data.size, indicatorContainer, 10f, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4"), Color.parseColor("#76b0ff"), Color.parseColor("#c683fe")))
-        indicator.setViewPager(mBinding.vp)
-
-        mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)
     }
 
     private fun initBanner(data: List<BannerInfo>) {

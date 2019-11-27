@@ -1,6 +1,7 @@
 package com.like.common.view.banner.indicator
 
 import android.content.Context
+import android.view.Gravity
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import com.like.common.view.CircleTextView
@@ -18,11 +19,15 @@ class TextIndicator(
         private val mDataCount: Int,
         private val mContainer: ViewGroup
 ) : IBannerIndicator {
-    private val mCircleTextView = CircleTextView(mContext)
+    private val mCircleTextView = CircleTextView(mContext).apply {
+        gravity = Gravity.CENTER
+    }
 
     init {
         if (mDataCount > 0) {
             mContainer.removeAllViews()
+            val containerHeight = mContainer.height
+            mCircleTextView.layoutParams = ViewGroup.LayoutParams(containerHeight, containerHeight)
             mContainer.addView(mCircleTextView)
         }
     }
@@ -37,10 +42,6 @@ class TextIndicator(
 
     fun setTextSize(textSize: Float) {
         mCircleTextView.textSize = textSize
-    }
-
-    fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
-        mCircleTextView.setPadding(left, top, right, bottom)
     }
 
     override fun onPageSelected(position: Int) {

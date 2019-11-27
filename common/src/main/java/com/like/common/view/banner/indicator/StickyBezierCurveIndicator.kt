@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -56,7 +57,7 @@ class StickyBezierCurveIndicator(
             mPaint.style = Paint.Style.FILL
             mMaxCircleRadius = DimensionUtils.dp2px(context, 5f).toFloat()
             mMinCircleRadius = DimensionUtils.dp2px(context, 2.5f).toFloat()
-
+            Log.d("tag", "width=${mContainer.width} height=${mContainer.height}")
             mContainer.removeAllViews()
             var startLeft = mContainer.left
             for (i in 0 until mDataCount) {
