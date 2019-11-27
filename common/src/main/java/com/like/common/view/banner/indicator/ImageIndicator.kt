@@ -6,16 +6,16 @@ import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 
 /**
- * 小圆点指示器
+ * 图片指示器，每个位置一张图片。包含正常状态和选中状态两种图片。
  *
  * @param mContext
  * @param mDataCount                指示器的数量
  * @param mContainer                指示器的容器
- * @param mIndicatorPadding         小圆点之间的间隔
- * @param mNormalIndicatorResId     正常状态的小圆点图片资源id
- * @param mSelectedIndicatorResIds  选中状态的小圆点图片资源id，可以为多个，比如每个选中状态对应一种颜色。
+ * @param mIndicatorPadding         指示器之间的间隔
+ * @param mNormalIndicatorResId     正常状态的指示器图片资源id
+ * @param mSelectedIndicatorResIds  选中状态的指示器图片资源id，可以为多个，比如每个选中状态对应一种颜色。
  */
-class DotIndicator(
+class ImageIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: LinearLayout,

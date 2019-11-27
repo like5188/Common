@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @param mViewPager        [BannerViewPager] 类型，它必须设置了 [BannerPagerAdapter]。
  * @param mCycleInterval    循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
  * @param mIndicator        在 ViewPager 的 OnPageChangeListener 中会回调[com.like.common.view.banner.indicator.BannerIndicator]的相关方法，用于使用者控制指示器。
- * 默认null。库中默认实现了几种指示器控制器[com.like.common.view.banner.indicator.DotIndicator]、[com.like.common.view.banner.indicator.NumberIndicator]
+ * 默认null。库中默认实现了几种指示器控制器[com.like.common.view.banner.indicator.ImageIndicator]、[com.like.common.view.banner.indicator.NumberIndicator]
  */
 class BannerController(
         private val mViewPager: BannerViewPager,

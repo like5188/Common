@@ -52,7 +52,7 @@ class BannerActivity : AppCompatActivity() {
             it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
         }
 
-//        val indicator = DotIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
+//        val indicator = ImageIndicator(this, data.size, indicatorContainer, 10, R.drawable.store_point2, listOf(R.drawable.store_point1))
         val indicator = NumberIndicator(this, data.size, indicatorContainer)
         mBinding.vp.adapter = MyBannerPagerAdapter(this, data)
         mBannerController = BannerController(mBinding.vp, 3000L, indicator)
