@@ -1,6 +1,7 @@
 package com.like.common.view.banner.indicator
 
 import android.animation.ArgbEvaluator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -21,6 +22,7 @@ import com.like.common.util.DimensionUtils
  * @param indicatorPadding  指示器之间的间隔
  * @param mColors           指示器的颜色，至少一个，少于[mDataCount]时，循环使用。
  */
+@SuppressLint("ViewConstructor")
 class StickyBezierCurveIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
