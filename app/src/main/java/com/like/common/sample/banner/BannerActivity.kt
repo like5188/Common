@@ -37,7 +37,7 @@ class BannerActivity : AppCompatActivity() {
         bannerInfoList.add(BannerInfo("https://mall03.sogoucdn.com/image/2018/12/21/20181221191646_4221.png"))
 
         initAutoPlayBanner(bannerInfoList)
-//        initBanner(bannerInfoList)
+        initBanner(bannerInfoList)
     }
 
     private fun initAutoPlayBanner(data: List<BannerInfo>) {
@@ -119,12 +119,12 @@ class BannerActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mBannerController?.play()
+        mBannerController.play()
     }
 
     override fun onPause() {
         super.onPause()
-        mBannerController?.pause()
+        mBannerController.pause()
     }
 
 }
