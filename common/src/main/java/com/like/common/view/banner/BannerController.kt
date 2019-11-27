@@ -21,9 +21,6 @@ class BannerController {
      * Adapter 中的实际数据数量
      */
     private var mAdapterCount = 0
-    /**
-     * [BannerViewPager] 类型，它必须设置了 [BannerPagerAdapter]。
-     */
     private var mViewPager: BannerViewPager? = null
     /**
      * 循环的时间间隔，毫秒。如果<=0，表示不循环播放。默认3000L
@@ -84,6 +81,9 @@ class BannerController {
         return this
     }
 
+    /**
+     * @param viewPager [BannerViewPager] 类型，它必须已经设置了 [BannerPagerAdapter]。
+     */
     fun setViewPager(viewPager: BannerViewPager): BannerController {
         val adapter = viewPager.adapter ?: throw IllegalArgumentException("viewPager 没有设置 adapter")
         require(adapter is BannerPagerAdapter) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }

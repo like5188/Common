@@ -30,6 +30,9 @@ open class BannerIndicator {
         }
     }
 
+    /**
+     * @param viewPager [BannerViewPager] 类型，它必须已经设置了 [BannerPagerAdapter]。
+     */
     fun setViewPager(viewPager: BannerViewPager) {
         val adapter = viewPager.adapter ?: throw IllegalArgumentException("viewPager 没有设置 adapter")
         require(adapter is BannerPagerAdapter) { "viewPager 的 adapter 必须继承 com.like.common.view.banner.BannerPagerAdapter" }
