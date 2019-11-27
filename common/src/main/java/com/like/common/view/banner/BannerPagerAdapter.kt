@@ -19,7 +19,7 @@ abstract class BannerPagerAdapter(dataCount: Int) : androidx.viewpager.widget.Pa
     final override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
 
     final override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val realPosition = getRealPosition(position)// 在原始数据列表中的位置
+        val realPosition = getRealPosition(mAdapterCount, position)// 在原始数据列表中的位置
         val view = onInstantiateItem(realPosition)
         container.addView(view)
         return view
@@ -29,10 +29,10 @@ abstract class BannerPagerAdapter(dataCount: Int) : androidx.viewpager.widget.Pa
         container.removeView(`object` as View)
     }
 
-    private fun getRealPosition(position: Int): Int = when {
-        mAdapterCount == 1 -> 0
-        position == 0 -> mAdapterCount - 2 - 1
-        else -> (position - 1) % (mAdapterCount - 2)
+    private fun getRealPosition(adapterCount: Int, position: Int): Int = when {
+        adapterCount == 1 -> 0
+        position == 0 -> adapterCount - 2 - 1
+        else -> (position - 1) % (adapterCount - 2)
     }
 
     abstract fun onInstantiateItem(position: Int): View

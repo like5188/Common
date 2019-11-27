@@ -17,7 +17,7 @@ class TextIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: ViewGroup
-) : BannerIndicator() {
+) : IBannerIndicator {
     private val mCircleTextView = CircleTextView(mContext)
 
     init {

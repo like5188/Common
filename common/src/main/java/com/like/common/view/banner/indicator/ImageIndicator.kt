@@ -22,7 +22,7 @@ class ImageIndicator(
         private val mIndicatorPadding: Int,
         private val mNormalIndicatorResIds: List<Int>,
         private val mSelectedIndicatorResIds: List<Int>
-) : BannerIndicator() {
+) : IBannerIndicator {
     private var mPreSelectedPosition = 0
 
     init {
