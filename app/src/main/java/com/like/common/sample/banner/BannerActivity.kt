@@ -57,8 +57,8 @@ class BannerActivity : AppCompatActivity() {
 //            setTextColor(Color.WHITE)
 //            setBackgroundColor(Color.DKGRAY)
 //        }
-//        val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
-        val indicator: IBannerIndicator = StickyBezierCurveIndicator(this, data.size, indicatorContainer, 10, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4"), Color.parseColor("#76b0ff"), Color.parseColor("#c683fe")))
+//        val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10f, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+        val indicator: IBannerIndicator = StickyBezierCurveIndicator(this, data.size, indicatorContainer, 10f, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4"), Color.parseColor("#76b0ff"), Color.parseColor("#c683fe")))
         indicator.setViewPager(mBinding.vp)
 
         mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)

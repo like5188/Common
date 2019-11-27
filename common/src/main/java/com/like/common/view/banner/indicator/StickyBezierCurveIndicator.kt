@@ -16,18 +16,19 @@ import com.like.common.util.DimensionUtils
  * 粘性贝塞尔曲线指示器
  *
  * @param mContext
- * @param mDataCount    指示器的数量
- * @param mContainer    指示器的容器
- * @param mContainer    指示器之间的间隔
- * @param mContainer    指示器的颜色，至少一个，少于[mDataCount]时，循环使用。
+ * @param mDataCount        指示器的数量
+ * @param mContainer        指示器的容器
+ * @param indicatorPadding  指示器之间的间隔
+ * @param mColors           指示器的颜色，至少一个，少于[mDataCount]时，循环使用。
  */
 class StickyBezierCurveIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: ViewGroup,
-        mIndicatorPadding: Int,
+        indicatorPadding: Float,
         private val mColors: List<Int>
 ) : View(mContext), IBannerIndicator {
+    private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
     private val mPositionDataList = mutableListOf<PositionData>()
 
     private var mLeftCircleRadius: Float = 0f
@@ -49,10 +50,10 @@ class StickyBezierCurveIndicator(
 
     init {
         if (mDataCount > 0) {
-            require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
+            require(mIndicatorPaddingPx > 0) { "indicatorPadding 必须大于0" }
             mPaint.style = Paint.Style.FILL
-            mMaxCircleRadius = DimensionUtils.dp2px(context, 3.5f).toFloat()
-            mMinCircleRadius = DimensionUtils.dp2px(context, 2f).toFloat()
+            mMaxCircleRadius = DimensionUtils.dp2px(context, 5f).toFloat()
+            mMinCircleRadius = DimensionUtils.dp2px(context, 2.5f).toFloat()
             mYOffset = DimensionUtils.dp2px(context, 1.5f).toFloat()
 
             mContainer.removeAllViews()
@@ -64,7 +65,7 @@ class StickyBezierCurveIndicator(
                 positionData.mRight = startLeft + mMaxCircleRadius.toInt() * 2
                 positionData.mBottom = mContainer.bottom
                 mPositionDataList.add(positionData)
-                startLeft = positionData.mRight + mIndicatorPadding
+                startLeft = positionData.mRight + mIndicatorPaddingPx
             }
             mContainer.addView(this)
         }

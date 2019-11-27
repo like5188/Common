@@ -3,6 +3,7 @@ package com.like.common.view.banner.indicator
 import android.content.Context
 import android.widget.ImageView
 import android.widget.LinearLayout
+import com.like.common.util.DimensionUtils
 
 /**
  * 图片指示器
@@ -11,7 +12,7 @@ import android.widget.LinearLayout
  * @param mContext
  * @param mDataCount                指示器的数量
  * @param mContainer                指示器的容器
- * @param mIndicatorPadding         指示器之间的间隔
+ * @param indicatorPadding          指示器之间的间隔，单位 dp
  * @param mNormalIndicatorResIds    正常状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，循环使用。
  * @param mSelectedIndicatorResIds  选中状态的指示器图片资源id，至少一个，图片少于[mDataCount]时，循环使用。
  */
@@ -19,15 +20,16 @@ class ImageIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: LinearLayout,
-        private val mIndicatorPadding: Int,
+        indicatorPadding: Float,
         private val mNormalIndicatorResIds: List<Int>,
         private val mSelectedIndicatorResIds: List<Int>
 ) : IBannerIndicator {
     private var mPreSelectedPosition = 0
+    private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
 
     init {
         if (mDataCount > 0) {
-            require(mIndicatorPadding > 0) { "mIndicatorPadding 必须大于0" }
+            require(mIndicatorPaddingPx > 0) { "indicatorPadding 必须大于0" }
             require(mNormalIndicatorResIds.isNotEmpty()) { "mNormalIndicatorResIds 不能为空" }
             mNormalIndicatorResIds.forEach {
                 require(it > 0) { "mNormalIndicatorResIds 中的图片资源 id 无效" }
@@ -47,7 +49,7 @@ class ImageIndicator(
                     params.setMargins(0, 0, 0, 0)// 设置指示器边距
                 } else {
                     iv.setBackgroundResource(getNormalIndicatorResId(i))
-                    params.setMargins(mIndicatorPadding, 0, 0, 0)// 设置指示器边距
+                    params.setMargins(mIndicatorPaddingPx, 0, 0, 0)// 设置指示器边距
                 }
                 iv.layoutParams = params
                 mContainer.addView(iv)
