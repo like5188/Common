@@ -42,8 +42,10 @@ class ImageIndicator(
             mContainer.removeAllViews()
             for (i in 0 until mDataCount) {
                 // 加载指示器图片
-                val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)// 设置指示器宽高
+                val containerHeight = mContainer.height
+                val params = LinearLayout.LayoutParams(containerHeight, containerHeight)// 设置指示器宽高
                 val iv = ImageView(mContext)
+                iv.scaleType = ImageView.ScaleType.FIT_CENTER
                 if (i == 0) {
                     iv.setBackgroundResource(getSelectedIndicatorResId(i))
                     params.setMargins(0, 0, 0, 0)// 设置指示器边距

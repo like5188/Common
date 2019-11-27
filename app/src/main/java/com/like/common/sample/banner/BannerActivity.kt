@@ -51,12 +51,12 @@ class BannerActivity : AppCompatActivity() {
         mBinding.vp.onPreDrawListener {
             it.layoutParams.height = (it.width * 0.4f).toInt()// vp 的高度是宽度的 0.4
 
-            val indicator: IBannerIndicator = TextIndicator(this, data.size, indicatorContainer).apply {
-                setTextSize(12f)
-                setTextColor(Color.WHITE)
-                setBackgroundColor(Color.DKGRAY)
-            }
-//            val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10f, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
+//            val indicator: IBannerIndicator = TextIndicator(this, data.size, indicatorContainer).apply {
+//                setTextSize(12f)
+//                setTextColor(Color.WHITE)
+//                setBackgroundColor(Color.DKGRAY)
+//            }
+            val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10f, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
 //            val indicator: IBannerIndicator = StickyBezierCurveIndicator(this, data.size, indicatorContainer, 10f, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4"), Color.parseColor("#76b0ff"), Color.parseColor("#c683fe")))
             indicator.setViewPager(mBinding.vp)
 
