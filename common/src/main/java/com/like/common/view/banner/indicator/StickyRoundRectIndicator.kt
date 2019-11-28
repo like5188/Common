@@ -120,9 +120,7 @@ class StickyRoundRectIndicator(
         if (position == mDataCount - 1) {
             val beforeFirstRect = RectF()// 第一个占位左边一个位置（假设的）
             beforeFirstRect.left = mPositions[0].left - distance
-            beforeFirstRect.top = mPositions[0].top
             beforeFirstRect.right = mPositions[0].right - distance
-            beforeFirstRect.bottom = mPositions[0].bottom
             mTransitionalRect2.left = beforeFirstRect.left + distance * mStartInterpolator.getInterpolation(positionOffset)
             mTransitionalRect2.right = beforeFirstRect.right + distance * mEndInterpolator.getInterpolation(positionOffset)
         }
