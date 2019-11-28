@@ -36,7 +36,7 @@ class BannerController {
                         it.setCurrentItem(mCurPosition, false)
                         mCycleHandler.sendEmptyMessage(0)
                     } else {
-                        it.currentItem = mCurPosition
+                        it.setCurrentItem(mCurPosition, true)
                         mCycleHandler.sendEmptyMessageDelayed(0, mCycleInterval)
                     }
                 }
@@ -100,8 +100,8 @@ class BannerController {
                 else -> {
                     viewPager.setScrollable(true)
                     // 因为页面变化，所以setCurrentItem方法能触发onPageSelected、onPageScrolled方法，
-                    // 但是不能触发 onPageScrollStateChanged，因为setCurrentItem方法在第一次是没有滚动效果的，所以要单独启动自动播放
-                    viewPager.currentItem = 1
+                    // 但是不能触发 onPageScrollStateChanged，所以不会启动自动播放，由使用者手动开启自动播放
+                    viewPager.setCurrentItem(1, false)
                 }
             }
         }

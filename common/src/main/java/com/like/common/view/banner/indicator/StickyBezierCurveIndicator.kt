@@ -93,9 +93,9 @@ class StickyBezierCurveIndicator(
         mPath.reset()
         mPath.moveTo(mNextTransitionalCircle1.centerX, mNextTransitionalCircle1.centerY)
         mPath.lineTo(mNextTransitionalCircle1.centerX, mMaxCircleRadius - mNextTransitionalCircle1.radius)
-        mPath.quadTo(mNextTransitionalCircle1.centerX + (mCurTransitionalCircle1.centerX - mNextTransitionalCircle1.centerX) / 2.0f, mMaxCircleRadius, mCurTransitionalCircle1.centerX, mMaxCircleRadius - mCurTransitionalCircle1.radius)
+        mPath.quadTo(mCurTransitionalCircle1.centerX + (mNextTransitionalCircle1.centerX - mCurTransitionalCircle1.centerX) / 2f, mMaxCircleRadius, mCurTransitionalCircle1.centerX, mMaxCircleRadius - mCurTransitionalCircle1.radius)
         mPath.lineTo(mCurTransitionalCircle1.centerX, mMaxCircleRadius + mCurTransitionalCircle1.radius)
-        mPath.quadTo(mNextTransitionalCircle1.centerX + (mCurTransitionalCircle1.centerX - mNextTransitionalCircle1.centerX) / 2.0f, mMaxCircleRadius, mNextTransitionalCircle1.centerX, mMaxCircleRadius + mNextTransitionalCircle1.radius)
+        mPath.quadTo(mCurTransitionalCircle1.centerX + (mNextTransitionalCircle1.centerX - mCurTransitionalCircle1.centerX) / 2f, mMaxCircleRadius, mNextTransitionalCircle1.centerX, mMaxCircleRadius + mNextTransitionalCircle1.radius)
         mPath.close()  // 闭合
         canvas.drawPath(mPath, mPaint)
     }
