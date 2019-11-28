@@ -40,7 +40,7 @@ class StickyBezierCurveIndicator(
     private var mMinCircleRadius: Float = 0f// 最小圆点半径
 
     private var mTransitionalColor = 0// 画过渡阶段（包括过渡圆点和贝塞尔曲线）的颜色
-    private val mCurTransitionalCircle1 = Circle()// 两个过渡圆点中的第一个
+    private val mCurTransitionalCircle1 = Circle()// 两个过渡圆点中的第一个。此圆点会紧跟着mNextTransitionalCircle1圆点到达下一个位置。
     private val mNextTransitionalCircle1 = Circle()// 两个过渡圆点中的第二个
 
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
