@@ -34,6 +34,13 @@
             android:text="启动透明的Activity"
             android:textAllCaps="false" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="click4"
+            android:text="测试startActivityForResult"
+            android:textAllCaps="false" />
+
         <TextView
             android:id="@+id/tv"
             android:layout_width="match_parent"

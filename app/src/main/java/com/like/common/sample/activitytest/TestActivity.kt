@@ -1,5 +1,6 @@
 package com.like.common.sample.activitytest
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
+import com.like.common.view.callback.RxCallback
 
 /**
  * Activity 相关的测试
@@ -124,6 +126,14 @@ class TestActivity : AppCompatActivity() {
 
     fun click3(view: View) {
         startActivity(Intent(this, TestActivity3::class.java))
+    }
+
+    @SuppressLint("CheckResult")
+    fun click4(view: View) {
+        RxCallback(this).startActivityForResult(Intent(this, TestActivity1::class.java))
+                .subscribe {
+                    Log.d(TAG, "$it")
+                }
     }
 
 }

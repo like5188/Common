@@ -1,6 +1,9 @@
 package com.like.common.sample.activitytest
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
@@ -19,4 +22,8 @@ class TestActivity1 : AppCompatActivity() {
         mBinding
     }
 
+    fun click0(view: View) {
+        setResult(Activity.RESULT_OK, Intent().apply { putExtra("name", "like") })
+        finish()
+    }
 }
