@@ -59,7 +59,9 @@ class BannerActivity : AppCompatActivity() {
             val indicator: IBannerIndicator = StickyRoundRectIndicator(this, data.size, indicatorContainer, 20f, 10f, Color.GRAY, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4")))
             indicator.setViewPager(mBinding.vp)
 
-            mBannerController.setViewPager(mBinding.vp).setCycleInterval(3000L)
+            mBannerController.setViewPager(mBinding.vp)
+                    .setCycleInterval(3000L)
+                    .play()
         }
 
     }
@@ -123,12 +125,12 @@ class BannerActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-//        mBannerController.play()
+        mBannerController.play()
     }
 
     override fun onPause() {
         super.onPause()
-//        mBannerController.pause()
+        mBannerController.pause()
     }
 
 }
