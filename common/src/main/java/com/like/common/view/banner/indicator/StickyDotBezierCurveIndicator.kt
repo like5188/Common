@@ -33,7 +33,7 @@ class StickyDotBezierCurveIndicator(
 ) : View(mContext), IBannerIndicator {
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)// 指示器之间的间隔
 
-    private val mCircles = mutableListOf<Circle>()// 占位圆点
+    private val mPositions = mutableListOf<Circle>()// 占位圆点
 
     private var mMaxCircleRadius: Float = 0f// 最大圆点半径
     private var mMinCircleRadius: Float = 0f// 最小圆点半径
@@ -72,7 +72,7 @@ class StickyDotBezierCurveIndicator(
                 circle.centerX = startCenterX
                 circle.centerY = mMaxCircleRadius
                 circle.radius = mMaxCircleRadius
-                mCircles.add(circle)
+                mPositions.add(circle)
                 startCenterX += mIndicatorPaddingPx + mMaxCircleRadius * 2f
             }
 
@@ -84,7 +84,7 @@ class StickyDotBezierCurveIndicator(
         super.onDraw(canvas)
         // 画所有占位圆点
         mPaint.color = mNormalColor
-        mCircles.forEach {
+        mPositions.forEach {
             it.draw(canvas, mPaint)
         }
         // 画过渡圆点
@@ -122,7 +122,7 @@ class StickyDotBezierCurveIndicator(
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        if (mCircles.isEmpty()) {
+        if (mPositions.isEmpty()) {
             return
         }
 
@@ -133,7 +133,7 @@ class StickyDotBezierCurveIndicator(
 
         // 计算过渡圆点，它们的centerX和radius都是不断变化的。
         val distance = mMaxCircleRadius * 2f + mIndicatorPaddingPx// 两圆点圆心之间的距离
-        val currentCircleX = mCircles[position].centerX
+        val currentCircleX = mPositions[position].centerX
 
         mCurTransitionalCircle1.centerX = currentCircleX + distance * mStartInterpolator.getInterpolation(positionOffset)
         mCurTransitionalCircle1.centerY = mMaxCircleRadius
@@ -145,7 +145,7 @@ class StickyDotBezierCurveIndicator(
 
         // 当处于首尾交替的情况，在第一个占位左边一个位置再假设一个占位，用于辅助最左边的过渡动画。
         if (position == mDataCount - 1) {
-            val beforeFirstCircleX = mCircles[0].centerX - distance// 第一个占位左边一个位置（假设的）
+            val beforeFirstCircleX = mPositions[0].centerX - distance// 第一个占位左边一个位置（假设的）
             mCurTransitionalCircle2.centerX = beforeFirstCircleX + distance * mStartInterpolator.getInterpolation(positionOffset)
             mCurTransitionalCircle2.centerY = mMaxCircleRadius
             mCurTransitionalCircle2.radius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
