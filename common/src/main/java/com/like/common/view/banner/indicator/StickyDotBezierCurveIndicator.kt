@@ -57,14 +57,13 @@ class StickyDotBezierCurveIndicator(
             require(mIndicatorPaddingPx > 0) { "indicatorPadding 必须大于0" }
             require(mSelectedColors.isNotEmpty()) { "mSelectedColors 不能为空" }
 
-            // 设置本控制器的宽高
             val containerHeight = mContainer.height - mContainer.paddingTop - mContainer.paddingBottom
-            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置，用于显示过渡动画
-            this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
-
             // 计算最大最小圆点半径
             mMaxCircleRadius = containerHeight / 2f
             mMinCircleRadius = 1f
+            // 设置本控制器的宽高
+            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置，用于显示过渡动画
+            this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
 
             // 计算所有占位圆点的位置
             var startCenterX = left + mIndicatorPaddingPx / 2 + mMaxCircleRadius
