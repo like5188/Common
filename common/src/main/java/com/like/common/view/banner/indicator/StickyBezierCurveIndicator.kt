@@ -4,7 +4,6 @@ import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.Log
@@ -57,9 +56,8 @@ class StickyBezierCurveIndicator(
             mMinCircleRadius = 1f
 
             // 设置本控制器的宽高
-            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()
+            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置
             this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
-            setBackgroundColor(Color.WHITE)
 
             // 计算所有圆点的位置
             var startCenterX = left + mIndicatorPaddingPx / 2 + mMaxCircleRadius
