@@ -43,7 +43,7 @@ class StickyDotBezierCurveIndicator(
     private val mCurTransitionalCircle1 = Circle()// 两个过渡圆点中的第一个。此圆点会紧跟着mNextTransitionalCircle1圆点到达下一个位置。
     private val mNextTransitionalCircle1 = Circle()// 两个过渡圆点中的第二个
     private val mCurTransitionalCircle2 = Circle()// 用于辅助处理首尾交替的情况
-    private val mNextTransitionalCircle2 = Circle()
+    private val mNextTransitionalCircle2 = Circle()// 用于辅助处理首尾交替的情况
 
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val mPath = Path()
