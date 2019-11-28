@@ -119,11 +119,11 @@ class StickyRoundRectIndicator(
 
         // 当处于首尾交替的情况，在第一个占位左边一个位置再假设一个占位，用于辅助最左边的过渡动画。
         if (position == mDataCount - 1) {
-            val beforeFirstRect = RectF()// 第一个占位左边一个位置（假设的）
-            beforeFirstRect.left = mPositions[0].left - distance
-            beforeFirstRect.right = mPositions[0].right - distance
-            mTransitionalRect2.left = beforeFirstRect.left + distance * mStartInterpolator.getInterpolation(positionOffset)
-            mTransitionalRect2.right = beforeFirstRect.right + distance * mEndInterpolator.getInterpolation(positionOffset)
+            // 第一个占位左边一个位置（假设的）
+            val beforeFirstRectLeft = mPositions[0].left - distance
+            val beforeFirstRectRight = mPositions[0].right - distance
+            mTransitionalRect2.left = beforeFirstRectLeft + distance * mStartInterpolator.getInterpolation(positionOffset)
+            mTransitionalRect2.right = beforeFirstRectRight + distance * mEndInterpolator.getInterpolation(positionOffset)
         }
 
         invalidate()
