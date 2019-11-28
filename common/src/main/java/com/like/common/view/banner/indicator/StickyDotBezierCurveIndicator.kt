@@ -13,7 +13,7 @@ import android.view.animation.DecelerateInterpolator
 import com.like.common.util.DimensionUtils
 
 /**
- * 粘性贝塞尔曲线指示器
+ * 粘性圆点贝塞尔曲线指示器
  *
  * @param mContext
  * @param mDataCount        指示器的数量
@@ -23,7 +23,7 @@ import com.like.common.util.DimensionUtils
  * @param mSelectedColors   选中状态的指示器颜色，至少一个，少于[mDataCount]时，循环使用。
  */
 @SuppressLint("ViewConstructor")
-class StickyBezierCurveIndicator(
+class StickyDotBezierCurveIndicator(
         private val mContext: Context,
         private val mDataCount: Int,
         private val mContainer: ViewGroup,
