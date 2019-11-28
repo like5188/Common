@@ -18,6 +18,7 @@ import com.like.common.util.StatusBarUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.banner.BannerController
 import com.like.common.view.banner.indicator.IBannerIndicator
+import com.like.common.view.banner.indicator.StickyDotBezierCurveIndicator
 import com.like.common.view.banner.indicator.StickyRoundRectIndicator
 import com.like.common.view.viewPagerTransformer.RotateYTransformer
 import kotlinx.android.synthetic.main.activity_banner.*
@@ -52,7 +53,7 @@ class BannerActivity : AppCompatActivity() {
 //            val indicator: IBannerIndicator = TextIndicator(this, data.size, indicatorContainer).apply {
 //                setTextSize(12f)
 //                setTextColor(Color.WHITE)
-//                setBackgroundColor(Color.DKGRAY)
+//                setBackgroundColor(Color.GRAY)
 //            }
 //            val indicator: IBannerIndicator = ImageIndicator(this, data.size, indicatorContainer, 10f, listOf(R.drawable.store_point2), listOf(R.drawable.store_point1))
 //            val indicator: IBannerIndicator = StickyDotBezierCurveIndicator(this, data.size, indicatorContainer, 20f, Color.GRAY, listOf(Color.parseColor("#ff4a42"), Color.parseColor("#fcde64"), Color.parseColor("#73e8f4")))

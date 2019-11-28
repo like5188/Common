@@ -65,11 +65,6 @@ class StickyDotBezierCurveIndicator(
             val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置，用于显示过渡动画
             this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
 
-            mCurTransitionalCircle1.centerY = mMaxCircleRadius
-            mNextTransitionalCircle1.centerY = mMaxCircleRadius
-            mCurTransitionalCircle2.centerY = mMaxCircleRadius
-            mNextTransitionalCircle2.centerY = mMaxCircleRadius
-
             // 计算所有占位圆点
             var startCenterX = left + mIndicatorPaddingPx / 2 + mMaxCircleRadius
             for (i in 0 until mDataCount) {
@@ -141,18 +136,22 @@ class StickyDotBezierCurveIndicator(
         val currentCircleX = mPositions[position].centerX
 
         mCurTransitionalCircle1.centerX = currentCircleX + distance * mStartInterpolator.getInterpolation(positionOffset)
+        mCurTransitionalCircle1.centerY = mMaxCircleRadius
         mCurTransitionalCircle1.radius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
 
         mNextTransitionalCircle1.centerX = currentCircleX + distance * mEndInterpolator.getInterpolation(positionOffset)
+        mNextTransitionalCircle1.centerY = mMaxCircleRadius
         mNextTransitionalCircle1.radius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
 
         // 当处于首尾交替的情况，在第一个占位左边一个位置再假设一个占位，用于辅助最左边的过渡动画。
         if (position == mDataCount - 1) {
             val beforeFirstCircleX = mPositions[0].centerX - distance// 第一个占位左边一个位置（假设的）
             mCurTransitionalCircle2.centerX = beforeFirstCircleX + distance * mStartInterpolator.getInterpolation(positionOffset)
+            mCurTransitionalCircle2.centerY = mMaxCircleRadius
             mCurTransitionalCircle2.radius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
 
             mNextTransitionalCircle2.centerX = beforeFirstCircleX + distance * mEndInterpolator.getInterpolation(positionOffset)
+            mNextTransitionalCircle2.centerY = mMaxCircleRadius
             mNextTransitionalCircle2.radius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
         }
 
