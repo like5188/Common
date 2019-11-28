@@ -56,7 +56,7 @@ class StickyBezierCurveIndicator(
             mMinCircleRadius = 1f
 
             // 设置本控制器的宽高
-            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置
+            val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置，用于显示过渡动画
             this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
 
             // 计算所有圆点的位置
