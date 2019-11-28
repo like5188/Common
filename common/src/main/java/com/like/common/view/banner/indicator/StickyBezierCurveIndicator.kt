@@ -40,8 +40,11 @@ class StickyBezierCurveIndicator(
     private var mMinCircleRadius: Float = 0f// 最小圆点半径
 
     private var mTransitionalColor = 0// 画过渡阶段（包括过渡圆点和贝塞尔曲线）的颜色
+
     private val mCurTransitionalCircle1 = Circle()// 两个过渡圆点中的第一个。此圆点会紧跟着mNextTransitionalCircle1圆点到达下一个位置。
     private val mNextTransitionalCircle1 = Circle()// 两个过渡圆点中的第二个
+    private val mCurTransitionalCircle2 = Circle()// 用于辅助在第1个占位和最后1个占位过渡的情况
+    private val mNextTransitionalCircle2 = Circle()
 
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val mPath = Path()
@@ -83,13 +86,13 @@ class StickyBezierCurveIndicator(
         // 画所有占位圆点
         mPaint.color = mNormalColor
         mCircles.forEach {
-            canvas.drawCircle(it.centerX, it.centerY, it.radius, mPaint)
+            it.draw(canvas, mPaint)
         }
-        // 画过度圆点
+        // 画过渡圆点
         mPaint.color = mTransitionalColor
-        canvas.drawCircle(mCurTransitionalCircle1.centerX, mCurTransitionalCircle1.centerY, mCurTransitionalCircle1.radius, mPaint)
-        canvas.drawCircle(mNextTransitionalCircle1.centerX, mNextTransitionalCircle1.centerY, mNextTransitionalCircle1.radius, mPaint)
-        // 画贝塞尔曲线
+        mCurTransitionalCircle1.draw(canvas, mPaint)
+        mNextTransitionalCircle1.draw(canvas, mPaint)
+        // 画贝过渡圆点之间的塞尔曲线
         mPath.reset()
         mPath.moveTo(mNextTransitionalCircle1.centerX, mNextTransitionalCircle1.centerY)
         mPath.lineTo(mNextTransitionalCircle1.centerX, mMaxCircleRadius - mNextTransitionalCircle1.radius)
@@ -138,5 +141,9 @@ class StickyBezierCurveIndicator(
         var centerX = 0f
         var centerY = 0f
         var radius = 0f
+
+        fun draw(canvas: Canvas, paint: Paint) {
+            canvas.drawCircle(centerX, centerY, radius, paint)
+        }
     }
 }
