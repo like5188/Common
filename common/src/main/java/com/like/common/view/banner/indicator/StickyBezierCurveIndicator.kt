@@ -22,7 +22,7 @@ import com.like.common.util.DimensionUtils
  * @param mDataCount        指示器的数量
  * @param mContainer        指示器的容器
  * @param indicatorPadding  指示器之间的间隔，单位 dp
- * @param normalColor       正常状态的指示器颜色
+ * @param mNormalColor       正常状态的指示器颜色
  * @param mSelectedColors   选中状态的指示器颜色，至少一个，少于[mDataCount]时，循环使用。
  */
 @SuppressLint("ViewConstructor")
@@ -31,27 +31,21 @@ class StickyBezierCurveIndicator(
         private val mDataCount: Int,
         private val mContainer: ViewGroup,
         indicatorPadding: Float,
-        private val normalColor: Int,
+        private val mNormalColor: Int,
         private val mSelectedColors: List<Int>
 ) : View(mContext), IBannerIndicator {
-    private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
-    private val mCircles = mutableListOf<Circle>()
-    private var mMaxCircleRadius: Float = 0f
-    private var mMinCircleRadius: Float = 0f
-
-    private val mCurCircle = Circle()
-    private val mNextCircle = Circle()
-
-    private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-    }
+    private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)// 指示器之间的间隔
+    private val mCircles = mutableListOf<Circle>()// 占位圆点
+    private var mMaxCircleRadius: Float = 0f// 最大圆点半径
+    private var mMinCircleRadius: Float = 0f// 最小圆点半径
+    private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val mPath = Path()
     private var mTransitionalColor = 0// 画过渡阶段（包括过渡圆点和贝塞尔曲线）的颜色
-
     private val mStartInterpolator = AccelerateInterpolator()
     private val mEndInterpolator = DecelerateInterpolator()
-
-    private val argbEvaluator = ArgbEvaluator()
+    private val mArgbEvaluator = ArgbEvaluator()
+    private val mCurCircle = Circle()
+    private val mNextCircle = Circle()
 
     init {
         if (mDataCount > 0) {
@@ -85,7 +79,7 @@ class StickyBezierCurveIndicator(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // 画占位圆点
-        mPaint.color = normalColor
+        mPaint.color = mNormalColor
         mCircles.forEach {
             canvas.drawCircle(it.centerX, it.centerY, it.radius, mPaint)
         }
@@ -113,7 +107,7 @@ class StickyBezierCurveIndicator(
         // 计算颜色
         val currentColor = mSelectedColors[position % mSelectedColors.size]
         val nextColor = mSelectedColors[(position + 1) % mSelectedColors.size]
-        mTransitionalColor = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
+        mTransitionalColor = mArgbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
 
         // 计算锚点位置
         val current = mCircles[position]
