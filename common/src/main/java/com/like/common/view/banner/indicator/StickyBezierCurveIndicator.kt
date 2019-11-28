@@ -114,6 +114,7 @@ class StickyBezierCurveIndicator(
         val current = mCircles[position]
         val next = if (position == mDataCount - 1) {
 //            mCircles[0]// 这种算法和下面的算法效果不一样
+            // 在最右边的占位圆点的右边创建一个假的占位圆点
             Circle().apply {
                 centerX = current.centerX + mIndicatorPaddingPx + mMaxCircleRadius * 2f
                 centerY = current.centerY
