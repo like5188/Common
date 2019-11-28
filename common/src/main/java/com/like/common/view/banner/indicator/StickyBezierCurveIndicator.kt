@@ -3,7 +3,10 @@ package com.like.common.view.banner.indicator
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -32,22 +35,15 @@ class StickyBezierCurveIndicator(
         private val mSelectedColors: List<Int>
 ) : View(mContext), IBannerIndicator {
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
-    private val mPositionList = mutableListOf<Rect>()
-
+    private val mCircles = mutableListOf<Circle>()
     private var mMaxCircleRadius: Float = 0f
     private var mMinCircleRadius: Float = 0f
 
-    private var mLeftCircleRadius: Float = 0f
-    private var mLeftCircleCenterX: Float = 0f
-    private var mRightCircleRadius: Float = 0f
-    private var mRightCircleCenterX: Float = 0f
+    private val mCurCircle = Circle()
+    private val mNextCircle = Circle()
 
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-    }
-    private val mPaint1: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        color = normalColor
     }
     private val mPath = Path()
 
@@ -71,15 +67,15 @@ class StickyBezierCurveIndicator(
             setBackgroundColor(Color.WHITE)
 
             // 计算所有圆点的位置
-            var startLeft = left + mIndicatorPaddingPx / 2
+            var startCenterX = left + mIndicatorPaddingPx / 2 + mMaxCircleRadius
             for (i in 0 until mDataCount) {
-                val position = Rect()
-                position.left = startLeft
-                position.top = top
-                position.right = startLeft + mMaxCircleRadius.toInt() * 2
-                position.bottom = bottom
-                mPositionList.add(position)
-                startLeft = position.right + mIndicatorPaddingPx
+                val circle = Circle()
+                circle.centerX = startCenterX
+                circle.centerY = mMaxCircleRadius
+                circle.radius = mMaxCircleRadius
+                circle.color = normalColor
+                mCircles.add(circle)
+                startCenterX += mIndicatorPaddingPx + mMaxCircleRadius * 2f
             }
 
             mContainer.addView(this)
@@ -89,58 +85,65 @@ class StickyBezierCurveIndicator(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // 画占位圆点
-        mPositionList.forEach {
-            canvas.drawCircle(it.left + mMaxCircleRadius, mMaxCircleRadius, mMaxCircleRadius, mPaint1)
+        mCircles.forEach {
+            mPaint.color = it.color
+            canvas.drawCircle(it.centerX, it.centerY, it.radius, mPaint)
         }
         // 画过度圆点
-        canvas.drawCircle(mLeftCircleCenterX, mMaxCircleRadius, mLeftCircleRadius, mPaint)
-        canvas.drawCircle(mRightCircleCenterX, mMaxCircleRadius, mRightCircleRadius, mPaint)
+        mPaint.color = mCurCircle.color
+        canvas.drawCircle(mCurCircle.centerX, mCurCircle.centerY, mCurCircle.radius, mPaint)
+        canvas.drawCircle(mNextCircle.centerX, mNextCircle.centerY, mNextCircle.radius, mPaint)
         // 画贝塞尔曲线
         mPath.reset()
-        mPath.moveTo(mRightCircleCenterX, mMaxCircleRadius)
-        mPath.lineTo(mRightCircleCenterX, mMaxCircleRadius - mRightCircleRadius)
-        mPath.quadTo(mRightCircleCenterX + (mLeftCircleCenterX - mRightCircleCenterX) / 2.0f, mMaxCircleRadius, mLeftCircleCenterX, mMaxCircleRadius - mLeftCircleRadius)
-        mPath.lineTo(mLeftCircleCenterX, mMaxCircleRadius + mLeftCircleRadius)
-        mPath.quadTo(mRightCircleCenterX + (mLeftCircleCenterX - mRightCircleCenterX) / 2.0f, mMaxCircleRadius, mRightCircleCenterX, mMaxCircleRadius + mRightCircleRadius)
+        mPath.moveTo(mNextCircle.centerX, mNextCircle.centerY)
+        mPath.lineTo(mNextCircle.centerX, mMaxCircleRadius - mNextCircle.radius)
+        mPath.quadTo(mNextCircle.centerX + (mCurCircle.centerX - mNextCircle.centerX) / 2.0f, mMaxCircleRadius, mCurCircle.centerX, mMaxCircleRadius - mCurCircle.radius)
+        mPath.lineTo(mCurCircle.centerX, mMaxCircleRadius + mCurCircle.radius)
+        mPath.quadTo(mNextCircle.centerX + (mCurCircle.centerX - mNextCircle.centerX) / 2.0f, mMaxCircleRadius, mNextCircle.centerX, mMaxCircleRadius + mNextCircle.radius)
         mPath.close()  // 闭合
         canvas.drawPath(mPath, mPaint)
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
         Log.d("tag", "position=$position positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
-        if (mPositionList.isEmpty()) {
+        if (mCircles.isEmpty()) {
             return
         }
 
         // 计算颜色
         val currentColor = mSelectedColors[position % mSelectedColors.size]
         val nextColor = mSelectedColors[(position + 1) % mSelectedColors.size]
-        mPaint.color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
+        val color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
+        mCurCircle.color = color
+        mNextCircle.color = color
 
         // 计算锚点位置
-        val current = mPositionList[position]
+        val current = mCircles[position]
         val next = if (position == mDataCount - 1) {
-//            mPositionList[0]// 这种算法和下面的算法效果不一样
-            Rect().apply {
-                // 在最后一个圆点后面创建一个假的圆点位置
-                left = current.right + mIndicatorPaddingPx
-                top = current.top
-                right = left + current.width()
-                bottom = current.bottom
+//            mCircles[0]// 这种算法和下面的算法效果不一样
+            Circle().apply {
+                centerX = current.centerX + mIndicatorPaddingPx + mMaxCircleRadius * 2f
+                centerY = current.centerY
             }
         } else {
-            mPositionList[position + 1]
+            mCircles[position + 1]
         }
 
-        val leftCircleCenterX = current.left + current.width() / 2f
-        val rightCircleCenterX = next.left + next.width() / 2f
+        mCurCircle.centerX = current.centerX + (next.centerX - current.centerX) * mStartInterpolator.getInterpolation(positionOffset)
+        mCurCircle.centerY = mMaxCircleRadius
+        mCurCircle.radius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
 
-        mLeftCircleCenterX = leftCircleCenterX + (rightCircleCenterX - leftCircleCenterX) * mStartInterpolator.getInterpolation(positionOffset)
-        mRightCircleCenterX = leftCircleCenterX + (rightCircleCenterX - leftCircleCenterX) * mEndInterpolator.getInterpolation(positionOffset)
-        mLeftCircleRadius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
-        mRightCircleRadius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
+        mNextCircle.centerX = current.centerX + (next.centerX - current.centerX) * mEndInterpolator.getInterpolation(positionOffset)
+        mNextCircle.centerY = mMaxCircleRadius
+        mNextCircle.radius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
 
         invalidate()
     }
 
+    class Circle {
+        var centerX = 0f
+        var centerY = 0f
+        var radius = 0f
+        var color = 0
+    }
 }
