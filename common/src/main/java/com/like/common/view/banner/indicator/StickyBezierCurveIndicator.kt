@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -34,17 +33,22 @@ class StickyBezierCurveIndicator(
         private val mSelectedColors: List<Int>
 ) : View(mContext), IBannerIndicator {
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)// 指示器之间的间隔
+
     private val mCircles = mutableListOf<Circle>()// 占位圆点
+
     private var mMaxCircleRadius: Float = 0f// 最大圆点半径
     private var mMinCircleRadius: Float = 0f// 最小圆点半径
+
+    private var mTransitionalColor = 0// 画过渡阶段（包括过渡圆点和贝塞尔曲线）的颜色
+    private val mCurTransitionalCircle1 = Circle()// 两个过渡圆点中的第一个
+    private val mNextTransitionalCircle1 = Circle()// 两个过渡圆点中的第二个
+
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val mPath = Path()
-    private var mTransitionalColor = 0// 画过渡阶段（包括过渡圆点和贝塞尔曲线）的颜色
+
     private val mStartInterpolator = AccelerateInterpolator()
     private val mEndInterpolator = DecelerateInterpolator()
     private val mArgbEvaluator = ArgbEvaluator()
-    private val mCurCircle = Circle()
-    private val mNextCircle = Circle()
 
     init {
         if (mDataCount > 0) {
@@ -83,21 +87,20 @@ class StickyBezierCurveIndicator(
         }
         // 画过度圆点
         mPaint.color = mTransitionalColor
-        canvas.drawCircle(mCurCircle.centerX, mCurCircle.centerY, mCurCircle.radius, mPaint)
-        canvas.drawCircle(mNextCircle.centerX, mNextCircle.centerY, mNextCircle.radius, mPaint)
+        canvas.drawCircle(mCurTransitionalCircle1.centerX, mCurTransitionalCircle1.centerY, mCurTransitionalCircle1.radius, mPaint)
+        canvas.drawCircle(mNextTransitionalCircle1.centerX, mNextTransitionalCircle1.centerY, mNextTransitionalCircle1.radius, mPaint)
         // 画贝塞尔曲线
         mPath.reset()
-        mPath.moveTo(mNextCircle.centerX, mNextCircle.centerY)
-        mPath.lineTo(mNextCircle.centerX, mMaxCircleRadius - mNextCircle.radius)
-        mPath.quadTo(mNextCircle.centerX + (mCurCircle.centerX - mNextCircle.centerX) / 2.0f, mMaxCircleRadius, mCurCircle.centerX, mMaxCircleRadius - mCurCircle.radius)
-        mPath.lineTo(mCurCircle.centerX, mMaxCircleRadius + mCurCircle.radius)
-        mPath.quadTo(mNextCircle.centerX + (mCurCircle.centerX - mNextCircle.centerX) / 2.0f, mMaxCircleRadius, mNextCircle.centerX, mMaxCircleRadius + mNextCircle.radius)
+        mPath.moveTo(mNextTransitionalCircle1.centerX, mNextTransitionalCircle1.centerY)
+        mPath.lineTo(mNextTransitionalCircle1.centerX, mMaxCircleRadius - mNextTransitionalCircle1.radius)
+        mPath.quadTo(mNextTransitionalCircle1.centerX + (mCurTransitionalCircle1.centerX - mNextTransitionalCircle1.centerX) / 2.0f, mMaxCircleRadius, mCurTransitionalCircle1.centerX, mMaxCircleRadius - mCurTransitionalCircle1.radius)
+        mPath.lineTo(mCurTransitionalCircle1.centerX, mMaxCircleRadius + mCurTransitionalCircle1.radius)
+        mPath.quadTo(mNextTransitionalCircle1.centerX + (mCurTransitionalCircle1.centerX - mNextTransitionalCircle1.centerX) / 2.0f, mMaxCircleRadius, mNextTransitionalCircle1.centerX, mMaxCircleRadius + mNextTransitionalCircle1.radius)
         mPath.close()  // 闭合
         canvas.drawPath(mPath, mPaint)
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        Log.d("tag", "position=$position positionOffset=$positionOffset positionOffsetPixels=$positionOffsetPixels")
         if (mCircles.isEmpty()) {
             return
         }
@@ -119,13 +122,13 @@ class StickyBezierCurveIndicator(
             mCircles[position + 1]
         }
 
-        mCurCircle.centerX = current.centerX + (next.centerX - current.centerX) * mStartInterpolator.getInterpolation(positionOffset)
-        mCurCircle.centerY = mMaxCircleRadius
-        mCurCircle.radius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
+        mCurTransitionalCircle1.centerX = current.centerX + (next.centerX - current.centerX) * mStartInterpolator.getInterpolation(positionOffset)
+        mCurTransitionalCircle1.centerY = mMaxCircleRadius
+        mCurTransitionalCircle1.radius = mMaxCircleRadius + (mMinCircleRadius - mMaxCircleRadius) * mEndInterpolator.getInterpolation(positionOffset)
 
-        mNextCircle.centerX = current.centerX + (next.centerX - current.centerX) * mEndInterpolator.getInterpolation(positionOffset)
-        mNextCircle.centerY = mMaxCircleRadius
-        mNextCircle.radius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
+        mNextTransitionalCircle1.centerX = current.centerX + (next.centerX - current.centerX) * mEndInterpolator.getInterpolation(positionOffset)
+        mNextTransitionalCircle1.centerY = mMaxCircleRadius
+        mNextTransitionalCircle1.radius = mMinCircleRadius + (mMaxCircleRadius - mMinCircleRadius) * mStartInterpolator.getInterpolation(positionOffset)
 
         invalidate()
     }
