@@ -65,6 +65,7 @@ class StickyDotBezierCurveIndicator(
             val w = (mMaxCircleRadius * 2 * mDataCount + mIndicatorPaddingPx * mDataCount).toInt()// 左右各留 mIndicatorPaddingPx/2 的位置，用于显示过渡动画
             this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
 
+            // 确定不随滚动而改变的
             mCurTransitionalCircle1.centerY = mMaxCircleRadius
             mNextTransitionalCircle1.centerY = mMaxCircleRadius
             mCurTransitionalCircle2.centerY = mMaxCircleRadius

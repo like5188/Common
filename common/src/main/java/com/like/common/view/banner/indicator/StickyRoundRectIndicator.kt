@@ -59,6 +59,7 @@ class StickyRoundRectIndicator(
             val w = mIndicatorWidthPx * mDataCount + mIndicatorPaddingPx * mDataCount// 左右各留 mIndicatorPaddingPx/2 的位置，用于显示过渡动画
             this.layoutParams = ViewGroup.LayoutParams(w, containerHeight)
 
+            // 确定不随滚动而改变的
             mTransitionalRect1.top = 0f
             mTransitionalRect1.bottom = containerHeight.toFloat()
             mTransitionalRect2.top = 0f
