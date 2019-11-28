@@ -31,7 +31,7 @@ class StickyBezierCurveIndicator(
         private val mDataCount: Int,
         private val mContainer: ViewGroup,
         indicatorPadding: Float,
-        normalColor: Int,
+        private val normalColor: Int,
         private val mSelectedColors: List<Int>
 ) : View(mContext), IBannerIndicator {
     private val mIndicatorPaddingPx: Int = DimensionUtils.dp2px(mContext, indicatorPadding)
@@ -46,6 +46,7 @@ class StickyBezierCurveIndicator(
         style = Paint.Style.FILL
     }
     private val mPath = Path()
+    private var mTransitionalColor = 0// 画过渡阶段（包括过渡圆点和贝塞尔曲线）的颜色
 
     private val mStartInterpolator = AccelerateInterpolator()
     private val mEndInterpolator = DecelerateInterpolator()
@@ -73,7 +74,6 @@ class StickyBezierCurveIndicator(
                 circle.centerX = startCenterX
                 circle.centerY = mMaxCircleRadius
                 circle.radius = mMaxCircleRadius
-                circle.color = normalColor
                 mCircles.add(circle)
                 startCenterX += mIndicatorPaddingPx + mMaxCircleRadius * 2f
             }
@@ -85,12 +85,12 @@ class StickyBezierCurveIndicator(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // 画占位圆点
+        mPaint.color = normalColor
         mCircles.forEach {
-            mPaint.color = it.color
             canvas.drawCircle(it.centerX, it.centerY, it.radius, mPaint)
         }
         // 画过度圆点
-        mPaint.color = mCurCircle.color
+        mPaint.color = mTransitionalColor
         canvas.drawCircle(mCurCircle.centerX, mCurCircle.centerY, mCurCircle.radius, mPaint)
         canvas.drawCircle(mNextCircle.centerX, mNextCircle.centerY, mNextCircle.radius, mPaint)
         // 画贝塞尔曲线
@@ -113,9 +113,7 @@ class StickyBezierCurveIndicator(
         // 计算颜色
         val currentColor = mSelectedColors[position % mSelectedColors.size]
         val nextColor = mSelectedColors[(position + 1) % mSelectedColors.size]
-        val color = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
-        mCurCircle.color = color
-        mNextCircle.color = color
+        mTransitionalColor = argbEvaluator.evaluate(positionOffset, currentColor, nextColor).toString().toInt()
 
         // 计算锚点位置
         val current = mCircles[position]
@@ -144,6 +142,5 @@ class StickyBezierCurveIndicator(
         var centerX = 0f
         var centerY = 0f
         var radius = 0f
-        var color = 0
     }
 }
