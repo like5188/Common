@@ -1,17 +1,15 @@
 package com.like.common.util
 
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 
 fun ImageView.setTint() {
-    val drawable = ContextCompat.getDrawable(context, com.like.common.R.drawable.dialog_close)
     val colors = intArrayOf(ContextCompat.getColor(context, com.like.common.R.color.common_text_red_0), ContextCompat.getColor(context, com.like.common.R.color.bar_grey))
     val states = arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf())
-    setTint(drawable!!, colors, states)
+    setTint(colors, states)
 }
 
 /**
@@ -23,7 +21,7 @@ fun ImageView.setTint() {
  * val colors = intArrayOf(ContextCompat.getColor(context, R.color.normalColor), ContextCompat.getColor(context, R.color.pressColor))
  * val states = arrayOf(intArrayOf(), intArrayOf(android.R.attr.state_pressed))
  */
-fun ImageView.setTint(drawable: Drawable, colors: IntArray, states: Array<IntArray>) {
+fun ImageView.setTint(colors: IntArray, states: Array<IntArray>) {
     val colorList = ColorStateList(states, colors)
     val stateListDrawable = StateListDrawable()
     stateListDrawable.addState(states[0], drawable)//注意顺序
