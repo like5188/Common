@@ -44,6 +44,13 @@
                 android:layout_height="wrap_content"
                 android:text="获取验证码" />
 
+            <ImageView
+                android:id="@+id/iv_tint_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:src="@drawable/dialog_close" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
