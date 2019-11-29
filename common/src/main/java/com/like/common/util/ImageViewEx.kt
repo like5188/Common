@@ -39,6 +39,8 @@ fun ImageView.setTint(colors: IntArray, states: Array<IntArray>) {
     stateListDrawable.addState(states[0], drawable)//注意顺序
     stateListDrawable.addState(states[1], drawable)
     val state = stateListDrawable.constantState
+    // wrap() 通过这个方法获取的Drawable对象，在使用DrawableCompat类中的染色一类的方法，可以在不同的API级别上应用着色。因此想要着色就先把原先的Drawable对象wrap一下后回去到新的Drawable对象。
+    // mutate() 可以让一个应用中使用同样的片的地方不受影响，因为默认情况下，相同的图片资源是被共享同一种状态的。如果修改了一个实例的状态，那么其他使用这个实例的地方都会被修改。因此这个方法的作用就是让其他地方不受影响。
     val wrapDrawable = DrawableCompat.wrap(state?.newDrawable() ?: stateListDrawable).mutate()
     DrawableCompat.setTintList(wrapDrawable, colorList)
     setImageDrawable(wrapDrawable)
