@@ -9,6 +9,18 @@ import androidx.core.graphics.drawable.DrawableCompat
 fun ImageView.setTint() {
     val colors = intArrayOf(ContextCompat.getColor(context, com.like.common.R.color.common_text_red_0), ContextCompat.getColor(context, com.like.common.R.color.bar_grey))
     val states = arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf())
+    setTint(ContextCompat.getColor(context, com.like.common.R.color.bar_grey), ContextCompat.getColor(context, com.like.common.R.color.common_text_red_0))
+}
+
+/**
+ * 为 [ImageView] 设置 tint 属性，来替代 selector 改变指定状态下的图片颜色。
+ *
+ * @param normalColor   正常状态下的颜色
+ * @param pressColor    按下状态下的颜色
+ */
+fun ImageView.setTint(normalColor: Int, pressColor: Int) {
+    val colors = intArrayOf(pressColor, normalColor)
+    val states = arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf())
     setTint(colors, states)
 }
 
