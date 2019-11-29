@@ -39,7 +39,7 @@ fun ImageView.setTint(colors: IntArray, states: Array<IntArray>) {
     stateListDrawable.addState(states[0], drawable)//注意顺序
     stateListDrawable.addState(states[1], drawable)
     val state = stateListDrawable.constantState
-    val wrapDrawable = DrawableCompat.wrap(state?.newDrawable() ?: drawable).mutate()
+    val wrapDrawable = DrawableCompat.wrap(state?.newDrawable() ?: stateListDrawable).mutate()
     DrawableCompat.setTintList(wrapDrawable, colorList)
     setImageDrawable(wrapDrawable)
 }
