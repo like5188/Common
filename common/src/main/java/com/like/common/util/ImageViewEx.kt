@@ -29,6 +29,7 @@ fun ImageView.setTintColor(@ColorInt normalColor: Int, @ColorInt pressColor: Int
  * val states = arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf())
  */
 fun ImageView.setTint(colors: IntArray, states: Array<IntArray>) {
+    drawable ?: return
     val colorList = ColorStateList(states, colors)
     val stateListDrawable = StateListDrawable()
     states.forEach {
