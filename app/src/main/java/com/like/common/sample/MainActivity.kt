@@ -25,7 +25,8 @@ import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.update.UpdateActivity
 import com.like.common.util.SPUtils
-import com.like.common.util.setTintResource
+import com.like.common.util.setSelectorBackgroundResource
+import com.like.common.util.setSelectorSrcResource
 import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.ToolbarUtils
@@ -77,7 +78,8 @@ class MainActivity : AppCompatActivity() {
         mBinding.timerTextView.setOnClickListener {
             mBinding.timerTextView.start(15000)
         }
-        mBinding.ivTintTest.setTintResource(R.color.common_divider_gray, R.color.common_text_red_0)
+        mBinding.ivTintTest.setSelectorSrcResource(R.color.common_divider_gray, R.color.common_text_red_0)
+        mBinding.ivTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
     }
 
     private fun initMarqueeView() {
