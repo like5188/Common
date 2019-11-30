@@ -3,30 +3,43 @@ package com.like.common.util
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
+import android.view.View
+import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 
-fun ImageView.setSelectorBackgroundResource(@ColorRes normalColorResId: Int, @ColorRes pressColorResId: Int) {
-    setSelectorBackgroundColor(ContextCompat.getColor(context, normalColorResId), ContextCompat.getColor(context, pressColorResId))
+fun CompoundButton.setSelectorBackgroundResource(@ColorRes normalColorResId: Int, @ColorRes checkedColorResId: Int) {
+    setSelectorBackgroundColor(ContextCompat.getColor(context, normalColorResId), ContextCompat.getColor(context, checkedColorResId))
 }
 
-fun ImageView.setSelectorBackgroundColor(@ColorInt normalColor: Int, @ColorInt pressColor: Int) {
-    drawable ?: return
-    val colors = intArrayOf(pressColor, normalColor)
+fun CompoundButton.setSelectorBackgroundColor(@ColorInt normalColor: Int, @ColorInt checkedColor: Int) {
+    background ?: return
+    val colors = intArrayOf(checkedColor, normalColor)
+    val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
+    background = background.toSelectorDrawable(colors, states)
+}
+
+fun View.setSelectorBackgroundResource(@ColorRes normalColorResId: Int, @ColorRes pressedColorResId: Int) {
+    setSelectorBackgroundColor(ContextCompat.getColor(context, normalColorResId), ContextCompat.getColor(context, pressedColorResId))
+}
+
+fun View.setSelectorBackgroundColor(@ColorInt normalColor: Int, @ColorInt pressedColor: Int) {
+    background ?: return
+    val colors = intArrayOf(pressedColor, normalColor)
     val states = arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf())
-    background = drawable.toSelectorDrawable(colors, states)
+    background = background.toSelectorDrawable(colors, states)
 }
 
-fun ImageView.setSelectorSrcResource(@ColorRes normalColorResId: Int, @ColorRes pressColorResId: Int) {
-    setSelectorSrcColor(ContextCompat.getColor(context, normalColorResId), ContextCompat.getColor(context, pressColorResId))
+fun ImageView.setSelectorSrcResource(@ColorRes normalColorResId: Int, @ColorRes pressedColorResId: Int) {
+    setSelectorSrcColor(ContextCompat.getColor(context, normalColorResId), ContextCompat.getColor(context, pressedColorResId))
 }
 
-fun ImageView.setSelectorSrcColor(@ColorInt normalColor: Int, @ColorInt pressColor: Int) {
+fun ImageView.setSelectorSrcColor(@ColorInt normalColor: Int, @ColorInt pressedColor: Int) {
     drawable ?: return
-    val colors = intArrayOf(pressColor, normalColor)
+    val colors = intArrayOf(pressedColor, normalColor)
     val states = arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf())
     setImageDrawable(drawable.toSelectorDrawable(colors, states))
 }

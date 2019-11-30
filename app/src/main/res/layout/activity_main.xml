@@ -44,12 +44,36 @@
                 android:layout_height="wrap_content"
                 android:text="获取验证码" />
 
+            <RadioButton
+                android:id="@+id/rb_tint_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dialog_close"
+                android:button="@color/transparent"
+                android:textSize="1sp" />
+
+            <CheckBox
+                android:id="@+id/cb_tint_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dialog_close"
+                android:button="@color/transparent"
+                android:textSize="1sp" />
+
             <ImageView
                 android:id="@+id/iv_tint_test"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/dialog_close"
                 android:clickable="true"
                 android:src="@drawable/dialog_close" />
+
+            <Button
+                android:id="@+id/btn_tint_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dialog_close"
+                android:clickable="true" />
 
             <Button
                 android:layout_width="match_parent"
