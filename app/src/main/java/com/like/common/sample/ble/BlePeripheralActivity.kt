@@ -24,7 +24,6 @@ import java.util.*
  */
 class BlePeripheralActivity : AppCompatActivity() {
     companion object {
-        private const val TAG = "BlePeripheralActivity"
         private val UUID_SERVICE: UUID = UUID.randomUUID()
         private val UUID_CHARACTERISTIC_READ: UUID = UUID.randomUUID()
         private val UUID_CHARACTERISTIC_WRITE: UUID = UUID.randomUUID()
