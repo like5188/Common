@@ -14,7 +14,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * 蓝牙准备就绪，可以进行连接、写数据
+ * 蓝牙准备就绪
+ * 可以进行连接、写数据
  */
 class ConnectedState(
         private val mContext: Context,
