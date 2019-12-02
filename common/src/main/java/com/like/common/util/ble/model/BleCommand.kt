@@ -3,7 +3,6 @@ package com.like.common.util.ble.model
 import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
-import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -107,13 +106,14 @@ abstract class BleCommand(
             }
         }
 
-        BleUtils.batch(data, maxTransferSize).forEach {
-            characteristic.value = it
-            bluetoothGatt.writeCharacteristic(characteristic)
-            SystemClock.sleep(30)
-        }
-        if (hasResult) {// 如果有返回值，那么需要循环检测是否超时
-            withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            BleUtils.batch(data, maxTransferSize).forEach {
+                characteristic.value = it
+                bluetoothGatt.writeCharacteristic(characteristic)
+                delay(30)
+            }
+
+            if (hasResult) {// 如果有返回值，那么需要循环检测是否超时
                 while (!isCompleted) {
                     delay(100)
                     if (isExpired()) {// 说明是超时了
@@ -122,9 +122,7 @@ abstract class BleCommand(
                         onFailure?.invoke(TimeoutException())
                     }
                 }
-            }
-        } else {
-            withContext(Dispatchers.IO) {
+            } else {
                 delay(100)
                 isCompleted = true
                 onSuccess?.invoke(null)
@@ -132,6 +130,7 @@ abstract class BleCommand(
                 Logger.d(">>>>>>>>>>>>>>>>>>>>执行 $description 命令成功。不需要返回结果>>>>>>>>>>>>>>>>>>>>")
             }
         }
+
     }
 
     // 查找远程设备的特征
