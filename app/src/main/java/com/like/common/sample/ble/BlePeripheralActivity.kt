@@ -8,14 +8,15 @@ import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelUuid
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBlePeripheralBinding
 import com.like.common.view.toolbar.ToolbarUtils
 import java.util.*
+
 
 /**
  * 蓝牙外围设备
@@ -24,15 +25,14 @@ import java.util.*
  */
 class BlePeripheralActivity : AppCompatActivity() {
     companion object {
-        private val UUID_SERVICE: UUID = UUID.randomUUID()
-        private val UUID_CHARACTERISTIC_READ: UUID = UUID.randomUUID()
-        private val UUID_CHARACTERISTIC_WRITE: UUID = UUID.randomUUID()
-        private val UUID_CHARACTERISTIC_INDICATE: UUID = UUID.randomUUID()
-        private val UUID_DESCRIPTOR: UUID = UUID.randomUUID()
+        private val UUID_SERVICE: UUID = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb")
+        private val UUID_CHARACTERISTIC_READ: UUID = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb")
+        private val UUID_CHARACTERISTIC_WRITE: UUID = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb")
+        private val UUID_DESCRIPTOR: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
 
     private val mBinding: ActivityBlePeripheralBinding by lazy {
-        DataBindingUtil.setContentView<ActivityBlePeripheralBinding>(this, R.layout.activity_ble_peripheral)
+        DataBindingUtil.setContentView<ActivityBlePeripheralBinding>(this, com.like.common.sample.R.layout.activity_ble_peripheral)
     }
     private val mToolbarUtils: ToolbarUtils by lazy {
         ToolbarUtils(this, mBinding.flToolbarContainer)
@@ -41,7 +41,11 @@ class BlePeripheralActivity : AppCompatActivity() {
                     finish()
                 })
     }
+
+    private var mBluetoothManager: BluetoothManager? = null
     private var mBluetoothGattServer: BluetoothGattServer? = null
+    private var mBluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
+
     private var mAdvertiseCallback: AdvertiseCallback? = null
     private val bluetoothGattServerCallback = object : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
@@ -49,7 +53,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         }
 
         override fun onServiceAdded(status: Int, service: BluetoothGattService) {
-            appendText("onServiceAdded status=$status service=$service")
+            appendText("onServiceAdded status=$status service=${service.uuid}")
         }
 
         override fun onCharacteristicReadRequest(device: BluetoothDevice, requestId: Int, offset: Int, characteristic: BluetoothGattCharacteristic) {
@@ -84,9 +88,6 @@ class BlePeripheralActivity : AppCompatActivity() {
             appendText("onMtuChanged device=$device mtu=$mtu")
         }
     }
-
-    private var mBluetoothManager: BluetoothManager? = null
-    private var mBluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,9 +125,17 @@ class BlePeripheralActivity : AppCompatActivity() {
         if (mAdvertiseCallback == null) {
             val settings = AdvertiseSettings.Builder()
                     .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+                    .setConnectable(true)
                     .setTimeout(0)
                     .build()
-            val data = AdvertiseData.Builder().setIncludeDeviceName(true).build()
+            val advertiseData = AdvertiseData.Builder()
+                    .setIncludeDeviceName(true)
+                    .setIncludeTxPowerLevel(true)
+                    .build()
+            val scanResponse = AdvertiseData.Builder()
+                    .addServiceUuid(ParcelUuid(UUID_SERVICE))
+                    .setIncludeTxPowerLevel(true)
+                    .build()
             mAdvertiseCallback = object : AdvertiseCallback() {
                 override fun onStartFailure(errorCode: Int) {
                     super.onStartFailure(errorCode)
@@ -140,7 +149,7 @@ class BlePeripheralActivity : AppCompatActivity() {
                 }
             }
 
-            mBluetoothLeAdvertiser?.startAdvertising(settings, data, mAdvertiseCallback)
+            mBluetoothLeAdvertiser?.startAdvertising(settings, advertiseData, scanResponse, mAdvertiseCallback)
         }
     }
 
@@ -160,27 +169,21 @@ class BlePeripheralActivity : AppCompatActivity() {
                 BluetoothGattCharacteristic.PROPERTY_READ,
                 BluetoothGattCharacteristic.PERMISSION_READ
         )
-        service.addCharacteristic(characteristicRead)
-
-        val characteristicWrite = BluetoothGattCharacteristic(
-                UUID_CHARACTERISTIC_WRITE,
-                BluetoothGattCharacteristic.PROPERTY_WRITE,
-                BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
-        service.addCharacteristic(characteristicWrite)
-
-
-        val characteristicIndicate = BluetoothGattCharacteristic(
-                UUID_CHARACTERISTIC_INDICATE,
-                BluetoothGattCharacteristic.PROPERTY_INDICATE,
-                BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
         val descriptor = BluetoothGattDescriptor(
                 UUID_DESCRIPTOR,
                 BluetoothGattCharacteristic.PERMISSION_WRITE
         )
-        characteristicIndicate.addDescriptor(descriptor)
-        service.addCharacteristic(characteristicIndicate)
+        characteristicRead.addDescriptor(descriptor)
+        service.addCharacteristic(characteristicRead)
+
+        val characteristicWrite = BluetoothGattCharacteristic(
+                UUID_CHARACTERISTIC_WRITE,
+                BluetoothGattCharacteristic.PROPERTY_WRITE or
+                        BluetoothGattCharacteristic.PROPERTY_READ or
+                        BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PERMISSION_WRITE
+        )
+        service.addCharacteristic(characteristicWrite)
 
         bluetoothGattServer.addService(service)
         mBluetoothGattServer = bluetoothGattServer
