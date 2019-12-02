@@ -42,7 +42,9 @@ import kotlinx.coroutines.CoroutineScope
  * 这时支持 BLE 的 Central 模式，也就是我们在上面 GAP 中说的，Android 设备只能作为中心设备去连接其他设备。
  * 从 Android 5.0 开始才支持外设模式。
  *
+ * 应用在使用蓝牙设备的时候必须要声明蓝牙权限 BLUETOOTH 需要这个权限才可以进行蓝牙通信，例如：请求连接、接受连接、和传输数据。
  * <uses-permission android:name="android.permission.BLUETOOTH" />
+ * 如果还需要发现或者操作蓝牙设置，则需要声明 BLUETOOTH_ADMIN 权限。使用这个权限的前提是要有 BLUETOOTH 权限。
  * <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
  * <!-- Android6.0 蓝牙扫描需要申请定位权限，因为 BLE 确实有定位的能力-->
  * <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
