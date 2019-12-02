@@ -18,7 +18,6 @@ import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.scanstrategy.IScanStrategy
-import com.like.common.util.shortToastCenter
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -79,12 +78,10 @@ class BleManager(
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
                         BluetoothAdapter.STATE_ON -> {// 蓝牙已打开
-                            context.shortToastCenter("蓝牙已打开")
                             bleResultLiveData.postValue(BleResult(BleStatus.ON))
                             initBle()// 初始化蓝牙
                         }
                         BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
-                            context.shortToastCenter("蓝牙已断开")
                             bleResultLiveData.postValue(BleResult(BleStatus.OFF))
                             close()
                         }
