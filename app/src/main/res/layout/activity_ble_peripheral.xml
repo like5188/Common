@@ -30,6 +30,13 @@
                 android:text="停止广播"
                 android:textColor="@color/common_text_black_1"
                 android:textSize="14sp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="gotoBleActivity"
+                android:text="启动蓝牙中心设备"
+                android:textAllCaps="false" />
         </LinearLayout>
 
         <TextView

@@ -62,7 +62,7 @@ class BleActivity : AppCompatActivity() {
     private val mAdapter: BaseAdapter by lazy { BaseAdapter() }
     private val mToolbarUtils: ToolbarUtils by lazy {
         ToolbarUtils(this, mBinding.flToolbarContainer)
-                .showTitle("低功耗蓝牙测试", R.color.common_text_white_0)
+                .showTitle("蓝牙中心设备", R.color.common_text_white_0)
                 .showNavigationButton(R.drawable.icon_back, View.OnClickListener {
                     finish()
                 })
@@ -107,7 +107,7 @@ class BleActivity : AppCompatActivity() {
                         1,
                         "hahah".toByteArray(),
                         curAddress,
-                        "0000fec9-0000-1000-8000-00805f9b34fb",
+                        "0000fff1-0000-1000-8000-00805f9b34fb",
                         mBleResultLiveData,
                         "描述",
                         false,

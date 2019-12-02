@@ -99,13 +99,6 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="gotoBleActivity"
-                android:text="蓝牙测试"
-                android:textAllCaps="false" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:onClick="gotoBleServiceActivity"
                 android:text="蓝牙外围设备测试"
                 android:textAllCaps="false" />

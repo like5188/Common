@@ -6,6 +6,7 @@ import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
@@ -195,4 +196,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         mBinding.tvStatus.text = sb.toString()
     }
 
+    fun gotoBleActivity(view: View) {
+        startActivity(Intent(this, BleActivity::class.java))
+    }
 }

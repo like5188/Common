@@ -117,10 +117,6 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
-    fun gotoBleActivity(view: View) {
-        startActivity(Intent(this, BleActivity::class.java))
-    }
-
     fun gotoBleServiceActivity(view: View) {
         startActivity(Intent(this, BlePeripheralActivity::class.java))
     }
