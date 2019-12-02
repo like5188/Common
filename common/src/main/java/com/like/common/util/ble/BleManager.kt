@@ -14,7 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.ble.blestate.BaseBleState
-import com.like.common.util.ble.blestate.ConnectedState
+import com.like.common.util.ble.blestate.ReadyState
 import com.like.common.util.ble.blestate.InitialState
 import com.like.common.util.ble.blestate.InitializedState
 import com.like.common.util.ble.model.BleCommand
@@ -114,7 +114,7 @@ class BleManager(
                 when (it?.status) {
                     BleStatus.CONNECTED -> {
                         mBleState?.getBluetoothAdapter()?.apply {
-                            mBleState = ConnectedState(context, mCoroutineScope, bleResultLiveData, this, connectTimeout)
+                            mBleState = ReadyState(context, mCoroutineScope, bleResultLiveData, this, connectTimeout)
                         }
                     }
                     BleStatus.DISCONNECTED -> {
@@ -137,9 +137,9 @@ class BleManager(
         if (mBleState is InitializedState) {
             mBleState?.startScan()
             mBleState?.getBluetoothAdapter()?.apply {
-                mBleState = ConnectedState(context, mCoroutineScope, bleResultLiveData, this, connectTimeout)
+                mBleState = ReadyState(context, mCoroutineScope, bleResultLiveData, this, connectTimeout)
             }
-        } else if (mBleState is ConnectedState) {
+        } else if (mBleState is ReadyState) {
             mBleState?.disconnectAll()
             mBleState?.getBluetoothAdapter()?.apply {
                 mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)

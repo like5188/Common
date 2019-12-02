@@ -14,7 +14,7 @@ import kotlinx.coroutines.channels.Channel
  * 蓝牙准备就绪
  * 可以进行连接、写数据
  */
-class ConnectedState(
+class ReadyState(
         private val mContext: Context,
         private val mCoroutineScope: CoroutineScope,
         private val mBleResultLiveData: MutableLiveData<BleResult>,
