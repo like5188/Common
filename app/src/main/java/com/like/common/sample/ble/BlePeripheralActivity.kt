@@ -123,7 +123,7 @@ class BlePeripheralActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun startAdvertising(view: View) {
         appendText("开始广播")
-        if (mAdvertiseCallback == null) {
+        if (mBluetoothLeAdvertiser != null && mAdvertiseCallback == null) {
             val settings = AdvertiseSettings.Builder()
                     // 设置广播的模式，低功耗，平衡和低延迟三种模式；
                     // 对应  AdvertiseSettings.ADVERTISE_MODE_LOW_POWER  ,ADVERTISE_MODE_BALANCED ,ADVERTISE_MODE_LOW_LATENCY
@@ -159,7 +159,15 @@ class BlePeripheralActivity : AppCompatActivity() {
             mAdvertiseCallback = object : AdvertiseCallback() {
                 override fun onStartFailure(errorCode: Int) {
                     super.onStartFailure(errorCode)
-                    appendText("广播失败 errorCode=$errorCode")
+                    val errorMsg = when (errorCode) {
+                        ADVERTISE_FAILED_DATA_TOO_LARGE -> "Failed to start advertising as the advertise data to be broadcasted is larger than 31 bytes."
+                        ADVERTISE_FAILED_TOO_MANY_ADVERTISERS -> "Failed to start advertising because no advertising instance is available."
+                        ADVERTISE_FAILED_ALREADY_STARTED -> "Failed to start advertising as the advertising is already started"
+                        ADVERTISE_FAILED_INTERNAL_ERROR -> "Operation failed due to an internal error"
+                        ADVERTISE_FAILED_FEATURE_UNSUPPORTED -> "This feature is not supported on this platform"
+                        else -> "errorCode=$errorCode"
+                    }
+                    appendText("广播失败 $errorMsg")
                 }
 
                 override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
