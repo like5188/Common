@@ -1,7 +1,6 @@
 package com.like.common.util.ble.blestate
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothGatt
 import com.like.common.util.ble.model.BleCommand
 
 /**
@@ -55,10 +54,4 @@ abstract class BaseBleState {
         return null
     }
 
-    /**
-     * 获取 BluetoothGatt
-     */
-    open fun getBluetoothGatt(address: String): BluetoothGatt? {
-        return null
-    }
 }

@@ -164,7 +164,7 @@ class ConnectedState(
         return mBluetoothAdapter
     }
 
-    override fun getBluetoothGatt(address: String): BluetoothGatt? {
+    private fun getBluetoothGatt(address: String): BluetoothGatt? {
         val filter = mConnectedBluetoothGattList.filter { it.device.address == address }
         return if (filter.isEmpty()) null else filter.first()
     }
