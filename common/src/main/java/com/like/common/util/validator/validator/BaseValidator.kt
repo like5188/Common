@@ -6,15 +6,14 @@ import com.like.common.util.validator.rule.AbstractRule
  * 验证器基类
  */
 open class BaseValidator<TYPE> {
-    val mRules = mutableListOf<AbstractRule<TYPE>>()
+    private val mRules = mutableListOf<AbstractRule<TYPE>>()
 
     /**
      * 克隆一个验证器，有相同的规则
      */
-    fun clone(): BaseValidator<TYPE> =
-            BaseValidator<TYPE>().apply {
-                this.mRules.addAll(mRules)
-            }
+    fun clone(): BaseValidator<TYPE> = BaseValidator<TYPE>().apply {
+        this.mRules.addAll(mRules)
+    }
 
     /**
      * 删除满足条件的规则
