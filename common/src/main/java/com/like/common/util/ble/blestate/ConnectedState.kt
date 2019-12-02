@@ -21,7 +21,7 @@ class ConnectedState(
         private var mBluetoothAdapter: BluetoothAdapter?,
         private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
 ) : BaseBleState() {
-    private val mCommandCache = mutableMapOf<String, BleCommandQueue>()
+    private val mAddressBleCommandQueue = mutableMapOf<String, BleCommandQueue>()
     private val mConnectedBluetoothGattList = mutableListOf<BluetoothGatt>()
     // 连接蓝牙设备的回调函数
     private val mGattCallback = object : BluetoothGattCallback() {
@@ -130,11 +130,11 @@ class ConnectedState(
 
     override fun write(command: BleCommand) {
         val address = command.address
-        if (!mCommandCache.containsKey(address)) {
-            mCommandCache[address] = BleCommandQueue()
+        if (!mAddressBleCommandQueue.containsKey(address)) {
+            mAddressBleCommandQueue[address] = BleCommandQueue()
         }
         val gatt = getBluetoothGatt(address) ?: return
-        val queue = mCommandCache[address] ?: return
+        val queue = mAddressBleCommandQueue[address] ?: return
         queue.put(command)
         mCoroutineScope.launch(Dispatchers.IO) {
             while (isActive) {
@@ -149,10 +149,10 @@ class ConnectedState(
             it.close()
         }
         mConnectedBluetoothGattList.clear()
-        mCommandCache.forEach {
+        mAddressBleCommandQueue.forEach {
             it.value.clear()
         }
-        mCommandCache.clear()
+        mAddressBleCommandQueue.clear()
     }
 
     override fun close() {
