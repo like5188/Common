@@ -44,6 +44,7 @@
         <activity
             android:name=".activitytest.TestActivity3"
             android:theme="@style/translucent" />
+        <activity android:name=".ble.BlePeripheralActivity" />
     </application>
 
 </manifest>

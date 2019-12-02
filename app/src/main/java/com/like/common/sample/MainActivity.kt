@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.banner.BannerActivity
 import com.like.common.sample.ble.BleActivity
+import com.like.common.sample.ble.BlePeripheralActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
@@ -24,7 +25,10 @@ import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.update.UpdateActivity
-import com.like.common.util.*
+import com.like.common.util.SPUtils
+import com.like.common.util.setSelectorBackgroundResource
+import com.like.common.util.setSelectorSrcResource
+import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
@@ -115,6 +119,10 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoBleActivity(view: View) {
         startActivity(Intent(this, BleActivity::class.java))
+    }
+
+    fun gotoBleServiceActivity(view: View) {
+        startActivity(Intent(this, BlePeripheralActivity::class.java))
     }
 
     fun gotoCoroutinesActivity(view: View) {
