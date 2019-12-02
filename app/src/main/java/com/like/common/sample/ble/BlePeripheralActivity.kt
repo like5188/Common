@@ -191,9 +191,11 @@ class BlePeripheralActivity : AppCompatActivity() {
     }
 
     private fun appendText(text: String) {
-        val sb = StringBuilder(mBinding.tvStatus.text)
-        sb.append(text).append("\n")
-        mBinding.tvStatus.text = sb.toString()
+        runOnUiThread {
+            val sb = StringBuilder(mBinding.tvStatus.text)
+            sb.append(text).append("\n")
+            mBinding.tvStatus.text = sb.toString()
+        }
     }
 
     fun gotoBleActivity(view: View) {

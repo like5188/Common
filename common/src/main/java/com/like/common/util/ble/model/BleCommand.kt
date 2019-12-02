@@ -141,7 +141,7 @@ abstract class BleCommand(
                 ?.flatMap {
                     it.characteristics
                 }
-                ?.first {
+                ?.firstOrNull {
                     it.uuid.toString() == characteristicUuidString
                 }
 

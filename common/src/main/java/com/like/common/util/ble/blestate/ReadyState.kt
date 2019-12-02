@@ -164,8 +164,7 @@ class ReadyState(
     }
 
     private fun getBluetoothGatt(address: String): BluetoothGatt? {
-        val filter = mConnectedBluetoothGattList.filter { it.device.address == address }
-        return if (filter.isEmpty()) null else filter.first()
+        return mConnectedBluetoothGattList.firstOrNull { it.device.address == address }
     }
 
 }
