@@ -8,7 +8,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.Logger
-import com.like.common.util.ble.utils.BleUtils
+import com.like.common.util.ble.utils.batch
+import com.like.common.util.ble.utils.toByteArrayOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -26,8 +27,8 @@ import java.util.concurrent.TimeoutException
  * @param description               命令描述，用于日志打印、错误提示等
  * @param hasResult                 是否有返回值
  * @param readTimeout               读取数据超时时间（毫秒）
- * @param maxTransferSize           硬件规定的一次的最大传输长度
- * @param maxFrameTransferSize      由硬件开发者约定的一帧的最大传输长度
+ * @param maxTransferSize           硬件规定的一次传输的最大字节数
+ * @param maxFrameTransferSize      由硬件开发者约定的一帧传输的最大字节数
  * @param onSuccess                 命令执行成功回调
  * @param onFailure                 命令执行失败回调
  */
@@ -83,7 +84,7 @@ abstract class BleCommand(
             resultCache.put(bleResult.data as ByteArray)
             if (isWholeFrame(resultCache)) {
                 isCompleted = true
-                onSuccess?.invoke(BleUtils.convert(resultCache))
+                onSuccess?.invoke(resultCache.toByteArrayOrNull())
             }
         }
     }
@@ -107,7 +108,7 @@ abstract class BleCommand(
         }
 
         withContext(Dispatchers.IO) {
-            BleUtils.batch(data, maxTransferSize).forEach {
+            data.batch(maxTransferSize).forEach {
                 characteristic.value = it
                 bluetoothGatt.writeCharacteristic(characteristic)
                 delay(30)
