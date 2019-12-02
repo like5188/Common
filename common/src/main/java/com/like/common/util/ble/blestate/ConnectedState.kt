@@ -134,8 +134,12 @@ class ConnectedState(
             mCommandCache[address] = BleCommandQueue()
         }
         val gatt = getBluetoothGatt(address) ?: return
+        val queue = mCommandCache[address] ?: return
+        queue.put(command)
         mCoroutineScope.launch(Dispatchers.IO) {
-            mCommandCache[address]?.writeUntilCompleted(gatt)
+            while (isActive) {
+                queue.writeUntilCompleted(gatt)
+            }
         }
     }
 
