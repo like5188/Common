@@ -57,7 +57,9 @@ abstract class BleCommand(
     var isCompleted = false
         set(value) {
             if (value) {
-                removeObserver()
+                activity.runOnUiThread {
+                    bleResultLiveData.removeObserver(mWriteObserver)
+                }
                 field = value
             }
         }
@@ -87,20 +89,6 @@ abstract class BleCommand(
         }
     }
 
-    private fun observer() {
-        if (activity is LifecycleOwner) {
-            activity.runOnUiThread {
-                bleResultLiveData.observe(activity, mWriteObserver)
-            }
-        }
-    }
-
-    private fun removeObserver() {
-        activity.runOnUiThread {
-            bleResultLiveData.removeObserver(mWriteObserver)
-        }
-    }
-
     suspend fun write(bluetoothGatt: BluetoothGatt?) {
         if (isCompleted || bluetoothGatt == null) {
             Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
@@ -113,7 +101,11 @@ abstract class BleCommand(
         }
 
         Logger.w("--------------------开始执行 $description 命令--------------------")
-        observer()
+        if (activity is LifecycleOwner) {
+            withContext(Dispatchers.Main) {
+                bleResultLiveData.observe(activity, mWriteObserver)
+            }
+        }
 
         BleUtils.batch(data, maxTransferSize).forEach {
             characteristic.value = it

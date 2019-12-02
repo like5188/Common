@@ -8,8 +8,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import androidx.annotation.MainThread
 import androidx.annotation.RequiresPermission
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.like.common.util.ble.blestate.BaseBleState
 import com.like.common.util.ble.blestate.ConnectedState
 import com.like.common.util.ble.blestate.InitialState
@@ -96,6 +99,7 @@ class BleManager(
     /**
      * 初始化蓝牙适配器
      */
+    @MainThread
     @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION])
     fun initBle() {
         // 注册蓝牙打开关闭监听
@@ -105,22 +109,24 @@ class BleManager(
             mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
         }
 
-        bleResultLiveData.observeForever {
-            when (it?.status) {
-                BleStatus.CONNECTED -> {
-                    mBleState?.getBluetoothAdapter()?.apply {
-                        mBleState = ConnectedState(context, mCoroutineScope, bleResultLiveData, this, connectTimeout)
+        if (context is LifecycleOwner) {
+            bleResultLiveData.observe(context, Observer {
+                when (it?.status) {
+                    BleStatus.CONNECTED -> {
+                        mBleState?.getBluetoothAdapter()?.apply {
+                            mBleState = ConnectedState(context, mCoroutineScope, bleResultLiveData, this, connectTimeout)
+                        }
+                    }
+                    BleStatus.DISCONNECTED -> {
+                        mBleState?.getBluetoothAdapter()?.apply {
+                            mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
+                            scanBleDevice()
+                        }
+                    }
+                    else -> {
                     }
                 }
-                BleStatus.DISCONNECTED -> {
-                    mBleState?.getBluetoothAdapter()?.apply {
-                        mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
-                        scanBleDevice()
-                    }
-                }
-                else -> {
-                }
-            }
+            })
         }
     }
 
