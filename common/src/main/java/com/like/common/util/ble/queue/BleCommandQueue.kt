@@ -10,7 +10,7 @@ class BleCommandQueue {
         mLinkedBlockingQueue.put(command)
     }
 
-    fun writeUntilCompleted(gatt: BluetoothGatt) {
+    suspend fun writeUntilCompleted(gatt: BluetoothGatt) {
         val c: Int
         val count = mLinkedBlockingQueue.count
         val takeLock = mLinkedBlockingQueue.takeLock

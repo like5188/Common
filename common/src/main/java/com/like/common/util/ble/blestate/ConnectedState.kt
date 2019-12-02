@@ -8,10 +8,7 @@ import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.queue.BleCommandQueue
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 /**
  * 蓝牙准备就绪
@@ -19,15 +16,13 @@ import kotlinx.coroutines.launch
  */
 class ConnectedState(
         private val mContext: Context,
+        private val mCoroutineScope: CoroutineScope,
         private val mBleResultLiveData: MutableLiveData<BleResult>,
         private var mBluetoothAdapter: BluetoothAdapter?,
         private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
 ) : BaseBleState() {
     private val mCommandCache = mutableMapOf<String, BleCommandQueue>()
-    private val mJobCache = mutableMapOf<String, Job>()
-
     private val mConnectedBluetoothGattList = mutableListOf<BluetoothGatt>()
-
     // 连接蓝牙设备的回调函数
     private val mGattCallback = object : BluetoothGattCallback() {
 
@@ -109,7 +104,7 @@ class ConnectedState(
             // 蓝牙设备已经连接过
             mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED))
         } else {
-            GlobalScope.launch {
+            mCoroutineScope.launch(Dispatchers.IO) {
                 // 获取远端的蓝牙设备
                 val bluetoothDevice = mBluetoothAdapter?.getRemoteDevice(address)
                 if (bluetoothDevice == null) {
@@ -121,11 +116,10 @@ class ConnectedState(
                 // 对BLE设备连接，连接过程要尽量短，如果连接不上，不要盲目进行重连，否这你的电池会很快被消耗掉。
                 Logger.v("尝试创建新的连接……")
                 bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
-            }
-
-            GlobalScope.launch {
-                delay(mConnectTimeout)
-                disconnect(address)
+                withContext((Dispatchers.IO)) {
+                    delay(mConnectTimeout)
+                    disconnect(address)
+                }
             }
         }
     }
@@ -137,15 +131,12 @@ class ConnectedState(
     override fun write(command: BleCommand) {
         val address = command.address
         if (!mCommandCache.containsKey(address)) {
-            val gatt = getBluetoothGatt(address) ?: return
             mCommandCache[address] = BleCommandQueue()
-            mJobCache[address] = GlobalScope.launch {
-                while (true) {
-                    mCommandCache[address]?.writeUntilCompleted(gatt)
-                }
-            }
         }
-        mCommandCache[address]?.put(command)
+        val gatt = getBluetoothGatt(address) ?: return
+        mCoroutineScope.launch(Dispatchers.IO) {
+            mCommandCache[address]?.writeUntilCompleted(gatt)
+        }
     }
 
     override fun disconnectAll() {
@@ -154,10 +145,6 @@ class ConnectedState(
             it.close()
         }
         mConnectedBluetoothGattList.clear()
-        mJobCache.forEach {
-            it.value.cancel()
-        }
-        mJobCache.clear()
         mCommandCache.forEach {
             it.value.clear()
         }

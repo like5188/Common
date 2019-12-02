@@ -1,18 +1,18 @@
 package com.like.common.util.ble.model
 
 import android.app.Activity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.os.SystemClock
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.like.common.util.Logger
 import com.like.common.util.ble.utils.BleUtils
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeoutException
 
@@ -75,16 +75,14 @@ abstract class BleCommand(
     abstract fun isWholeFrame(data: ByteBuffer): Boolean
 
     private val mWriteObserver = Observer<BleResult> { bleResult ->
-        when (bleResult?.status) {
-            BleStatus.CHARACTERISTIC_CHANGED -> {
-                if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
-                    return@Observer
-                }
-                resultCache.put(bleResult.data as ByteArray)
-                if (isWholeFrame(resultCache)) {
-                    isCompleted = true
-                    onSuccess?.invoke(BleUtils.convert(resultCache))
-                }
+        if (bleResult?.status == BleStatus.CHARACTERISTIC_CHANGED) {
+            if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
+                return@Observer
+            }
+            resultCache.put(bleResult.data as ByteArray)
+            if (isWholeFrame(resultCache)) {
+                isCompleted = true
+                onSuccess?.invoke(BleUtils.convert(resultCache))
             }
         }
     }
@@ -103,7 +101,7 @@ abstract class BleCommand(
         }
     }
 
-    fun write(bluetoothGatt: BluetoothGatt?) {
+    suspend fun write(bluetoothGatt: BluetoothGatt?) {
         if (isCompleted || bluetoothGatt == null) {
             Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
             return
@@ -123,7 +121,7 @@ abstract class BleCommand(
             SystemClock.sleep(30)
         }
         if (hasResult) {// 如果有返回值，那么需要循环检测是否超时
-            GlobalScope.launch {
+            withContext(Dispatchers.IO) {
                 while (!isCompleted) {
                     delay(100)
                     if (isExpired()) {// 说明是超时了
@@ -134,7 +132,7 @@ abstract class BleCommand(
                 }
             }
         } else {
-            GlobalScope.launch {
+            withContext(Dispatchers.IO) {
                 delay(100)
                 isCompleted = true
                 onSuccess?.invoke(null)

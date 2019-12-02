@@ -1,14 +1,11 @@
 package com.like.common.util.ble.blestate
 
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.scanstrategy.IScanStrategy
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -16,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 可以进行扫描
  */
 class InitializedState(
-        private val mContext: Context,
+        private val mCoroutineScope: CoroutineScope,
         private val mBleResultLiveData: MutableLiveData<BleResult>,
         private var mBluetoothAdapter: BluetoothAdapter?,
         private var mScanStrategy: IScanStrategy?,
@@ -31,17 +28,16 @@ class InitializedState(
     override fun startScan() {
         val scanStrategy = mScanStrategy ?: return
         if (mScanning.compareAndSet(false, true)) {
-            GlobalScope.launch {
+            mCoroutineScope.launch(Dispatchers.IO) {
                 delay(50)
                 mBleResultLiveData.postValue(BleResult(BleStatus.START_SCAN_DEVICE))
                 scanStrategy.startScan(mBluetoothAdapter)
-            }
-
-            // 在指定超时时间时取消扫描
-            GlobalScope.launch {
-                delay(mScanTimeout)
-                if (mScanning.get()) {
-                    stopScan()
+                withContext(Dispatchers.IO) {
+                    // 在指定超时时间时取消扫描
+                    delay(mScanTimeout)
+                    if (mScanning.get()) {
+                        stopScan()
+                    }
                 }
             }
         }
@@ -50,7 +46,7 @@ class InitializedState(
     override fun stopScan() {
         val scanStrategy = mScanStrategy ?: return
         if (mScanning.compareAndSet(true, false)) {
-            GlobalScope.launch {
+            mCoroutineScope.launch(Dispatchers.IO) {
                 delay(50)
                 mBleResultLiveData.postValue(BleResult(BleStatus.STOP_SCAN_DEVICE))
                 scanStrategy.stopScan(mBluetoothAdapter)
