@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBleBinding
 import com.like.common.util.PermissionUtils
@@ -56,7 +57,7 @@ class BleActivity : AppCompatActivity() {
                 addItem(device)
             })
         }
-        BleManager(this.applicationContext, mBleResultLiveData, scanStrategy)
+        BleManager(this.applicationContext, lifecycleScope, mBleResultLiveData, scanStrategy)
     }
     private val mAdapter: BaseAdapter by lazy { BaseAdapter() }
     private val mToolbarUtils: ToolbarUtils by lazy {
