@@ -7,8 +7,8 @@ import com.like.common.util.Logger
 import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
-import com.like.common.util.ble.queue.BleCommandQueue
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 
 /**
  * 蓝牙准备就绪
@@ -21,7 +21,7 @@ class ConnectedState(
         private var mBluetoothAdapter: BluetoothAdapter?,
         private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
 ) : BaseBleState() {
-    private val mAddressBleCommandQueue = mutableMapOf<String, BleCommandQueue>()
+    private val mChannels: MutableMap<String, Channel<BleCommand>> = mutableMapOf()
     private val mConnectedBluetoothGattList = mutableListOf<BluetoothGatt>()
     // 连接蓝牙设备的回调函数
     private val mGattCallback = object : BluetoothGattCallback() {
@@ -130,16 +130,19 @@ class ConnectedState(
 
     override fun write(command: BleCommand) {
         val address = command.address
-        if (!mAddressBleCommandQueue.containsKey(address)) {
-            mAddressBleCommandQueue[address] = BleCommandQueue()
-        }
-        val gatt = getBluetoothGatt(address) ?: return
-        val queue = mAddressBleCommandQueue[address] ?: return
-        queue.put(command)
-        mCoroutineScope.launch(Dispatchers.IO) {
-            while (isActive) {
-                queue.writeUntilCompleted(gatt)
+        if (!mChannels.containsKey(address)) {
+            val channel = Channel<BleCommand>()
+            mChannels[address] = channel
+            mCoroutineScope.launch(Dispatchers.IO) {
+                for (bleCommand in channel) {
+                    getBluetoothGatt(address)?.let {
+                        bleCommand.write(it)
+                    }
+                }
             }
+        }
+        mCoroutineScope.launch(Dispatchers.IO) {
+            mChannels[address]?.send(command)
         }
     }
 
@@ -149,10 +152,6 @@ class ConnectedState(
             it.close()
         }
         mConnectedBluetoothGattList.clear()
-        mAddressBleCommandQueue.forEach {
-            it.value.clear()
-        }
-        mAddressBleCommandQueue.clear()
     }
 
     override fun close() {
