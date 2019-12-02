@@ -1,14 +1,13 @@
 package com.like.common.util.ble.blestate
 
-import androidx.lifecycle.MutableLiveData
 import android.bluetooth.*
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.like.common.util.Logger
 import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.queue.BleCommandQueue
-import com.like.common.util.shortToastCenter
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,13 +17,13 @@ import kotlinx.coroutines.launch
  * 蓝牙准备就绪，可以进行连接、写数据
  */
 class ConnectedState(
-        private val context: Context,
-        private val bleResultLiveData: MutableLiveData<BleResult>,
+        private val mContext: Context,
+        private val mBleResultLiveData: MutableLiveData<BleResult>,
         private var mBluetoothAdapter: BluetoothAdapter?,
-        private val connectTimeout: Long = 20000// 蓝牙连接超时时间
-) : IBleState {
-    private val commandCache = mutableMapOf<String, BleCommandQueue>()
-    private val jobCache = mutableMapOf<String, Job>()
+        private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
+) : BaseBleState() {
+    private val mCommandCache = mutableMapOf<String, BleCommandQueue>()
+    private val mJobCache = mutableMapOf<String, Job>()
 
     private val mConnectedBluetoothGattList = mutableListOf<BluetoothGatt>()
 
@@ -40,16 +39,16 @@ class ConnectedState(
                 }
                 BluetoothGatt.STATE_DISCONNECTED -> {// 连接蓝牙设备失败
                     mConnectedBluetoothGattList.remove(gatt)
-                    bleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED))
+                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED))
                 }
             }
         }
 
         // 发现蓝牙服务
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            if (status == BluetoothGatt.GATT_SUCCESS) {// 发现到蓝牙服务，此时才算真正的连接成功。
+            if (status == BluetoothGatt.GATT_SUCCESS) {// 发现了蓝牙服务后，才算真正的连接成功。
                 mConnectedBluetoothGattList.add(gatt)
-                bleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.name))
+                mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.name))
             }
         }
 
@@ -59,12 +58,12 @@ class ConnectedState(
                 characteristic: BluetoothGattCharacteristic,
                 status: Int
         ) {
-            bleResultLiveData.postValue(BleResult(BleStatus.READ_CHARACTERISTIC, characteristic.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.READ_CHARACTERISTIC, characteristic.value))
         }
 
         // 特征值改变
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            bleResultLiveData.postValue(BleResult(BleStatus.CHARACTERISTIC_CHANGED, characteristic.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.CHARACTERISTIC_CHANGED, characteristic.value))
         }
 
         // 写特征值
@@ -73,69 +72,58 @@ class ConnectedState(
                 characteristic: BluetoothGattCharacteristic,
                 status: Int
         ) {
-            bleResultLiveData.postValue(BleResult(BleStatus.WRITE_CHARACTERISTIC, characteristic.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.WRITE_CHARACTERISTIC, characteristic.value))
         }
 
         // 读描述值
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            bleResultLiveData.postValue(BleResult(BleStatus.READ_DESCRIPTOR, descriptor.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.READ_DESCRIPTOR, descriptor.value))
         }
 
         // 写描述值
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            bleResultLiveData.postValue(BleResult(BleStatus.WRITE_DESCRIPTOR, descriptor.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.WRITE_DESCRIPTOR, descriptor.value))
         }
 
         // 读蓝牙信号值
         override fun onReadRemoteRssi(gatt: BluetoothGatt, rssi: Int, status: Int) {
-            bleResultLiveData.postValue(BleResult(BleStatus.READ_REMOTE_RSSI, rssi))
+            mBleResultLiveData.postValue(BleResult(BleStatus.READ_REMOTE_RSSI, rssi))
         }
 
     }
 
-    override fun init() {
-    }
-
-    override fun startScan() {
-    }
-
-    override fun stopScan() {
-    }
-
-    // 如果要对多个设备发起连接请求，最好是有一个同一个的设备连接管理，把发起连接请求序列化起来。
+    // 如果要对多个设备发起连接请求，最好是有一个统一的设备连接管理，把发起连接请求用队列管理起来。
     // 前一个设备请求建立连接，后面请求在队列中等待。
     // 如果连接成功了，就处理下一个连接请求。
     // 如果连接失败了（例如出错，或者连接超时失败），就马上调用 BluetoothGatt.disconnect() 来释放建立连接请求，然后处理下一个设备连接请求。
     override fun connect(address: String) {
-        bleResultLiveData.postValue(BleResult(BleStatus.CONNECT))
+        mBleResultLiveData.postValue(BleResult(BleStatus.CONNECT))
         if (address.isEmpty()) {
-            context.shortToastCenter("连接蓝牙设备失败：无效地址：$address")
-            bleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED))
+            mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, errorMsg = "连接蓝牙设备失败：地址不能为空"))
             return
         }
 
         val gatt = getBluetoothGatt(address)
         if (gatt != null) {// 已经连接过了
             // 蓝牙设备已经连接过
-            bleResultLiveData.postValue(BleResult(BleStatus.CONNECTED))
+            mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED))
         } else {
             GlobalScope.launch {
                 // 获取远端的蓝牙设备
                 val bluetoothDevice = mBluetoothAdapter?.getRemoteDevice(address)
                 if (bluetoothDevice == null) {
-                    context.shortToastCenter("连接蓝牙设备失败：设备未找到")
-                    bleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED))
+                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, errorMsg = "连接蓝牙设备失败：设备 $address 未找到"))
                     return@launch
                 }
 
                 // 在任何时刻都只能最多一个设备在尝试建立连接。如果同时对多个蓝牙设备发起建立 Gatt 连接请求。如果前面的设备连接失败了，后面的设备请求会被永远阻塞住，不会有任何连接回调。
                 // 对BLE设备连接，连接过程要尽量短，如果连接不上，不要盲目进行重连，否这你的电池会很快被消耗掉。
                 Logger.v("尝试创建新的连接……")
-                bluetoothDevice.connectGatt(context, false, mGattCallback)// 第二个参数表示是否自动重连
+                bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
             }
 
             GlobalScope.launch {
-                delay(connectTimeout)
+                delay(mConnectTimeout)
                 disconnect(address)
             }
         }
@@ -147,17 +135,16 @@ class ConnectedState(
 
     override fun write(command: BleCommand) {
         val address = command.address
-        if (!commandCache.containsKey(address)) {
-            val gatt = getBluetoothGatt(address)
-            gatt ?: return
-            commandCache[address] = BleCommandQueue()
-            jobCache[address] = GlobalScope.launch {
+        if (!mCommandCache.containsKey(address)) {
+            val gatt = getBluetoothGatt(address) ?: return
+            mCommandCache[address] = BleCommandQueue()
+            mJobCache[address] = GlobalScope.launch {
                 while (true) {
-                    commandCache[address]?.writeUntilCompleted(gatt)
+                    mCommandCache[address]?.writeUntilCompleted(gatt)
                 }
             }
         }
-        commandCache[address]?.put(command)
+        mCommandCache[address]?.put(command)
     }
 
     override fun disconnectAll() {
@@ -166,14 +153,14 @@ class ConnectedState(
             it.close()
         }
         mConnectedBluetoothGattList.clear()
-        jobCache.forEach {
+        mJobCache.forEach {
             it.value.cancel()
         }
-        jobCache.clear()
-        commandCache.forEach {
+        mJobCache.clear()
+        mCommandCache.forEach {
             it.value.clear()
         }
-        commandCache.clear()
+        mCommandCache.clear()
     }
 
     override fun close() {

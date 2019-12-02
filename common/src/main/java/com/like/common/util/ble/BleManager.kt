@@ -11,9 +11,9 @@ import android.content.IntentFilter
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.MutableLiveData
 import com.like.common.util.ble.blestate.ConnectedState
-import com.like.common.util.ble.blestate.IBleState
-import com.like.common.util.ble.blestate.InitedState
-import com.like.common.util.ble.blestate.NotInitState
+import com.like.common.util.ble.blestate.BaseBleState
+import com.like.common.util.ble.blestate.InitializedState
+import com.like.common.util.ble.blestate.InitialState
 import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
@@ -68,7 +68,7 @@ class BleManager(
         private val scanTimeout: Long = 3000,// 蓝牙扫描时间的限制
         private val connectTimeout: Long = 20000// 蓝牙连接超时时间
 ) {
-    private var mBleState: IBleState? = NotInitState(context, bleResultLiveData)
+    private var mBleState: BaseBleState? = InitialState(context, bleResultLiveData)
 
     // 蓝牙打开关闭监听器
     private val mReceiver = object : BroadcastReceiver() {
@@ -101,7 +101,7 @@ class BleManager(
         context.registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
         mBleState?.init()
         mBleState?.getBluetoothAdapter()?.apply {
-            mBleState = InitedState(context, bleResultLiveData, this, mScanStrategy, scanTimeout)
+            mBleState = InitializedState(context, bleResultLiveData, this, mScanStrategy, scanTimeout)
         }
 
         bleResultLiveData.observeForever {
@@ -113,7 +113,7 @@ class BleManager(
                 }
                 BleStatus.DISCONNECTED -> {
                     mBleState?.getBluetoothAdapter()?.apply {
-                        mBleState = InitedState(context, bleResultLiveData, this, mScanStrategy, scanTimeout)
+                        mBleState = InitializedState(context, bleResultLiveData, this, mScanStrategy, scanTimeout)
                         scanBleDevice()
                     }
                 }
@@ -127,7 +127,7 @@ class BleManager(
      * 扫描蓝牙设备
      */
     fun scanBleDevice() {
-        if (mBleState is InitedState) {
+        if (mBleState is InitializedState) {
             mBleState?.startScan()
             mBleState?.getBluetoothAdapter()?.apply {
                 mBleState = ConnectedState(context, bleResultLiveData, this, connectTimeout)
@@ -135,7 +135,7 @@ class BleManager(
         } else if (mBleState is ConnectedState) {
             mBleState?.disconnectAll()
             mBleState?.getBluetoothAdapter()?.apply {
-                mBleState = InitedState(context, bleResultLiveData, this, mScanStrategy, scanTimeout)
+                mBleState = InitializedState(context, bleResultLiveData, this, mScanStrategy, scanTimeout)
                 scanBleDevice()
             }
         }
