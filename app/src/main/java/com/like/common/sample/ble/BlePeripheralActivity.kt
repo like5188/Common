@@ -6,7 +6,6 @@ import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
@@ -16,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.databinding.ActivityBlePeripheralBinding
 import com.like.common.view.toolbar.ToolbarUtils
+import java.lang.reflect.InvocationTargetException
 import java.util.*
 
 
@@ -63,7 +63,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         }
 
         override fun onCharacteristicWriteRequest(device: BluetoothDevice, requestId: Int, characteristic: BluetoothGattCharacteristic, preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray) {
-            appendText("onCharacteristicWriteRequest device=$device requestId=$requestId characteristic=$characteristic preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=$value")
+            appendText("onCharacteristicWriteRequest device=$device requestId=$requestId characteristic=$characteristic preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=${value.contentToString()}")
             mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0, 9, 8, 7, 6, 5, 4, 3, 2, 1))
         }
 
@@ -73,7 +73,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         }
 
         override fun onDescriptorWriteRequest(device: BluetoothDevice, requestId: Int, descriptor: BluetoothGattDescriptor, preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray) {
-            appendText("onDescriptorWriteRequest device=$device requestId=$requestId descriptor=$descriptor preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=$value")
+            appendText("onDescriptorWriteRequest device=$device requestId=$requestId descriptor=$descriptor preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=${value.contentToString()}")
             mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(19, 18, 17, 16, 15, 14, 13, 12, 11, 10))
         }
 
@@ -94,11 +94,38 @@ class BlePeripheralActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToolbarUtils
-        init()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            appendText("mac = ${getBluetoothMacAddress()}")
+        } else {
+            appendText("mac = ${android.provider.Settings.Secure.getString(contentResolver, "bluetooth_address")}")
+        }
+    }
+
+    /**
+     * 获取蓝牙地址
+     */
+    private fun getBluetoothMacAddress(): String {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        var bluetoothMacAddress = ""
+        try {
+            val mServiceField = bluetoothAdapter.javaClass.getDeclaredField("mService")
+            mServiceField.isAccessible = true
+
+            val btManagerService = mServiceField.get(bluetoothAdapter)
+
+            if (btManagerService != null) {
+                bluetoothMacAddress = btManagerService.javaClass.getMethod("getAddress").invoke(btManagerService) as String
+            }
+        } catch (ignore: NoSuchFieldException) {
+        } catch (ignore: NoSuchMethodException) {
+        } catch (ignore: IllegalAccessException) {
+        } catch (ignore: InvocationTargetException) {
+        }
+        return bluetoothMacAddress
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun init() {
+    fun init(view: View) {
         if (mBluetoothLeAdvertiser == null) {
             mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
             if (mBluetoothManager != null) {
@@ -124,39 +151,9 @@ class BlePeripheralActivity : AppCompatActivity() {
     fun startAdvertising(view: View) {
         if (mBluetoothLeAdvertiser == null) return
         if (mAdvertiseCallback != null) return
+
         appendText("开始广播")
-        val settings = AdvertiseSettings.Builder()
-                // 设置广播的模式，低功耗，平衡和低延迟三种模式；
-                // 对应  AdvertiseSettings.ADVERTISE_MODE_LOW_POWER  ,ADVERTISE_MODE_BALANCED ,ADVERTISE_MODE_LOW_LATENCY
-                // 从左右到右，广播的间隔会越来越短
-                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-                // 设置是否可以连接。
-                // 广播分为可连接广播和不可连接广播，一般不可连接广播应用在iBeacon设备上，这样APP无法连接上iBeacon设备
-                .setConnectable(true)
-                // 设置广播的最长时间，最大值为常量AdvertiseSettings.LIMITED_ADVERTISING_MAX_MILLIS = 180 * 1000;  180秒
-                // 设为0时，代表无时间限制会一直广播
-                .setTimeout(0)
-                // 设置广播的信号强度
-                // 常量有AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW, ADVERTISE_TX_POWER_LOW, ADVERTISE_TX_POWER_MEDIUM, ADVERTISE_TX_POWER_HIGH
-                // 从左到右分别表示强度越来越强.
-                // 举例：当设置为ADVERTISE_TX_POWER_ULTRA_LOW时，
-                // 手机1和手机2放在一起，手机2扫描到的rssi信号强度为-56左右，
-                // 当设置为ADVERTISE_TX_POWER_HIGH  时， 扫描到的信号强度为-33左右，
-                // 信号强度越大，表示手机和设备靠的越近
-                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_HIGH -56 dBm @ 1 meter with Nexus 5
-                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_LOW -75 dBm @ 1 meter with Nexus 5
-                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM -66 dBm @ 1 meter with Nexus 5
-                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW not detected with Nexus 5
-                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
-                .build()
-        val advertiseData = AdvertiseData.Builder()
-                .setIncludeDeviceName(true)
-                .setIncludeTxPowerLevel(true)
-                .build()
-        val scanResponse = AdvertiseData.Builder()
-                .addServiceData(ParcelUuid(UUID_SERVICE), byteArrayOf(1, 2, 3, 4, 5))
-                .setIncludeTxPowerLevel(true)
-                .build()
+
         mAdvertiseCallback = object : AdvertiseCallback() {
             override fun onStartFailure(errorCode: Int) {
                 super.onStartFailure(errorCode)
@@ -178,8 +175,47 @@ class BlePeripheralActivity : AppCompatActivity() {
             }
         }
 
-        mBluetoothLeAdvertiser?.startAdvertising(settings, advertiseData, scanResponse, mAdvertiseCallback)
+        mBluetoothLeAdvertiser?.startAdvertising(createAdvertiseSettings(), createAdvertiseData(byteArrayOf(0x34, 0x56)), createScanResponseAdvertiseData(), mAdvertiseCallback)
     }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun createAdvertiseData(data: ByteArray) = AdvertiseData.Builder()
+            .addManufacturerData(0x01AC, data)
+            .setIncludeDeviceName(true)
+            .setIncludeTxPowerLevel(true)
+            .build()
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun createScanResponseAdvertiseData() = AdvertiseData.Builder()
+            .addServiceData(ParcelUuid(UUID_SERVICE), byteArrayOf(1, 2, 3, 4, 5))
+            .setIncludeTxPowerLevel(true)
+            .build()
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun createAdvertiseSettings() = AdvertiseSettings.Builder()
+            // 设置广播的模式，低功耗，平衡和低延迟三种模式；
+            // 对应  AdvertiseSettings.ADVERTISE_MODE_LOW_POWER  ,ADVERTISE_MODE_BALANCED ,ADVERTISE_MODE_LOW_LATENCY
+            // 从左右到右，广播的间隔会越来越短
+            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+            // 设置是否可以连接。
+            // 广播分为可连接广播和不可连接广播，一般不可连接广播应用在iBeacon设备上，这样APP无法连接上iBeacon设备
+            .setConnectable(true)
+            // 设置广播的最长时间，最大值为常量AdvertiseSettings.LIMITED_ADVERTISING_MAX_MILLIS = 180 * 1000;  180秒
+            // 设为0时，代表无时间限制会一直广播
+            .setTimeout(0)
+            // 设置广播的信号强度
+            // 常量有AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW, ADVERTISE_TX_POWER_LOW, ADVERTISE_TX_POWER_MEDIUM, ADVERTISE_TX_POWER_HIGH
+            // 从左到右分别表示强度越来越强.
+            // 举例：当设置为ADVERTISE_TX_POWER_ULTRA_LOW时，
+            // 手机1和手机2放在一起，手机2扫描到的rssi信号强度为-56左右，
+            // 当设置为ADVERTISE_TX_POWER_HIGH  时， 扫描到的信号强度为-33左右，
+            // 信号强度越大，表示手机和设备靠的越近
+            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_HIGH -56 dBm @ 1 meter with Nexus 5
+            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_LOW -75 dBm @ 1 meter with Nexus 5
+            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM -66 dBm @ 1 meter with Nexus 5
+            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW not detected with Nexus 5
+            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+            .build()
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun stopAdvertising(view: View) {
@@ -223,9 +259,5 @@ class BlePeripheralActivity : AppCompatActivity() {
             sb.append(text).append("\n")
             mBinding.tvStatus.text = sb.toString()
         }
-    }
-
-    fun gotoBleActivity(view: View) {
-        startActivity(Intent(this, BleActivity::class.java))
     }
 }

@@ -7,6 +7,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -35,6 +36,7 @@ import java.nio.ByteBuffer
  */
 class BleActivity : AppCompatActivity() {
     companion object {
+        private val TAG = BleActivity::class.java.simpleName
         /**
          * 打开蓝牙请求码
          */
@@ -49,11 +51,13 @@ class BleActivity : AppCompatActivity() {
         val scanStrategy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ScanStrategy21(object : ScanCallback() {
                 override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                    Log.d(TAG, "address=${result?.device?.address} rssi=${result?.rssi} scanRecord=${result?.scanRecord}")
                     addItem(result?.device)
                 }
             })
         } else {
             ScanStrategy18(BluetoothAdapter.LeScanCallback { device, rssi, scanRecord ->
+                Log.d(TAG, "address=${device.address} rssi=$rssi scanRecord=$scanRecord")
                 addItem(device)
             })
         }
@@ -107,7 +111,7 @@ class BleActivity : AppCompatActivity() {
                         1,
                         "hahah".toByteArray(),
                         curAddress,
-                        "0000fff1-0000-1000-8000-00805f9b34fb",
+                        "0000fff2-0000-1000-8000-00805f9b34fb",
                         mBleResultLiveData,
                         "描述",
                         false,
