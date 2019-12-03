@@ -110,6 +110,13 @@ abstract class BleCommand(
         withContext(Dispatchers.IO) {
             data.batch(maxTransferSize).forEach {
                 characteristic.value = it
+                /*
+                写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
+                    WRITE_TYPE_DEFAULT  默认类型，需要外围设备的确认，也就是需要外围设备的回应，这样才能继续发送写。
+                    WRITE_TYPE_NO_RESPONSE 设置该类型不需要外围设备的回应，可以继续写数据。加快传输速率。
+                    WRITE_TYPE_SIGNED  写特征携带认证签名，具体作用不太清楚。
+                 */
+                characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                 bluetoothGatt.writeCharacteristic(characteristic)
                 delay(30)
             }
