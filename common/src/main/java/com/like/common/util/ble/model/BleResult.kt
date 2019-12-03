@@ -16,7 +16,13 @@ data class BleResult(val status: BleStatus, val data: Any? = null, val errorMsg:
     }
 
     override fun toString(): String {
-        return "BleResult(status=$status, data=${if (data is String) data else if (data is Array<*>) Arrays.toString(data) else data.toString()}, errorMsg='$errorMsg')"
+        val dataString = when (data) {
+            is String -> data
+            is ByteArray -> Arrays.toString(data)
+            is IntArray -> Arrays.toString(data)
+            else -> data.toString()
+        }
+        return "BleResult(status=$status, data=$dataString, errorMsg='$errorMsg')"
     }
 
 }

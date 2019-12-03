@@ -9,6 +9,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -94,6 +95,7 @@ class BlePeripheralActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToolbarUtils
+        mBinding.tvStatus.movementMethod = ScrollingMovementMethod()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             appendText("mac = ${getBluetoothMacAddress()}")
         } else {
@@ -258,6 +260,8 @@ class BlePeripheralActivity : AppCompatActivity() {
             val sb = StringBuilder(mBinding.tvStatus.text)
             sb.append(text).append("\n\n")
             mBinding.tvStatus.text = sb.toString()
+            val offset = mBinding.tvStatus.lineCount * mBinding.tvStatus.lineHeight
+            mBinding.tvStatus.scrollTo(0, offset - mBinding.tvStatus.height + mBinding.tvStatus.lineHeight)
         }
     }
 }
