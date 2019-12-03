@@ -274,10 +274,11 @@ class BlePeripheralActivity : AppCompatActivity() {
 
         val characteristicWrite = BluetoothGattCharacteristic(
                 UUID_CHARACTERISTIC_WRITE,
-                BluetoothGattCharacteristic.PROPERTY_WRITE or
-                        BluetoothGattCharacteristic.PROPERTY_READ or
+                BluetoothGattCharacteristic.PROPERTY_READ or
+                        BluetoothGattCharacteristic.PROPERTY_WRITE or
                         BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-                BluetoothGattCharacteristic.PERMISSION_WRITE
+                BluetoothGattCharacteristic.PERMISSION_READ or
+                        BluetoothGattCharacteristic.PERMISSION_WRITE
         )
         service.addCharacteristic(characteristicWrite)
 
