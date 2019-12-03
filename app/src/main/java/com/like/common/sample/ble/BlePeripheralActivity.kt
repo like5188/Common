@@ -90,7 +90,7 @@ class BlePeripheralActivity : AppCompatActivity() {
             appendText("onCharacteristicWriteRequest device=$device requestId=$requestId characteristic=$characteristic preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=${value.contentToString()}")
             // 必须调用 sendResponse()方法，才能完成整个连接流程，触发中心设备的 BluetoothGattCallback.onCharacteristicWrite() 方法。
             mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x03, 0x04))
-            // 调用 notifyCharacteristicChanged() 方法通知中心设备，会触发 onNotificationSent() 方法和中心设备的 BluetoothGattCallback.onCharacteristicChanged() 方法。
+            // 调用 notifyCharacteristicChanged() 方法向中心设备发送数据，会触发 onNotificationSent() 方法和中心设备的 BluetoothGattCallback.onCharacteristicChanged() 方法。
 //            characteristic.value = byteArrayOf(0x05, 0x06)
 //            mBluetoothGattServer?.notifyCharacteristicChanged(device, characteristic, false)
         }
