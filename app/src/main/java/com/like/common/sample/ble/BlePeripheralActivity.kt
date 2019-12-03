@@ -22,7 +22,6 @@ import com.like.common.sample.databinding.ActivityBlePeripheralBinding
 import com.like.common.view.toolbar.ToolbarUtils
 import java.util.*
 
-
 /**
  * 蓝牙外围设备
  * 自安卓5.0后，谷歌加入了对安卓手机作为低功耗蓝牙外围设备，即服务端的支持。使得手机可以通过低功耗蓝牙进行相互通信。
@@ -32,8 +31,7 @@ import java.util.*
 class BlePeripheralActivity : AppCompatActivity() {
     companion object {
         private val UUID_SERVICE: UUID = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb")
-        private val UUID_CHARACTERISTIC_READ: UUID = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb")
-        private val UUID_CHARACTERISTIC_WRITE: UUID = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb")
+        private val UUID_CHARACTERISTIC: UUID = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb")
         private val UUID_DESCRIPTOR: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
 
@@ -90,6 +88,8 @@ class BlePeripheralActivity : AppCompatActivity() {
         override fun onCharacteristicWriteRequest(device: BluetoothDevice, requestId: Int, characteristic: BluetoothGattCharacteristic, preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray) {
             appendText("onCharacteristicWriteRequest device=$device requestId=$requestId characteristic=$characteristic preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=${value.contentToString()}")
             mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x03, 0x04))
+            characteristic.value = byteArrayOf(0x05, 0x06)
+            mBluetoothGattServer?.notifyCharacteristicChanged(device, characteristic, false)
         }
 
         override fun onDescriptorReadRequest(device: BluetoothDevice, requestId: Int, offset: Int, descriptor: BluetoothGattDescriptor) {
@@ -254,26 +254,20 @@ class BlePeripheralActivity : AppCompatActivity() {
         val bluetoothGattServer = mBluetoothManager?.openGattServer(this, bluetoothGattServerCallback) ?: return
         val service = BluetoothGattService(UUID_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
-        val characteristicRead = BluetoothGattCharacteristic(
-                UUID_CHARACTERISTIC_READ,
-                BluetoothGattCharacteristic.PROPERTY_READ,
-                BluetoothGattCharacteristic.PERMISSION_READ
+        val characteristic = BluetoothGattCharacteristic(
+                UUID_CHARACTERISTIC,
+                BluetoothGattCharacteristic.PROPERTY_WRITE or
+                        BluetoothGattCharacteristic.PROPERTY_READ or
+                        BluetoothGattCharacteristic.PROPERTY_NOTIFY,
+                BluetoothGattCharacteristic.PERMISSION_WRITE or
+                        BluetoothGattCharacteristic.PERMISSION_READ
         )
         val descriptor = BluetoothGattDescriptor(
                 UUID_DESCRIPTOR,
                 BluetoothGattCharacteristic.PERMISSION_WRITE
         )
-        characteristicRead.addDescriptor(descriptor)
-        service.addCharacteristic(characteristicRead)
-
-        val characteristicWrite = BluetoothGattCharacteristic(
-                UUID_CHARACTERISTIC_WRITE,
-                BluetoothGattCharacteristic.PROPERTY_WRITE or
-                        BluetoothGattCharacteristic.PROPERTY_READ or
-                        BluetoothGattCharacteristic.PROPERTY_NOTIFY,
-                BluetoothGattCharacteristic.PERMISSION_WRITE
-        )
-        service.addCharacteristic(characteristicWrite)
+        characteristic.addDescriptor(descriptor)
+        service.addCharacteristic(characteristic)
 
         bluetoothGattServer.addService(service)
         mBluetoothGattServer = bluetoothGattServer
