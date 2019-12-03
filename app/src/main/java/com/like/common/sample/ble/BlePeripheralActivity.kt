@@ -157,13 +157,13 @@ class BlePeripheralActivity : AppCompatActivity() {
 
         mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
         if (mBluetoothManager == null) {
-            appendText("蓝牙初始化失败")
+            appendText("蓝牙初始化失败，获取 mBluetoothManager 失败")
             return
         }
 
         mBluetoothAdapter = mBluetoothManager?.adapter
         if (mBluetoothAdapter == null) {
-            appendText("蓝牙初始化失败")
+            appendText("蓝牙初始化失败，获取 mBluetoothAdapter 失败")
             return
         }
 
@@ -172,7 +172,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         } else {
             mBluetoothManager = null
             mBluetoothAdapter = null
-            appendText("蓝牙初始化失败")
+            appendText("蓝牙初始化失败，蓝牙未打开")
             openBTDialog(1)
         }
     }
