@@ -73,6 +73,10 @@ class BlePeripheralActivity : AppCompatActivity() {
         }
     }
     private val bluetoothGattServerCallback = object : BluetoothGattServerCallback() {
+
+        /**
+         * @param newState  连接状态，只能为BluetoothProfile.STATE_CONNECTED和BluetoothProfile.STATE_DISCONNECTED。
+         */
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
             appendText("onConnectionStateChange device=$device status=$status newState=$newState")
         }
@@ -81,11 +85,20 @@ class BlePeripheralActivity : AppCompatActivity() {
             appendText("onServiceAdded status=$status service=${service.uuid}")
         }
 
+        /**
+         * @param requestId     请求的标识
+         * @param offset        特性值偏移量
+         */
         override fun onCharacteristicReadRequest(device: BluetoothDevice, requestId: Int, offset: Int, characteristic: BluetoothGattCharacteristic) {
             appendText("onCharacteristicReadRequest device=$device requestId=$requestId offset=$offset characteristic=$characteristic")
-            mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x07, 0x08))
+            // 此方法要求作出响应
+            mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x07, 0x08))// 最后一个参数是传的数据。
         }
 
+        /**
+         * @param preparedWrite     true则写操作必须排队等待稍后执行
+         * @param responseNeeded    是否需要响应，需要响应则必须调用 sendResponse()
+         */
         override fun onCharacteristicWriteRequest(device: BluetoothDevice, requestId: Int, characteristic: BluetoothGattCharacteristic, preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray) {
             appendText("onCharacteristicWriteRequest device=$device requestId=$requestId characteristic=$characteristic preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=${value.contentToString()}")
             // 如果 responseNeeded=true（此属性由中心设备的 characteristic.setWriteType() 方法设置），则必须调用 sendResponse()方法回复中心设备，这个方法会触发中心设备的 BluetoothGattCallback.onCharacteristicWrite() 方法，然后中心设备才能继续下次写数据，否则不能再次写入数据。
@@ -93,9 +106,10 @@ class BlePeripheralActivity : AppCompatActivity() {
             if (responseNeeded) {
                 mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x03, 0x04))
             }
+            // 外围设备向中心设备不能发送数据，必须通过notify 或者indicate的方式，andorid只发现notify接口。
             // 调用 notifyCharacteristicChanged() 方法向中心设备发送数据，会触发 onNotificationSent() 方法和中心设备的 BluetoothGattCallback.onCharacteristicChanged() 方法。
 //            characteristic.value = byteArrayOf(0x05, 0x06)
-//            mBluetoothGattServer?.notifyCharacteristicChanged(device, characteristic, false)
+//            mBluetoothGattServer?.notifyCharacteristicChanged(device, characteristic, false)// 最后一个参数表示是否需要客户端确认
         }
 
         override fun onDescriptorReadRequest(device: BluetoothDevice, requestId: Int, offset: Int, descriptor: BluetoothGattDescriptor) {
