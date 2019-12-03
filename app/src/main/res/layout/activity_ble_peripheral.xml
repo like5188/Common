@@ -41,12 +41,17 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_status"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="@color/common_text_blue_1"
-            android:textSize="14sp" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/common_text_blue_1"
+                android:textSize="14sp" />
+        </ScrollView>
 
     </LinearLayout>
 </layout>

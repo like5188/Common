@@ -1,6 +1,7 @@
 package com.like.common.util.ble.model
 
 import com.like.common.util.Logger
+import java.util.*
 
 /**
  * 蓝牙相关的操作的返回结果。
@@ -13,4 +14,9 @@ data class BleResult(val status: BleStatus, val data: Any? = null, val errorMsg:
     init {
         Logger.i(this.toString())
     }
+
+    override fun toString(): String {
+        return "BleResult(status=$status, data=${if (data is String) data else if (data is Array<*>) Arrays.toString(data) else data.toString()}, errorMsg='$errorMsg')"
+    }
+
 }

@@ -118,7 +118,7 @@ abstract class BleCommand(
                 while (!isCompleted) {
                     delay(100)
                     if (isExpired()) {// 说明是超时了
-                        Logger.e("执行 $description 命令超时")
+                        Logger.e("执行 $description 命令超时，没有收到返回值！")
                         isCompleted = true
                         onFailure?.invoke(TimeoutException())
                     }

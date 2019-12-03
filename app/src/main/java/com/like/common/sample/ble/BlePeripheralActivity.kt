@@ -256,7 +256,7 @@ class BlePeripheralActivity : AppCompatActivity() {
     private fun appendText(text: String) {
         runOnUiThread {
             val sb = StringBuilder(mBinding.tvStatus.text)
-            sb.append(text).append("\n")
+            sb.append(text).append("\n\n")
             mBinding.tvStatus.text = sb.toString()
         }
     }
