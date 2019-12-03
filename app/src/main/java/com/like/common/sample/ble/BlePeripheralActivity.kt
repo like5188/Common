@@ -5,7 +5,11 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.ParcelUuid
@@ -16,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.databinding.ActivityBlePeripheralBinding
 import com.like.common.view.toolbar.ToolbarUtils
-import java.lang.reflect.InvocationTargetException
 import java.util.*
 
 
@@ -25,6 +28,7 @@ import java.util.*
  * 自安卓5.0后，谷歌加入了对安卓手机作为低功耗蓝牙外围设备，即服务端的支持。使得手机可以通过低功耗蓝牙进行相互通信。
  * 实现这一功能其实只需要分为设置广播和设置服务器两个部分完成即可
  */
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class BlePeripheralActivity : AppCompatActivity() {
     companion object {
         private val UUID_SERVICE: UUID = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb")
@@ -45,10 +49,30 @@ class BlePeripheralActivity : AppCompatActivity() {
     }
 
     private var mBluetoothManager: BluetoothManager? = null
+    private var mBluetoothAdapter: BluetoothAdapter? = null
     private var mBluetoothGattServer: BluetoothGattServer? = null
     private var mBluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
 
-    private var mAdvertiseCallback: AdvertiseCallback? = null
+    private val mAdvertiseCallback: AdvertiseCallback = object : AdvertiseCallback() {
+        override fun onStartFailure(errorCode: Int) {
+            super.onStartFailure(errorCode)
+            val errorMsg = when (errorCode) {
+                ADVERTISE_FAILED_DATA_TOO_LARGE -> "Failed to start advertising as the advertise data to be broadcasted is larger than 31 bytes."
+                ADVERTISE_FAILED_TOO_MANY_ADVERTISERS -> "Failed to start advertising because no advertising instance is available."
+                ADVERTISE_FAILED_ALREADY_STARTED -> "Failed to start advertising as the advertising is already started"
+                ADVERTISE_FAILED_INTERNAL_ERROR -> "Operation failed due to an internal error"
+                ADVERTISE_FAILED_FEATURE_UNSUPPORTED -> "This feature is not supported on this platform"
+                else -> "errorCode=$errorCode"
+            }
+            appendText("广播失败 $errorMsg")
+        }
+
+        override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+            super.onStartSuccess(settingsInEffect)
+            appendText("广播成功 txPowerLevel=${settingsInEffect.txPowerLevel} mode=${settingsInEffect.mode} timeout=${settingsInEffect.timeout}")
+            initServices()//该方法是添加一个服务，在此处调用即将服务广播出去
+        }
+    }
     private val bluetoothGattServerCallback = object : BluetoothGattServerCallback() {
         override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
             appendText("onConnectionStateChange device=$device status=$status newState=$newState")
@@ -90,143 +114,143 @@ class BlePeripheralActivity : AppCompatActivity() {
             appendText("onMtuChanged device=$device mtu=$mtu")
         }
     }
+    // 蓝牙打开关闭监听器
+    private val mReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
+                        BluetoothAdapter.STATE_ON -> {// 蓝牙已打开
+                            appendText("蓝牙已打开")
+                            init(mBinding.tvStatus)// 初始化蓝牙
+                        }
+                        BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
+                            appendText("蓝牙已关闭")
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToolbarUtils
         mBinding.tvStatus.movementMethod = ScrollingMovementMethod()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            appendText("mac = ${getBluetoothMacAddress()}")
-        } else {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             appendText("mac = ${android.provider.Settings.Secure.getString(contentResolver, "bluetooth_address")}")
+        }
+        // 注册蓝牙打开关闭监听
+        registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+    }
+
+    fun init(view: View) {
+        // 设备不支持BLE
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            appendText("蓝牙初始化失败，设备不支持蓝牙功能")
+            return
+        }
+        if (isBlePrepared()) {
+            appendText("蓝牙已经初始化")
+            return
+        }
+
+        mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+        if (mBluetoothManager == null) {
+            appendText("蓝牙初始化失败")
+            return
+        }
+
+        mBluetoothAdapter = mBluetoothManager?.adapter
+        if (mBluetoothAdapter == null) {
+            appendText("蓝牙初始化失败")
+            return
+        }
+
+        if (isBlePrepared()) {
+            appendText("蓝牙初始化成功")
+        } else {
+            mBluetoothManager = null
+            mBluetoothAdapter = null
+            appendText("蓝牙初始化失败")
+            openBTDialog(1)
         }
     }
 
     /**
-     * 获取蓝牙地址
+     * 蓝牙是否就绪
      */
-    private fun getBluetoothMacAddress(): String {
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        var bluetoothMacAddress = ""
-        try {
-            val mServiceField = bluetoothAdapter.javaClass.getDeclaredField("mService")
-            mServiceField.isAccessible = true
+    private fun isBlePrepared() = mBluetoothAdapter?.isEnabled ?: false
 
-            val btManagerService = mServiceField.get(bluetoothAdapter)
-
-            if (btManagerService != null) {
-                bluetoothMacAddress = btManagerService.javaClass.getMethod("getAddress").invoke(btManagerService) as String
-            }
-        } catch (ignore: NoSuchFieldException) {
-        } catch (ignore: NoSuchMethodException) {
-        } catch (ignore: IllegalAccessException) {
-        } catch (ignore: InvocationTargetException) {
-        }
-        return bluetoothMacAddress
+    /**
+     * 弹出开启蓝牙的对话框
+     */
+    private fun openBTDialog(requestCode: Int) {
+        startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), requestCode)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun init(view: View) {
-        if (mBluetoothLeAdvertiser == null) {
-            mBluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
-            if (mBluetoothManager != null) {
-                val bluetoothAdapter = mBluetoothManager?.adapter
-                if (bluetoothAdapter != null) {
-                    val bluetoothLeAdvertiser = bluetoothAdapter.bluetoothLeAdvertiser
-                    if (bluetoothLeAdvertiser == null) {
-                        appendText("设备不支持蓝牙广播")
-                    } else {
-                        appendText("蓝牙初始化成功")
-                        mBluetoothLeAdvertiser = bluetoothLeAdvertiser
-                    }
-                } else {
-                    appendText("设备不支持蓝牙")
-                }
-            } else {
-                appendText("设备不支持蓝牙")
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun startAdvertising(view: View) {
-        if (mBluetoothLeAdvertiser == null) return
-        if (mAdvertiseCallback != null) return
+        if (mBluetoothLeAdvertiser == null) {
+            mBluetoothLeAdvertiser = mBluetoothAdapter?.bluetoothLeAdvertiser
+            if (mBluetoothLeAdvertiser == null) {
+                appendText("广播失败")
+                return
+            }
+        }
 
         appendText("开始广播")
-
-        mAdvertiseCallback = object : AdvertiseCallback() {
-            override fun onStartFailure(errorCode: Int) {
-                super.onStartFailure(errorCode)
-                val errorMsg = when (errorCode) {
-                    ADVERTISE_FAILED_DATA_TOO_LARGE -> "Failed to start advertising as the advertise data to be broadcasted is larger than 31 bytes."
-                    ADVERTISE_FAILED_TOO_MANY_ADVERTISERS -> "Failed to start advertising because no advertising instance is available."
-                    ADVERTISE_FAILED_ALREADY_STARTED -> "Failed to start advertising as the advertising is already started"
-                    ADVERTISE_FAILED_INTERNAL_ERROR -> "Operation failed due to an internal error"
-                    ADVERTISE_FAILED_FEATURE_UNSUPPORTED -> "This feature is not supported on this platform"
-                    else -> "errorCode=$errorCode"
-                }
-                appendText("广播失败 $errorMsg")
-            }
-
-            override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
-                super.onStartSuccess(settingsInEffect)
-                appendText("广播成功 txPowerLevel=${settingsInEffect.txPowerLevel} mode=${settingsInEffect.mode} timeout=${settingsInEffect.timeout}")
-                initServices()//该方法是添加一个服务，在此处调用即将服务广播出去
-            }
-        }
-
         mBluetoothLeAdvertiser?.startAdvertising(createAdvertiseSettings(), createAdvertiseData(byteArrayOf(0x34, 0x56)), createScanResponseAdvertiseData(), mAdvertiseCallback)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun createAdvertiseData(data: ByteArray) = AdvertiseData.Builder()
-            .addManufacturerData(0x01AC, data)
-            .setIncludeDeviceName(true)
-            .setIncludeTxPowerLevel(true)
-            .build()
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun createScanResponseAdvertiseData() = AdvertiseData.Builder()
-            .addServiceData(ParcelUuid(UUID_SERVICE), byteArrayOf(1, 2, 3, 4, 5))
-            .setIncludeTxPowerLevel(true)
-            .build()
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun createAdvertiseSettings() = AdvertiseSettings.Builder()
-            // 设置广播的模式，低功耗，平衡和低延迟三种模式；
-            // 对应  AdvertiseSettings.ADVERTISE_MODE_LOW_POWER  ,ADVERTISE_MODE_BALANCED ,ADVERTISE_MODE_LOW_LATENCY
-            // 从左右到右，广播的间隔会越来越短
-            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-            // 设置是否可以连接。
-            // 广播分为可连接广播和不可连接广播，一般不可连接广播应用在iBeacon设备上，这样APP无法连接上iBeacon设备
-            .setConnectable(true)
-            // 设置广播的最长时间，最大值为常量AdvertiseSettings.LIMITED_ADVERTISING_MAX_MILLIS = 180 * 1000;  180秒
-            // 设为0时，代表无时间限制会一直广播
-            .setTimeout(0)
-            // 设置广播的信号强度
-            // 常量有AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW, ADVERTISE_TX_POWER_LOW, ADVERTISE_TX_POWER_MEDIUM, ADVERTISE_TX_POWER_HIGH
-            // 从左到右分别表示强度越来越强.
-            // 举例：当设置为ADVERTISE_TX_POWER_ULTRA_LOW时，
-            // 手机1和手机2放在一起，手机2扫描到的rssi信号强度为-56左右，
-            // 当设置为ADVERTISE_TX_POWER_HIGH  时， 扫描到的信号强度为-33左右，
-            // 信号强度越大，表示手机和设备靠的越近
-            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_HIGH -56 dBm @ 1 meter with Nexus 5
-            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_LOW -75 dBm @ 1 meter with Nexus 5
-            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM -66 dBm @ 1 meter with Nexus 5
-            // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW not detected with Nexus 5
-            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
-            .build()
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun stopAdvertising(view: View) {
         appendText("停止广播")
         mBluetoothLeAdvertiser?.stopAdvertising(mAdvertiseCallback)
-        mAdvertiseCallback = null
+    }
+
+    private fun createAdvertiseData(data: ByteArray): AdvertiseData {
+        return AdvertiseData.Builder()
+                .addManufacturerData(0x01AC, data)
+                .setIncludeDeviceName(true)
+                .setIncludeTxPowerLevel(true)
+                .build()
+    }
+
+    private fun createScanResponseAdvertiseData(): AdvertiseData {
+        return AdvertiseData.Builder()
+                .addServiceData(ParcelUuid(UUID_SERVICE), byteArrayOf(1, 2, 3, 4, 5))
+                .setIncludeTxPowerLevel(true)
+                .build()
+    }
+
+    private fun createAdvertiseSettings(): AdvertiseSettings {
+        return AdvertiseSettings.Builder()
+                // 设置广播的模式，低功耗，平衡和低延迟三种模式；
+                // 对应  AdvertiseSettings.ADVERTISE_MODE_LOW_POWER  ,ADVERTISE_MODE_BALANCED ,ADVERTISE_MODE_LOW_LATENCY
+                // 从左右到右，广播的间隔会越来越短
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+                // 设置是否可以连接。
+                // 广播分为可连接广播和不可连接广播，一般不可连接广播应用在iBeacon设备上，这样APP无法连接上iBeacon设备
+                .setConnectable(true)
+                // 设置广播的最长时间，最大值为常量AdvertiseSettings.LIMITED_ADVERTISING_MAX_MILLIS = 180 * 1000;  180秒
+                // 设为0时，代表无时间限制会一直广播
+                .setTimeout(0)
+                // 设置广播的信号强度
+                // 常量有AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW, ADVERTISE_TX_POWER_LOW, ADVERTISE_TX_POWER_MEDIUM, ADVERTISE_TX_POWER_HIGH
+                // 从左到右分别表示强度越来越强.
+                // 举例：当设置为ADVERTISE_TX_POWER_ULTRA_LOW时，
+                // 手机1和手机2放在一起，手机2扫描到的rssi信号强度为-56左右，
+                // 当设置为ADVERTISE_TX_POWER_HIGH  时， 扫描到的信号强度为-33左右，
+                // 信号强度越大，表示手机和设备靠的越近
+                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_HIGH -56 dBm @ 1 meter with Nexus 5
+                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_LOW -75 dBm @ 1 meter with Nexus 5
+                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM -66 dBm @ 1 meter with Nexus 5
+                // ＊ AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW not detected with Nexus 5
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+                .build()
     }
 
     private fun initServices() {
+        if (mBluetoothGattServer != null) return
         val bluetoothGattServer = mBluetoothManager?.openGattServer(this, bluetoothGattServerCallback) ?: return
         val service = BluetoothGattService(UUID_SERVICE, BluetoothGattService.SERVICE_TYPE_PRIMARY)
 
@@ -264,4 +288,14 @@ class BlePeripheralActivity : AppCompatActivity() {
             mBinding.tvStatus.scrollTo(0, offset - mBinding.tvStatus.height + mBinding.tvStatus.lineHeight)
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(mReceiver)
+        } catch (e: Exception) {// 避免 java.lang.IllegalArgumentException: Receiver not registered
+            e.printStackTrace()
+        }
+    }
+
 }

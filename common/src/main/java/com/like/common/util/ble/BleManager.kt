@@ -14,9 +14,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.ble.blestate.BaseBleState
-import com.like.common.util.ble.blestate.ReadyState
 import com.like.common.util.ble.blestate.InitialState
 import com.like.common.util.ble.blestate.InitializedState
+import com.like.common.util.ble.blestate.ReadyState
 import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
@@ -88,12 +88,17 @@ class BleManager(
                         }
                         BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
                             bleResultLiveData.postValue(BleResult(BleStatus.OFF))
-                            close()
+                            mBleState?.close()
                         }
                     }
                 }
             }
         }
+    }
+
+    init {
+        // 注册蓝牙打开关闭监听
+        context.registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
     }
 
     /**
@@ -102,8 +107,6 @@ class BleManager(
     @MainThread
     @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION])
     fun initBle() {
-        // 注册蓝牙打开关闭监听
-        context.registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
         mBleState?.init()
         mBleState?.getBluetoothAdapter()?.apply {
             mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
