@@ -2,7 +2,6 @@ package com.like.common.util.ble.model
 
 import android.app.Activity
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -10,10 +9,7 @@ import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
 import com.like.common.util.ble.utils.findCharacteristic
 import com.like.common.util.ble.utils.toByteArrayOrNull
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeoutException
 
@@ -28,17 +24,20 @@ abstract class BleReadCommand(
         characteristicUuidString: String,
         bleResultLiveData: MutableLiveData<BleResult>,
         description: String = "",
-        hasResult: Boolean = true,
         readTimeout: Long = 0L,
         maxTransferSize: Int = 20,
         maxFrameTransferSize: Int = 300,
         onSuccess: ((ByteArray?) -> Unit)? = null,
         onFailure: ((Throwable) -> Unit)? = null
-) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, hasResult, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
-    // 缓存返回数据，因为一帧有可能分为多次发送
+) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
+    // 缓存返回数据，因为一帧有可能分为多次接收
     private var resultCache: ByteBuffer = ByteBuffer.allocate(maxFrameTransferSize)
     // 过期时间
     private val expired = readTimeout + System.currentTimeMillis()
+
+    // 是否过期
+    private fun isExpired() = expired - System.currentTimeMillis() <= 0
+
     /**
      * 此条命令是否已经完成。成功或者失败
      */
@@ -51,11 +50,6 @@ abstract class BleReadCommand(
                 field = value
             }
         }
-
-    /**
-     * 是否过期
-     */
-    private fun isExpired() = expired - System.currentTimeMillis() <= 0
 
     /**
      * 判断返回的是否是完整的一帧数据
@@ -98,29 +92,22 @@ abstract class BleReadCommand(
         coroutineScope.launch(Dispatchers.Main) {
             bleResultLiveData.observe(activity, mWriteObserver)
 
-            launch(Dispatchers.IO) {
+            val job = launch(Dispatchers.IO) {
                 data.batch(maxTransferSize).forEach {
                     characteristic.value = it
-                    /*
-                    写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
-                        WRITE_TYPE_DEFAULT  默认类型，需要外围设备的确认，也就是需要外围设备的回应，这样才能继续发送写。
-                        WRITE_TYPE_NO_RESPONSE 设置该类型不需要外围设备的回应，可以继续写数据。加快传输速率。
-                        WRITE_TYPE_SIGNED  写特征携带认证签名，具体作用不太清楚。
-                     */
-                    characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                     bluetoothGatt.readCharacteristic(characteristic)
-                    delay(30)
+                    delay(200)
                 }
+            }
 
-                if (hasResult) {// 如果有返回值，那么需要循环检测是否超时
-                    while (!isCompleted) {
-                        delay(100)
-                        if (isExpired()) {// 说明是超时了
-                            Logger.e("执行 $description 命令超时，没有收到返回值！")
-                            isCompleted = true
-                            onFailure?.invoke(TimeoutException())
-                            return@launch
-                        }
+            withContext(Dispatchers.IO) {
+                while (!isCompleted) {
+                    delay(100)
+                    if (isExpired()) {// 说明是超时了
+                        job.cancel()
+                        isCompleted = true
+                        onFailure?.invoke(TimeoutException())
+                        return@withContext
                     }
                 }
             }

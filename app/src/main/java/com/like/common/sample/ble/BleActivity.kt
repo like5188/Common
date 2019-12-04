@@ -18,9 +18,9 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBleBinding
 import com.like.common.util.PermissionUtils
 import com.like.common.util.ble.BleManager
+import com.like.common.util.ble.model.BleReadCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
-import com.like.common.util.ble.model.BleWriteCommand
 import com.like.common.util.ble.scanstrategy.ScanStrategy18
 import com.like.common.util.ble.scanstrategy.ScanStrategy21
 import com.like.common.util.shortToastCenter
@@ -31,6 +31,8 @@ import com.like.livedatarecyclerview.listener.OnItemClickListener
 import com.like.livedatarecyclerview.model.IRecyclerViewItem
 import com.like.livedatarecyclerview.viewholder.CommonViewHolder
 import com.like.retrofit.utils.getCustomNetworkMessage
+import java.nio.ByteBuffer
+import java.util.*
 
 /**
  * 蓝牙测试
@@ -107,7 +109,7 @@ class BleActivity : AppCompatActivity() {
 
     fun sendData(view: View) {
         mBleManager.write(
-                object : BleWriteCommand(
+                object : BleReadCommand(
                         this,
                         1,
                         byteArrayOf(0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02),
@@ -115,20 +117,19 @@ class BleActivity : AppCompatActivity() {
                         "0000fff2-0000-1000-8000-00805f9b34fb",
                         mBleResultLiveData,
                         "模拟的BleCommand",
-                        true,
                         1000,
                         5,
                         300,
                         {
-                            shortToastCenter("执行命令成功")
+                            shortToastCenter("执行命令成功 ${Arrays.toString(it)}")
                         },
                         {
                             shortToastCenter("执行命令失败！${it.getCustomNetworkMessage()}")
                         }
                 ) {
-//                    override fun isWholeFrame(data: ByteBuffer): Boolean {
-//                        return true
-//                    }
+                    override fun isWholeFrame(data: ByteBuffer): Boolean {
+                        return true
+                    }
                 }
         )
     }

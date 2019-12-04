@@ -37,21 +37,19 @@ abstract class BleWriteCommand(
         characteristicUuidString: String,
         bleResultLiveData: MutableLiveData<BleResult>,
         description: String = "",
-        hasResult: Boolean = true,
         readTimeout: Long = 0L,
         maxTransferSize: Int = 20,
         maxFrameTransferSize: Int = 300,
         onSuccess: ((ByteArray?) -> Unit)? = null,
         onFailure: ((Throwable) -> Unit)? = null
-) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, hasResult, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
+) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
+    // 记录所有的数据批次，在所有的数据都发送完成后，才调用onSuccess()
     private val mBatchCount: AtomicInteger by lazy { AtomicInteger(mDataList.size) }
     // 过期时间
     private val expired = readTimeout + System.currentTimeMillis()
 
-    /**
-     * 是否过期
-     */
+    // 是否过期
     private fun isExpired() = expired - System.currentTimeMillis() <= 0
 
     override fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {
@@ -101,18 +99,18 @@ abstract class BleWriteCommand(
                     delay(100)
                     if (isExpired()) {// 说明是超时了
                         job.cancel()
-                        onFailure?.invoke(TimeoutException())
                         withContext(Dispatchers.Main) {
                             bleResultLiveData.removeObserver(observer)
                         }
+                        onFailure?.invoke(TimeoutException())
                         return@withContext
                     }
                 }
 
-                onSuccess?.invoke(null)
                 withContext(Dispatchers.Main) {
                     bleResultLiveData.removeObserver(observer)
                 }
+                onSuccess?.invoke(null)
             }
         }
     }

@@ -29,7 +29,6 @@ abstract class BleCommand(
         val characteristicUuidString: String,
         val bleResultLiveData: MutableLiveData<BleResult>,
         val description: String = "",
-        val hasResult: Boolean = true,
         val readTimeout: Long = 1000L,
         val maxTransferSize: Int = 20,
         val maxFrameTransferSize: Int = 300,
