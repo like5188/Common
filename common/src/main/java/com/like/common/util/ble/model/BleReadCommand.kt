@@ -96,7 +96,7 @@ abstract class BleReadCommand(
                 data.batch(maxTransferSize).forEach {
                     characteristic.value = it
                     bluetoothGatt.readCharacteristic(characteristic)
-                    delay(200)
+                    delay(1000)
                 }
             }
 

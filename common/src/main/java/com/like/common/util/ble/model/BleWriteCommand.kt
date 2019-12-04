@@ -90,7 +90,7 @@ abstract class BleWriteCommand(
                 mDataList.forEach {
                     characteristic.value = it
                     bluetoothGatt.writeCharacteristic(characteristic)
-                    delay(200)
+                    delay(1000)
                 }
             }
 

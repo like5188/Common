@@ -32,7 +32,6 @@ import com.like.livedatarecyclerview.model.IRecyclerViewItem
 import com.like.livedatarecyclerview.viewholder.CommonViewHolder
 import com.like.retrofit.utils.getCustomNetworkMessage
 import java.nio.ByteBuffer
-import java.util.*
 
 /**
  * 蓝牙测试
@@ -117,11 +116,11 @@ class BleActivity : AppCompatActivity() {
                         "0000fff2-0000-1000-8000-00805f9b34fb",
                         mBleResultLiveData,
                         "模拟的BleCommand",
-                        1000,
+                        5000,
                         5,
                         300,
                         {
-                            shortToastCenter("执行命令成功 ${Arrays.toString(it)}")
+                            shortToastCenter("执行命令成功 ${it?.contentToString()}")
                         },
                         {
                             shortToastCenter("执行命令失败！${it.getCustomNetworkMessage()}")
