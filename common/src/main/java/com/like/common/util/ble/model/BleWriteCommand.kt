@@ -43,7 +43,7 @@ abstract class BleWriteCommand(
         val readTimeout: Long = 0L,
         val maxTransferSize: Int = 20,
         val maxFrameTransferSize: Int = 300,
-        val onSuccess: (() -> Unit)? = null,
+        val onSuccess: ((ByteArray?) -> Unit)? = null,
         val onFailure: ((Throwable) -> Unit)? = null
 ) {
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
@@ -86,7 +86,7 @@ abstract class BleWriteCommand(
             try {
                 batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
                 Logger.d(">>>>>>>>>>>>>>>>>>>>执行 $description 命令成功 >>>>>>>>>>>>>>>>>>>>")
-                onSuccess?.invoke()
+                onSuccess?.invoke(null)
             } catch (e: Exception) {
                 Logger.e("执行 $description 命令失败！${e.message}")
                 onFailure?.invoke(e)
