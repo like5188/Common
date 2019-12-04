@@ -116,7 +116,7 @@ class BleActivity : AppCompatActivity() {
                         mBleResultLiveData,
                         "模拟的BleCommand",
                         true,
-                        3000,
+                        1000,
                         5,
                         300,
                         {

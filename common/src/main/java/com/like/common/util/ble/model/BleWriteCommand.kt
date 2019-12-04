@@ -10,8 +10,8 @@ import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
 import com.like.common.util.ble.utils.findCharacteristic
 import kotlinx.coroutines.*
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * 蓝牙通信的命令
@@ -45,10 +45,17 @@ abstract class BleWriteCommand(
         onFailure: ((Throwable) -> Unit)? = null
 ) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, hasResult, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
-    private val batchCount: CountDownLatch by lazy { CountDownLatch(mDataList.size) }
+    private val mBatchCount: AtomicInteger by lazy { AtomicInteger(mDataList.size) }
+    // 过期时间
+    private val expired = readTimeout + System.currentTimeMillis()
+
+    /**
+     * 是否过期
+     */
+    private fun isExpired() = expired - System.currentTimeMillis() <= 0
 
     override fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {
-        if (batchCount.count == 0L || bluetoothGatt == null) {
+        if (mBatchCount.get() == 0 || bluetoothGatt == null) {
             onFailure?.invoke(IllegalArgumentException("bluetoothGatt 无效 或者 此命令已经完成"))
             return
         }
@@ -74,37 +81,38 @@ abstract class BleWriteCommand(
         Logger.w("--------------------开始执行 $description 命令--------------------")
         val observer = Observer<BleResult> { bleResult ->
             if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_WRITE) {
-                batchCount.countDown()
+                mBatchCount.decrementAndGet()
             }
         }
 
         coroutineScope.launch(Dispatchers.Main) {
             bleResultLiveData.observe(activity, observer)
 
-            launch(Dispatchers.IO) {
+            val job = launch(Dispatchers.IO) {
                 mDataList.forEach {
                     characteristic.value = it
                     bluetoothGatt.writeCharacteristic(characteristic)
-                    delay(5000)
-                    Logger.w("1 ${batchCount.count}")
+                    delay(200)
                 }
             }
 
             withContext(Dispatchers.IO) {
-                try {
-                    Logger.w("2 ${batchCount.count}")
-                    batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
-                    Logger.w("3 ${batchCount.count}")
-                    onSuccess?.invoke(null)
-                } catch (e: Exception) {
-                    Logger.w("4 ${batchCount.count}")
-                    onFailure?.invoke(e)
+                while (mBatchCount.get() > 0) {
+                    delay(100)
+                    if (isExpired()) {// 说明是超时了
+                        job.cancel()
+                        onFailure?.invoke(TimeoutException())
+                        withContext(Dispatchers.Main) {
+                            bleResultLiveData.removeObserver(observer)
+                        }
+                        return@withContext
+                    }
                 }
-            }
 
-            Logger.w("5 ${batchCount.count}")
-            launch(Dispatchers.Main) {
-                bleResultLiveData.removeObserver(observer)
+                onSuccess?.invoke(null)
+                withContext(Dispatchers.Main) {
+                    bleResultLiveData.removeObserver(observer)
+                }
             }
         }
     }
