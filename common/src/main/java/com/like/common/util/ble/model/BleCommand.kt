@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
+import com.like.common.util.ble.utils.findCharacteristic
 import com.like.common.util.ble.utils.toByteArrayOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -94,7 +95,7 @@ abstract class BleCommand(
             Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
             return
         }
-        val characteristic = findCharacteristic(bluetoothGatt, characteristicUuidString)
+        val characteristic = bluetoothGatt.findCharacteristic(characteristicUuidString)
         if (characteristic == null) {
             Log.e("BleCommand", "特征值不存在：$characteristicUuidString")
             return
@@ -139,24 +140,6 @@ abstract class BleCommand(
             }
         }
 
-    }
-
-    // 查找远程设备的特征
-    private fun findCharacteristic(gatt: BluetoothGatt, characteristicUuidString: String): BluetoothGattCharacteristic? {
-        // 开始查找特征
-        val characteristic = gatt.services
-                ?.flatMap {
-                    it.characteristics
-                }
-                ?.firstOrNull {
-                    it.uuid.toString() == characteristicUuidString
-                }
-
-        if (characteristic != null) {
-            // 接受Characteristic被写的通知,收到蓝牙模块的数据后会触发onCharacteristicChanged()
-            gatt.setCharacteristicNotification(characteristic, true)
-        }
-        return characteristic
     }
 
 }
