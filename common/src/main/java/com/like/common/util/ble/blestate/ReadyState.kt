@@ -48,7 +48,7 @@ class ReadyState(
             }
         }
 
-        // 读特征值
+        // 谁进行读数据操作，然后外围设备才会被动的发出一个数据，而这个数据只能是读操作的对象才有资格获得到这个数据。
         override fun onCharacteristicRead(
                 gatt: BluetoothGatt,
                 characteristic: BluetoothGattCharacteristic,
@@ -57,7 +57,7 @@ class ReadyState(
             mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ, characteristic.value))
         }
 
-        // 特征值改变
+        // 外围设备调用 notifyCharacteristicChanged() 通知所有中心设备，数据改变了，此方法被触发。
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
             mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_CHANGED, characteristic.value))
         }
