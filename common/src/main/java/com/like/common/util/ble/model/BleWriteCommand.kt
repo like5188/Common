@@ -9,9 +9,7 @@ import androidx.lifecycle.Observer
 import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
 import com.like.common.util.ble.utils.findCharacteristic
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +47,7 @@ abstract class BleWriteCommand(
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
     private val batchCount: CountDownLatch by lazy { CountDownLatch(mDataList.size) }
 
-    override suspend fun write(bluetoothGatt: BluetoothGatt?) {
+    override fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {
         if (batchCount.count == 0L || bluetoothGatt == null) {
             onFailure?.invoke(IllegalArgumentException("bluetoothGatt 无效 或者 此命令已经完成"))
             return
@@ -80,32 +78,35 @@ abstract class BleWriteCommand(
             }
         }
 
-        withContext(Dispatchers.Main) {
+        coroutineScope.launch(Dispatchers.Main) {
             bleResultLiveData.observe(activity, observer)
-        }
 
-        mDataList.forEach {
-            characteristic.value = it
-            bluetoothGatt.writeCharacteristic(characteristic)
-            delay(100)
-            Logger.w("1 ${batchCount.count}")
-        }
+            launch(Dispatchers.IO) {
+                mDataList.forEach {
+                    characteristic.value = it
+                    bluetoothGatt.writeCharacteristic(characteristic)
+                    delay(5000)
+                    Logger.w("1 ${batchCount.count}")
+                }
+            }
 
-        try {
-            Logger.w("2 ${batchCount.count}")
-            batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
-            Logger.w("3 ${batchCount.count}")
-            onSuccess?.invoke(null)
-        } catch (e: Exception) {
-            Logger.w("4 ${batchCount.count}")
-            onFailure?.invoke(e)
-        }
+            withContext(Dispatchers.IO) {
+                try {
+                    Logger.w("2 ${batchCount.count}")
+                    batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
+                    Logger.w("3 ${batchCount.count}")
+                    onSuccess?.invoke(null)
+                } catch (e: Exception) {
+                    Logger.w("4 ${batchCount.count}")
+                    onFailure?.invoke(e)
+                }
+            }
 
-        Logger.w("5 ${batchCount.count}")
-        withContext(Dispatchers.Main) {
-            bleResultLiveData.removeObserver(observer)
+            Logger.w("5 ${batchCount.count}")
+            launch(Dispatchers.Main) {
+                bleResultLiveData.removeObserver(observer)
+            }
         }
-
     }
 
 }

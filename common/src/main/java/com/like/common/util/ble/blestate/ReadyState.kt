@@ -136,7 +136,7 @@ class ReadyState(
             mCoroutineScope.launch(Dispatchers.IO) {
                 for (bleCommand in channel) {
                     getBluetoothGatt(address)?.let {
-                        bleCommand.write(it)
+                        bleCommand.write(mCoroutineScope, it)
                     }
                 }
             }

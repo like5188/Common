@@ -3,6 +3,7 @@ package com.like.common.util.ble.model
 import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
 
 /**
  * 蓝牙通信的命令
@@ -35,7 +36,7 @@ abstract class BleCommand(
         val onSuccess: ((ByteArray?) -> Unit)? = null,
         val onFailure: ((Throwable) -> Unit)? = null
 ) {
-    abstract suspend fun write(bluetoothGatt: BluetoothGatt?)
+    abstract fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?)
 }
 
 

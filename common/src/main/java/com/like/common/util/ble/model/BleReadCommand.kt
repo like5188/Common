@@ -3,7 +3,6 @@ package com.like.common.util.ble.model
 import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -11,9 +10,10 @@ import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
 import com.like.common.util.ble.utils.findCharacteristic
 import com.like.common.util.ble.utils.toByteArrayOrNull
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeoutException
 
@@ -71,57 +71,61 @@ abstract class BleReadCommand(
             }
             resultCache.put(bleResult.data as ByteArray)
             if (isWholeFrame(resultCache)) {
-                Logger.d(">>>>>>>>>>>>>>>>>>>>执行 $description 命令成功 >>>>>>>>>>>>>>>>>>>>")
                 isCompleted = true
                 onSuccess?.invoke(resultCache.toByteArrayOrNull())
             }
         }
     }
 
-    override suspend fun write(bluetoothGatt: BluetoothGatt?) {
+    override fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {
         if (isCompleted || bluetoothGatt == null) {
-            Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
+            onFailure?.invoke(IllegalArgumentException("bluetoothGatt 无效 或者 此命令已经完成"))
             return
         }
+
+        if (activity !is LifecycleOwner) {
+            onFailure?.invoke(IllegalArgumentException("activity 不是 LifecycleOwner"))
+            return
+        }
+
         val characteristic = bluetoothGatt.findCharacteristic(characteristicUuidString)
         if (characteristic == null) {
-            Log.e("BleCommand", "特征值不存在：$characteristicUuidString")
+            onFailure?.invoke(IllegalArgumentException("特征值不存在：$characteristicUuidString"))
             return
         }
 
         Logger.w("--------------------开始执行 $description 命令--------------------")
-        if (activity is LifecycleOwner) {
-            withContext(Dispatchers.Main) {
-                bleResultLiveData.observe(activity, mWriteObserver)
-            }
-        }
+        coroutineScope.launch(Dispatchers.Main) {
+            bleResultLiveData.observe(activity, mWriteObserver)
 
-        withContext(Dispatchers.IO) {
-            data.batch(maxTransferSize).forEach {
-                characteristic.value = it
-                /*
-                写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
-                    WRITE_TYPE_DEFAULT  默认类型，需要外围设备的确认，也就是需要外围设备的回应，这样才能继续发送写。
-                    WRITE_TYPE_NO_RESPONSE 设置该类型不需要外围设备的回应，可以继续写数据。加快传输速率。
-                    WRITE_TYPE_SIGNED  写特征携带认证签名，具体作用不太清楚。
-                 */
-                characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-                bluetoothGatt.readCharacteristic(characteristic)
-                delay(30)
-            }
+            launch(Dispatchers.IO) {
+                data.batch(maxTransferSize).forEach {
+                    characteristic.value = it
+                    /*
+                    写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
+                        WRITE_TYPE_DEFAULT  默认类型，需要外围设备的确认，也就是需要外围设备的回应，这样才能继续发送写。
+                        WRITE_TYPE_NO_RESPONSE 设置该类型不需要外围设备的回应，可以继续写数据。加快传输速率。
+                        WRITE_TYPE_SIGNED  写特征携带认证签名，具体作用不太清楚。
+                     */
+                    characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                    bluetoothGatt.readCharacteristic(characteristic)
+                    delay(30)
+                }
 
-            if (hasResult) {// 如果有返回值，那么需要循环检测是否超时
-                while (!isCompleted) {
-                    delay(100)
-                    if (isExpired()) {// 说明是超时了
-                        Logger.e("执行 $description 命令超时，没有收到返回值！")
-                        isCompleted = true
-                        onFailure?.invoke(TimeoutException())
-                        return@withContext
+                if (hasResult) {// 如果有返回值，那么需要循环检测是否超时
+                    while (!isCompleted) {
+                        delay(100)
+                        if (isExpired()) {// 说明是超时了
+                            Logger.e("执行 $description 命令超时，没有收到返回值！")
+                            isCompleted = true
+                            onFailure?.invoke(TimeoutException())
+                            return@launch
+                        }
                     }
                 }
             }
         }
+
     }
 }
 
