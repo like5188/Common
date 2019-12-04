@@ -84,22 +84,26 @@ abstract class BleWriteCommand(
             bleResultLiveData.observe(activity, observer)
         }
 
-        withContext(Dispatchers.IO) {
-            mDataList.forEach {
-                characteristic.value = it
-                bluetoothGatt.writeCharacteristic(characteristic)
-                delay(100)
-            }
-            try {
-                batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
-                onSuccess?.invoke(null)
-            } catch (e: Exception) {
-                onFailure?.invoke(e)
-            } finally {
-                withContext(Dispatchers.Main) {
-                    bleResultLiveData.removeObserver(observer)
-                }
-            }
+        mDataList.forEach {
+            characteristic.value = it
+            bluetoothGatt.writeCharacteristic(characteristic)
+            delay(100)
+            Logger.w("1 ${batchCount.count}")
+        }
+
+        try {
+            Logger.w("2 ${batchCount.count}")
+            batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
+            Logger.w("3 ${batchCount.count}")
+            onSuccess?.invoke(null)
+        } catch (e: Exception) {
+            Logger.w("4 ${batchCount.count}")
+            onFailure?.invoke(e)
+        }
+
+        Logger.w("5 ${batchCount.count}")
+        withContext(Dispatchers.Main) {
+            bleResultLiveData.removeObserver(observer)
         }
 
     }

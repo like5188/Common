@@ -319,4 +319,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         }
     }
 
+    fun clearLog(view: View) {
+        mBinding.tvStatus.text = ""
+    }
 }

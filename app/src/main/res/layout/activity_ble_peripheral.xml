@@ -39,6 +39,13 @@
                 android:textColor="@color/common_text_black_1"
                 android:textSize="14sp" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="clearLog"
+                android:text="清空日志"
+                android:textColor="@color/common_text_black_1"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <TextView
