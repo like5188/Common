@@ -1,6 +1,5 @@
 package com.like.common.util.ble.model
 
-import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.util.Log
@@ -9,10 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
+import com.like.common.util.ble.utils.findCharacteristic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeoutException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * 蓝牙通信的命令
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeoutException
  * @param onFailure                 命令执行失败回调
  */
 abstract class BleWriteCommand(
-        val activity: Activity,
+        val lifecycleOwner: LifecycleOwner,
         val id: Int,
         val data: ByteArray,
         val address: String,
@@ -45,67 +46,32 @@ abstract class BleWriteCommand(
         val onSuccess: (() -> Unit)? = null,
         val onFailure: ((Throwable) -> Unit)? = null
 ) {
-
-    // 过期时间
-    private val expired = readTimeout + System.currentTimeMillis()
-    /**
-     * 此条命令是否已经完成。成功或者失败
-     */
-    var isCompleted = false
-        set(value) {
-            if (value) {
-                activity.runOnUiThread {
-                    bleResultLiveData.removeObserver(mWriteObserver)
-                }
-                field = value
-            }
-        }
-
-    /**
-     * 是否过期
-     */
-    private fun isExpired() = expired - System.currentTimeMillis() <= 0
-
-    private var batchCount = 0
-    private var curBatchCount = 0
-
-    private val mWriteObserver = Observer<BleResult> { bleResult ->
-        if (bleResult?.status == BleStatus.WRITE_CHARACTERISTIC) {
-            if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
-                return@Observer
-            }
-            if (++curBatchCount == batchCount) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
-                batchCount = 0
-                curBatchCount = 0
-                isCompleted = true
-                onSuccess?.invoke()
-                Logger.d(">>>>>>>>>>>>>>>>>>>>执行 $description 命令成功 >>>>>>>>>>>>>>>>>>>>")
-            }
-        }
-    }
+    private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
+    private val batchCount: CountDownLatch by lazy { CountDownLatch(mDataList.size) }
 
     suspend fun write(bluetoothGatt: BluetoothGatt?) {
-        if (isCompleted || bluetoothGatt == null) {
+        if (batchCount.count == 0L || bluetoothGatt == null) {
             Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
             return
         }
-        val characteristic = findCharacteristic(bluetoothGatt, characteristicUuidString)
+        val characteristic = bluetoothGatt.findCharacteristic(characteristicUuidString)
         if (characteristic == null) {
             Log.e("BleCommand", "特征值不存在：$characteristicUuidString")
             return
         }
 
         Logger.w("--------------------开始执行 $description 命令--------------------")
-        if (activity is LifecycleOwner) {
-            withContext(Dispatchers.Main) {
-                bleResultLiveData.observe(activity, mWriteObserver)
+        val observer = Observer<BleResult> { bleResult ->
+            if (bleResult?.status == BleStatus.WRITE_CHARACTERISTIC) {
+                batchCount.countDown()
             }
+        }
+        withContext(Dispatchers.Main) {
+            bleResultLiveData.observe(lifecycleOwner, observer)
         }
 
         withContext(Dispatchers.IO) {
-            val batch = data.batch(maxTransferSize)
-            batchCount = batch.size
-            batch.forEach {
+            mDataList.forEach {
                 characteristic.value = it
                 /*
                 写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
@@ -117,34 +83,20 @@ abstract class BleWriteCommand(
                 bluetoothGatt.writeCharacteristic(characteristic)
                 delay(30)
             }
-            while (!isCompleted) {
-                delay(100)
-                if (isExpired()) {// 说明是超时了
-                    Logger.e("执行 $description 命令超时！")
-                    isCompleted = true
-                    onFailure?.invoke(TimeoutException())
+            try {
+                batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
+                Logger.d(">>>>>>>>>>>>>>>>>>>>执行 $description 命令成功 >>>>>>>>>>>>>>>>>>>>")
+                onSuccess?.invoke()
+            } catch (e: Exception) {
+                Logger.e("执行 $description 命令失败！${e.message}")
+                onFailure?.invoke(e)
+            } finally {
+                withContext(Dispatchers.Main) {
+                    bleResultLiveData.removeObserver(observer)
                 }
             }
         }
 
-    }
-
-    // 查找远程设备的特征
-    private fun findCharacteristic(gatt: BluetoothGatt, characteristicUuidString: String): BluetoothGattCharacteristic? {
-        // 开始查找特征
-        val characteristic = gatt.services
-                ?.flatMap {
-                    it.characteristics
-                }
-                ?.firstOrNull {
-                    it.uuid.toString() == characteristicUuidString
-                }
-
-        if (characteristic != null) {
-            // 接受Characteristic被写的通知,收到蓝牙模块的数据后会触发onCharacteristicChanged()
-            gatt.setCharacteristicNotification(characteristic, true)
-        }
-        return characteristic
     }
 
 }
