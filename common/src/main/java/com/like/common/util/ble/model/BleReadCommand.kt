@@ -19,35 +19,22 @@ import java.util.concurrent.TimeoutException
 
 /**
  * 蓝牙通信的命令
- *
- * @param id                        唯一标识，一般用控制码表示
- * @param data                      需要发送的命令数据
- * @param address                   蓝牙设备的地址
- * @param characteristicUuidString  数据交互的蓝牙特征地址
- * @param bleResultLiveData         数据监听
- * @param description               命令描述，用于日志打印、错误提示等
- * @param hasResult                 是否有返回值
- * @param readTimeout               读取数据超时时间（毫秒）
- * @param maxTransferSize           硬件规定的一次传输的最大字节数
- * @param maxFrameTransferSize      由硬件开发者约定的一帧传输的最大字节数
- * @param onSuccess                 命令执行成功回调
- * @param onFailure                 命令执行失败回调
  */
 abstract class BleReadCommand(
-        val activity: Activity,
-        val id: Int,
-        val data: ByteArray,
-        val address: String,
-        val characteristicUuidString: String,
-        val bleResultLiveData: MutableLiveData<BleResult>,
-        val description: String = "",
-        val hasResult: Boolean = true,
-        val readTimeout: Long = 0L,
-        val maxTransferSize: Int = 20,
-        val maxFrameTransferSize: Int = 300,
-        val onSuccess: ((ByteArray?) -> Unit)? = null,
-        val onFailure: ((Throwable) -> Unit)? = null
-) {
+        activity: Activity,
+        id: Int,
+        data: ByteArray,
+        address: String,
+        characteristicUuidString: String,
+        bleResultLiveData: MutableLiveData<BleResult>,
+        description: String = "",
+        hasResult: Boolean = true,
+        readTimeout: Long = 0L,
+        maxTransferSize: Int = 20,
+        maxFrameTransferSize: Int = 300,
+        onSuccess: ((ByteArray?) -> Unit)? = null,
+        onFailure: ((Throwable) -> Unit)? = null
+) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, hasResult, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
     // 缓存返回数据，因为一帧有可能分为多次发送
     private var resultCache: ByteBuffer = ByteBuffer.allocate(maxFrameTransferSize)
     // 过期时间
@@ -78,7 +65,7 @@ abstract class BleReadCommand(
     abstract fun isWholeFrame(data: ByteBuffer): Boolean
 
     private val mWriteObserver = Observer<BleResult> { bleResult ->
-        if (bleResult?.status == BleStatus.READ_CHARACTERISTIC) {
+        if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ) {
             if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
                 return@Observer
             }
@@ -91,7 +78,7 @@ abstract class BleReadCommand(
         }
     }
 
-    suspend fun read(bluetoothGatt: BluetoothGatt?) {
+    override suspend fun write(bluetoothGatt: BluetoothGatt?) {
         if (isCompleted || bluetoothGatt == null) {
             Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
             return
@@ -130,13 +117,12 @@ abstract class BleReadCommand(
                         Logger.e("执行 $description 命令超时，没有收到返回值！")
                         isCompleted = true
                         onFailure?.invoke(TimeoutException())
+                        return@withContext
                     }
                 }
             }
         }
-
     }
-
 }
 
 

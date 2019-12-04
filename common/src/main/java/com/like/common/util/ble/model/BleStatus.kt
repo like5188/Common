@@ -18,12 +18,12 @@ enum class BleStatus(val des: String) {
     CONNECTED("连接蓝牙设备成功"),
     DISCONNECTED("连接蓝牙设备失败"),
 
-    READ_CHARACTERISTIC("开始读特征值"),
-    CHARACTERISTIC_CHANGED("获取到特征值"),
-    WRITE_CHARACTERISTIC("开始写特征值"),
-    READ_DESCRIPTOR("开始读描述值"),
-    WRITE_DESCRIPTOR("开始写描述值"),
-    READ_REMOTE_RSSI("开始读蓝牙信号值");
+    ON_CHARACTERISTIC_READ("读取到了特征值"),
+    ON_CHARACTERISTIC_CHANGED("特征值改变了"),
+    ON_CHARACTERISTIC_WRITE("写入了特征值"),
+    ON_DESCRIPTOR_READ("读取到了描述值"),
+    ON_DESCRIPTOR_WRITE("写入了描述值"),
+    ON_READ_REMOTE_RSSI("读取到了蓝牙信号值");
 
     override fun toString(): String {
         return "BleStatus(des='$des')"

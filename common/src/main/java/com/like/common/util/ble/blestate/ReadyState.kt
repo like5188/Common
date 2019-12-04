@@ -54,12 +54,12 @@ class ReadyState(
                 characteristic: BluetoothGattCharacteristic,
                 status: Int
         ) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.READ_CHARACTERISTIC, characteristic.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ, characteristic.value))
         }
 
         // 特征值改变
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.CHARACTERISTIC_CHANGED, characteristic.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_CHANGED, characteristic.value))
         }
 
         // 写特征值
@@ -68,22 +68,22 @@ class ReadyState(
                 characteristic: BluetoothGattCharacteristic,
                 status: Int
         ) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.WRITE_CHARACTERISTIC, characteristic.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_WRITE, characteristic.value))
         }
 
         // 读描述值
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.READ_DESCRIPTOR, descriptor.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_READ, descriptor.value))
         }
 
         // 写描述值
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.WRITE_DESCRIPTOR, descriptor.value))
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_WRITE, descriptor.value))
         }
 
         // 读蓝牙信号值
         override fun onReadRemoteRssi(gatt: BluetoothGatt, rssi: Int, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.READ_REMOTE_RSSI, rssi))
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_READ_REMOTE_RSSI, rssi))
         }
 
     }

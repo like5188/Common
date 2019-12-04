@@ -1,8 +1,8 @@
 package com.like.common.util.ble.model
 
+import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -32,63 +32,68 @@ import java.util.concurrent.TimeUnit
  * @param onFailure                 命令执行失败回调
  */
 abstract class BleWriteCommand(
-        val lifecycleOwner: LifecycleOwner,
-        val id: Int,
-        val data: ByteArray,
-        val address: String,
-        val characteristicUuidString: String,
-        val bleResultLiveData: MutableLiveData<BleResult>,
-        val description: String = "",
-        val hasResult: Boolean = true,
-        val readTimeout: Long = 0L,
-        val maxTransferSize: Int = 20,
-        val maxFrameTransferSize: Int = 300,
-        val onSuccess: ((ByteArray?) -> Unit)? = null,
-        val onFailure: ((Throwable) -> Unit)? = null
-) {
+        activity: Activity,
+        id: Int,
+        data: ByteArray,
+        address: String,
+        characteristicUuidString: String,
+        bleResultLiveData: MutableLiveData<BleResult>,
+        description: String = "",
+        hasResult: Boolean = true,
+        readTimeout: Long = 0L,
+        maxTransferSize: Int = 20,
+        maxFrameTransferSize: Int = 300,
+        onSuccess: ((ByteArray?) -> Unit)? = null,
+        onFailure: ((Throwable) -> Unit)? = null
+) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, hasResult, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
     private val batchCount: CountDownLatch by lazy { CountDownLatch(mDataList.size) }
 
-    suspend fun write(bluetoothGatt: BluetoothGatt?) {
+    override suspend fun write(bluetoothGatt: BluetoothGatt?) {
         if (batchCount.count == 0L || bluetoothGatt == null) {
-            Log.e("BleCommand", "bluetoothGatt 无效 或者 此命令已经完成")
-            return
-        }
-        val characteristic = bluetoothGatt.findCharacteristic(characteristicUuidString)
-        if (characteristic == null) {
-            Log.e("BleCommand", "特征值不存在：$characteristicUuidString")
+            onFailure?.invoke(IllegalArgumentException("bluetoothGatt 无效 或者 此命令已经完成"))
             return
         }
 
+        if (activity !is LifecycleOwner) {
+            onFailure?.invoke(IllegalArgumentException("activity 不是 LifecycleOwner"))
+            return
+        }
+
+        val characteristic = bluetoothGatt.findCharacteristic(characteristicUuidString)
+        if (characteristic == null) {
+            onFailure?.invoke(IllegalArgumentException("特征值不存在：$characteristicUuidString"))
+            return
+        }
+        /*
+        写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
+            WRITE_TYPE_DEFAULT  默认类型，需要外围设备的确认，也就是需要外围设备的回应，这样才能继续发送写。
+            WRITE_TYPE_NO_RESPONSE 设置该类型不需要外围设备的回应，可以继续写数据。加快传输速率。
+            WRITE_TYPE_SIGNED  写特征携带认证签名，具体作用不太清楚。
+         */
+        characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+
         Logger.w("--------------------开始执行 $description 命令--------------------")
         val observer = Observer<BleResult> { bleResult ->
-            if (bleResult?.status == BleStatus.WRITE_CHARACTERISTIC) {
+            if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_WRITE) {
                 batchCount.countDown()
             }
         }
+
         withContext(Dispatchers.Main) {
-            bleResultLiveData.observe(lifecycleOwner, observer)
+            bleResultLiveData.observe(activity, observer)
         }
 
         withContext(Dispatchers.IO) {
             mDataList.forEach {
                 characteristic.value = it
-                /*
-                写特征值前可以设置写的类型setWriteType()，写类型有三种，如下：
-                    WRITE_TYPE_DEFAULT  默认类型，需要外围设备的确认，也就是需要外围设备的回应，这样才能继续发送写。
-                    WRITE_TYPE_NO_RESPONSE 设置该类型不需要外围设备的回应，可以继续写数据。加快传输速率。
-                    WRITE_TYPE_SIGNED  写特征携带认证签名，具体作用不太清楚。
-                 */
-                characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
                 bluetoothGatt.writeCharacteristic(characteristic)
-                delay(30)
+                delay(100)
             }
             try {
                 batchCount.await(readTimeout, TimeUnit.MILLISECONDS)
-                Logger.d(">>>>>>>>>>>>>>>>>>>>执行 $description 命令成功 >>>>>>>>>>>>>>>>>>>>")
                 onSuccess?.invoke(null)
             } catch (e: Exception) {
-                Logger.e("执行 $description 命令失败！${e.message}")
                 onFailure?.invoke(e)
             } finally {
                 withContext(Dispatchers.Main) {
