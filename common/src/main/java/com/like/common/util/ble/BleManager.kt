@@ -173,13 +173,6 @@ class BleManager(private val mActivity: FragmentActivity) {
     }
 
     /**
-     * 断开所有蓝牙设备
-     */
-    fun disconnectAll() {
-        mBleState?.disconnectAll()
-    }
-
-    /**
      * 关闭所有蓝牙连接
      */
     fun close() {

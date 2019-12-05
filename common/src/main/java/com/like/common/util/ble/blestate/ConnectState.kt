@@ -156,20 +156,18 @@ class ConnectState(
         }
     }
 
-    override fun disconnectAll() {
-        mConnectedBluetoothGattList.forEach {
-            it.disconnect()
-            it.close()
-        }
-        mConnectedBluetoothGattList.clear()
-    }
-
     override fun close() {
         mChannels.values.forEach {
             it.close()
         }
         mChannels.clear()
-        disconnectAll()
+
+        mConnectedBluetoothGattList.forEach {
+            it.disconnect()
+            it.close()
+        }
+        mConnectedBluetoothGattList.clear()
+
         mBluetoothAdapter = null
         mBluetoothManager = null
     }

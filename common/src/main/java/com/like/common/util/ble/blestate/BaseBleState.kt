@@ -50,11 +50,6 @@ abstract class BaseBleState {
     open fun disconnect(command: BleDisconnectCommand) {}
 
     /**
-     * 断开所有蓝牙设备
-     */
-    open fun disconnectAll() {}
-
-    /**
      * 释放资源
      */
     open fun close() {}
