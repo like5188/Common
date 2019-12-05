@@ -14,7 +14,6 @@ enum class BleStatus(val des: String) {
     START_SCAN_DEVICE("开始扫描蓝牙设备"),
     STOP_SCAN_DEVICE("停止扫描蓝牙设备"),
 
-    CONNECT("开始连接蓝牙设备"),
     CONNECTED("连接蓝牙设备成功"),
     DISCONNECTED("连接蓝牙设备失败"),
 

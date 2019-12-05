@@ -11,7 +11,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBleBinding
 import com.like.common.util.ble.BleManager
@@ -39,21 +38,21 @@ class BleActivity : AppCompatActivity() {
     private val mBinding: ActivityBleBinding by lazy {
         DataBindingUtil.setContentView<ActivityBleBinding>(this, R.layout.activity_ble)
     }
+    private val mScanStrategy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        ScanStrategy21(object : ScanCallback() {
+            override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                Log.d(TAG, "address=${result?.device?.address} rssi=${result?.rssi} scanRecord=${result?.scanRecord}")
+                addItem(result?.device)
+            }
+        })
+    } else {
+        ScanStrategy18(BluetoothAdapter.LeScanCallback { device, rssi, scanRecord ->
+            Log.d(TAG, "address=${device.address} rssi=$rssi scanRecord=$scanRecord")
+            addItem(device)
+        })
+    }
     private val mBleManager: BleManager by lazy {
-        val scanStrategy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ScanStrategy21(object : ScanCallback() {
-                override fun onScanResult(callbackType: Int, result: ScanResult?) {
-                    Log.d(TAG, "address=${result?.device?.address} rssi=${result?.rssi} scanRecord=${result?.scanRecord}")
-                    addItem(result?.device)
-                }
-            })
-        } else {
-            ScanStrategy18(BluetoothAdapter.LeScanCallback { device, rssi, scanRecord ->
-                Log.d(TAG, "address=${device.address} rssi=$rssi scanRecord=$scanRecord")
-                addItem(device)
-            })
-        }
-        BleManager(this, lifecycleScope, scanStrategy)
+        BleManager(this)
     }
     private val mAdapter: BaseAdapter by lazy { BaseAdapter() }
     private val mToolbarUtils: ToolbarUtils by lazy {
@@ -95,7 +94,7 @@ class BleActivity : AppCompatActivity() {
 
     fun scanDevice(view: View) {
         mAdapter.mAdapterDataManager.clear()
-        mBleManager.scanBleDevice()
+        mBleManager.scanBleDevice(mScanStrategy)
     }
 
     private var curAddress = ""

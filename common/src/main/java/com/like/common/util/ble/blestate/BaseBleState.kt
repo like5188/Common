@@ -1,9 +1,11 @@
 package com.like.common.util.ble.blestate
 
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleConnectCommand
 import com.like.common.util.ble.model.BleWriteCommand
+import com.like.common.util.ble.scanstrategy.IScanStrategy
 
 /**
  * 蓝牙状态
@@ -17,7 +19,7 @@ abstract class BaseBleState {
     /**
      * 开始扫描设备
      */
-    open fun startScan() {}
+    open fun startScan(scanStrategy: IScanStrategy, scanTimeout: Long) {}
 
     /**
      * 停止扫描设备
@@ -61,4 +63,7 @@ abstract class BaseBleState {
         return null
     }
 
+    open fun getBluetoothManager(): BluetoothManager? {
+        return null
+    }
 }

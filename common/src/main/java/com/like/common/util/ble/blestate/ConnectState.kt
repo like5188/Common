@@ -1,33 +1,27 @@
 package com.like.common.util.ble.blestate
 
 import android.bluetooth.*
-import android.content.Context
 import android.os.Build
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.like.common.util.ble.model.*
-import com.like.common.util.ble.scanstrategy.IScanStrategy
 import com.like.common.util.shortToastCenter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * 蓝牙初始化完毕的状态
- * 可以进行扫描、连接、操作数据等操作
+ * 蓝牙连接状态
+ * 可以进行连接、操作数据等等操作
  */
-class InitializedState(
-        private val mContext: Context,
-        private val mCoroutineScope: CoroutineScope,
+class ConnectState(
+        private val mActivity: FragmentActivity,
         private val mBleResultLiveData: MutableLiveData<BleResult>,
-        private var mBluetoothAdapter: BluetoothAdapter?,
-        private var mScanStrategy: IScanStrategy?,
-        private val mScanTimeout: Long = 3000// 蓝牙扫描时间的限制
+        private var mBluetoothManager: BluetoothManager?,
+        private var mBluetoothAdapter: BluetoothAdapter?
 ) : BaseBleState() {
 
-    private var mScanning = AtomicBoolean(false)
     private val mChannels: MutableMap<String, Channel<BleCommand>> = mutableMapOf()
     private val mConnectedBluetoothGattList = mutableListOf<BluetoothGatt>()
     // 连接蓝牙设备的回调函数
@@ -125,35 +119,12 @@ class InitializedState(
 
     }
 
-    override fun startScan() {
-        val scanStrategy = mScanStrategy ?: return
-        if (mScanning.compareAndSet(false, true)) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.START_SCAN_DEVICE))
-            scanStrategy.startScan(mBluetoothAdapter)
-            mCoroutineScope.launch(Dispatchers.IO) {
-                // 在指定超时时间时取消扫描
-                delay(mScanTimeout)
-                if (mScanning.get()) {
-                    stopScan()
-                }
-            }
-        }
-    }
-
-    override fun stopScan() {
-        val scanStrategy = mScanStrategy ?: return
-        if (mScanning.compareAndSet(true, false)) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.STOP_SCAN_DEVICE))
-            scanStrategy.stopScan(mBluetoothAdapter)
-        }
-    }
-
     // 如果要对多个设备发起连接请求，最好是有一个统一的设备连接管理，把发起连接请求用队列管理起来。
     // 前一个设备请求建立连接，后面请求在队列中等待。
     // 如果连接成功了，就处理下一个连接请求。
     // 如果连接失败了（例如出错，或者连接超时失败），就马上调用 BluetoothGatt.disconnect() 来释放建立连接请求，然后处理下一个设备连接请求。
     override fun connect(command: BleConnectCommand) {
-        command.connect(mCoroutineScope, mGattCallback, mBluetoothAdapter) { disconnect(command.address) }
+        command.connect(mActivity.lifecycleScope, mGattCallback, mBluetoothAdapter) { disconnect(command.address) }
     }
 
     override fun write(command: BleWriteCommand) {
@@ -161,15 +132,15 @@ class InitializedState(
         if (!mChannels.containsKey(address)) {
             val channel = Channel<BleCommand>()
             mChannels[address] = channel
-            mCoroutineScope.launch(Dispatchers.IO) {
+            mActivity.lifecycleScope.launch(Dispatchers.IO) {
                 for (bleCommand in channel) {
                     mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-                        bleCommand.write(mCoroutineScope, it)
+                        bleCommand.write(mActivity.lifecycleScope, it)
                     }
                 }
             }
         }
-        mCoroutineScope.launch(Dispatchers.IO) {
+        mActivity.lifecycleScope.launch(Dispatchers.IO) {
             mChannels[address]?.send(command)
         }
     }
@@ -195,21 +166,20 @@ class InitializedState(
     }
 
     override fun close() {
-        stopScan()
-        disconnectAll()
         mChannels.values.forEach {
             it.close()
         }
         mChannels.clear()
+        disconnectAll()
         mBluetoothAdapter = null
-        mScanStrategy = null
+        mBluetoothManager = null
     }
 
     override fun setMtu(address: String, mtu: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.requestMtu(mtu)
         } else {
-            mContext.shortToastCenter("android 5.0 才支持 setMtu() 操作")
+            mActivity.shortToastCenter("android 5.0 才支持 setMtu() 操作")
         }
     }
 
@@ -217,4 +187,7 @@ class InitializedState(
         return mBluetoothAdapter
     }
 
+    override fun getBluetoothManager(): BluetoothManager? {
+        return mBluetoothManager
+    }
 }

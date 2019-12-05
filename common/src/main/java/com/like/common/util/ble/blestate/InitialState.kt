@@ -16,8 +16,8 @@ import com.like.common.util.ble.model.BleStatus
 import com.like.common.view.callback.RxCallback
 
 /**
- * 蓝牙的初始状态
- * 可以进行初始化
+ * 蓝牙初始状态
+ * 可以进行初始化操作
  */
 class InitialState(
         private val mActivity: FragmentActivity,
@@ -25,6 +25,7 @@ class InitialState(
 ) : BaseBleState() {
     private var mBluetoothManager: BluetoothManager? = null
     private var mBluetoothAdapter: BluetoothAdapter? = null
+
     private val mPermissionUtils: PermissionUtils by lazy { PermissionUtils(mActivity) }
     private val mRxCallback: RxCallback by lazy { RxCallback(mActivity) }
 
@@ -90,12 +91,16 @@ class InitialState(
     }
 
     override fun close() {
-        mBluetoothManager = null
         mBluetoothAdapter = null
+        mBluetoothManager = null
     }
 
     override fun getBluetoothAdapter(): BluetoothAdapter? {
         return mBluetoothAdapter
+    }
+
+    override fun getBluetoothManager(): BluetoothManager? {
+        return mBluetoothManager
     }
 
     /**

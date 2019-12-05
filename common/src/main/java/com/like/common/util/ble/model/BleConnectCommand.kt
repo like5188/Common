@@ -22,7 +22,6 @@ class BleConnectCommand(
 ) : BleCommand(address) {
 
     override fun connect(coroutineScope: CoroutineScope, gattCallback: BluetoothGattCallback, bluetoothAdapter: BluetoothAdapter?, disconnect: () -> Unit) {
-        mLiveData.postValue(BleResult(BleStatus.CONNECT))
         if (address.isEmpty()) {
             onFailure?.invoke(IllegalArgumentException("连接蓝牙设备失败：地址不能为空"))
             return
