@@ -37,7 +37,7 @@ abstract class BleCommand(
 ) {
     lateinit var mLiveData: MutableLiveData<BleResult>
 
-    abstract fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?)
+    internal abstract fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?)
 }
 
 
