@@ -2,6 +2,7 @@ package com.like.common.util.ble.blestate
 
 import android.bluetooth.*
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import com.like.common.util.Logger
 import com.like.common.util.ble.model.BleCommand
@@ -144,7 +145,12 @@ class InitializedState(
                 // 在任何时刻都只能最多一个设备在尝试建立连接。如果同时对多个蓝牙设备发起建立 Gatt 连接请求。如果前面的设备连接失败了，后面的设备请求会被永远阻塞住，不会有任何连接回调。
                 // 对BLE设备连接，连接过程要尽量短，如果连接不上，不要盲目进行重连，否这你的电池会很快被消耗掉。
                 Logger.v("尝试创建新的连接……")
-                bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    bluetoothDevice.connectGatt(mContext, false, mGattCallback, BluetoothDevice.TRANSPORT_LE)// 第二个参数表示是否自动重连
+                } else {
+                    bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
+                }
+
                 withContext((Dispatchers.IO)) {
                     delay(mConnectTimeout)
                     disconnect(address)
