@@ -129,32 +129,26 @@ class InitializedState(
             return
         }
 
-        val gatt = getBluetoothGatt(address)
-        if (gatt != null) {// 已经连接过了
-            // 蓝牙设备已经连接过
-            mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED))
-        } else {
-            mCoroutineScope.launch(Dispatchers.IO) {
-                // 获取远端的蓝牙设备
-                val bluetoothDevice = mBluetoothAdapter?.getRemoteDevice(address)
-                if (bluetoothDevice == null) {
-                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, errorMsg = "连接蓝牙设备失败：设备 $address 未找到"))
-                    return@launch
-                }
+        mCoroutineScope.launch(Dispatchers.IO) {
+            // 获取远端的蓝牙设备
+            val bluetoothDevice = mBluetoothAdapter?.getRemoteDevice(address)
+            if (bluetoothDevice == null) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, errorMsg = "连接蓝牙设备失败：设备 $address 未找到"))
+                return@launch
+            }
 
-                // 在任何时刻都只能最多一个设备在尝试建立连接。如果同时对多个蓝牙设备发起建立 Gatt 连接请求。如果前面的设备连接失败了，后面的设备请求会被永远阻塞住，不会有任何连接回调。
-                // 对BLE设备连接，连接过程要尽量短，如果连接不上，不要盲目进行重连，否这你的电池会很快被消耗掉。
-                Logger.v("尝试创建新的连接……")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    bluetoothDevice.connectGatt(mContext, false, mGattCallback, BluetoothDevice.TRANSPORT_LE)// 第二个参数表示是否自动重连
-                } else {
-                    bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
-                }
+            // 在任何时刻都只能最多一个设备在尝试建立连接。如果同时对多个蓝牙设备发起建立 Gatt 连接请求。如果前面的设备连接失败了，后面的设备请求会被永远阻塞住，不会有任何连接回调。
+            // 对BLE设备连接，连接过程要尽量短，如果连接不上，不要盲目进行重连，否这你的电池会很快被消耗掉。
+            Logger.v("尝试创建新的连接……")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                bluetoothDevice.connectGatt(mContext, false, mGattCallback, BluetoothDevice.TRANSPORT_LE)// 第二个参数表示是否自动重连
+            } else {
+                bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
+            }
 
-                withContext((Dispatchers.IO)) {
-                    delay(mConnectTimeout)
-                    disconnect(address)
-                }
+            withContext((Dispatchers.IO)) {
+                delay(mConnectTimeout)
+                disconnect(address)
             }
         }
     }
@@ -166,7 +160,7 @@ class InitializedState(
             mChannels[address] = channel
             mCoroutineScope.launch(Dispatchers.IO) {
                 for (bleCommand in channel) {
-                    getBluetoothGatt(address)?.let {
+                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
                         bleCommand.write(mCoroutineScope, it)
                     }
                 }
@@ -178,7 +172,15 @@ class InitializedState(
     }
 
     override fun disconnect(address: String) {
-        getBluetoothGatt(address)?.disconnect()
+        val listIterator = mConnectedBluetoothGattList.listIterator()
+        while (listIterator.hasNext()) {
+            val gatt = listIterator.next()
+            if (gatt.device.address == address) {
+                gatt.disconnect()
+                listIterator.remove()
+                break
+            }
+        }
     }
 
     override fun disconnectAll() {
@@ -204,7 +206,4 @@ class InitializedState(
         return mBluetoothAdapter
     }
 
-    private fun getBluetoothGatt(address: String): BluetoothGatt? {
-        return mConnectedBluetoothGattList.firstOrNull { it.device.address == address }
-    }
 }
