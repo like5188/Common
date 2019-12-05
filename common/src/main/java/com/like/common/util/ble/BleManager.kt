@@ -1,7 +1,5 @@
 package com.like.common.util.ble
 
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -14,7 +12,6 @@ import androidx.lifecycle.Observer
 import com.like.common.util.ble.blestate.BaseBleState
 import com.like.common.util.ble.blestate.InitialState
 import com.like.common.util.ble.blestate.InitializedState
-import com.like.common.util.ble.blestate.ReadyState
 import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
@@ -62,8 +59,6 @@ import kotlinx.coroutines.CoroutineScope
  * @version 1.0
  * created on 2017/4/14 11:52
  */
-@TargetApi(18)
-@SuppressLint("MissingPermission")
 class BleManager(
         private val mActivity: FragmentActivity,
         private val mCoroutineScope: CoroutineScope,
@@ -72,7 +67,7 @@ class BleManager(
         private val scanTimeout: Long = 3000,// 蓝牙扫描时间的限制
         private val connectTimeout: Long = 20000// 蓝牙连接超时时间
 ) {
-    private var mBleState: BaseBleState? = InitialState(mActivity, bleResultLiveData)
+    private var mBleState: BaseBleState? = null
 
     // 蓝牙打开关闭监听器
     private val mReceiver = object : BroadcastReceiver() {
@@ -87,7 +82,6 @@ class BleManager(
                         BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
                             bleResultLiveData.postValue(BleResult(BleStatus.OFF))
                             mBleState?.close()
-                            mBleState = InitialState(mActivity, bleResultLiveData)
                         }
                     }
                 }
@@ -98,18 +92,7 @@ class BleManager(
         when (it?.status) {
             BleStatus.INIT_SUCCESS -> {
                 mBleState?.getBluetoothAdapter()?.apply {
-                    mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
-                }
-            }
-            BleStatus.CONNECTED -> {
-                mBleState?.getBluetoothAdapter()?.apply {
-                    mBleState = ReadyState(mActivity, mCoroutineScope, bleResultLiveData, this, connectTimeout)
-                }
-            }
-            BleStatus.DISCONNECTED -> {
-                mBleState?.getBluetoothAdapter()?.apply {
-                    mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
-                    scanBleDevice()
+                    mBleState = InitializedState(mActivity, mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
                 }
             }
             else -> {
@@ -129,6 +112,9 @@ class BleManager(
      */
     @MainThread
     fun initBle() {
+        if (mBleState == null || mBleState !is InitialState) {
+            mBleState = InitialState(mActivity, bleResultLiveData)
+        }
         mBleState?.init()
     }
 
@@ -136,18 +122,7 @@ class BleManager(
      * 扫描蓝牙设备
      */
     fun scanBleDevice() {
-        if (mBleState is InitializedState) {
-            mBleState?.startScan()
-            mBleState?.getBluetoothAdapter()?.apply {
-                mBleState = ReadyState(mActivity, mCoroutineScope, bleResultLiveData, this, connectTimeout)
-            }
-        } else if (mBleState is ReadyState) {
-            mBleState?.disconnectAll()
-            mBleState?.getBluetoothAdapter()?.apply {
-                mBleState = InitializedState(mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
-                scanBleDevice()
-            }
-        }
+        mBleState?.startScan()
     }
 
     /**
@@ -173,6 +148,13 @@ class BleManager(
      */
     fun disconnect(address: String) {
         mBleState?.disconnect(address)
+    }
+
+    /**
+     * 断开所有蓝牙设备
+     */
+    fun disconnectAll(address: String) {
+        mBleState?.disconnectAll()
     }
 
     /**
