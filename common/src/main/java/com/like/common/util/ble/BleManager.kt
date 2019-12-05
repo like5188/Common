@@ -15,12 +15,8 @@ import com.like.common.util.ble.blestate.BaseBleState
 import com.like.common.util.ble.blestate.ConnectState
 import com.like.common.util.ble.blestate.InitialState
 import com.like.common.util.ble.blestate.ScanState
-import com.like.common.util.ble.model.BleConnectCommand
-import com.like.common.util.ble.model.BleResult
-import com.like.common.util.ble.model.BleStatus
-import com.like.common.util.ble.model.BleWriteCommand
+import com.like.common.util.ble.model.*
 import com.like.common.util.ble.scanstrategy.IScanStrategy
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * 蓝牙是一种近距离无线通信技术。它的特性就是近距离通信，典型距离是 10 米以内，传输速度最高可达 24 Mbps，支持多连接，安全性高，非常适合用智能设备上。
@@ -169,8 +165,8 @@ class BleManager(private val mActivity: FragmentActivity) {
     /**
      * 取消连接
      */
-    fun disconnect(address: String) {
-        mBleState?.disconnect(address)
+    fun disconnect(command: BleDisconnectCommand) {
+        mBleState?.disconnect(command)
     }
 
     /**
@@ -194,7 +190,7 @@ class BleManager(private val mActivity: FragmentActivity) {
         }
     }
 
-    fun setMtu(address: String, mtu: Int) {
-        mBleState?.setMtu(address, mtu)
+    fun setMtu(command: BleSetMtuCommand) {
+        mBleState?.setMtu(command)
     }
 }
