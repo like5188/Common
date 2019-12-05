@@ -70,7 +70,7 @@ class BleManager(
     private val mLiveData: MediatorLiveData<BleResult> by lazy {
         MediatorLiveData<BleResult>().apply {
             addSource(mAllLiveData) {
-                // 过滤状态，只发送一部分
+                // 过滤状态，只发送一部分，其它的用回调替代。
                 when {
                     it.status == BleStatus.ON ||
                             it.status == BleStatus.OFF ||
