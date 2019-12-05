@@ -1,12 +1,10 @@
 package com.like.common.util.ble.blestate
 
 import android.bluetooth.*
-import android.os.Build
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.like.common.util.ble.model.*
-import com.like.common.util.shortToastCenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
@@ -124,7 +122,7 @@ class ConnectState(
     // 如果连接成功了，就处理下一个连接请求。
     // 如果连接失败了（例如出错，或者连接超时失败），就马上调用 BluetoothGatt.disconnect() 来释放建立连接请求，然后处理下一个设备连接请求。
     override fun connect(command: BleConnectCommand) {
-        command.connect(mActivity.lifecycleScope, mGattCallback, mBluetoothAdapter) { disconnect(command.address) }
+        command.connect(mActivity.lifecycleScope, mGattCallback, mBluetoothAdapter) { disconnect(BleDisconnectCommand(mActivity, command.address)) }
     }
 
     override fun write(command: BleWriteCommand) {
@@ -145,12 +143,13 @@ class ConnectState(
         }
     }
 
-    override fun disconnect(address: String) {
+    override fun disconnect(command: BleDisconnectCommand) {
+        val address = command.address
         val listIterator = mConnectedBluetoothGattList.listIterator()
         while (listIterator.hasNext()) {
             val gatt = listIterator.next()
             if (gatt.device.address == address) {
-                gatt.disconnect()
+                command.disconnect(mActivity.lifecycleScope, gatt)
                 listIterator.remove()
                 break
             }
@@ -175,11 +174,10 @@ class ConnectState(
         mBluetoothManager = null
     }
 
-    override fun setMtu(address: String, mtu: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.requestMtu(mtu)
-        } else {
-            mActivity.shortToastCenter("android 5.0 才支持 setMtu() 操作")
+    override fun setMtu(command: BleSetMtuCommand) {
+        val address = command.address
+        mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
+            command.setMtu(mActivity.lifecycleScope, it)
         }
     }
 

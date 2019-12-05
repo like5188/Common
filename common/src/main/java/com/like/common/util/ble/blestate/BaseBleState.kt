@@ -2,9 +2,7 @@ package com.like.common.util.ble.blestate
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
-import com.like.common.util.ble.model.BleCommand
-import com.like.common.util.ble.model.BleConnectCommand
-import com.like.common.util.ble.model.BleWriteCommand
+import com.like.common.util.ble.model.*
 import com.like.common.util.ble.scanstrategy.IScanStrategy
 
 /**
@@ -39,7 +37,7 @@ abstract class BaseBleState {
     /**
      * 断开指定蓝牙设备
      */
-    open fun disconnect(address: String) {}
+    open fun disconnect(command: BleDisconnectCommand) {}
 
     /**
      * 断开所有蓝牙设备
@@ -54,7 +52,7 @@ abstract class BaseBleState {
     /**
      * 设置mtu
      */
-    open fun setMtu(address: String, mtu: Int) {}
+    open fun setMtu(command: BleSetMtuCommand) {}
 
     /**
      * 获取 BluetoothAdapter
