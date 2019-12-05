@@ -14,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
  * @param characteristicUuidString  数据交互的蓝牙特征地址
  * @param bleResultLiveData         数据监听
  * @param description               命令描述，用于日志打印、错误提示等
- * @param hasResult                 是否有返回值
  * @param readTimeout               读取数据超时时间（毫秒）
  * @param maxTransferSize           硬件规定的一次传输的最大字节数
  * @param maxFrameTransferSize      由硬件开发者约定的一帧传输的最大字节数
