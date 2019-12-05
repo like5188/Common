@@ -168,4 +168,7 @@ class BleManager(
         }
     }
 
+    fun setMtu(address: String, mtu: Int) {
+        mBleState?.setMtu(address, mtu)
+    }
 }
