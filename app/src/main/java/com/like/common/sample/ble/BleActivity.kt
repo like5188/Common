@@ -1,6 +1,5 @@
 package com.like.common.sample.ble
 
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanCallback
@@ -16,11 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBleBinding
-import com.like.common.util.PermissionUtils
 import com.like.common.util.ble.BleManager
 import com.like.common.util.ble.model.BleReadCommand
 import com.like.common.util.ble.model.BleResult
-import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.scanstrategy.ScanStrategy18
 import com.like.common.util.ble.scanstrategy.ScanStrategy21
 import com.like.common.util.shortToastCenter
@@ -63,7 +60,7 @@ class BleActivity : AppCompatActivity() {
                 addItem(device)
             })
         }
-        BleManager(this.applicationContext, lifecycleScope, mBleResultLiveData, scanStrategy)
+        BleManager(this, lifecycleScope, mBleResultLiveData, scanStrategy)
     }
     private val mAdapter: BaseAdapter by lazy { BaseAdapter() }
     private val mToolbarUtils: ToolbarUtils by lazy {
@@ -73,20 +70,12 @@ class BleActivity : AppCompatActivity() {
                     finish()
                 })
     }
-    private val mPermissionUtils: PermissionUtils by lazy { PermissionUtils(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToolbarUtils
         mBleResultLiveData.observe(this, Observer {
             mBinding.tvStatus.text = it?.status?.des
-            when (it?.status) {
-                BleStatus.INIT_FAILURE -> {
-                    mBleManager.openBTDialog(this, REQUEST_ENABLE_BT)
-                }
-                else -> {
-                }
-            }
         })
         initBle()
         mBinding.rv.layoutManager = WrapLinearLayoutManager(this)
@@ -141,27 +130,13 @@ class BleActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("MissingPermission")
     private fun initBle() {
-        mPermissionUtils.checkPermissions(
-                android.Manifest.permission.BLUETOOTH_ADMIN,
-                android.Manifest.permission.BLUETOOTH,
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                onDenied = {
-                    mBinding.tvStatus.text = BleStatus.INIT_FAILURE.des
-                },
-                onError = {
-                    mBinding.tvStatus.text = BleStatus.INIT_FAILURE.des
-                },
-                onGranted = {
-                    mBleManager.initBle()
-                })
+        mBleManager.initBle()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         mBleManager.close()
+        super.onDestroy()
     }
 
 }
