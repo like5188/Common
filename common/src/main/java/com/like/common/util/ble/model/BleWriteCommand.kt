@@ -38,7 +38,7 @@ class BleWriteCommand(
         private val readTimeout: Long = 0L,
         private val maxTransferSize: Int = 20,
         private val maxFrameTransferSize: Int = 300,
-        private val onSuccess: ((ByteArray?) -> Unit)? = null,
+        private val onSuccess: (() -> Unit)? = null,
         private val onFailure: ((Throwable) -> Unit)? = null
 ) : BleCommand(address) {
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
@@ -110,7 +110,7 @@ class BleWriteCommand(
                 }
 
                 removeObserver(observer)
-                onSuccess?.invoke(null)
+                onSuccess?.invoke()
             }
         }
     }
