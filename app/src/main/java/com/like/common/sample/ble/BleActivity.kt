@@ -76,7 +76,7 @@ class BleActivity : AppCompatActivity() {
             override fun onItemClick(holder: CommonViewHolder, position: Int, data: IRecyclerViewItem?) {
                 curAddress = (data as BleInfo).address
                 if (!data.isConnected.get()) {
-                    mBleManager.connect(BleConnectCommand(
+                    mBleManager.sendCommand(BleConnectCommand(
                             this@BleActivity,
                             curAddress,
                             5000L,
@@ -100,7 +100,7 @@ class BleActivity : AppCompatActivity() {
     private var curAddress = ""
 
     fun sendData(view: View) {
-        mBleManager.write(BleWriteCommand(
+        mBleManager.sendCommand(BleWriteCommand(
                 this,
                 1,
                 byteArrayOf(0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02),
@@ -111,7 +111,7 @@ class BleActivity : AppCompatActivity() {
                 5,
                 300,
                 {
-                    shortToastCenter("执行命令成功 ${it?.contentToString()}")
+                    shortToastCenter("执行命令成功")
                 },
                 {
                     shortToastCenter("执行命令失败！${it.getCustomNetworkMessage()}")
