@@ -63,8 +63,7 @@ class BleManager(
         private val mActivity: FragmentActivity,
         private val mCoroutineScope: CoroutineScope,
         private val mScanStrategy: IScanStrategy,
-        private val mScanTimeout: Long = 3000,// 蓝牙扫描时间的限制
-        private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
+        private val mScanTimeout: Long = 3000// 蓝牙扫描时间的限制
 ) {
     private var mBleState: BaseBleState? = null
     private val mAllLiveData = MutableLiveData<BleResult>()
@@ -109,7 +108,7 @@ class BleManager(
         when (it?.status) {
             BleStatus.INIT_SUCCESS -> {
                 mBleState?.getBluetoothAdapter()?.apply {
-                    mBleState = InitializedState(mActivity, mCoroutineScope, mAllLiveData, this, mScanStrategy, mScanTimeout, mConnectTimeout)
+                    mBleState = InitializedState(mActivity, mCoroutineScope, mAllLiveData, this, mScanStrategy, mScanTimeout)
                 }
             }
             else -> {
