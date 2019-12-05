@@ -32,8 +32,7 @@ class InitialState(
     override fun init() {
         mBleResultLiveData.postValue(BleResult(BleStatus.INIT))
 
-        // 设备不支持BLE
-        if (!mActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+        if (!isSupportBle()) {
             mBleResultLiveData.postValue(BleResult(BleStatus.INIT_FAILURE, errorMsg = "phone does not support Bluetooth"))
             return
         }
@@ -50,7 +49,7 @@ class InitialState(
                     mBleResultLiveData.postValue(BleResult(BleStatus.INIT_FAILURE, errorMsg = it.message ?: "unknown error"))
                 },
                 onGranted = {
-                    if (isBlePrepared()) {// 蓝牙已经初始化
+                    if (isBlueEnable()) {// 蓝牙已经初始化
                         mBleResultLiveData.postValue(BleResult(BleStatus.INIT_SUCCESS))
                         return@checkPermissions
                     }
@@ -67,7 +66,7 @@ class InitialState(
                         return@checkPermissions
                     }
 
-                    if (isBlePrepared()) {// 蓝牙初始化成功
+                    if (isBlueEnable()) {// 蓝牙初始化成功
                         mBleResultLiveData.postValue(BleResult(BleStatus.INIT_SUCCESS))
                     } else {// 蓝牙功能未打开
                         mBluetoothManager = null
@@ -102,6 +101,7 @@ class InitialState(
     /**
      * 蓝牙是否就绪
      */
-    private fun isBlePrepared() = mBluetoothAdapter?.isEnabled ?: false
+    private fun isBlueEnable() = mBluetoothAdapter?.isEnabled ?: false
 
+    private fun isSupportBle() = mActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)
 }
