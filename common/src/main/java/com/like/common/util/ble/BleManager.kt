@@ -62,10 +62,10 @@ import kotlinx.coroutines.CoroutineScope
 class BleManager(
         private val mActivity: FragmentActivity,
         private val mCoroutineScope: CoroutineScope,
-        val bleResultLiveData: MutableLiveData<BleResult>,
+        private val mBleResultLiveData: MutableLiveData<BleResult>,
         private val mScanStrategy: IScanStrategy,
-        private val scanTimeout: Long = 3000,// 蓝牙扫描时间的限制
-        private val connectTimeout: Long = 20000// 蓝牙连接超时时间
+        private val mScanTimeout: Long = 3000,// 蓝牙扫描时间的限制
+        private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
 ) {
     private var mBleState: BaseBleState? = null
 
@@ -76,11 +76,11 @@ class BleManager(
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
                         BluetoothAdapter.STATE_ON -> {// 蓝牙已打开
-                            bleResultLiveData.postValue(BleResult(BleStatus.ON))
+                            mBleResultLiveData.postValue(BleResult(BleStatus.ON))
                             initBle()// 初始化蓝牙
                         }
                         BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
-                            bleResultLiveData.postValue(BleResult(BleStatus.OFF))
+                            mBleResultLiveData.postValue(BleResult(BleStatus.OFF))
                             mBleState?.close()
                         }
                     }
@@ -92,7 +92,7 @@ class BleManager(
         when (it?.status) {
             BleStatus.INIT_SUCCESS -> {
                 mBleState?.getBluetoothAdapter()?.apply {
-                    mBleState = InitializedState(mActivity, mCoroutineScope, bleResultLiveData, this, mScanStrategy, scanTimeout)
+                    mBleState = InitializedState(mActivity, mCoroutineScope, mBleResultLiveData, this, mScanStrategy, mScanTimeout, mConnectTimeout)
                 }
             }
             else -> {
@@ -104,7 +104,7 @@ class BleManager(
         // 注册蓝牙打开关闭监听
         mActivity.registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
-        bleResultLiveData.observe(mActivity, mObserver)
+        mBleResultLiveData.observe(mActivity, mObserver)
     }
 
     /**
@@ -113,7 +113,7 @@ class BleManager(
     @MainThread
     fun initBle() {
         if (mBleState == null || mBleState !is InitialState) {
-            mBleState = InitialState(mActivity, bleResultLiveData)
+            mBleState = InitialState(mActivity, mBleResultLiveData)
         }
         mBleState?.init()
     }
@@ -165,7 +165,7 @@ class BleManager(
         mBleState = null
         try {
             mActivity.unregisterReceiver(mReceiver)
-            bleResultLiveData.removeObserver(mObserver)
+            mBleResultLiveData.removeObserver(mObserver)
         } catch (e: Exception) {// 避免 java.lang.IllegalArgumentException: Receiver not registered
             e.printStackTrace()
         }

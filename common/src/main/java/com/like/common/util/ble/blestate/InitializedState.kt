@@ -22,8 +22,8 @@ class InitializedState(
         private val mBleResultLiveData: MutableLiveData<BleResult>,
         private var mBluetoothAdapter: BluetoothAdapter?,
         private var mScanStrategy: IScanStrategy?,
-        private val mConnectTimeout: Long = 20000,// 蓝牙连接超时时间
-        private val mScanTimeout: Long = 3000// 蓝牙扫描时间的限制
+        private val mScanTimeout: Long = 3000,// 蓝牙扫描时间的限制,
+        private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
 ) : BaseBleState() {
 
     private var mScanning = AtomicBoolean(false)
