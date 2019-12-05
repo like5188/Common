@@ -18,13 +18,19 @@ enum class BleStatus(val des: String) {
     CONNECTED("连接蓝牙设备成功"),
     DISCONNECTED("连接蓝牙设备失败"),
 
-    ON_CHARACTERISTIC_READ("读取到了特征值"),
     ON_CHARACTERISTIC_CHANGED("特征值改变了"),
-    ON_CHARACTERISTIC_WRITE("写入了特征值"),
-    ON_DESCRIPTOR_READ("读取到了描述值"),
-    ON_DESCRIPTOR_WRITE("写入了描述值"),
-    ON_READ_REMOTE_RSSI("读取到了蓝牙信号值"),
-    ON_MTU_CHANGED("MTU改变了");
+    ON_CHARACTERISTIC_READ_SUCCESS("读特征值成功"),
+    ON_CHARACTERISTIC_READ_FAILURE("读特征值失败"),
+    ON_CHARACTERISTIC_WRITE_SUCCESS("写特征值成功"),
+    ON_CHARACTERISTIC_WRITE_FAILURE("写特征值失败"),
+    ON_DESCRIPTOR_READ_SUCCESS("读描述值成功"),
+    ON_DESCRIPTOR_READ_FAILURE("读描述值失败"),
+    ON_DESCRIPTOR_WRITE_SUCCESS("写描述值成功"),
+    ON_DESCRIPTOR_WRITE_FAILURE("写描述值失败"),
+    ON_READ_REMOTE_RSSI_SUCCESS("读信号值成功"),
+    ON_READ_REMOTE_RSSI_FAILURE("读信号值失败"),
+    ON_MTU_CHANGED_SUCCESS("设置MTU成功"),
+    ON_MTU_CHANGED_FAILURE("设置MTU失败");
 
     override fun toString(): String {
         return "BleStatus(des='$des')"

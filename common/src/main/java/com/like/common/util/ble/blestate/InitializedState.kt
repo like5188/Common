@@ -53,7 +53,14 @@ class InitializedState(
             if (status == BluetoothGatt.GATT_SUCCESS) {// 发现了蓝牙服务后，才算真正的连接成功。
                 mConnectedBluetoothGattList.add(gatt)
                 mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.name))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.name))
             }
+        }
+
+        // 外围设备调用 notifyCharacteristicChanged() 通知所有中心设备，数据改变了，此方法被触发。
+        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_CHANGED, characteristic.value))
         }
 
         // 谁进行读数据操作，然后外围设备才会被动的发出一个数据，而这个数据只能是读操作的对象才有资格获得到这个数据。
@@ -62,12 +69,11 @@ class InitializedState(
                 characteristic: BluetoothGattCharacteristic,
                 status: Int
         ) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ, characteristic.value))
-        }
-
-        // 外围设备调用 notifyCharacteristicChanged() 通知所有中心设备，数据改变了，此方法被触发。
-        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_CHANGED, characteristic.value))
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ_SUCCESS, characteristic.value))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ_FAILURE, characteristic.value))
+            }
         }
 
         // 写特征值
@@ -76,26 +82,46 @@ class InitializedState(
                 characteristic: BluetoothGattCharacteristic,
                 status: Int
         ) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_WRITE, characteristic.value))
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_WRITE_SUCCESS, characteristic.value))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_WRITE_FAILURE, characteristic.value))
+            }
         }
 
         // 读描述值
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_READ, descriptor.value))
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_READ_SUCCESS, descriptor.value))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_READ_FAILURE, descriptor.value))
+            }
         }
 
         // 写描述值
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_WRITE, descriptor.value))
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_WRITE_SUCCESS, descriptor.value))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_DESCRIPTOR_WRITE_FAILURE, descriptor.value))
+            }
         }
 
         // 读蓝牙信号值
         override fun onReadRemoteRssi(gatt: BluetoothGatt, rssi: Int, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_READ_REMOTE_RSSI, rssi))
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_READ_REMOTE_RSSI_SUCCESS, rssi))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_READ_REMOTE_RSSI_FAILURE, rssi))
+            }
         }
 
         override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.ON_MTU_CHANGED, mtu))
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_MTU_CHANGED_SUCCESS, mtu))
+            } else {
+                mBleResultLiveData.postValue(BleResult(BleStatus.ON_MTU_CHANGED_FAILURE, mtu))
+            }
         }
 
     }

@@ -64,16 +64,22 @@ abstract class BleWriteCommand(
         characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
 
         Logger.w("--------------------开始执行 $description 命令--------------------")
-        val observer = Observer<BleResult> { bleResult ->
-            if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_WRITE) {
+        var job: Job? = null
+        var observer: Observer<BleResult>? = null
+        observer = Observer { bleResult ->
+            if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_WRITE_SUCCESS) {
                 mBatchCount.decrementAndGet()
+            } else if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_WRITE_FAILURE) {
+                job?.cancel()
+                removeObserver(observer)
+                onFailure?.invoke(RuntimeException("写特征值失败：$characteristicUuidString"))
             }
         }
 
         coroutineScope.launch(Dispatchers.Main) {
             bleResultLiveData.observe(activity, observer)
 
-            val job = launch(Dispatchers.IO) {
+            job = launch(Dispatchers.IO) {
                 mDataList.forEach {
                     characteristic.value = it
                     bluetoothGatt.writeCharacteristic(characteristic)
@@ -85,23 +91,25 @@ abstract class BleWriteCommand(
                 while (mBatchCount.get() > 0) {
                     delay(100)
                     if (isExpired()) {// 说明是超时了
-                        job.cancel()
-                        withContext(Dispatchers.Main) {
-                            bleResultLiveData.removeObserver(observer)
-                        }
+                        job?.cancel()
+                        removeObserver(observer)
                         onFailure?.invoke(TimeoutException())
                         return@withContext
                     }
                 }
 
-                withContext(Dispatchers.Main) {
-                    bleResultLiveData.removeObserver(observer)
-                }
+                removeObserver(observer)
                 onSuccess?.invoke(null)
             }
         }
     }
 
+    private fun removeObserver(observer: Observer<BleResult>?) {
+        observer ?: return
+        activity.runOnUiThread {
+            bleResultLiveData.removeObserver(observer)
+        }
+    }
 }
 
 

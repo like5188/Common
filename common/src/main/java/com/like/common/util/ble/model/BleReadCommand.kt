@@ -58,8 +58,9 @@ abstract class BleReadCommand(
      */
     abstract fun isWholeFrame(data: ByteBuffer): Boolean
 
+    private var job: Job? = null
     private val mWriteObserver = Observer<BleResult> { bleResult ->
-        if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ) {
+        if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ_SUCCESS) {
             if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
                 return@Observer
             }
@@ -68,6 +69,10 @@ abstract class BleReadCommand(
                 isCompleted = true
                 onSuccess?.invoke(resultCache.toByteArrayOrNull())
             }
+        } else if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ_FAILURE) {
+            job?.cancel()
+            isCompleted = true
+            onFailure?.invoke(RuntimeException("读取特征值失败：$characteristicUuidString"))
         }
     }
 
@@ -92,7 +97,7 @@ abstract class BleReadCommand(
         coroutineScope.launch(Dispatchers.Main) {
             bleResultLiveData.observe(activity, mWriteObserver)
 
-            val job = launch(Dispatchers.IO) {
+            job = launch(Dispatchers.IO) {
                 data.batch(maxTransferSize).forEach {
                     characteristic.value = it
                     bluetoothGatt.readCharacteristic(characteristic)
@@ -104,7 +109,7 @@ abstract class BleReadCommand(
                 while (!isCompleted) {
                     delay(100)
                     if (isExpired()) {// 说明是超时了
-                        job.cancel()
+                        job?.cancel()
                         isCompleted = true
                         onFailure?.invoke(TimeoutException())
                         return@withContext
