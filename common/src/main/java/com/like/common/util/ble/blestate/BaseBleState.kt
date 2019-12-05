@@ -40,6 +40,11 @@ abstract class BaseBleState {
     open fun write(command: BleWriteCommand) {}
 
     /**
+     * 设置mtu
+     */
+    open fun setMtu(command: BleSetMtuCommand) {}
+
+    /**
      * 断开指定蓝牙设备
      */
     open fun disconnect(command: BleDisconnectCommand) {}
@@ -55,18 +60,13 @@ abstract class BaseBleState {
     open fun close() {}
 
     /**
-     * 设置mtu
-     */
-    open fun setMtu(command: BleSetMtuCommand) {}
-
-    /**
      * 获取 BluetoothAdapter
      */
-    open fun getBluetoothAdapter(): BluetoothAdapter? {
+    internal open fun getBluetoothAdapter(): BluetoothAdapter? {
         return null
     }
 
-    open fun getBluetoothManager(): BluetoothManager? {
+    internal open fun getBluetoothManager(): BluetoothManager? {
         return null
     }
 }
