@@ -12,6 +12,8 @@ abstract class BleCommand(val address: String) {
     internal open fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {}
 
     internal open fun connect(coroutineScope: CoroutineScope, gattCallback: BluetoothGattCallback, bluetoothAdapter: BluetoothAdapter?, disconnect: () -> Unit) {}
+
+    internal open fun disconnect(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {}
 }
 
 
