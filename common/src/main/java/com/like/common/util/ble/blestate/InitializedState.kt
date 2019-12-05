@@ -4,14 +4,14 @@ import android.bluetooth.*
 import android.content.Context
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
-import com.like.common.util.Logger
-import com.like.common.util.ble.model.BleCommand
-import com.like.common.util.ble.model.BleResult
-import com.like.common.util.ble.model.BleStatus
+import com.like.common.util.ble.model.*
 import com.like.common.util.ble.scanstrategy.IScanStrategy
 import com.like.common.util.shortToastCenter
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -153,38 +153,11 @@ class InitializedState(
     // 前一个设备请求建立连接，后面请求在队列中等待。
     // 如果连接成功了，就处理下一个连接请求。
     // 如果连接失败了（例如出错，或者连接超时失败），就马上调用 BluetoothGatt.disconnect() 来释放建立连接请求，然后处理下一个设备连接请求。
-    override fun connect(address: String) {
-        mBleResultLiveData.postValue(BleResult(BleStatus.CONNECT))
-        if (address.isEmpty()) {
-            mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, errorMsg = "连接蓝牙设备失败：地址不能为空"))
-            return
-        }
-
-        mCoroutineScope.launch(Dispatchers.IO) {
-            // 获取远端的蓝牙设备
-            val bluetoothDevice = mBluetoothAdapter?.getRemoteDevice(address)
-            if (bluetoothDevice == null) {
-                mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, errorMsg = "连接蓝牙设备失败：设备 $address 未找到"))
-                return@launch
-            }
-
-            // 在任何时刻都只能最多一个设备在尝试建立连接。如果同时对多个蓝牙设备发起建立 Gatt 连接请求。如果前面的设备连接失败了，后面的设备请求会被永远阻塞住，不会有任何连接回调。
-            // 对BLE设备连接，连接过程要尽量短，如果连接不上，不要盲目进行重连，否这你的电池会很快被消耗掉。
-            Logger.v("尝试创建新的连接……")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                bluetoothDevice.connectGatt(mContext, false, mGattCallback, BluetoothDevice.TRANSPORT_LE)// 第二个参数表示是否自动重连
-            } else {
-                bluetoothDevice.connectGatt(mContext, false, mGattCallback)// 第二个参数表示是否自动重连
-            }
-
-            withContext((Dispatchers.IO)) {
-                delay(mConnectTimeout)
-                disconnect(address)
-            }
-        }
+    override fun connect(command: BleConnectCommand) {
+        command.connect(mCoroutineScope, mGattCallback, mBluetoothAdapter) { disconnect(command.address) }
     }
 
-    override fun write(command: BleCommand) {
+    override fun write(command: BleWriteCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
             val channel = Channel<BleCommand>()

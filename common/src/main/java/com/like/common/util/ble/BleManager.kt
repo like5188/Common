@@ -14,9 +14,10 @@ import androidx.lifecycle.Observer
 import com.like.common.util.ble.blestate.BaseBleState
 import com.like.common.util.ble.blestate.InitialState
 import com.like.common.util.ble.blestate.InitializedState
-import com.like.common.util.ble.model.BleCommand
+import com.like.common.util.ble.model.BleConnectCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
+import com.like.common.util.ble.model.BleWriteCommand
 import com.like.common.util.ble.scanstrategy.IScanStrategy
 import kotlinx.coroutines.CoroutineScope
 
@@ -153,11 +154,12 @@ class BleManager(
     /**
      * 根据蓝牙地址，连接蓝牙设备
      */
-    fun connect(address: String) {
-        mBleState?.connect(address)
+    fun connect(command: BleConnectCommand) {
+        command.mLiveData = mAllLiveData
+        mBleState?.connect(command)
     }
 
-    fun write(command: BleCommand) {
+    fun write(command: BleWriteCommand) {
         command.mLiveData = mAllLiveData
         mBleState?.write(command)
     }

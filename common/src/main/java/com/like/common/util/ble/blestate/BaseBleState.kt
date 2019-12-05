@@ -2,6 +2,8 @@ package com.like.common.util.ble.blestate
 
 import android.bluetooth.BluetoothAdapter
 import com.like.common.util.ble.model.BleCommand
+import com.like.common.util.ble.model.BleConnectCommand
+import com.like.common.util.ble.model.BleWriteCommand
 
 /**
  * 蓝牙状态
@@ -25,12 +27,12 @@ abstract class BaseBleState {
     /**
      *  连接指定蓝牙设备
      */
-    open fun connect(address: String) {}
+    open fun connect(command: BleConnectCommand) {}
 
     /**
      * 写数据
      */
-    open fun write(command: BleCommand) {}
+    open fun write(command: BleWriteCommand) {}
 
     /**
      * 断开指定蓝牙设备
