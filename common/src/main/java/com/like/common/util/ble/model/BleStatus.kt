@@ -23,7 +23,8 @@ enum class BleStatus(val des: String) {
     ON_CHARACTERISTIC_WRITE("写入了特征值"),
     ON_DESCRIPTOR_READ("读取到了描述值"),
     ON_DESCRIPTOR_WRITE("写入了描述值"),
-    ON_READ_REMOTE_RSSI("读取到了蓝牙信号值");
+    ON_READ_REMOTE_RSSI("读取到了蓝牙信号值"),
+    ON_MTU_CHANGED("MTU改变了");
 
     override fun toString(): String {
         return "BleStatus(des='$des')"

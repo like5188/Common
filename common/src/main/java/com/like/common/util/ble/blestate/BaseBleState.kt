@@ -48,6 +48,11 @@ abstract class BaseBleState {
     open fun close() {}
 
     /**
+     * 设置mtu
+     */
+    open fun setMtu(address: String, mtu: Int) {}
+
+    /**
      * 获取 BluetoothAdapter
      */
     open fun getBluetoothAdapter(): BluetoothAdapter? {

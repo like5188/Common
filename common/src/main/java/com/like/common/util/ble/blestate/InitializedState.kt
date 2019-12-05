@@ -9,6 +9,7 @@ import com.like.common.util.ble.model.BleCommand
 import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.model.BleStatus
 import com.like.common.util.ble.scanstrategy.IScanStrategy
+import com.like.common.util.shortToastCenter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.util.concurrent.atomic.AtomicBoolean
@@ -91,6 +92,10 @@ class InitializedState(
         // 读蓝牙信号值
         override fun onReadRemoteRssi(gatt: BluetoothGatt, rssi: Int, status: Int) {
             mBleResultLiveData.postValue(BleResult(BleStatus.ON_READ_REMOTE_RSSI, rssi))
+        }
+
+        override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_MTU_CHANGED, mtu))
         }
 
     }
@@ -200,6 +205,14 @@ class InitializedState(
         mChannels.clear()
         mBluetoothAdapter = null
         mScanStrategy = null
+    }
+
+    override fun setMtu(address: String, mtu: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.requestMtu(mtu)
+        } else {
+            mContext.shortToastCenter("android 5.0 才支持 setMtu() 操作")
+        }
     }
 
     override fun getBluetoothAdapter(): BluetoothAdapter? {
