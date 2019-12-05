@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.annotation.MainThread
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.ble.blestate.BaseBleState
@@ -59,12 +61,29 @@ import kotlinx.coroutines.CoroutineScope
 class BleManager(
         private val mActivity: FragmentActivity,
         private val mCoroutineScope: CoroutineScope,
-        private val mBleResultLiveData: MutableLiveData<BleResult>,
         private val mScanStrategy: IScanStrategy,
         private val mScanTimeout: Long = 3000,// 蓝牙扫描时间的限制
         private val mConnectTimeout: Long = 20000// 蓝牙连接超时时间
 ) {
     private var mBleState: BaseBleState? = null
+    private val mAllLiveData = MutableLiveData<BleResult>()
+    private val mLiveData: MediatorLiveData<BleResult> by lazy {
+        MediatorLiveData<BleResult>().apply {
+            addSource(mAllLiveData) {
+                // 过滤状态，只发送一部分
+                when {
+                    it.status == BleStatus.ON ||
+                            it.status == BleStatus.OFF ||
+                            it.status == BleStatus.INIT ||
+                            it.status == BleStatus.INIT_SUCCESS ||
+                            it.status == BleStatus.INIT_FAILURE ||
+                            it.status == BleStatus.START_SCAN_DEVICE ||
+                            it.status == BleStatus.STOP_SCAN_DEVICE
+                    -> postValue(it)
+                }
+            }
+        }
+    }
 
     // 蓝牙打开关闭监听器
     private val mReceiver = object : BroadcastReceiver() {
@@ -73,11 +92,11 @@ class BleManager(
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
                         BluetoothAdapter.STATE_ON -> {// 蓝牙已打开
-                            mBleResultLiveData.postValue(BleResult(BleStatus.ON))
+                            mAllLiveData.postValue(BleResult(BleStatus.ON))
                             initBle()// 初始化蓝牙
                         }
                         BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
-                            mBleResultLiveData.postValue(BleResult(BleStatus.OFF))
+                            mAllLiveData.postValue(BleResult(BleStatus.OFF))
                             mBleState?.close()
                         }
                     }
@@ -89,7 +108,7 @@ class BleManager(
         when (it?.status) {
             BleStatus.INIT_SUCCESS -> {
                 mBleState?.getBluetoothAdapter()?.apply {
-                    mBleState = InitializedState(mActivity, mCoroutineScope, mBleResultLiveData, this, mScanStrategy, mScanTimeout, mConnectTimeout)
+                    mBleState = InitializedState(mActivity, mCoroutineScope, mAllLiveData, this, mScanStrategy, mScanTimeout, mConnectTimeout)
                 }
             }
             else -> {
@@ -101,8 +120,10 @@ class BleManager(
         // 注册蓝牙打开关闭监听
         mActivity.registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
-        mBleResultLiveData.observe(mActivity, mObserver)
+        mAllLiveData.observe(mActivity, mObserver)
     }
+
+    fun getLiveData(): LiveData<BleResult> = mLiveData
 
     /**
      * 初始化蓝牙适配器
@@ -110,7 +131,7 @@ class BleManager(
     @MainThread
     fun initBle() {
         if (mBleState == null || mBleState !is InitialState) {
-            mBleState = InitialState(mActivity, mBleResultLiveData)
+            mBleState = InitialState(mActivity, mAllLiveData)
         }
         mBleState?.init()
     }
@@ -137,6 +158,7 @@ class BleManager(
     }
 
     fun write(command: BleCommand) {
+        command.mLiveData = mAllLiveData
         mBleState?.write(command)
     }
 
@@ -162,7 +184,7 @@ class BleManager(
         mBleState = null
         try {
             mActivity.unregisterReceiver(mReceiver)
-            mBleResultLiveData.removeObserver(mObserver)
+            mAllLiveData.removeObserver(mObserver)
         } catch (e: Exception) {// 避免 java.lang.IllegalArgumentException: Receiver not registered
             e.printStackTrace()
         }

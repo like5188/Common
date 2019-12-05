@@ -10,14 +10,12 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityBleBinding
 import com.like.common.util.ble.BleManager
 import com.like.common.util.ble.model.BleReadCommand
-import com.like.common.util.ble.model.BleResult
 import com.like.common.util.ble.scanstrategy.ScanStrategy18
 import com.like.common.util.ble.scanstrategy.ScanStrategy21
 import com.like.common.util.shortToastCenter
@@ -41,7 +39,6 @@ class BleActivity : AppCompatActivity() {
     private val mBinding: ActivityBleBinding by lazy {
         DataBindingUtil.setContentView<ActivityBleBinding>(this, R.layout.activity_ble)
     }
-    private val mBleResultLiveData: MutableLiveData<BleResult> = MutableLiveData()
     private val mBleManager: BleManager by lazy {
         val scanStrategy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ScanStrategy21(object : ScanCallback() {
@@ -56,7 +53,7 @@ class BleActivity : AppCompatActivity() {
                 addItem(device)
             })
         }
-        BleManager(this, lifecycleScope, mBleResultLiveData, scanStrategy)
+        BleManager(this, lifecycleScope, scanStrategy)
     }
     private val mAdapter: BaseAdapter by lazy { BaseAdapter() }
     private val mToolbarUtils: ToolbarUtils by lazy {
@@ -70,7 +67,7 @@ class BleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mToolbarUtils
-        mBleResultLiveData.observe(this, Observer {
+        mBleManager.getLiveData().observe(this, Observer {
             mBinding.tvStatus.text = it?.status?.des
         })
         initBle()
@@ -99,7 +96,6 @@ class BleActivity : AppCompatActivity() {
                         byteArrayOf(0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02),
                         curAddress,
                         "0000fff2-0000-1000-8000-00805f9b34fb",
-                        mBleResultLiveData,
                         "模拟的BleCommand",
                         5000,
                         5,

@@ -28,7 +28,6 @@ abstract class BleCommand(
         val data: ByteArray,
         val address: String,
         val characteristicUuidString: String,
-        val bleResultLiveData: MutableLiveData<BleResult>,
         val description: String = "",
         val readTimeout: Long = 1000L,
         val maxTransferSize: Int = 20,
@@ -36,6 +35,8 @@ abstract class BleCommand(
         val onSuccess: ((ByteArray?) -> Unit)? = null,
         val onFailure: ((Throwable) -> Unit)? = null
 ) {
+    lateinit var mLiveData: MutableLiveData<BleResult>
+
     abstract fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?)
 }
 

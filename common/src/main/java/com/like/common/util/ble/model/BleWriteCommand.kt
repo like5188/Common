@@ -4,7 +4,6 @@ import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
@@ -22,14 +21,13 @@ abstract class BleWriteCommand(
         data: ByteArray,
         address: String,
         characteristicUuidString: String,
-        bleResultLiveData: MutableLiveData<BleResult>,
         description: String = "",
         readTimeout: Long = 0L,
         maxTransferSize: Int = 20,
         maxFrameTransferSize: Int = 300,
         onSuccess: ((ByteArray?) -> Unit)? = null,
         onFailure: ((Throwable) -> Unit)? = null
-) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
+) : BleCommand(activity, id, data, address, characteristicUuidString, description, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
     private val mDataList: List<ByteArray> by lazy { data.batch(maxTransferSize) }
     // 记录所有的数据批次，在所有的数据都发送完成后，才调用onSuccess()
     private val mBatchCount: AtomicInteger by lazy { AtomicInteger(mDataList.size) }
@@ -77,7 +75,7 @@ abstract class BleWriteCommand(
         }
 
         coroutineScope.launch(Dispatchers.Main) {
-            bleResultLiveData.observe(activity, observer)
+            mLiveData.observe(activity, observer)
 
             job = launch(Dispatchers.IO) {
                 mDataList.forEach {
@@ -107,7 +105,7 @@ abstract class BleWriteCommand(
     private fun removeObserver(observer: Observer<BleResult>?) {
         observer ?: return
         activity.runOnUiThread {
-            bleResultLiveData.removeObserver(observer)
+            mLiveData.removeObserver(observer)
         }
     }
 }

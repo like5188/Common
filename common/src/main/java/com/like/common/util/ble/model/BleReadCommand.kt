@@ -3,7 +3,6 @@ package com.like.common.util.ble.model
 import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.like.common.util.Logger
 import com.like.common.util.ble.utils.batch
@@ -22,14 +21,13 @@ abstract class BleReadCommand(
         data: ByteArray,
         address: String,
         characteristicUuidString: String,
-        bleResultLiveData: MutableLiveData<BleResult>,
         description: String = "",
         readTimeout: Long = 0L,
         maxTransferSize: Int = 20,
         maxFrameTransferSize: Int = 300,
         onSuccess: ((ByteArray?) -> Unit)? = null,
         onFailure: ((Throwable) -> Unit)? = null
-) : BleCommand(activity, id, data, address, characteristicUuidString, bleResultLiveData, description, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
+) : BleCommand(activity, id, data, address, characteristicUuidString, description, readTimeout, maxTransferSize, maxFrameTransferSize, onSuccess, onFailure) {
     // 缓存返回数据，因为一帧有可能分为多次接收
     private var resultCache: ByteBuffer = ByteBuffer.allocate(maxFrameTransferSize)
     // 过期时间
@@ -45,7 +43,7 @@ abstract class BleReadCommand(
         set(value) {
             if (value) {
                 activity.runOnUiThread {
-                    bleResultLiveData.removeObserver(mWriteObserver)
+                    mLiveData.removeObserver(mWriteObserver)
                 }
                 field = value
             }
@@ -95,7 +93,7 @@ abstract class BleReadCommand(
 
         Logger.w("--------------------开始执行 $description 命令--------------------")
         coroutineScope.launch(Dispatchers.Main) {
-            bleResultLiveData.observe(activity, mWriteObserver)
+            mLiveData.observe(activity, mWriteObserver)
 
             job = launch(Dispatchers.IO) {
                 data.batch(maxTransferSize).forEach {
