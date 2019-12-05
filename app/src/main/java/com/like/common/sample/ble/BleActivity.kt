@@ -36,10 +36,6 @@ import java.nio.ByteBuffer
 class BleActivity : AppCompatActivity() {
     companion object {
         private val TAG = BleActivity::class.java.simpleName
-        /**
-         * 打开蓝牙请求码
-         */
-        const val REQUEST_ENABLE_BT = 1
     }
 
     private val mBinding: ActivityBleBinding by lazy {
