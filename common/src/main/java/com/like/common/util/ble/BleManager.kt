@@ -105,7 +105,7 @@ class BleManager(
      * 初始化蓝牙适配器
      */
     @MainThread
-    @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION])
+    @RequiresPermission(allOf = [android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.BLUETOOTH, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION])
     fun initBle() {
         mBleState?.init()
         mBleState?.getBluetoothAdapter()?.apply {
