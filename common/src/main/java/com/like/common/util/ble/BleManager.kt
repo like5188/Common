@@ -142,31 +142,34 @@ class BleManager(private val mActivity: FragmentActivity) {
         mBleState?.stopScan()
     }
 
-    /**
-     * 根据蓝牙地址，连接蓝牙设备
-     */
-    fun connect(command: BleConnectCommand) {
-        if (mBleState is ScanState) {
-            val bluetoothManager = mBleState?.getBluetoothManager() ?: return
-            val bluetoothAdapter = mBleState?.getBluetoothAdapter() ?: return
-            mBleState = ConnectState(mActivity, mAllLiveData, bluetoothManager, bluetoothAdapter)
+    fun sendCommand(command: BleCommand) {
+        when (command) {
+            is BleConnectCommand -> {
+                if (mBleState is ScanState) {
+                    val bluetoothManager = mBleState?.getBluetoothManager() ?: return
+                    val bluetoothAdapter = mBleState?.getBluetoothAdapter() ?: return
+                    mBleState = ConnectState(mActivity, mAllLiveData, bluetoothManager, bluetoothAdapter)
+                }
+                if (mBleState is ConnectState) {
+                    command.mLiveData = mAllLiveData
+                    mBleState?.connect(command)
+                }
+            }
+            is BleDisconnectCommand -> {
+                mBleState?.disconnect(command)
+            }
+            is BleReadCommand -> {
+                command.mLiveData = mAllLiveData
+                mBleState?.read(command)
+            }
+            is BleWriteCommand -> {
+                command.mLiveData = mAllLiveData
+                mBleState?.write(command)
+            }
+            is BleSetMtuCommand -> {
+                mBleState?.setMtu(command)
+            }
         }
-        if (mBleState is ConnectState) {
-            command.mLiveData = mAllLiveData
-            mBleState?.connect(command)
-        }
-    }
-
-    fun write(command: BleWriteCommand) {
-        command.mLiveData = mAllLiveData
-        mBleState?.write(command)
-    }
-
-    /**
-     * 取消连接
-     */
-    fun disconnect(command: BleDisconnectCommand) {
-        mBleState?.disconnect(command)
     }
 
     /**
@@ -188,9 +191,5 @@ class BleManager(private val mActivity: FragmentActivity) {
         } catch (e: Exception) {// 避免 java.lang.IllegalArgumentException: Receiver not registered
             e.printStackTrace()
         }
-    }
-
-    fun setMtu(command: BleSetMtuCommand) {
-        mBleState?.setMtu(command)
     }
 }

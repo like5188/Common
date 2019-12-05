@@ -30,6 +30,11 @@ abstract class BaseBleState {
     open fun connect(command: BleConnectCommand) {}
 
     /**
+     * 读数据
+     */
+    open fun read(command: BleReadCommand) {}
+
+    /**
      * 写数据
      */
     open fun write(command: BleWriteCommand) {}

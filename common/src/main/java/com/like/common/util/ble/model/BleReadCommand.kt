@@ -87,7 +87,7 @@ abstract class BleReadCommand(
         }
     }
 
-    override fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {
+    override fun read(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {
         if (isCompleted || bluetoothGatt == null) {
             onFailure?.invoke(IllegalArgumentException("bluetoothGatt 无效 或者 此命令已经完成"))
             return

@@ -9,6 +9,8 @@ import kotlinx.coroutines.CoroutineScope
 abstract class BleCommand(val address: String) {
     lateinit var mLiveData: MutableLiveData<BleResult>
 
+    internal open fun read(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {}
+
     internal open fun write(coroutineScope: CoroutineScope, bluetoothGatt: BluetoothGatt?) {}
 
     internal open fun connect(coroutineScope: CoroutineScope, gattCallback: BluetoothGattCallback, bluetoothAdapter: BluetoothAdapter?, disconnect: () -> Unit) {}
