@@ -49,7 +49,6 @@ class BleConnectCommand(
             observer = Observer { bleResult ->
                 if (bleResult?.status == BleStatus.CONNECTED) {
                     job?.cancel()
-                    removeObserver(observer)
                     onSuccess?.invoke()
                 } else if (bleResult?.status == BleStatus.DISCONNECTED) {
                     job?.cancel()
