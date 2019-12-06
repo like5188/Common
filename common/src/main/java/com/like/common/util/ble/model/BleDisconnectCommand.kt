@@ -42,6 +42,7 @@ class BleDisconnectCommand(
             }
 
             withContext(Dispatchers.Main) {
+                mLiveData?.value = null// 避免残留值影响下次命令
                 mLiveData?.observe(activity, observer)
             }
 

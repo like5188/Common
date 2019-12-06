@@ -80,6 +80,7 @@ class BleWriteCharacteristicCommand(
         }
 
         coroutineScope.launch(Dispatchers.Main) {
+            mLiveData?.value = null// 避免残留值影响下次命令
             mLiveData?.observe(activity, observer)
 
             job = launch(Dispatchers.IO) {

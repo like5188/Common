@@ -58,10 +58,11 @@ import com.like.common.util.ble.scanstrategy.IScanStrategy
  */
 class BleManager(private val mActivity: FragmentActivity) {
     private var mBleState: BaseBleState? = null
-    private val mAllLiveData = MutableLiveData<BleResult>()
-    private val mLiveData: MediatorLiveData<BleResult> by lazy {
+    private val mLiveData = MutableLiveData<BleResult>()
+    private val mPartLiveData: MediatorLiveData<BleResult> by lazy {
         MediatorLiveData<BleResult>().apply {
-            addSource(mAllLiveData) {
+            addSource(mLiveData) {
+                it ?: return@addSource
                 // 过滤状态，只发送一部分，其它的用回调替代。
                 when {
                     it.status == BleStatus.ON ||
@@ -84,11 +85,11 @@ class BleManager(private val mActivity: FragmentActivity) {
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
                         BluetoothAdapter.STATE_ON -> {// 蓝牙已打开
-                            mAllLiveData.postValue(BleResult(BleStatus.ON))
+                            mLiveData.postValue(BleResult(BleStatus.ON))
                             initBle()// 初始化蓝牙
                         }
                         BluetoothAdapter.STATE_OFF -> {// 蓝牙已关闭
-                            mAllLiveData.postValue(BleResult(BleStatus.OFF))
+                            mLiveData.postValue(BleResult(BleStatus.OFF))
                             mBleState?.close()
                         }
                     }
@@ -101,7 +102,7 @@ class BleManager(private val mActivity: FragmentActivity) {
             BleStatus.INIT_SUCCESS -> {
                 val bluetoothManager = mBleState?.getBluetoothManager() ?: return@Observer
                 val bluetoothAdapter = mBleState?.getBluetoothAdapter() ?: return@Observer
-                mBleState = ScanState(mActivity, mAllLiveData, bluetoothManager, bluetoothAdapter)
+                mBleState = ScanState(mActivity, mLiveData, bluetoothManager, bluetoothAdapter)
             }
             else -> {
             }
@@ -112,10 +113,10 @@ class BleManager(private val mActivity: FragmentActivity) {
         // 注册蓝牙打开关闭监听
         mActivity.registerReceiver(mReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
 
-        mAllLiveData.observe(mActivity, mObserver)
+        mLiveData.observe(mActivity, mObserver)
     }
 
-    fun getLiveData(): LiveData<BleResult> = mLiveData
+    fun getLiveData(): LiveData<BleResult> = mPartLiveData
 
     /**
      * 初始化蓝牙适配器
@@ -123,7 +124,7 @@ class BleManager(private val mActivity: FragmentActivity) {
     @MainThread
     fun initBle() {
         if (mBleState == null || mBleState !is InitialState) {
-            mBleState = InitialState(mActivity, mAllLiveData)
+            mBleState = InitialState(mActivity, mLiveData)
         }
         mBleState?.init()
     }
@@ -143,13 +144,13 @@ class BleManager(private val mActivity: FragmentActivity) {
     }
 
     fun sendCommand(command: BleCommand) {
-        command.mLiveData = mAllLiveData
+        command.mLiveData = mLiveData
         when (command) {
             is BleConnectCommand -> {
                 if (mBleState is ScanState) {
                     val bluetoothManager = mBleState?.getBluetoothManager() ?: return
                     val bluetoothAdapter = mBleState?.getBluetoothAdapter() ?: return
-                    mBleState = ConnectState(mActivity, mAllLiveData, bluetoothManager, bluetoothAdapter)
+                    mBleState = ConnectState(mActivity, mLiveData, bluetoothManager, bluetoothAdapter)
                 }
                 if (mBleState is ConnectState) {
                     mBleState?.connect(command)
@@ -178,7 +179,7 @@ class BleManager(private val mActivity: FragmentActivity) {
         mBleState = null
         try {
             mActivity.unregisterReceiver(mReceiver)
-            mAllLiveData.removeObserver(mObserver)
+            mLiveData.removeObserver(mObserver)
         } catch (e: Exception) {// 避免 java.lang.IllegalArgumentException: Receiver not registered
             e.printStackTrace()
         }
