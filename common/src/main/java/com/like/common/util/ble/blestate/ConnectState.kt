@@ -80,6 +80,7 @@ class ConnectState(
                 mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.address))
             } else {
                 closeChannelAndRemove(address)
+                mConnectedBluetoothGattList.remove(gatt)
                 mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.address))
             }
         }
@@ -157,11 +158,13 @@ class ConnectState(
     // 如果连接成功了，就处理下一个连接请求。
     // 如果连接失败了（例如出错，或者连接超时失败），就马上调用 BluetoothGatt.disconnect() 来释放建立连接请求，然后处理下一个设备连接请求。
     override fun connect(command: BleConnectCommand) {
+        if (isConnected(command.address)) return
         command.connect(mActivity.lifecycleScope, mGattCallback, mBluetoothAdapter) { disconnect(BleDisconnectCommand(mActivity, command.address)) }
     }
 
     override fun disconnect(command: BleDisconnectCommand) {
         val address = command.address
+        if (!isConnected(address)) return
         val listIterator = mConnectedBluetoothGattList.listIterator()
         while (listIterator.hasNext()) {
             val gatt = listIterator.next()
@@ -236,4 +239,8 @@ class ConnectState(
     override fun getBluetoothManager(): BluetoothManager? {
         return mBluetoothManager
     }
+
+    private fun isConnected(address: String) =
+            mConnectedBluetoothGattList.any { it.device.address == address }
+
 }
