@@ -73,6 +73,7 @@ class BlePeripheralActivity : AppCompatActivity() {
         }
     }
     private val bluetoothGattServerCallback = object : BluetoothGattServerCallback() {
+        private var mCurWriteData: ByteArray? = null
 
         /**
          * @param newState  连接状态，只能为BluetoothProfile.STATE_CONNECTED和BluetoothProfile.STATE_DISCONNECTED。
@@ -91,8 +92,11 @@ class BlePeripheralActivity : AppCompatActivity() {
          */
         override fun onCharacteristicReadRequest(device: BluetoothDevice, requestId: Int, offset: Int, characteristic: BluetoothGattCharacteristic) {
             appendText("onCharacteristicReadRequest device=$device requestId=$requestId offset=$offset characteristic=$characteristic value=${characteristic.value?.contentToString()}")
-            // 此方法要求作出响应
-            mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x07, 0x08))// 最后一个参数是传的数据。
+            val curWriteData = mCurWriteData
+            if (curWriteData != null && curWriteData.isNotEmpty() && curWriteData[0] == 0x1.toByte()) {
+                // 此方法要求作出响应
+                mBluetoothGattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, byteArrayOf(0x07, 0x08))// 最后一个参数是传的数据。
+            }
         }
 
         /**
@@ -101,6 +105,7 @@ class BlePeripheralActivity : AppCompatActivity() {
          */
         override fun onCharacteristicWriteRequest(device: BluetoothDevice, requestId: Int, characteristic: BluetoothGattCharacteristic, preparedWrite: Boolean, responseNeeded: Boolean, offset: Int, value: ByteArray) {
             appendText("onCharacteristicWriteRequest device=$device requestId=$requestId characteristic=$characteristic preparedWrite=$preparedWrite responseNeeded=$responseNeeded offset=$offset value=${value.contentToString()}")
+            mCurWriteData = value
             // 如果 responseNeeded=true（此属性由中心设备的 characteristic.setWriteType() 方法设置），则必须调用 sendResponse()方法回复中心设备，这个方法会触发中心设备的 BluetoothGattCallback.onCharacteristicWrite() 方法，然后中心设备才能继续下次写数据，否则不能再次写入数据。
             // 如果 responseNeeded=false，那么不需要 sendResponse() 方法，也会触发中心设备的 BluetoothGattCallback.onCharacteristicWrite() 方法
             if (responseNeeded) {

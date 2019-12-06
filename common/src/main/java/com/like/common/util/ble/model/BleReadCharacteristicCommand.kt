@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothGatt
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.like.common.util.Logger
-import com.like.common.util.ble.utils.batch
 import com.like.common.util.ble.utils.findCharacteristic
 import com.like.common.util.ble.utils.toByteArrayOrNull
 import kotlinx.coroutines.*
@@ -15,11 +14,8 @@ import java.util.concurrent.TimeoutException
 /**
  * 蓝牙读取特征值数据的命令
  *
- * @param id                        唯一标识，一般用控制码表示
- * @param data                      需要发送的命令数据
  * @param address                   蓝牙设备的地址
  * @param characteristicUuidString  数据交互的蓝牙特征地址
- * @param description               命令描述，用于日志打印、错误提示等
  * @param readTimeout               读取数据超时时间（毫秒）
  * @param maxTransferSize           硬件规定的一次传输的最大字节数
  * core spec里面定义了ATT的默认MTU为23个bytes， 除去ATT的opcode一个字节以及ATT的handle 2个字节之后，剩下的20个字节便是留给GATT的了。
@@ -30,11 +26,8 @@ import java.util.concurrent.TimeoutException
  */
 abstract class BleReadCharacteristicCommand(
         private val activity: Activity,
-        private val id: Int,
-        private val data: ByteArray,
         address: String,
         private val characteristicUuidString: String,
-        private val description: String = "",
         private val readTimeout: Long = 0L,
         private val maxTransferSize: Int = 20,
         private val maxFrameTransferSize: Int = 300,
@@ -69,7 +62,6 @@ abstract class BleReadCharacteristicCommand(
      */
     abstract fun isWholeFrame(data: ByteBuffer): Boolean
 
-    private var job: Job? = null
     private val mWriteObserver = Observer<BleResult> { bleResult ->
         if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ_SUCCESS) {
             if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
@@ -81,7 +73,6 @@ abstract class BleReadCharacteristicCommand(
                 onSuccess?.invoke(resultCache.toByteArrayOrNull())
             }
         } else if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ_FAILURE) {
-            job?.cancel()
             isCompleted = true
             onFailure?.invoke(RuntimeException("读取特征值失败：$characteristicUuidString"))
         }
@@ -104,23 +95,18 @@ abstract class BleReadCharacteristicCommand(
             return
         }
 
-        Logger.w("--------------------开始执行 $description 命令--------------------")
+        Logger.w("--------------------开始执行命令--------------------")
         coroutineScope.launch(Dispatchers.Main) {
             mLiveData.observe(activity, mWriteObserver)
 
-            job = launch(Dispatchers.IO) {
-                data.batch(maxTransferSize).forEach {
-                    characteristic.value = it
-                    bluetoothGatt.readCharacteristic(characteristic)
-                    delay(1000)
-                }
+            launch(Dispatchers.IO) {
+                bluetoothGatt.readCharacteristic(characteristic)
             }
 
             withContext(Dispatchers.IO) {
                 while (!isCompleted) {
                     delay(100)
                     if (isExpired()) {// 说明是超时了
-                        job?.cancel()
                         isCompleted = true
                         onFailure?.invoke(TimeoutException())
                         return@withContext

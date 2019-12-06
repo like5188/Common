@@ -48,16 +48,13 @@ class BleAdapter(private val mActivity: Activity, private val mBleManager: BleMa
         binding.btnReadChar.setOnClickListener {
             mBleManager.sendCommand(object : BleReadCharacteristicCommand(
                     mActivity,
-                    1,
-                    byteArrayOf(0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02),
                     address,
                     "0000fff2-0000-1000-8000-00805f9b34fb",
-                    "模拟的BleCommand",
                     5000,
                     5,
                     300,
                     {
-                        mActivity.shortToastCenter("读特征成功")
+                        mActivity.shortToastCenter("读特征成功 ${it?.contentToString()}")
                     },
                     {
                         mActivity.shortToastCenter("读特征失败！${it.getCustomNetworkMessage()}")
@@ -72,12 +69,12 @@ class BleAdapter(private val mActivity: Activity, private val mBleManager: BleMa
             mBleManager.sendCommand(BleWriteCharacteristicCommand(
                     mActivity,
                     1,
-                    byteArrayOf(0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02),
+                    byteArrayOf(0x1),
                     address,
                     "0000fff2-0000-1000-8000-00805f9b34fb",
                     "模拟的BleCommand",
                     5000,
-                    5,
+                    20,
                     300,
                     {
                         mActivity.shortToastCenter("写特征成功")
@@ -93,7 +90,7 @@ class BleAdapter(private val mActivity: Activity, private val mBleManager: BleMa
                     address,
                     50,
                     {
-                        mActivity.shortToastCenter("设置MTU成功")
+                        mActivity.shortToastCenter("设置MTU成功 $it")
                     },
                     {
                         mActivity.shortToastCenter("设置MTU失败！${it.getCustomNetworkMessage()}")

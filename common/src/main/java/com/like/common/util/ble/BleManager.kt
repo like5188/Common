@@ -143,6 +143,7 @@ class BleManager(private val mActivity: FragmentActivity) {
     }
 
     fun sendCommand(command: BleCommand) {
+        command.mLiveData = mAllLiveData
         when (command) {
             is BleConnectCommand -> {
                 if (mBleState is ScanState) {
@@ -151,7 +152,6 @@ class BleManager(private val mActivity: FragmentActivity) {
                     mBleState = ConnectState(mActivity, mAllLiveData, bluetoothManager, bluetoothAdapter)
                 }
                 if (mBleState is ConnectState) {
-                    command.mLiveData = mAllLiveData
                     mBleState?.connect(command)
                 }
             }
@@ -159,11 +159,9 @@ class BleManager(private val mActivity: FragmentActivity) {
                 mBleState?.disconnect(command)
             }
             is BleReadCharacteristicCommand -> {
-                command.mLiveData = mAllLiveData
                 mBleState?.read(command)
             }
             is BleWriteCharacteristicCommand -> {
-                command.mLiveData = mAllLiveData
                 mBleState?.write(command)
             }
             is BleSetMtuCommand -> {
