@@ -88,7 +88,7 @@ class BleWriteCharacteristicCommand(
         }
 
         coroutineScope.launch(Dispatchers.Main) {
-            mLiveData.observe(activity, observer)
+            mLiveData?.observe(activity, observer)
 
             job = launch(Dispatchers.IO) {
                 mDataList.forEach {
@@ -118,7 +118,7 @@ class BleWriteCharacteristicCommand(
     private fun removeObserver(observer: Observer<BleResult>?) {
         observer ?: return
         activity.runOnUiThread {
-            mLiveData.removeObserver(observer)
+            mLiveData?.removeObserver(observer)
         }
     }
 }

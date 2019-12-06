@@ -49,7 +49,7 @@ abstract class BleReadCharacteristicCommand(
         set(value) {
             if (value) {
                 activity.runOnUiThread {
-                    mLiveData.removeObserver(mWriteObserver)
+                    mLiveData?.removeObserver(mWriteObserver)
                 }
                 field = value
             }
@@ -97,7 +97,7 @@ abstract class BleReadCharacteristicCommand(
 
         Logger.w("--------------------开始执行命令--------------------")
         coroutineScope.launch(Dispatchers.Main) {
-            mLiveData.observe(activity, mWriteObserver)
+            mLiveData?.observe(activity, mWriteObserver)
 
             launch(Dispatchers.IO) {
                 bluetoothGatt.readCharacteristic(characteristic)

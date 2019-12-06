@@ -1,16 +1,15 @@
 package com.like.common.util.ble.model
 
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
 import android.os.Build
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.like.common.util.Logger
 import com.like.common.util.shortToastCenter
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 蓝牙设置MTU的命令
@@ -39,15 +38,15 @@ class BleSetMtuCommand(
             observer = Observer { bleResult ->
                 if (bleResult?.status == BleStatus.ON_MTU_CHANGED_SUCCESS) {
                     removeObserver(observer)
-                    onFailure?.invoke(RuntimeException("设置MTU失败"))
+                    onSuccess?.invoke(mtu)
                 } else if (bleResult?.status == BleStatus.ON_MTU_CHANGED_FAILURE) {
                     removeObserver(observer)
-                    onSuccess?.invoke(mtu)
+                    onFailure?.invoke(RuntimeException("设置MTU失败"))
                 }
             }
 
             withContext(Dispatchers.Main) {
-                mLiveData.observe(activity, observer)
+                mLiveData?.observe(activity, observer)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -61,7 +60,7 @@ class BleSetMtuCommand(
     private fun removeObserver(observer: Observer<BleResult>?) {
         observer ?: return
         activity.runOnUiThread {
-            mLiveData.removeObserver(observer)
+            mLiveData?.removeObserver(observer)
         }
     }
 }

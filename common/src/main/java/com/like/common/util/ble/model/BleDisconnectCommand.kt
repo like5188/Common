@@ -43,7 +43,7 @@ class BleDisconnectCommand(
             }
 
             withContext(Dispatchers.Main) {
-                mLiveData.observe(activity, observer)
+                mLiveData?.observe(activity, observer)
             }
 
             bluetoothGatt.disconnect()
@@ -53,7 +53,7 @@ class BleDisconnectCommand(
     private fun removeObserver(observer: Observer<BleResult>?) {
         observer ?: return
         activity.runOnUiThread {
-            mLiveData.removeObserver(observer)
+            mLiveData?.removeObserver(observer)
         }
     }
 }

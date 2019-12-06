@@ -57,7 +57,7 @@ class BleConnectCommand(
             }
 
             withContext(Dispatchers.Main) {
-                mLiveData.observe(activity, observer)
+                mLiveData?.observe(activity, observer)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -76,7 +76,7 @@ class BleConnectCommand(
     private fun removeObserver(observer: Observer<BleResult>?) {
         observer ?: return
         activity.runOnUiThread {
-            mLiveData.removeObserver(observer)
+            mLiveData?.removeObserver(observer)
         }
     }
 }
