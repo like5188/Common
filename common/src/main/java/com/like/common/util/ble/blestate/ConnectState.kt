@@ -168,7 +168,7 @@ class ConnectState(
             if (gatt.device.address == address) {
                 command.disconnect(mActivity.lifecycleScope, gatt)
                 listIterator.remove()
-                break
+                return
             }
         }
     }
