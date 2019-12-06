@@ -51,7 +51,6 @@ class BleAdapter(private val mActivity: Activity, private val mBleManager: BleMa
                     address,
                     "0000fff2-0000-1000-8000-00805f9b34fb",
                     5000,
-                    5,
                     300,
                     {
                         mActivity.shortToastCenter("读特征成功 ${it?.contentToString()}")
@@ -68,14 +67,11 @@ class BleAdapter(private val mActivity: Activity, private val mBleManager: BleMa
         binding.btnWriteChar.setOnClickListener {
             mBleManager.sendCommand(BleWriteCharacteristicCommand(
                     mActivity,
-                    1,
                     byteArrayOf(0x1),
                     address,
                     "0000fff2-0000-1000-8000-00805f9b34fb",
-                    "模拟的BleCommand",
                     5000,
                     20,
-                    300,
                     {
                         mActivity.shortToastCenter("写特征成功")
                     },

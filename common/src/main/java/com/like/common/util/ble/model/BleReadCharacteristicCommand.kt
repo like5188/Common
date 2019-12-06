@@ -4,7 +4,6 @@ import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.like.common.util.Logger
 import com.like.common.util.ble.utils.findCharacteristic
 import com.like.common.util.ble.utils.toByteArrayOrNull
 import kotlinx.coroutines.*
@@ -17,9 +16,6 @@ import java.util.concurrent.TimeoutException
  * @param address                   蓝牙设备的地址
  * @param characteristicUuidString  数据交互的蓝牙特征地址
  * @param readTimeout               读取数据超时时间（毫秒）
- * @param maxTransferSize           硬件规定的一次传输的最大字节数
- * core spec里面定义了ATT的默认MTU为23个bytes， 除去ATT的opcode一个字节以及ATT的handle 2个字节之后，剩下的20个字节便是留给GATT的了。
- * 由于ATT的最大长度为512byte，因此一般认为MTU的最大长度为512个byte就够了，再大也没什么意义，你不可能发一个超过512的ATT的数据。
  * @param maxFrameTransferSize      由硬件开发者约定的一帧传输的最大字节数
  * @param onSuccess                 命令执行成功回调
  * @param onFailure                 命令执行失败回调
@@ -29,7 +25,6 @@ abstract class BleReadCharacteristicCommand(
         address: String,
         private val characteristicUuidString: String,
         private val readTimeout: Long = 0L,
-        private val maxTransferSize: Int = 20,
         private val maxFrameTransferSize: Int = 300,
         private val onSuccess: ((ByteArray?) -> Unit)? = null,
         private val onFailure: ((Throwable) -> Unit)? = null
@@ -95,7 +90,6 @@ abstract class BleReadCharacteristicCommand(
             return
         }
 
-        Logger.w("--------------------开始执行命令--------------------")
         coroutineScope.launch(Dispatchers.Main) {
             mLiveData?.observe(activity, mWriteObserver)
 
