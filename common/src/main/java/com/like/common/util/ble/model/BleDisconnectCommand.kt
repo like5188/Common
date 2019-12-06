@@ -34,7 +34,6 @@ class BleDisconnectCommand(
             var observer: Observer<BleResult>? = null
             observer = Observer { bleResult ->
                 if (bleResult?.status == BleStatus.CONNECTED) {
-                    removeObserver(observer)
                     onFailure?.invoke(RuntimeException("断开蓝牙连接失败"))
                 } else if (bleResult?.status == BleStatus.DISCONNECTED) {
                     removeObserver(observer)
