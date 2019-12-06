@@ -66,7 +66,7 @@ class ConnectState(
                 BluetoothGatt.STATE_DISCONNECTED -> {// 连接蓝牙设备失败
                     closeChannelAndRemove(gatt.device.address)
                     mConnectedBluetoothGattList.remove(gatt)
-                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.name))
+                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.address))
                 }
             }
         }
@@ -77,10 +77,10 @@ class ConnectState(
             if (status == BluetoothGatt.GATT_SUCCESS) {// 发现了蓝牙服务后，才算真正的连接成功。
                 addChannelAndReceive(address, gatt)
                 mConnectedBluetoothGattList.add(gatt)
-                mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.name))
+                mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.address))
             } else {
                 closeChannelAndRemove(address)
-                mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.name))
+                mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.address))
             }
         }
 
@@ -171,6 +171,7 @@ class ConnectState(
                 return
             }
         }
+        mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, address))
     }
 
     @Synchronized
