@@ -40,24 +40,17 @@ abstract class BleReadCharacteristicCommand(
     /**
      * 此条命令是否已经完成。成功或者失败
      */
-    var isCompleted = false
+    private var isCompleted = false
         set(value) {
             if (value) {
                 activity.runOnUiThread {
-                    mLiveData?.removeObserver(mWriteObserver)
+                    mLiveData?.removeObserver(mObserver)
                 }
                 field = value
             }
         }
 
-    /**
-     * 判断返回的是否是完整的一帧数据
-     *
-     * @param data  当前接收到的所有数据
-     */
-    abstract fun isWholeFrame(data: ByteBuffer): Boolean
-
-    private val mWriteObserver = Observer<BleResult> { bleResult ->
+    private val mObserver = Observer<BleResult> { bleResult ->
         if (bleResult?.status == BleStatus.ON_CHARACTERISTIC_READ_SUCCESS) {
             if (isCompleted) {// 说明超时了，避免超时后继续返回数据（此时没有发送下一条数据）
                 return@Observer
@@ -92,7 +85,7 @@ abstract class BleReadCharacteristicCommand(
 
         coroutineScope.launch(Dispatchers.Main) {
             mLiveData?.value = null// 避免残留值影响下次命令
-            mLiveData?.observe(activity, mWriteObserver)
+            mLiveData?.observe(activity, mObserver)
 
             launch(Dispatchers.IO) {
                 bluetoothGatt.readCharacteristic(characteristic)
@@ -111,6 +104,13 @@ abstract class BleReadCharacteristicCommand(
         }
 
     }
+
+    /**
+     * 判断返回的是否是完整的一帧数据
+     *
+     * @param data  当前接收到的所有数据
+     */
+    abstract fun isWholeFrame(data: ByteBuffer): Boolean
 }
 
 
