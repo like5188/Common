@@ -138,6 +138,7 @@ class ConnectState(
         }
     }
 
+    @Synchronized
     override fun read(command: BleReadCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
@@ -156,6 +157,7 @@ class ConnectState(
         }
     }
 
+    @Synchronized
     override fun write(command: BleWriteCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
@@ -174,10 +176,22 @@ class ConnectState(
         }
     }
 
+    @Synchronized
     override fun setMtu(command: BleSetMtuCommand) {
         val address = command.address
-        mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-            command.setMtu(mActivity.lifecycleScope, it)
+        if (!mChannels.containsKey(address)) {
+            val channel = Channel<BleCommand>()
+            mChannels[address] = channel
+            mActivity.lifecycleScope.launch(Dispatchers.IO) {
+                for (bleSetMtuCommand in channel) {
+                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
+                        bleSetMtuCommand.setMtu(mActivity.lifecycleScope, it)
+                    }
+                }
+            }
+        }
+        mActivity.lifecycleScope.launch(Dispatchers.IO) {
+            mChannels[address]?.send(command)
         }
     }
 
