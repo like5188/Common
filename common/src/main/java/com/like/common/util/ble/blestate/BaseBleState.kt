@@ -30,6 +30,11 @@ abstract class BaseBleState {
     open fun connect(command: BleConnectCommand) {}
 
     /**
+     * 断开指定蓝牙设备
+     */
+    open fun disconnect(command: BleDisconnectCommand) {}
+
+    /**
      * 读数据
      */
     open fun read(command: BleReadCommand) {}
@@ -43,11 +48,6 @@ abstract class BaseBleState {
      * 设置mtu
      */
     open fun setMtu(command: BleSetMtuCommand) {}
-
-    /**
-     * 断开指定蓝牙设备
-     */
-    open fun disconnect(command: BleDisconnectCommand) {}
 
     /**
      * 释放资源

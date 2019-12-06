@@ -125,24 +125,6 @@ class ConnectState(
         command.connect(mActivity.lifecycleScope, mGattCallback, mBluetoothAdapter) { disconnect(BleDisconnectCommand(mActivity, command.address)) }
     }
 
-    override fun write(command: BleWriteCommand) {
-        val address = command.address
-        if (!mChannels.containsKey(address)) {
-            val channel = Channel<BleCommand>()
-            mChannels[address] = channel
-            mActivity.lifecycleScope.launch(Dispatchers.IO) {
-                for (bleCommand in channel) {
-                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-                        bleCommand.write(mActivity.lifecycleScope, it)
-                    }
-                }
-            }
-        }
-        mActivity.lifecycleScope.launch(Dispatchers.IO) {
-            mChannels[address]?.send(command)
-        }
-    }
-
     override fun disconnect(command: BleDisconnectCommand) {
         val address = command.address
         val listIterator = mConnectedBluetoothGattList.listIterator()
@@ -153,6 +135,49 @@ class ConnectState(
                 listIterator.remove()
                 break
             }
+        }
+    }
+
+    override fun read(command: BleReadCommand) {
+        val address = command.address
+        if (!mChannels.containsKey(address)) {
+            val channel = Channel<BleCommand>()
+            mChannels[address] = channel
+            mActivity.lifecycleScope.launch(Dispatchers.IO) {
+                for (bleReadCommand in channel) {
+                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
+                        bleReadCommand.read(mActivity.lifecycleScope, it)
+                    }
+                }
+            }
+        }
+        mActivity.lifecycleScope.launch(Dispatchers.IO) {
+            mChannels[address]?.send(command)
+        }
+    }
+
+    override fun write(command: BleWriteCommand) {
+        val address = command.address
+        if (!mChannels.containsKey(address)) {
+            val channel = Channel<BleCommand>()
+            mChannels[address] = channel
+            mActivity.lifecycleScope.launch(Dispatchers.IO) {
+                for (bleWriteCommand in channel) {
+                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
+                        bleWriteCommand.write(mActivity.lifecycleScope, it)
+                    }
+                }
+            }
+        }
+        mActivity.lifecycleScope.launch(Dispatchers.IO) {
+            mChannels[address]?.send(command)
+        }
+    }
+
+    override fun setMtu(command: BleSetMtuCommand) {
+        val address = command.address
+        mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
+            command.setMtu(mActivity.lifecycleScope, it)
         }
     }
 
@@ -170,13 +195,6 @@ class ConnectState(
 
         mBluetoothAdapter = null
         mBluetoothManager = null
-    }
-
-    override fun setMtu(command: BleSetMtuCommand) {
-        val address = command.address
-        mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-            command.setMtu(mActivity.lifecycleScope, it)
-        }
     }
 
     override fun getBluetoothAdapter(): BluetoothAdapter? {
