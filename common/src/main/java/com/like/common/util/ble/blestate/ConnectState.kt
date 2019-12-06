@@ -25,6 +25,37 @@ class ConnectState(
     // 连接蓝牙设备的回调函数
     private val mGattCallback = object : BluetoothGattCallback() {
 
+        /**
+         * 添加指定 address 的通道，并开启接收数据
+         */
+        private fun addChannelAndReceive(address: String, gatt: BluetoothGatt) {
+            if (address.isEmpty()) return
+            if (!mChannels.containsKey(address)) {
+                val channel = Channel<BleCommand>()
+                mChannels[address] = channel
+                mActivity.lifecycleScope.launch(Dispatchers.IO) {
+                    for (command in channel) {
+                        when (command) {
+                            is BleReadCommand -> command.read(mActivity.lifecycleScope, gatt)
+                            is BleWriteCommand -> command.write(mActivity.lifecycleScope, gatt)
+                            is BleSetMtuCommand -> command.setMtu(mActivity.lifecycleScope, gatt)
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * 关闭指定 address 的通道，并移除
+         */
+        private fun closeChannelAndRemove(address: String) {
+            if (address.isEmpty()) return
+            if (mChannels.containsKey(address)) {
+                mChannels[address]?.close()
+                mChannels.remove(address)
+            }
+        }
+
         // 当连接状态改变
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             when (newState) {
@@ -33,18 +64,22 @@ class ConnectState(
                     gatt.discoverServices()
                 }
                 BluetoothGatt.STATE_DISCONNECTED -> {// 连接蓝牙设备失败
+                    closeChannelAndRemove(gatt.device.address)
                     mConnectedBluetoothGattList.remove(gatt)
-                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED))
+                    mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.name))
                 }
             }
         }
 
         // 发现蓝牙服务
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
+            val address = gatt.device.address
             if (status == BluetoothGatt.GATT_SUCCESS) {// 发现了蓝牙服务后，才算真正的连接成功。
+                addChannelAndReceive(address, gatt)
                 mConnectedBluetoothGattList.add(gatt)
                 mBleResultLiveData.postValue(BleResult(BleStatus.CONNECTED, gatt.device.name))
             } else {
+                closeChannelAndRemove(address)
                 mBleResultLiveData.postValue(BleResult(BleStatus.DISCONNECTED, gatt.device.name))
             }
         }
@@ -142,16 +177,10 @@ class ConnectState(
     override fun read(command: BleReadCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
-            val channel = Channel<BleCommand>()
-            mChannels[address] = channel
-            mActivity.lifecycleScope.launch(Dispatchers.IO) {
-                for (bleReadCommand in channel) {
-                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-                        bleReadCommand.read(mActivity.lifecycleScope, it)
-                    }
-                }
-            }
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ_FAILURE, errorMsg = "设备未连接 $command"))
+            return
         }
+
         mActivity.lifecycleScope.launch(Dispatchers.IO) {
             mChannels[address]?.send(command)
         }
@@ -161,16 +190,10 @@ class ConnectState(
     override fun write(command: BleWriteCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
-            val channel = Channel<BleCommand>()
-            mChannels[address] = channel
-            mActivity.lifecycleScope.launch(Dispatchers.IO) {
-                for (bleWriteCommand in channel) {
-                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-                        bleWriteCommand.write(mActivity.lifecycleScope, it)
-                    }
-                }
-            }
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_WRITE_FAILURE, errorMsg = "设备未连接 $command"))
+            return
         }
+
         mActivity.lifecycleScope.launch(Dispatchers.IO) {
             mChannels[address]?.send(command)
         }
@@ -180,16 +203,10 @@ class ConnectState(
     override fun setMtu(command: BleSetMtuCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
-            val channel = Channel<BleCommand>()
-            mChannels[address] = channel
-            mActivity.lifecycleScope.launch(Dispatchers.IO) {
-                for (bleSetMtuCommand in channel) {
-                    mConnectedBluetoothGattList.firstOrNull { it.device.address == address }?.let {
-                        bleSetMtuCommand.setMtu(mActivity.lifecycleScope, it)
-                    }
-                }
-            }
+            mBleResultLiveData.postValue(BleResult(BleStatus.ON_MTU_CHANGED_FAILURE, errorMsg = "设备未连接 $command"))
+            return
         }
+
         mActivity.lifecycleScope.launch(Dispatchers.IO) {
             mChannels[address]?.send(command)
         }
