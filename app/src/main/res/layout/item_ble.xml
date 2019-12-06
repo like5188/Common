@@ -41,6 +41,7 @@
                 tools:text="XX:XX:XX:XX:XX:XX" />
 
             <TextView
+                android:id="@+id/tv_connect_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -48,6 +49,68 @@
                 android:textColor="@{bleInfo.isConnected?@color/common_text_blue_1:@color/common_text_black_1}"
                 android:textSize="14sp"
                 tools:text="未连接" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_read_char"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="读特征" />
+
+            <Button
+                android:id="@+id/btn_write_char"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="写特征" />
+
+            <Button
+                android:id="@+id/btn_set_mtu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置MTU" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_open_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开启通知" />
+
+            <Button
+                android:id="@+id/btn_close_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关闭通知" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_read_des"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="读描述" />
+
+            <Button
+                android:id="@+id/btn_write_des"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="写描述" />
+
         </LinearLayout>
 
         <View

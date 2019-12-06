@@ -13,7 +13,7 @@ import com.like.common.util.shortToastCenter
 import kotlinx.coroutines.*
 
 /**
- * 蓝牙连接的命令
+ * 蓝牙设置MTU的命令
  */
 class BleSetMtuCommand(
         private val activity: Activity,

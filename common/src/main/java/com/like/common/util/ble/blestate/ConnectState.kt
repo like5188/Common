@@ -36,8 +36,8 @@ class ConnectState(
                 mActivity.lifecycleScope.launch(Dispatchers.IO) {
                     for (command in channel) {
                         when (command) {
-                            is BleReadCommand -> command.read(mActivity.lifecycleScope, gatt)
-                            is BleWriteCommand -> command.write(mActivity.lifecycleScope, gatt)
+                            is BleReadCharacteristicCommand -> command.read(mActivity.lifecycleScope, gatt)
+                            is BleWriteCharacteristicCommand -> command.write(mActivity.lifecycleScope, gatt)
                             is BleSetMtuCommand -> command.setMtu(mActivity.lifecycleScope, gatt)
                         }
                     }
@@ -175,7 +175,7 @@ class ConnectState(
     }
 
     @Synchronized
-    override fun read(command: BleReadCommand) {
+    override fun read(command: BleReadCharacteristicCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
             mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_READ_FAILURE, errorMsg = "设备未连接 $command"))
@@ -188,7 +188,7 @@ class ConnectState(
     }
 
     @Synchronized
-    override fun write(command: BleWriteCommand) {
+    override fun write(command: BleWriteCharacteristicCommand) {
         val address = command.address
         if (!mChannels.containsKey(address)) {
             mBleResultLiveData.postValue(BleResult(BleStatus.ON_CHARACTERISTIC_WRITE_FAILURE, errorMsg = "设备未连接 $command"))

@@ -158,11 +158,11 @@ class BleManager(private val mActivity: FragmentActivity) {
             is BleDisconnectCommand -> {
                 mBleState?.disconnect(command)
             }
-            is BleReadCommand -> {
+            is BleReadCharacteristicCommand -> {
                 command.mLiveData = mAllLiveData
                 mBleState?.read(command)
             }
-            is BleWriteCommand -> {
+            is BleWriteCharacteristicCommand -> {
                 command.mLiveData = mAllLiveData
                 mBleState?.write(command)
             }

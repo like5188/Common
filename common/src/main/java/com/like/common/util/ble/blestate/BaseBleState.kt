@@ -37,12 +37,12 @@ abstract class BaseBleState {
     /**
      * 读数据
      */
-    open fun read(command: BleReadCommand) {}
+    open fun read(command: BleReadCharacteristicCommand) {}
 
     /**
      * 写数据
      */
-    open fun write(command: BleWriteCommand) {}
+    open fun write(command: BleWriteCharacteristicCommand) {}
 
     /**
      * 设置mtu

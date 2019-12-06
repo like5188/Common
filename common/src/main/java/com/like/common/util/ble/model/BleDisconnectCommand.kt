@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * 蓝牙连接的命令
+ * 蓝牙断开连接的命令
  */
 class BleDisconnectCommand(
         private val activity: Activity,
