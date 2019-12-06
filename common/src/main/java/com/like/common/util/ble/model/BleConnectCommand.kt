@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothGattCallback
 import android.os.Build
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.like.common.util.Logger
 import kotlinx.coroutines.*
 
 /**
