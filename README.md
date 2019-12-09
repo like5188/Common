@@ -50,7 +50,6 @@
 
 3、常用工具类
 ```java
-    ble
     validator
     ApkUtils
     AppUtils
