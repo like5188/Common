@@ -29,7 +29,6 @@
         <activity android:name=".image.ImageActivity" />
         <activity android:name=".coroutines.CoroutinesActivity" />
         <activity android:name=".update.UpdateActivity" />
-        <activity android:name=".ble.BleActivity" />
         <activity android:name=".flexbox.FlexBoxActivity" />
         <activity android:name=".notification.NotificationActivity" />
         <activity android:name=".serializable.SerializableActivity" />
@@ -44,7 +43,6 @@
         <activity
             android:name=".activitytest.TestActivity3"
             android:theme="@style/translucent" />
-        <activity android:name=".ble.BlePeripheralActivity" />
     </application>
 
 </manifest>

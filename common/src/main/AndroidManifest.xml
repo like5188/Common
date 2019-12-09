@@ -1,17 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.like.common">
 
-    <!--这个权限允许程序连接到已配对的蓝牙设备, 请求连接/接收连接/传输数据需要改权限, 主要用于对配对后进行操作-->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <!--这个权限允许程序发现和配对蓝牙设备, 该权限用来管理蓝牙设备, 有了这个权限, 应用才能使用本机的蓝牙设备, 主要用于对配对前的操作;-->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!-- Android6.0 蓝牙扫描需要下面两个危险权限-->
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

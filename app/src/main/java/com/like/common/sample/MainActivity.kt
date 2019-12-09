@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.banner.BannerActivity
-import com.like.common.sample.ble.BleActivity
-import com.like.common.sample.ble.BlePeripheralActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
@@ -115,14 +113,6 @@ class MainActivity : AppCompatActivity() {
 //                file.writeText("123")
 //            }
 //        }
-    }
-
-    fun gotoBleActivity(view: View) {
-        startActivity(Intent(this, BleActivity::class.java))
-    }
-
-    fun gotoBlePeripheralActivity(view: View) {
-        startActivity(Intent(this, BlePeripheralActivity::class.java))
     }
 
     fun gotoCoroutinesActivity(view: View) {
