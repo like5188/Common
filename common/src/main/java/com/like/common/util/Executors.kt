@@ -19,7 +19,7 @@ fun networkThread(f: () -> Unit) {
 }
 
 fun mainThread(f: () -> Unit) {
-    MAIN_EXECUTOR.execute(f)
+    if (Looper.getMainLooper() === Looper.myLooper()) f() else MAIN_EXECUTOR.execute(f)
 }
 
 class MainThreadExecutor : Executor {
