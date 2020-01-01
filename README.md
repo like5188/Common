@@ -106,7 +106,6 @@
     dragview
     pwdedittext
     toolbar
-    update
     viewPagerTransformer
     AspectRatioImageView
     CircleTextView
@@ -123,100 +122,84 @@
 
 5、常用第三方库的引用
 ```java
-   testImplementation 'junit:junit:4.12'
-   // constraint
-   api 'androidx.constraintlayout:constraintlayout:1.1.3'
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    api 'com.google.android.material:material:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.1.0'
+    // 调色板
+    api 'androidx.palette:palette:1.0.0'
 
-   // support
-   api 'androidx.appcompat:appcompat:1.1.0'
-   api 'com.google.android.material:material:1.0.0'
-   api 'androidx.recyclerview:recyclerview:1.0.0'
-   api 'androidx.palette:palette:1.0.0'// 调色板
+    // rxjava2
+    api 'io.reactivex.rxjava2:rxjava:2.2.11'
+    api 'io.reactivex.rxjava2:rxkotlin:2.3.0'
+    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    api 'com.github.tbruyelle:rxpermissions:0.10.2'
 
-   // kotlin
-   api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-   api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    // fastjson
+    api 'com.alibaba:fastjson:1.2.51'
 
-   // rxjava2
-   api 'io.reactivex.rxjava2:rxjava:2.2.11'
-   api 'io.reactivex.rxjava2:rxkotlin:2.3.0'
-   api 'io.reactivex.rxjava2:rxandroid:2.1.1'
-   api 'com.github.tbruyelle:rxpermissions:0.10.2'
+    // retrofit2
+    api 'com.squareup.retrofit2:retrofit:2.6.2'
+    api 'com.squareup.retrofit2:converter-gson:2.6.2'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
+    api 'com.squareup.retrofit2:converter-scalars:2.6.2'
+    api 'com.squareup.okhttp3:logging-interceptor:3.12.2'
 
-   // fastjson
-   api 'com.alibaba:fastjson:1.2.51'
+    // dagger
+    api 'com.google.dagger:dagger:2.17'
+    api 'com.google.dagger:dagger-android:2.17'
+    api 'com.google.dagger:dagger-android-support:2.17'
 
-   // retrofit2
-   api 'com.squareup.retrofit2:retrofit:2.6.2'
-   api 'com.squareup.retrofit2:converter-gson:2.6.2'
-   api 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
-   api 'com.squareup.retrofit2:converter-scalars:2.6.2'
-   api 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    // arouter
+    api 'com.alibaba:arouter-api:1.5.0'
 
-   // dagger
-   api 'com.google.dagger:dagger:2.17'
-   api 'com.google.dagger:dagger-android:2.17'
-   api 'com.google.dagger:dagger-android-support:2.17'
+    // ViewModelProviders
+    api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
-   // arouter
-   api 'com.alibaba:arouter-api:1.5.0'
+    // paging
+    api 'androidx.paging:paging-runtime:2.1.1'
 
-   // ViewModelProviders
-   api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    // work
+    api 'androidx.work:work-runtime-ktx:2.2.0'// workmanager 对协程的支持：suspend
 
-   // paging
-   api 'androidx.paging:paging-runtime:2.1.0'
+    // room
+    api 'androidx.room:room-runtime:2.2.3'
+    api 'androidx.room:room-rxjava2:2.2.3'
+    api 'androidx.room:room-ktx:2.2.3'// room 对协程的支持：suspend
 
-   // work
-   api 'androidx.work:work-runtime-ktx:2.2.0'// workmanager 对协程的支持：suspend
+    // coroutines
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
+    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03'
+    // Activity 或 Fragment 对协程的支持：lifecycleScope
+    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03'// ViewModel 对协程的支持：viewModelScope
+    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03'// livedata 对协程的支持：liveData{}
 
-   // room
-   api 'androidx.room:room-runtime:2.2.1'
-   api 'androidx.room:room-rxjava2:2.2.1'
-   api 'androidx.room:room-ktx:2.2.1'// room 对协程的支持：suspend
+    // glide
+    api "com.github.bumptech.glide:glide:4.8.0"
+    api "com.github.bumptech.glide:okhttp3-integration:4.8.0"
+    api 'jp.wasabeef:glide-transformations:4.0.1'// glide对应的图片处理库，可以转换图片为圆形、圆角矩形、高斯模糊等等效果
 
-   // coroutines
-   api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
-   api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
-   api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02'// Activity 或 Fragment 对协程的支持：lifecycleScope
-   api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc02'// ViewModel 对协程的支持：viewModelScope
-   api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc02'// livedata 对协程的支持：liveData{}
+    // zxing
+    api 'com.google.zxing:core:3.3.3'
 
-   // glide
-   api "com.github.bumptech.glide:glide:4.8.0"
-   api "com.github.bumptech.glide:okhttp3-integration:4.8.0"
-   api 'jp.wasabeef:glide-transformations:4.0.1'// glide对应的图片处理库，可以转换图片为圆形、圆角矩形、高斯模糊等等效果
+    // rxbinding
+    api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
 
-   // zxing
-   api 'com.google.zxing:core:3.3.3'
+    // PhotoView
+    api 'com.github.chrisbanes:PhotoView:2.1.4'// 不能升级2.2.0，因为使用了AndroidX库，不能和support库共存。
 
-   // rxbinding
-   api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
+    // 图片选择器
+    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
 
-   // PhotoView
-   api 'com.github.chrisbanes:PhotoView:2.1.4'// 不能升级2.2.0，因为使用了AndroidX库，不能和support库共存。
+    // 日期时间格式化工具
+    api 'net.danlew:android.joda:2.10.1.2'
 
-   // 图片选择器
-   api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    api 'com.google.android:flexbox:1.0.0'
 
-   // 日期时间格式化工具
-   api 'net.danlew:android.joda:2.10.1.2'
-
-   api 'com.google.android:flexbox:1.0.0'
-
-   api 'com.github.like5188:Repository:2.1.7'
-   api 'com.github.like5188:LiveDataRecyclerView:2.1.0'
-   api 'com.github.like5188:LibRetrofit:2.0.5'
-   api 'com.github.like5188.LiveDataBus:livedatabus:2.0.4'
-   api 'com.github.like5188.LiveDataBus:livedatabus_annotations:2.0.4'
-// gradle 3.2.1 不需要添加这个引用，升级到 3.5.2 后必须添加，否则会提示找不到其中的类。
-
-   // 使用 com.like.common.view.update 中的更新功能时需要
-   kapt 'com.github.like5188.LiveDataBus:livedatabus_compiler:2.0.4'
-   // 使用 Glide 时需要
-   kapt 'com.github.bumptech.glide:compiler:4.8.0'
-//    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
-//    kapt 'androidx.room:room-compiler:2.2.1'
-//    kapt 'com.google.dagger:dagger-compiler:2.17'
-//    kapt 'com.google.dagger:dagger-android-processor:2.17'
+    // 使用 Glide 时需要
+    kapt 'com.github.bumptech.glide:compiler:4.8.0'
+    //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
+    //    kapt 'androidx.room:room-compiler:2.2.1'
+    //    kapt 'com.google.dagger:dagger-compiler:2.17'
+    //    kapt 'com.google.dagger:dagger-android-processor:2.17'
 ```
