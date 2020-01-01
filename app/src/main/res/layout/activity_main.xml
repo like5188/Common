@@ -99,13 +99,6 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="gotoUpdateActivity"
-                android:text="启动更新测试界面"
-                android:textAllCaps="false" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:onClick="gotoCoroutinesActivity"
                 android:text="启动协程测试界面"
                 android:textAllCaps="false" />

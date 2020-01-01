@@ -22,7 +22,6 @@ import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
-import com.like.common.sample.update.UpdateActivity
 import com.like.common.util.SPUtils
 import com.like.common.util.setSelectorBackgroundResource
 import com.like.common.util.setSelectorSrcResource
@@ -141,10 +140,6 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoBannerActivity(view: View) {
         startActivity(Intent(this, BannerActivity::class.java))
-    }
-
-    fun gotoUpdateActivity(view: View) {
-        startActivity(Intent(this, UpdateActivity::class.java))
     }
 
     fun gotoNotificationActivity(view: View) {
