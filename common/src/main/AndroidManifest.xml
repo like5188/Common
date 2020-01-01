@@ -29,10 +29,5 @@
             android:name=".view.dragview.view.DragViewActivity"
             android:theme="@style/translucent" />
 
-        <receiver android:name=".view.update.shower.NotificationControllerBroadcastReceiver">
-            <intent-filter>
-                <action android:name="action" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

@@ -28,7 +28,6 @@
         <activity android:name=".pictureselector.PictureSelectorActivity" />
         <activity android:name=".image.ImageActivity" />
         <activity android:name=".coroutines.CoroutinesActivity" />
-        <activity android:name=".update.UpdateActivity" />
         <activity android:name=".flexbox.FlexBoxActivity" />
         <activity android:name=".notification.NotificationActivity" />
         <activity android:name=".serializable.SerializableActivity" />
