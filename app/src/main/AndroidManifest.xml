@@ -21,7 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".banner.BannerActivity" />
         <activity android:name=".letterlistview.SidebarViewActivity" />
         <activity android:name=".checkradio.CheckAndRadioActivity" />
         <activity android:name=".drag.DragViewTestActivity" />

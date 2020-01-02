@@ -141,13 +141,6 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="gotoBannerActivity"
-                android:text="启动Banner界面"
-                android:textAllCaps="false" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:onClick="gotoNotificationActivity"
                 android:text="启动Notification界面"
                 android:textAllCaps="false" />

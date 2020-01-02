@@ -10,7 +10,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.activitytest.TestActivity
-import com.like.common.sample.banner.BannerActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
@@ -136,10 +135,6 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoSidebarViewActivity(view: View) {
         startActivity(Intent(this, SidebarViewActivity::class.java))
-    }
-
-    fun gotoBannerActivity(view: View) {
-        startActivity(Intent(this, BannerActivity::class.java))
     }
 
     fun gotoNotificationActivity(view: View) {

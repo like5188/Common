@@ -101,7 +101,6 @@
 4、自定义View
 ```java
     badgeview
-    banner
     callback
     dragview
     pwdedittext
