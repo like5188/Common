@@ -115,6 +115,8 @@ dependencies {
 
     api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
 
+    api 'com.github.OCNYang:PageTransformerHelp:v1.0.1'
+
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
