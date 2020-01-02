@@ -113,6 +113,8 @@ dependencies {
 
     api 'com.google.android:flexbox:1.0.0'
 
+    api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
+
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
