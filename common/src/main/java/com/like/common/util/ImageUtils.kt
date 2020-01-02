@@ -17,6 +17,7 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import androidx.palette.graphics.Palette
+import androidx.palette.graphics.Target
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -41,24 +42,26 @@ object ImageUtils {
     /**
      * 从 Drawable 中提取颜色
      */
-    fun getColor(drawable: Drawable?, defaultColor: Int): Int {
+    fun getColor(drawable: Drawable?, target: Target, defaultColor: Int): Int {
         drawable ?: return defaultColor
-        return getColor(drawable2Bitmap(drawable), defaultColor)
+        return getColor(drawable2Bitmap(drawable), target, defaultColor)
     }
 
     /**
      * 从 Bitmap 中提取颜色
      */
-    fun getColor(bitmap: Bitmap?, defaultColor: Int): Int {
+    fun getColor(bitmap: Bitmap?, target: Target, defaultColor: Int): Int {
         bitmap ?: return defaultColor
         val palette = Palette.from(bitmap).generate()
-        val vibrant = palette.getVibrantColor(defaultColor)
-        val vibrantLight = palette.getLightVibrantColor(defaultColor)
-        val vibrantDark = palette.getDarkVibrantColor(defaultColor)
-        val muted = palette.getMutedColor(defaultColor)
-        val mutedLight = palette.getLightMutedColor(defaultColor)
-        val mutedDark = palette.getDarkMutedColor(defaultColor)
-        return vibrantDark
+        return when (target) {
+            Target.DARK_MUTED -> palette.getDarkMutedColor(defaultColor)
+            Target.DARK_VIBRANT -> palette.getDarkVibrantColor(defaultColor)
+            Target.LIGHT_MUTED -> palette.getLightMutedColor(defaultColor)
+            Target.LIGHT_VIBRANT -> palette.getLightVibrantColor(defaultColor)
+            Target.MUTED -> palette.getMutedColor(defaultColor)
+            Target.VIBRANT -> palette.getVibrantColor(defaultColor)
+            else -> defaultColor
+        }
     }
 
     /**
