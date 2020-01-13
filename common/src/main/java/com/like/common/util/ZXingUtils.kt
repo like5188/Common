@@ -1,18 +1,47 @@
 package com.like.common.util
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
+import androidx.fragment.app.FragmentActivity
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
+import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import com.like.common.view.callback.RxCallback
+import com.yzq.zxinglibrary.android.CaptureActivity
+import com.yzq.zxinglibrary.bean.ZxingConfig
+import com.yzq.zxinglibrary.common.Constant
 import java.util.*
 
 object ZXingUtils {
+
+    fun scan(activity: FragmentActivity, config: ZxingConfig, onSuccess: (String) -> Unit, onError: ((Throwable) -> Unit)? = null) {
+        val permissionUtils = PermissionUtils(activity)
+        val rxCallback = RxCallback(activity)
+        permissionUtils.checkCameraPermissionGroup {
+            val intent = Intent(activity, CaptureActivity::class.java)
+            intent.putExtra(Constant.INTENT_ZXING_CONFIG, config)
+            rxCallback.startActivityForResult(intent).subscribe(
+                    {
+                        if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+                            val content: String = it.data.getStringExtra(Constant.CODED_CONTENT) ?: ""
+                            onSuccess(content)
+                        }
+                    },
+                    {
+                        onError?.invoke(it)
+                    })
+        }
+    }
+
     /**
      * 根据条形码字符串生成条形码图片
      */
-    @Throws(Exception::class)
     fun createBarCode(content: String, width: Int, height: Int): Bitmap {
         // 生成一维条码,编码时指定大小,不要生成了图片以后再进行缩放,这样会模糊导致识别失败
         val matrix = MultiFormatWriter().encode(content, BarcodeFormat.CODE_128, width, height)
@@ -44,27 +73,76 @@ object ZXingUtils {
     }
 
     /**
-     * 生成二维码图片（不带图片）
+     * 生成二维码图片
      */
-    @Throws(WriterException::class)
-    fun createQRCode(url: String, widthAndHeight: Int): Bitmap {
-        val hints = Hashtable<EncodeHintType, String>()
-        hints.put(EncodeHintType.CHARACTER_SET, "utf-8")
-        val matrix = MultiFormatWriter().encode(url, BarcodeFormat.QR_CODE, widthAndHeight, widthAndHeight)
-
-        val width = matrix.width
-        val height = matrix.height
-        val pixels = IntArray(width * height)
-        //画黑点
-        for (y in 0 until height) {
-            (0 until width).filter { matrix.get(it, y) }
-                    .forEach {
-                        pixels[y * width + it] = Color.parseColor("#ff303030")
-                    }
+    fun createQRCode(content: String, w: Int, h: Int, logo: Bitmap?): Bitmap? {
+        if (content.isEmpty()) {
+            return null
         }
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
-        return bitmap
+        if (w <= 0 || h <= 0) {
+            return null
+        }
+        /*偏移量*/
+        var offsetX = w / 2
+        var offsetY = h / 2
+        /*生成logo*/
+        var logoBitmap: Bitmap? = null
+        if (logo != null) {
+            val matrix = Matrix()
+            val scaleFactor = Math.min(w * 1.0f / 5 / logo.width, h * 1.0f / 5 / logo.height)
+            matrix.postScale(scaleFactor, scaleFactor)
+            logoBitmap = Bitmap.createBitmap(logo, 0, 0, logo.width, logo.height, matrix, true)
+        }
+        /*如果log不为null,重新计算偏移量*/
+        var logoW = 0
+        var logoH = 0
+        if (logoBitmap != null) {
+            logoW = logoBitmap.width
+            logoH = logoBitmap.height
+            offsetX = (w - logoW) / 2
+            offsetY = (h - logoH) / 2
+        }
+        /*指定为UTF-8*/
+        val hints = Hashtable<EncodeHintType, Any?>()
+        hints[EncodeHintType.CHARACTER_SET] = "utf-8"
+        //容错级别
+        hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.H
+        //设置空白边距的宽度
+        hints[EncodeHintType.MARGIN] = 0
+        // 生成二维矩阵,编码时指定大小,不要生成了图片以后再进行缩放,这样会模糊导致识别失败
+        var matrix: BitMatrix? = null
+        return try {
+            matrix = MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, w, h, hints)
+            // 二维矩阵转为一维像素数组,也就是一直横着排了
+            val pixels = IntArray(w * h)
+            for (y in 0 until h) {
+                for (x in 0 until w) {
+                    if (x >= offsetX && x < offsetX + logoW && y >= offsetY && y < offsetY + logoH) {
+                        var pixel = logoBitmap!!.getPixel(x - offsetX, y - offsetY)
+                        if (pixel == 0) {
+                            pixel = if (matrix[x, y]) {
+                                -0x1000000
+                            } else {
+                                -0x1
+                            }
+                        }
+                        pixels[y * w + x] = pixel
+                    } else {
+                        if (matrix[x, y]) {
+                            pixels[y * w + x] = -0x1000000
+                        } else {
+                            pixels[y * w + x] = -0x1
+                        }
+                    }
+                }
+            }
+            Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).apply {
+                setPixels(pixels, 0, w, 0, 0, w, h)
+            }
+        } catch (e: WriterException) {
+            print(e)
+            null
+        }
     }
 
 }

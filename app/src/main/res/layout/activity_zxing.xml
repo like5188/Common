@@ -15,8 +15,14 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="createQRCode"
+            android:onClick="createQRCode1"
             android:text="生成二维码" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createQRCode2"
+            android:text="生成二维码（带图标）" />
 
         <Button
             android:layout_width="match_parent"
