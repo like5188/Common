@@ -59,6 +59,32 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
                 }
             })
         }
+        if (hasRemainingTime()) {
+            timer = Timer()
+            timerTask = object : TimerTask() {
+                override fun run() {
+                    post {
+                        when {
+                            remainingTime == totalTime -> {
+                                this@TimerTextView.isEnabled = false
+                                tickListener?.onStart(remainingTime)
+                            }
+                            remainingTime < step -> {
+                                this@TimerTextView.isEnabled = true
+                                tickListener?.onEnd()
+                                destroy()
+                            }
+                            else -> {
+                                this@TimerTextView.isEnabled = false
+                                tickListener?.onTick(remainingTime)
+                            }
+                        }
+                        remainingTime -= step
+                    }
+                }
+            }
+            timer?.schedule(timerTask, 0, step)
+        }
     }
 
     /**
@@ -94,15 +120,19 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
             }
         }
 
-        val passTime = System.currentTimeMillis() - startTime// 上次开始倒计时到现在的时间间隔
-        remainingTime = totalTime - passTime// 上次剩余的时长
-        if (remainingTime < step) {// 上次时间已经走完了
+        if (!hasRemainingTime()) {// 上次时间已经走完了
             remainingTime = length
             totalTime = length
             step = stepTime
             startTime = System.currentTimeMillis()
         }
         timer?.schedule(timerTask, 0, step)
+    }
+
+    private fun hasRemainingTime(): Boolean {
+        val passTime = System.currentTimeMillis() - startTime// 上次开始倒计时到现在的时间间隔
+        remainingTime = totalTime - passTime// 上次剩余的时长
+        return remainingTime >= step
     }
 
     fun destroy() {
