@@ -21,6 +21,7 @@ import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
+import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.SPUtils
 import com.like.common.util.setSelectorBackgroundResource
 import com.like.common.util.setSelectorSrcResource
@@ -94,6 +95,10 @@ class MainActivity : AppCompatActivity() {
         mBinding.tv2.setOnClickListener {
             shortToastCenter(list[mBinding.verticalMarqueeView.getCurPosition()].second)
         }
+    }
+
+    fun gotoZXingActivity(view: View) {
+        startActivity(Intent(this, ZXingActivity::class.java))
     }
 
     fun gotoFlexBoxActivity(view: View) {

@@ -95,7 +95,7 @@
     UriEx.kt
     VibrateUtils
     ViewEx.kt
-    ZxingUtils
+    ZXingUtils
 ```
 
 4、自定义View

@@ -41,6 +41,7 @@
         <activity
             android:name=".activitytest.TestActivity3"
             android:theme="@style/translucent" />
+        <activity android:name=".zxing.ZXingActivity" />
     </application>
 
 </manifest>

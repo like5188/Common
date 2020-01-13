@@ -8,7 +8,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import java.util.*
 
-object ZxingUtils {
+object ZXingUtils {
     /**
      * 根据条形码字符串生成条形码图片
      */
