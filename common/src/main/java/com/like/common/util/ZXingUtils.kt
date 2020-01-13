@@ -20,17 +20,22 @@ import java.util.*
 
 object ZXingUtils {
 
-    fun scan(activity: FragmentActivity, config: ZxingConfig, onSuccess: (String) -> Unit, onError: ((Throwable) -> Unit)? = null) {
+    /**
+     * 扫描条码或者二维码。
+     * 已经做了权限处理
+     */
+    fun scan(activity: FragmentActivity, onSuccess: (String) -> Unit, onError: ((Throwable) -> Unit)? = null, config: ZxingConfig? = null) {
         val permissionUtils = PermissionUtils(activity)
         val rxCallback = RxCallback(activity)
         permissionUtils.checkCameraPermissionGroup {
             val intent = Intent(activity, CaptureActivity::class.java)
-            intent.putExtra(Constant.INTENT_ZXING_CONFIG, config)
+            config?.let {
+                intent.putExtra(Constant.INTENT_ZXING_CONFIG, it)
+            }
             rxCallback.startActivityForResult(intent).subscribe(
                     {
                         if (it.resultCode == Activity.RESULT_OK && it.data != null) {
-                            val content: String = it.data.getStringExtra(Constant.CODED_CONTENT) ?: ""
-                            onSuccess(content)
+                            onSuccess(it.data.getStringExtra(Constant.CODED_CONTENT) ?: "")
                         }
                     },
                     {
