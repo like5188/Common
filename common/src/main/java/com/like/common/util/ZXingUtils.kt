@@ -47,9 +47,15 @@ object ZXingUtils {
     /**
      * 根据条形码字符串生成条形码图片
      */
-    fun createBarCode(content: String, width: Int, height: Int): Bitmap {
+    fun createBarCode(content: String, w: Int, h: Int): Bitmap? {
+        if (content.isEmpty()) {
+            return null
+        }
+        if (w <= 0 || h <= 0) {
+            return null
+        }
         // 生成一维条码,编码时指定大小,不要生成了图片以后再进行缩放,这样会模糊导致识别失败
-        val matrix = MultiFormatWriter().encode(content, BarcodeFormat.CODE_128, width, height)
+        val matrix = MultiFormatWriter().encode(content, BarcodeFormat.CODE_128, w, h)
         //矩阵的宽度
         val matrixWidth = matrix.width
         //矩阵的高度
