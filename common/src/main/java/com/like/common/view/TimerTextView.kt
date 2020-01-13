@@ -135,7 +135,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         return remainingTime >= step
     }
 
-    fun destroy() {
+    private fun destroy() {
         timerTask?.cancel()
         timerTask = null
         timer?.cancel()
