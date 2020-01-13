@@ -13,7 +13,7 @@ object ZxingUtils {
      * 根据条形码字符串生成条形码图片
      */
     @Throws(Exception::class)
-    fun createOneDCode(content: String, width: Int, height: Int): Bitmap {
+    fun createBarCode(content: String, width: Int, height: Int): Bitmap {
         // 生成一维条码,编码时指定大小,不要生成了图片以后再进行缩放,这样会模糊导致识别失败
         val matrix = MultiFormatWriter().encode(content, BarcodeFormat.CODE_128, width, height)
         //矩阵的宽度
