@@ -97,7 +97,7 @@ dependencies {
     api 'jp.wasabeef:glide-transformations:4.0.1'// glide对应的图片处理库，可以转换图片为圆形、圆角矩形、高斯模糊等等效果
 
     // zxing
-    api 'com.google.zxing:core:3.3.3'
+    api 'com.google.zxing:core:3.4.0'
 
     // rxbinding
     api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
