@@ -2,7 +2,7 @@ package com.like.common.util.validator.rule
 
 import java.util.regex.Pattern
 
-class PhoneRule<TYPE>(errorMessage: String) : AbstractRule<TYPE>(errorMessage) {
+class PhoneRule<TYPE> : AbstractRule<TYPE>() {
     companion object {
         const val REG_PHONE = "(^1[3,4,5,7,8]\\d{9}$)"
     }

@@ -8,9 +8,9 @@ class UrlValidator : BaseValidator<String?>() {
 
     init {
         addRules(
-                NotNullRule("Url不能为null"),
-                NotEmptyRule("Url不能为空"),
-                UrlRule("Url格式错误")
+                NotNullRule(),
+                NotEmptyRule(),
+                UrlRule()
         )
     }
 }

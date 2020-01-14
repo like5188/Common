@@ -8,9 +8,9 @@ class PhoneValidator : BaseValidator<String?>() {
 
     init {
         addRules(
-                NotNullRule("电话号码不能为null"),
-                NotEmptyRule("电话号码不能为空"),
-                PhoneRule("电话号码格式错误")
+                NotNullRule(),
+                NotEmptyRule(),
+                PhoneRule()
         )
     }
 }

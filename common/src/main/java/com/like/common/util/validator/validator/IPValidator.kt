@@ -8,9 +8,9 @@ class IPValidator : BaseValidator<String?>() {
 
     init {
         addRules(
-                NotNullRule("IP地址不能为null"),
-                NotEmptyRule("IP地址不能为空"),
-                PhoneRule("IP地址格式错误")
+                NotNullRule(),
+                NotEmptyRule(),
+                PhoneRule()
         )
     }
 }

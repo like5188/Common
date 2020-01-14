@@ -8,9 +8,9 @@ class IDNumberValidator : BaseValidator<String?>() {
 
     init {
         addRules(
-                NotNullRule("身份证号码不能为null"),
-                NotEmptyRule("身份证号码不能为空"),
-                IDNumberRule("身份证号码格式错误")
+                NotNullRule(),
+                NotEmptyRule(),
+                IDNumberRule()
         )
     }
 }

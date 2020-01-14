@@ -1,6 +1,6 @@
 package com.like.common.util.validator.rule
 
-class NotEmptyRule<TYPE>(errorMessage: String) : AbstractRule<TYPE>(errorMessage) {
+class NotEmptyRule<TYPE> : AbstractRule<TYPE>() {
 
     override fun isValid(data: TYPE): Boolean {
         return when (data) {
