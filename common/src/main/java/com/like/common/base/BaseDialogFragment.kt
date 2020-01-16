@@ -2,23 +2,19 @@ package com.like.common.base
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.*
-import androidx.annotation.LayoutRes
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
+import android.view.Gravity
+import android.view.Window
+import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 
-abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
-    private var mBinding: T? = null
+abstract class BaseDialogFragment : DialogFragment() {
     private var mWidth = WindowManager.LayoutParams.WRAP_CONTENT
     private var mHeight = WindowManager.LayoutParams.WRAP_CONTENT
     private var mGravity = Gravity.CENTER
     private var mDimAmount = 0.6f
-    @get:LayoutRes
-    abstract val layoutId: Int
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -28,19 +24,6 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         initDialog(dialog)
         return dialog
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (layoutId <= 0) return null
-        mBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
-        return mBinding?.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mBinding?.let {
-            initView(it, savedInstanceState)
-        }
     }
 
     override fun onStart() {
@@ -103,8 +86,6 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
         }
     }
 
-    fun getBinding() = mBinding
-
     fun setWidth(width: Int) {
         mWidth = width
     }
@@ -122,6 +103,5 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     }
 
     open fun initDialog(dialog: Dialog) {}
-    open fun initView(binding: T, savedInstanceState: Bundle?) {}
     open fun initWindow(window: Window) {}
 }
