@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.like.common.base.BaseDialogFragment
 import com.like.common.sample.R
@@ -39,9 +40,6 @@ class DialogFragment1 : BaseDialogFragment() {
         binding.ivClose.setOnClickListener {
             dismiss()
         }
-        resources.displayMetrics?.widthPixels?.let { screenWidth ->
-            setWidth((screenWidth * 0.9).toInt())
-        }
         if (savedInstanceState != null) {
             setTitle(savedInstanceState.getString("mTitle") ?: "")
             setMessage(savedInstanceState.getString("mMessage") ?: "")
@@ -56,6 +54,13 @@ class DialogFragment1 : BaseDialogFragment() {
         super.onSaveInstanceState(outState)
         outState.putString("mTitle", mTitle)
         outState.putString("mMessage", mMessage)
+    }
+
+    override fun initLayoutParams(layoutParams: WindowManager.LayoutParams) {
+        super.initLayoutParams(layoutParams)
+        resources.displayMetrics?.widthPixels?.let {
+            layoutParams.width = (it * 0.9).toInt()
+        }
     }
 
     fun setTitle(title: String) {
