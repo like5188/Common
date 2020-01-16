@@ -1,63 +1,58 @@
 package com.like.common.base
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 
 /**
- * 若把初始化内容放到lazyLoadData实现</br>
- * 就是采用Lazy方式加载的Fragment</br>
- * 若不需要Lazy加载则lazyLoadData方法内留空,初始化内容放到initViews即可</br>
+ * 懒加载数据封装
  *
  * 注1:</br>
- * 如果是与ViewPager一起使用，调用的是setUserVisibleHint。</br>
+ * 如果是与 ViewPager 一起使用，Fragment 的显示隐藏调用的是[setUserVisibleHint]方法。</br>
  *
  * 注2:</br>
- * 如果是通过FragmentTransaction的show和hide的方法来控制显示，调用的是onHiddenChanged.</br>
- * 针对初始就show的Fragment 为了触发onHiddenChanged事件 达到lazy效果 需要先hide再show</br>
+ * 如果是通过 FragmentTransaction 的 show 和 hide 的方法来控制显示隐藏，调用的是[onHiddenChanged]方法</br>
+ * 针对初始就 show 的 Fragment 为了触发[onHiddenChanged]事件 达到lazy效果 需要先 hide 再 show </br>
  * eg:</br>
  * transaction.hide(aFragment);</br>
  * transaction.show(aFragment);</br>
  *
- * 要使用 ARouter 来接收参数，请在 onCreate 方法中加上：ARouter.getInstance().inject(this)。
- * 然后在需要为每一个参数声明一个字段，并使用 @Autowired 标注，这样 ARouter 会自动对字段进行赋值，无需主动获取
+ * 要使用 ARouter 来接收参数，请在[onCreate]方法中加上：ARouter.getInstance().inject(this)。
+ * 然后对通过 ARouter 传递过来的参数声明一个字段，并使用 @Autowired 标注，这样 ARouter 会自动对字段进行赋值，无需主动获取
+ * eg:</br>
+ * @Autowired
+ * @JvmField
+ * var pageIndex: Int = 0
  */
-abstract class BaseFragment : androidx.fragment.app.Fragment() {
+abstract class BaseFragment : Fragment() {
     /**
-     * 是否可见状态
+     * Fragment 是否对用户可见
      */
-    var visible = false
+    private var isVisibleToUser = false
     /**
-     * 标志位，View已经初始化完成。
+     * Fragment 是否已经初始化完毕
      */
-    var prepared: Boolean = false
+    private var isInitialized: Boolean = false
     /**
-     * 是否第一次加载
-     * 当设置isFirstLoad为true，下次显示该Fragment时，还会触发lazyLoadData()方法
+     * 是否需要加载数据
+     * 如果在第一次加载完成后，需要重新触发加载数据，可以设置[isNeedData]为true，那么下次显示该Fragment时，还会触发[onLazyLoadData]方法
      */
-    var firstLoad = true
-    lateinit var mContentView: View
+    var isNeedData = true
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        firstLoad = true
-        mContentView = initViews(inflater, container, savedInstanceState)
-        prepared = true
-        return mContentView
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        isInitialized = true
+        lazyLoadData()// 在这里调用是因为搭配 ViewPager 使用时，setUserVisibleHint()方法会在此方法之前调用，然后就无法触发懒加载了。
     }
 
     /**
      * 如果是与ViewPager一起使用，调用的是setUserVisibleHint
-     *
-     * @param isVisibleToUser 是否显示出来了
      */
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
+        this.isVisibleToUser = isVisibleToUser
         if (isVisibleToUser) {
-            visible = true
             onVisible()
         } else {
-            visible = false
             onInvisible()
         }
     }
@@ -65,43 +60,40 @@ abstract class BaseFragment : androidx.fragment.app.Fragment() {
     /**
      * 如果是通过FragmentTransaction的show和hide的方法来控制显示，调用的是onHiddenChanged.
      * 若是初始就show的Fragment 为了触发该事件 需要先hide再show
-     *
-     * @param hidden
      */
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        this.isVisibleToUser = !hidden
         if (!hidden) {
-            visible = true
             onVisible()
         } else {
-            visible = false
             onInvisible()
         }
     }
 
-    protected open fun onVisible() {
-        lazyLoad()
-    }
-
-    protected open fun onInvisible() {
-    }
-
-    private fun lazyLoad() {
-        if (!prepared || !visible || !firstLoad) {
+    private fun lazyLoadData() {
+        if (!isInitialized || !isVisibleToUser || !isNeedData) {
             return
         }
-        firstLoad = false
+        isNeedData = false
+        onLazyLoadData()
+    }
+
+    /**
+     * Fragment 可见
+     */
+    protected open fun onVisible() {
         lazyLoadData()
     }
 
     /**
-     * 需要延迟加载的数据放到这里
+     * Fragment 不可见
      */
-    protected open fun lazyLoadData() {}
+    protected open fun onInvisible() {}
 
     /**
-     * 初始化Fragment的视图
+     * 需要延迟加载数据的操作放到这里
      */
-    protected abstract fun initViews(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
+    protected open fun onLazyLoadData() {}
 
 }

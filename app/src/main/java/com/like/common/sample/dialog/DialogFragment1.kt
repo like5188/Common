@@ -21,10 +21,6 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
             field = value
         }
 
-    override fun getLayoutResId(): Int {
-        return R.layout.dialog_fragment_1
-    }
-
     override fun initView(binding: DialogFragment1Binding, savedInstanceState: Bundle?) {
         binding.btnCancel.setOnClickListener {
             dismiss()
@@ -61,5 +57,8 @@ class DialogFragment1 : BaseDialogFragment<DialogFragment1Binding>() {
     fun setMessage(message: String) {
         mMessage = message
     }
+
+    override val layoutId: Int
+        get() = R.layout.dialog_fragment_1
 
 }

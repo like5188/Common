@@ -3,6 +3,7 @@ package com.like.common.base
 import android.app.Dialog
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
@@ -16,6 +17,8 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     private var mHeight = WindowManager.LayoutParams.WRAP_CONTENT
     private var mGravity = Gravity.CENTER
     private var mDimAmount = 0.6f
+    @get:LayoutRes
+    abstract val layoutId: Int
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -28,9 +31,8 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val layoutResId = getLayoutResId()
-        if (layoutResId <= 0) return null
-        mBinding = DataBindingUtil.inflate(inflater, layoutResId, container, false)
+        if (layoutId <= 0) return null
+        mBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
         return mBinding?.root
     }
 
@@ -122,5 +124,4 @@ abstract class BaseDialogFragment<T : ViewDataBinding> : DialogFragment() {
     open fun initDialog(dialog: Dialog) {}
     open fun initView(binding: T, savedInstanceState: Bundle?) {}
     open fun initWindow(window: Window) {}
-    abstract fun getLayoutResId(): Int
 }
