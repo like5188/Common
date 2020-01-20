@@ -1,7 +1,5 @@
 package com.like.common.sample.pictureselector
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,10 +10,8 @@ import com.like.common.sample.databinding.ActivityPictureSelectorBinding
 import com.like.common.util.PermissionUtils
 import com.like.livedatarecyclerview.layoutmanager.WrapGridLayoutManager
 import com.luck.picture.lib.PictureSelector
-import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.tools.PictureFileUtils
-
 
 class PictureSelectorActivity : AppCompatActivity() {
     companion object {
@@ -46,17 +42,7 @@ class PictureSelectorActivity : AppCompatActivity() {
                 .loadImageEngine(GlideEngine.createGlideEngine()) // 请参考Demo GlideEngine.java
                 .compress(true)// 是否压缩
                 .compressQuality(60)// 图片压缩后输出质量
-                .forResult(PictureConfig.CHOOSE_REQUEST)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                PictureConfig.CHOOSE_REQUEST -> {
-                    // 图片选择结果回调
-                    // 图片选择结果回调
-                    val selectList = PictureSelector.obtainMultipleResult(data)
+                .forResult {
                     // 例如 LocalMedia 里面返回五种path
                     // 1.media.getPath(); 为原图path
                     // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
@@ -71,7 +57,7 @@ class PictureSelectorActivity : AppCompatActivity() {
                     // 4.media.getOriginalPath()); media.isOriginal());为true时此字段才有值
                     // 5.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
                     // 如果同时开启裁剪和压缩，则取压缩路径为准因为是先裁剪后压缩
-                    for (media in selectList) {
+                    for (media in it) {
                         Log.i(TAG, "是否压缩:" + media.isCompressed)
                         Log.i(TAG, "压缩:" + media.compressPath)
                         Log.i(TAG, "原图:" + media.path)
@@ -81,10 +67,8 @@ class PictureSelectorActivity : AppCompatActivity() {
                         Log.i(TAG, "原图路径:" + media.originalPath)
                         Log.i(TAG, "Android Q 特有Path:" + media.androidQToPath)
                     }
-                    mAddImageViewAdapter.add(selectList)
+                    mAddImageViewAdapter.add(it)
                 }
-            }
-        }
     }
 
     override fun onDestroy() {
@@ -93,7 +77,7 @@ class PictureSelectorActivity : AppCompatActivity() {
             //包括裁剪和压缩后的缓存，要在上传成功后调用，type 指的是图片or视频缓存取决于你设置的ofImage或ofVideo 注意：需要系统sd卡权限
             PictureFileUtils.deleteCacheDirFile(this, PictureMimeType.ofImage())
             // 清除所有缓存 例如：压缩、裁剪、视频、音频所生成的临时文件
-            PictureFileUtils.deleteAllCacheDirFile(this)
+//            PictureFileUtils.deleteAllCacheDirFile(this)
         }
     }
 
