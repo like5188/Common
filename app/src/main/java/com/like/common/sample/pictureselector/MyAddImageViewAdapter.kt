@@ -1,5 +1,6 @@
 package com.like.common.sample.pictureselector
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableBoolean
 import com.like.common.sample.R
@@ -49,17 +50,43 @@ class MyAddImageViewAdapter(private val activity: androidx.fragment.app.Fragment
                         PictureSelector.create(activity)
                                 .openGallery(PictureMimeType.ofImage())
                                 .maxSelectNum(9)
+                                .loadImageEngine(GlideEngine.createGlideEngine())
                                 .selectionMedia(getLocalMedias())
                                 .imageSpanCount(3)// 每行显示个数 int
                                 .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
                                 .previewImage(true)// 是否可预览图片 true or false
                                 .isCamera(true)// 是否显示拍照按钮 true or false
                                 .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                                .sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
                                 .compress(true)// 是否压缩 true or false
                                 .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
                                 .minimumCompressSize(100)// 小于100kb的图片不压缩
-                                .forResult(PictureConfig.CHOOSE_REQUEST)
+                                .forResult {
+                                    // 例如 LocalMedia 里面返回五种path
+                                    // 1.media.getPath(); 为原图path
+                                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                                    // 4.media.getOriginalPath()); media.isOriginal());为true时此字段才有值
+                                    // 5.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
+                                    // 如果同时开启裁剪和压缩，则取压缩路径为准因为是先裁剪后压缩
+                                    // 例如 LocalMedia 里面返回五种path
+                                    // 1.media.getPath(); 为原图path
+                                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                                    // 4.media.getOriginalPath()); media.isOriginal());为true时此字段才有值
+                                    // 5.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
+                                    // 如果同时开启裁剪和压缩，则取压缩路径为准因为是先裁剪后压缩
+                                    for (media in it) {
+                                        Log.i(PictureSelectorActivity.TAG, "是否压缩:" + media.isCompressed)
+                                        Log.i(PictureSelectorActivity.TAG, "压缩:" + media.compressPath)
+                                        Log.i(PictureSelectorActivity.TAG, "原图:" + media.path)
+                                        Log.i(PictureSelectorActivity.TAG, "是否裁剪:" + media.isCut)
+                                        Log.i(PictureSelectorActivity.TAG, "裁剪:" + media.cutPath)
+                                        Log.i(PictureSelectorActivity.TAG, "是否开启原图:" + media.isOriginal)
+                                        Log.i(PictureSelectorActivity.TAG, "原图路径:" + media.originalPath)
+                                        Log.i(PictureSelectorActivity.TAG, "Android Q 特有Path:" + media.androidQToPath)
+                                    }
+                                    add(it)
+                                }
                     }
                     // 隐藏删除按钮
                     deleteButtonShown.set(false)

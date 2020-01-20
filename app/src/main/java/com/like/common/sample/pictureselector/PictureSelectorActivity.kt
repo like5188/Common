@@ -15,7 +15,7 @@ import com.luck.picture.lib.tools.PictureFileUtils
 
 class PictureSelectorActivity : AppCompatActivity() {
     companion object {
-        private const val TAG = "PictureSelectorActivity"
+        const val TAG = "PictureSelectorActivity"
     }
 
     private val mBinding: ActivityPictureSelectorBinding by lazy {
