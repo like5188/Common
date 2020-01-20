@@ -6,6 +6,7 @@ import androidx.databinding.ObservableBoolean
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ViewAddImageBinding
 import com.like.common.sample.databinding.ViewImageBinding
+import com.like.common.util.GlideEngineForPictureSelector
 import com.like.common.util.GlideUtils
 import com.like.common.util.PermissionUtils
 import com.like.common.util.VibrateUtils
@@ -50,7 +51,7 @@ class MyAddImageViewAdapter(private val activity: androidx.fragment.app.Fragment
                         PictureSelector.create(activity)
                                 .openGallery(PictureMimeType.ofImage())
                                 .maxSelectNum(9)
-                                .loadImageEngine(GlideEngine.createGlideEngine())
+                                .loadImageEngine(GlideEngineForPictureSelector.createGlideEngine())
                                 .selectionMedia(getLocalMedias())
                                 .imageSpanCount(3)// 每行显示个数 int
                                 .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
@@ -110,7 +111,7 @@ class MyAddImageViewAdapter(private val activity: androidx.fragment.app.Fragment
                     PictureSelector.create(activity)
                             .themeStyle(R.style.picture_default_style)
                             .isNotPreviewDownload(true)
-                            .loadImageEngine(GlideEngine.createGlideEngine()) // 请参考Demo GlideEngine.java
+                            .loadImageEngine(GlideEngineForPictureSelector.createGlideEngine()) // 请参考Demo GlideEngine.java
                             .openExternalPreview(position, getLocalMedias())
                 }
                 binding.ivDelete.setOnClickListener {

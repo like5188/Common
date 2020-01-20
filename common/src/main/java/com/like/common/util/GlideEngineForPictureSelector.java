@@ -1,4 +1,4 @@
-package com.like.common.sample.pictureselector;
+package com.like.common.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,8 +15,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.ImageViewTarget;
-import com.like.common.sample.R;
-import com.like.common.util.GlideApp;
+import com.like.common.R;
 import com.luck.picture.lib.engine.ImageEngine;
 import com.luck.picture.lib.listener.ImageCompleteCallback;
 import com.luck.picture.lib.tools.MediaUtils;
@@ -29,7 +28,7 @@ import com.luck.picture.lib.widget.longimage.SubsamplingScaleImageView;
  * @date：2019-11-13 17:02
  * @describe：Glide加载引擎
  */
-public class GlideEngine implements ImageEngine {
+public class GlideEngineForPictureSelector implements ImageEngine {
 
     /**
      * 加载图片
@@ -215,16 +214,16 @@ public class GlideEngine implements ImageEngine {
     }
 
 
-    private GlideEngine() {
+    private GlideEngineForPictureSelector() {
     }
 
-    private static GlideEngine instance;
+    private static GlideEngineForPictureSelector instance;
 
-    public static GlideEngine createGlideEngine() {
+    public static GlideEngineForPictureSelector createGlideEngine() {
         if (null == instance) {
-            synchronized (GlideEngine.class) {
+            synchronized (GlideEngineForPictureSelector.class) {
                 if (null == instance) {
-                    instance = new GlideEngine();
+                    instance = new GlideEngineForPictureSelector();
                 }
             }
         }
