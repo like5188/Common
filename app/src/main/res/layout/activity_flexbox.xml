@@ -20,7 +20,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="程序员"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="影视天堂"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start"
             app:layout_flexGrow="1" />
 
@@ -41,7 +41,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="美食"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start"
             app:layout_flexGrow="1" />
 
@@ -52,7 +52,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="漫画.手绘"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start"
             app:layout_flexGrow="1" />
 
@@ -63,7 +63,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="广告圈"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="旅行.在路上"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -83,7 +83,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="娱乐八卦"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -93,7 +93,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="青春"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -103,7 +103,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="谈写作"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -113,7 +113,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="短篇小说"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -123,7 +123,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="散文"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start" />
 
         <TextView
@@ -133,7 +133,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:text="摄影"
-            android:textColor="@color/black"
+            android:textColor="@color/common_text_black_0"
             app:layout_alignSelf="flex_start"
             app:layout_order="2" />
     </com.google.android.flexbox.FlexboxLayout>

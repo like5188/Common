@@ -60,7 +60,7 @@ class NotificationActivity : AppCompatActivity() {
         val contentView = RemoteViews(packageName, R.layout.view_download_progress_for_notification)
         contentView.setImageViewResource(R.id.iv_small_icon, R.mipmap.ic_launcher)
         contentView.setImageViewResource(R.id.iv_large_icon, R.mipmap.ic_launcher)
-        contentView.setImageViewResource(R.id.iv_controller, R.drawable.ic_placeholder)
+        contentView.setImageViewResource(R.id.iv_controller, R.mipmap.ic_launcher)
 
         val contentIntent = PendingIntent.getActivity(
                 this,

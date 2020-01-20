@@ -2,6 +2,7 @@ package com.like.common.sample.pictureselector
 
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableBoolean
+import com.like.common.sample.R
 import com.like.common.sample.databinding.ViewAddImageBinding
 import com.like.common.sample.databinding.ViewImageBinding
 import com.like.common.util.GlideUtils
@@ -77,7 +78,13 @@ class MyAddImageViewAdapter(private val activity: androidx.fragment.app.Fragment
                     true
                 }
                 binding.root.setOnClickListener {
-                    PictureSelector.create(activity).externalPicturePreview(position, getLocalMedias())
+                    // 预览图片 可自定长按保存路径
+                    // 注意 .themeStyle(R.style.theme)；里面的参数不可删，否则闪退...
+                    PictureSelector.create(activity)
+                            .themeStyle(R.style.picture_default_style)
+                            .isNotPreviewDownload(true)
+                            .loadImageEngine(GlideEngine.createGlideEngine()) // 请参考Demo GlideEngine.java
+                            .openExternalPreview(position, getLocalMedias())
                 }
                 binding.ivDelete.setOnClickListener {
                     removeItem(item)

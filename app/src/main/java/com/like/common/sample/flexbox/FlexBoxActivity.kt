@@ -23,7 +23,7 @@ class FlexBoxActivity : AppCompatActivity() {
             textView.text = "Test Label $i"
             textView.gravity = Gravity.CENTER
             textView.setPadding(30, 0, 30, 0)
-            textView.setTextColor(resources.getColor(com.like.common.R.color.black))
+            textView.setTextColor(resources.getColor(com.like.common.R.color.common_text_black_0))
             // 通过FlexboxLayout.LayoutParams 设置子元素支持的属性
             val params = textView.layoutParams
             if (params is FlexboxLayout.LayoutParams) {
