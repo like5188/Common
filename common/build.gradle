@@ -106,7 +106,7 @@ dependencies {
     api 'com.github.chrisbanes:PhotoView:2.1.4'// 不能升级2.2.0，因为使用了AndroidX库，不能和support库共存。
 
     // 图片选择器
-    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.4.6'
 
     // 日期时间格式化工具
     api 'net.danlew:android.joda:2.10.1.2'
