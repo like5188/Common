@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:appComponentFactory="任意字符"
         android:icon="@mipmap/ic_launcher"

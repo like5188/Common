@@ -80,4 +80,14 @@ open class BaseApplication : Application() {
         activities.filter { classes.contains(it::class.java) }.forEach { it.finish() }
     }
 
+    /**
+     * 获取指定Activity实例
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Activity> getActivity(clazz: Class<T>): T? {
+        return activities.firstOrNull {
+            it.javaClass == clazz
+        } as? T
+    }
+
 }
