@@ -57,8 +57,6 @@ open class BaseApplication : Application() {
         System.exit(0)
     }
 
-    fun getAllActivities(): List<Activity> = activities
-
     /**
      * 关闭所有Activity
      */
@@ -90,4 +88,5 @@ open class BaseApplication : Application() {
         } as? T
     }
 
+    fun getAllActivities(): List<Activity> = activities
 }
