@@ -231,7 +231,7 @@ class PermissionUtils {
      *      ①、6.0 以下：只是检查是否在 AndroidManifest.xml 中声明了权限。
      *      ②、6.0 以上：除了要检查是否在 AndroidManifest.xml 中声明了权限外，还检查是否授予了权限。
      */
-    private fun hasPermissions(context: Context, @Size(min = 1) vararg perms: String): Boolean {
+    fun hasPermissions(context: Context, @Size(min = 1) vararg perms: String): Boolean {
         for (perm in perms) {
             if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
                 return false
