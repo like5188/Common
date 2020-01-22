@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
  * 懒加载数据封装
  *
  * 注1:</br>
- * 如果是与 ViewPager 一起使用，Fragment 的显示隐藏调用的是[setUserVisibleHint]方法。</br>
+ * 如果是与 ViewPager 一起使用，Fragment 的显示隐藏是由 [FragmentPagerAdapter] 调用的 [setUserVisibleHint] 方法。</br>
  *
  * 注2:</br>
  * 如果是通过 FragmentTransaction 的 show 和 hide 的方法来控制显示隐藏，调用的是[onHiddenChanged]方法</br>
@@ -27,11 +27,11 @@ abstract class BaseFragment : Fragment() {
     /**
      * Fragment 是否对用户可见
      */
-    var isVisibleToUser = false
+    private var isVisibleToUser = false
     /**
      * Fragment 是否已经初始化完毕
      */
-    var isInitialized: Boolean = false
+    private var isInitialized: Boolean = false
     /**
      * 是否需要加载数据
      * 如果在第一次加载完成后，需要重新触发加载数据，可以设置[isNeedData]为true，那么下次显示该Fragment时，还会触发[onLazyLoadData]方法
