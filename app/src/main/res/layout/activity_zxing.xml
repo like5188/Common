@@ -24,12 +24,6 @@
             android:onClick="createQRCode2"
             android:text="生成二维码（带图标）" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="scan"
-            android:text="扫描" />
-
         <ImageView
             android:id="@+id/iv"
             android:layout_width="match_parent"

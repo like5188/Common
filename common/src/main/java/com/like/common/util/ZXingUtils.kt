@@ -1,48 +1,17 @@
 package com.like.common.util
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Matrix
-import androidx.fragment.app.FragmentActivity
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.like.common.view.callback.RxCallback
-import com.yzq.zxinglibrary.android.CaptureActivity
-import com.yzq.zxinglibrary.bean.ZxingConfig
-import com.yzq.zxinglibrary.common.Constant
 import java.util.*
 
 object ZXingUtils {
-
-    /**
-     * 扫描条码或者二维码。
-     * 已经做了权限处理
-     */
-    fun scan(activity: FragmentActivity, onSuccess: (String) -> Unit, onError: ((Throwable) -> Unit)? = null, config: ZxingConfig? = null) {
-        val permissionUtils = PermissionUtils(activity)
-        val rxCallback = RxCallback(activity)
-        permissionUtils.checkCameraPermissionGroup {
-            val intent = Intent(activity, CaptureActivity::class.java)
-            config?.let {
-                intent.putExtra(Constant.INTENT_ZXING_CONFIG, it)
-            }
-            rxCallback.startActivityForResult(intent).subscribe(
-                    {
-                        if (it.resultCode == Activity.RESULT_OK && it.data != null) {
-                            onSuccess(it.data.getStringExtra(Constant.CODED_CONTENT) ?: "")
-                        }
-                    },
-                    {
-                        onError?.invoke(it)
-                    })
-        }
-    }
 
     /**
      * 根据条形码字符串生成条形码图片
@@ -86,7 +55,7 @@ object ZXingUtils {
     /**
      * 生成二维码图片
      */
-    fun createQRCode(content: String, w: Int, h: Int, logo: Bitmap?): Bitmap? {
+    fun createQRCode(content: String, w: Int, h: Int, logo: Bitmap? = null): Bitmap? {
         if (content.isEmpty()) {
             return null
         }

@@ -8,8 +8,6 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
 import com.like.common.util.ZXingUtils
-import com.like.common.util.longToastCenter
-
 
 class ZXingActivity : AppCompatActivity() {
     private val mBinding: ActivityZxingBinding by lazy {
@@ -34,12 +32,6 @@ class ZXingActivity : AppCompatActivity() {
     fun createQRCode2(view: View) {
         val bmp = ZXingUtils.createQRCode("https://www.baidu.com/", 400, 400, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
         mBinding.iv.setImageBitmap(bmp)
-    }
-
-    fun scan(view: View) {
-        ZXingUtils.scan(this, {
-            longToastCenter(it)
-        })
     }
 
 }
