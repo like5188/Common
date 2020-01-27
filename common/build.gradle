@@ -98,6 +98,9 @@ dependencies {
     // zxing。（zxing 3.4.0：要求最低api等级为24）
     api 'com.google.zxing:core:3.3.3'
 
+    // 扫描器
+    api 'com.shouzhong:Scanner:1.1.2-beta1'
+
     // rxbinding
     api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
 

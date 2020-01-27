@@ -16,7 +16,24 @@ class ZXingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding
+        mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this, heightWidthRatio = 1f))
+        mBinding.sv.setEnableZXing(true)
+//        mBinding.sv.setEnableZBar(true)
+//        mBinding.sv.setEnableIdCard(true)
+        mBinding.sv.setCallback { result ->
+            mBinding.tvScanResult.text = result.toString()
+            mBinding.sv.restartPreviewAfterDelay(2000)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mBinding.sv.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mBinding.sv.onPause()
     }
 
     fun createBarCode(view: View) {

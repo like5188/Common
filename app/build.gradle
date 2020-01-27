@@ -139,6 +139,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'// 身份证识别
+    implementation 'com.shouzhong:ScannerZBarLib:1.0.0'// zbar
+
     implementation 'com.github.like5188:LiveDataRecyclerView:2.1.3'
 
     implementation project(':common')
