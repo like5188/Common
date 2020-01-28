@@ -51,13 +51,6 @@ class PictureSelectorActivity : AppCompatActivity() {
                     // 4.media.getOriginalPath()); media.isOriginal());为true时此字段才有值
                     // 5.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
                     // 如果同时开启裁剪和压缩，则取压缩路径为准因为是先裁剪后压缩
-                    // 例如 LocalMedia 里面返回五种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-                    // 4.media.getOriginalPath()); media.isOriginal());为true时此字段才有值
-                    // 5.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
-                    // 如果同时开启裁剪和压缩，则取压缩路径为准因为是先裁剪后压缩
                     for (media in it) {
                         Log.i(TAG, "是否压缩:" + media.isCompressed)
                         Log.i(TAG, "压缩:" + media.compressPath)
