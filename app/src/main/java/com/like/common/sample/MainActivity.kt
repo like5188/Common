@@ -13,6 +13,7 @@ import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
+import com.like.common.sample.databinding.ViewMarqueeBinding
 import com.like.common.sample.dialog.DialogActivity
 import com.like.common.sample.drag.DragViewTestActivity
 import com.like.common.sample.flexbox.FlexBoxActivity
@@ -29,6 +30,7 @@ import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
     private val mToolbarUtils: ToolbarUtils by lazy {
@@ -85,18 +87,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMarqueeView() {
         val list = listOf(Pair("like1", "like2"), Pair("like3", "like4"))
-        mBinding.verticalMarqueeView.setOnPageChangeListener {
-            Log.e("tag", "position=$it first=${list[it].first} second=${list[it].second}")
-            mBinding.tv1.text = list[it].first
-            mBinding.tv2.text = list[it].second
+        for (i in 0..1) {
+            val viewMarqueeBinding = DataBindingUtil.inflate<ViewMarqueeBinding>(layoutInflater, R.layout.view_marquee, null, false)
+            viewMarqueeBinding.tv1.text = list[i].first
+            viewMarqueeBinding.tv2.text = list[i].second
+            viewMarqueeBinding.tv1.setOnClickListener {
+                shortToastCenter(list[i].first)
+            }
+            viewMarqueeBinding.tv2.setOnClickListener {
+                shortToastCenter(list[i].second)
+            }
+            view_flipper.addView(viewMarqueeBinding.root)
         }
-        mBinding.verticalMarqueeView.init(list.size, R.id.ll)
-        mBinding.tv1.setOnClickListener {
-            shortToastCenter(list[mBinding.verticalMarqueeView.getPosition()].first)
-        }
-        mBinding.tv2.setOnClickListener {
-            shortToastCenter(list[mBinding.verticalMarqueeView.getPosition()].second)
-        }
+        view_flipper.flipInterval = 2000
+        view_flipper.startFlipping()
     }
 
     fun gotoZXingActivity(view: View) {
@@ -160,11 +164,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, TestActivity::class.java)
         intent.putExtra("name", "从 MainActivity 跳转过来")
         startActivity(intent)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mBinding.verticalMarqueeView.pause()
     }
 
 }

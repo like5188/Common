@@ -7,7 +7,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <FrameLayout
@@ -15,28 +15,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.like.common.view.VerticalMarqueeView
-                android:id="@+id/verticalMarqueeView"
+            <ViewFlipper
+                android:id="@+id/view_flipper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tv2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-            </com.like.common.view.VerticalMarqueeView>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:inAnimation="@anim/marquee_anim_bottom_in"
+                android:outAnimation="@anim/marquee_anim_top_out" />
 
             <com.like.common.view.TimerTextView
                 android:id="@+id/timerTextView"
