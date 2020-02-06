@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             }
             view_flipper.addView(viewMarqueeBinding.root)
         }
-        view_flipper.flipInterval = 2000
+        view_flipper.flipInterval = 3000
         view_flipper.startFlipping()
     }
 
