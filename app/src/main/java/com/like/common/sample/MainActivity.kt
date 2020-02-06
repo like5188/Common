@@ -87,15 +87,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMarqueeView() {
         val list = listOf(Pair("like1", "like2"), Pair("like3", "like4"))
-        for (i in 0..1) {
+        list.forEach { data ->
             val viewMarqueeBinding = DataBindingUtil.inflate<ViewMarqueeBinding>(layoutInflater, R.layout.view_marquee, null, false)
-            viewMarqueeBinding.tv1.text = list[i].first
-            viewMarqueeBinding.tv2.text = list[i].second
+            viewMarqueeBinding.tv1.text = data.first
+            viewMarqueeBinding.tv2.text = data.second
             viewMarqueeBinding.tv1.setOnClickListener {
-                shortToastCenter(list[i].first)
+                shortToastCenter(data.first)
             }
             viewMarqueeBinding.tv2.setOnClickListener {
-                shortToastCenter(list[i].second)
+                shortToastCenter(data.second)
             }
             view_flipper.addView(viewMarqueeBinding.root)
         }
