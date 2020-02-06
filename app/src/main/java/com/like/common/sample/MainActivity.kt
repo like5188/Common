@@ -85,15 +85,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun initMarqueeView() {
         val list = listOf(Pair("like1", "like2"), Pair("like3", "like4"))
-        mBinding.verticalMarqueeView.initParamsAndPlay(list, R.id.ll, {
-            mBinding.tv1.text = it.first
-            mBinding.tv2.text = it.second
-        })
+        mBinding.verticalMarqueeView.setOnPageChangeListener {
+            Log.e("tag", "position=$it first=${list[it].first} second=${list[it].second}")
+            mBinding.tv1.text = list[it].first
+            mBinding.tv2.text = list[it].second
+        }
+        mBinding.verticalMarqueeView.init(list.size, R.id.ll)
         mBinding.tv1.setOnClickListener {
-            shortToastCenter(list[mBinding.verticalMarqueeView.getCurPosition()].first)
+            shortToastCenter(list[mBinding.verticalMarqueeView.getPosition()].first)
         }
         mBinding.tv2.setOnClickListener {
-            shortToastCenter(list[mBinding.verticalMarqueeView.getCurPosition()].second)
+            shortToastCenter(list[mBinding.verticalMarqueeView.getPosition()].second)
         }
     }
 
@@ -158,6 +160,11 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, TestActivity::class.java)
         intent.putExtra("name", "从 MainActivity 跳转过来")
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding.verticalMarqueeView.pause()
     }
 
 }
