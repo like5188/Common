@@ -40,7 +40,7 @@ android {
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    api 'com.google.android.material:material:1.0.0'
+    api 'com.google.android.material:material:1.1.0'
     api 'androidx.recyclerview:recyclerview:1.1.0'
     // 调色板
     api 'androidx.palette:palette:1.0.0'
@@ -76,7 +76,7 @@ dependencies {
     api 'androidx.paging:paging-runtime:2.1.1'
 
     // work
-    api 'androidx.work:work-runtime-ktx:2.3.0'// workmanager 对协程的支持：suspend
+    api 'androidx.work:work-runtime-ktx:2.3.1'// workmanager 对协程的支持：suspend
 
     // room
     api 'androidx.room:room-runtime:2.2.3'
@@ -105,7 +105,7 @@ dependencies {
     api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
 
     // PhotoView
-    api 'com.github.chrisbanes:PhotoView:2.1.4'// 不能升级2.2.0，因为使用了AndroidX库，不能和support库共存。
+    api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // 图片选择器
     api 'com.github.LuckSiege.PictureSelector:picture_library:v2.4.6'
