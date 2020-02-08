@@ -125,6 +125,9 @@ dependencies {
     // 选择器
     api 'com.contrarywind:Android-PickerView:4.1.9'
 
+    // 手写签名
+    api 'com.github.gcacace:signature-pad:1.2.1'
+
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
