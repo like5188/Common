@@ -119,6 +119,9 @@ dependencies {
 
     api 'com.github.OCNYang:PageTransformerHelp:v1.0.1'
 
+    // 汉字转拼音
+    api 'com.github.promeg:tinypinyin:2.0.3'
+
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.1.0'
