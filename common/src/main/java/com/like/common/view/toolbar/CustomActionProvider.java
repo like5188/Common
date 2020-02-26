@@ -11,6 +11,7 @@ import androidx.appcompat.widget.ActionMenuView;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.like.common.R;
@@ -64,7 +65,7 @@ public class CustomActionProvider extends ActionProvider {
             @Override
             public void onGlobalLayout() {
                 mBinding.getRoot().getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                Toolbar.LayoutParams lp = (Toolbar.LayoutParams) mBinding.getRoot().getLayoutParams();
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mBinding.getRoot().getLayoutParams();
                 lp.width = mBinding.getRoot().getWidth() + leftAndRightMargin * 2;
                 lp.height = mBinding.getRoot().getHeight() + topAndBottomMargin * 2;
             }
