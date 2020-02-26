@@ -120,7 +120,7 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
     @JvmOverloads
     fun showCustomNavigationView(@DrawableRes iconResId: Int = -1, name: String = "", listener: View.OnClickListener? = null): ToolbarUtils {
         hideNavigationBotton()
-        navigationBadgeViewHelper = BadgeViewHelper(mContext, mBinding.toolbarNavigationCustomView.messageContainer)
+        navigationBadgeViewHelper = BadgeViewHelper(mContext, mBinding.toolbarNavigationCustomView.cl)
         if (!TextUtils.isEmpty(name)) {
             mBinding.toolbarNavigationCustomView.tvTitle.visibility = View.VISIBLE
             mBinding.toolbarNavigationCustomView.tvTitle.text = name

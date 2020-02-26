@@ -28,7 +28,7 @@ public class CustomActionProvider extends ActionProvider {
     public CustomActionProvider(Context context) {
         super(context);
         mBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.toolbar_custom_view, null, false);
-        badgeViewHelper = new BadgeViewHelper(context, mBinding.messageContainer);
+        badgeViewHelper = new BadgeViewHelper(context, mBinding.cl);
     }
 
     @Override
@@ -73,10 +73,10 @@ public class CustomActionProvider extends ActionProvider {
     }
 
     void setMessageMargin(int left, int top, int right, int bottom) {
-        mBinding.messageContainer.setPadding(mBinding.messageContainer.getPaddingLeft() + left,
-                mBinding.messageContainer.getPaddingTop() + top,
-                mBinding.messageContainer.getPaddingRight() + right,
-                mBinding.messageContainer.getPaddingBottom() + bottom);
+        mBinding.cl.setPadding(mBinding.cl.getPaddingLeft() + left,
+                mBinding.cl.getPaddingTop() + top,
+                mBinding.cl.getPaddingRight() + right,
+                mBinding.cl.getPaddingBottom() + bottom);
     }
 
     void setTextColor(@ColorInt int color) {
