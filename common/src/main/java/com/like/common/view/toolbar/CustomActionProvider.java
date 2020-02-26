@@ -1,11 +1,14 @@
 package com.like.common.view.toolbar;
 
 import android.content.Context;
+
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.core.view.ActionProvider;
 import androidx.appcompat.widget.ActionMenuView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -61,7 +64,7 @@ public class CustomActionProvider extends ActionProvider {
             @Override
             public void onGlobalLayout() {
                 mBinding.getRoot().getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                ActionMenuView.LayoutParams lp = (ActionMenuView.LayoutParams) mBinding.getRoot().getLayoutParams();
+                Toolbar.LayoutParams lp = (Toolbar.LayoutParams) mBinding.getRoot().getLayoutParams();
                 lp.width = mBinding.getRoot().getWidth() + leftAndRightMargin * 2;
                 lp.height = mBinding.getRoot().getHeight() + topAndBottomMargin * 2;
             }
