@@ -22,18 +22,35 @@ class ToolbarCustomViewHelper(context: Context, binding: ToolbarCustomViewBindin
         )
     }
 
-    fun getRootView() = mBinding.root
+    /**
+     * 获取自定义视图
+     */
+    fun getRootView(): View = mBinding.root
 
-    fun getContentView() = mBinding.cl
+    /**
+     * 获取自定义视图的第一层孩子根目录，用于配合[com.like.common.view.badgeview.BadgeView]来显示消息并调整其位置
+     */
+    fun getContentView(): View = mBinding.cl
 
-    fun setOnClickListener(clickListener: View.OnClickListener? = null) {
-        if (clickListener == null) {
-            mBinding.root.setOnClickListener(null)
-        } else {
-            mBinding.root.setOnClickListener { view -> clickListener.onClick(view) }
-        }
+    /**
+     * 设置自定义视图的内容的 padding
+     *
+     * 自定义视图的root为第一层，那么真正的内容在第二层显示，
+     * 这里其实是设置第二层的margin，用于配合[com.like.common.view.badgeview.BadgeView]来显示消息并调整其位置
+     */
+    fun setContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
+        mBinding.cl.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                .apply {
+                    leftMargin = left
+                    topMargin = top
+                    rightMargin = right
+                    bottomMargin = bottom
+                }
     }
 
+    /**
+     * 设置自定义视图的 margin
+     */
     fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
         val layoutParams = mBinding.root.layoutParams
         if (layoutParams is Toolbar.LayoutParams) {// 如果是NavigationView：Toolbar.LayoutParams
@@ -56,36 +73,32 @@ class ToolbarCustomViewHelper(context: Context, binding: ToolbarCustomViewBindin
     }
 
     /**
-     * 假如root为第一层，那么真正的内容在第二层，
-     * 设置第二层的margin，这样可以配合[com.like.common.view.badgeview.BadgeView]来显示消息并调整其位置
+     * 设置自定义视图点击监听
+     *
+     * @param clickListener     点击监听。默认为null，表示取消监听。
      */
-    fun setContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
-        mBinding.cl.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT)
-                .apply {
-                    leftMargin = left
-                    topMargin = top
-                    rightMargin = right
-                    bottomMargin = bottom
-                }
+    fun setOnClickListener(clickListener: View.OnClickListener? = null) {
+        if (clickListener == null) {
+            mBinding.root.setOnClickListener(null)
+        } else {
+            mBinding.root.setOnClickListener { view -> clickListener.onClick(view) }
+        }
     }
 
     /**
+     * 设置自定义视图的文本
      *
-     * @param size 单位sp
+     * @param title             文本
+     * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
+     * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
      */
-    fun setTitle(title: String? = null, @ColorInt color: Int? = null, size: Float? = null) {
-        if (title.isNullOrEmpty()) {
-            mBinding.tvTitle.visibility = View.GONE
-            mBinding.tvTitle.text = ""
-        } else {
-            mBinding.tvTitle.visibility = View.VISIBLE
-            mBinding.tvTitle.text = title
-            if (color != null) {
-                mBinding.tvTitle.setTextColor(color)
-            }
-            if (size != null) {
-                mBinding.tvTitle.textSize = size
-            }
+    fun setTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
+        mBinding.tvTitle.text = title
+        if (textColor != null) {
+            mBinding.tvTitle.setTextColor(textColor)
+        }
+        if (textSize != null) {
+            mBinding.tvTitle.textSize = textSize
         }
     }
 
@@ -93,12 +106,15 @@ class ToolbarCustomViewHelper(context: Context, binding: ToolbarCustomViewBindin
         return mBinding.tvTitle.text.toString()
     }
 
-    fun setIcon(@DrawableRes iconResId: Int = 0) {
+    /**
+     * 设置自定义视图的文本
+     *
+     * @param iconResId         图标资源id。如果设置为0，表示去掉图标。
+     */
+    fun setIcon(@DrawableRes iconResId: Int) {
         if (iconResId == 0) {
-            mBinding.iv.visibility = View.GONE
             mBinding.iv.setImageDrawable(null)
         } else {
-            mBinding.iv.visibility = View.VISIBLE
             mBinding.iv.setImageResource(iconResId)
         }
     }

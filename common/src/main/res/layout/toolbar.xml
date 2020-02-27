@@ -24,7 +24,6 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@color/picture_color_grey_3e"
                 android:layout_gravity="center_horizontal"
                 android:ellipsize="end"
                 android:gravity="center"

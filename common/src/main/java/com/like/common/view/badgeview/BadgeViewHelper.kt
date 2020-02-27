@@ -11,6 +11,14 @@ class BadgeViewHelper(context: Context, target: View) {
         }
     }
 
+    /**
+     * 设置消息数
+     *
+     * @param messageCount      消息数
+     * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
+     * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
+     * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
+     */
     fun setMessageCount(messageCount: String, @ColorInt textColor: Int? = null, textSize: Int? = null, @ColorInt backgroundColor: Int? = null) {
         mBadgeView.setBadgeCount(messageCount)
         if (textColor != null) {
@@ -24,6 +32,9 @@ class BadgeViewHelper(context: Context, target: View) {
         }
     }
 
+    /**
+     * 获取显示的消息数
+     */
     fun getMessageCount(): String {
         return mBadgeView.text.toString()
     }

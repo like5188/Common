@@ -33,78 +33,75 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     private val mToolbarUtils: ToolbarUtils by lazy {
         ToolbarUtils(this, fl_toolbarContainer)
-                .setBackgroundColor(Color.LTGRAY)
+                .setBackgroundColor(Color.WHITE)
 
-                .showDivider(10f, Color.GREEN)
+                .showDivider(1f, Color.LTGRAY)
 
-                .showNavigationView(
-                        resid = R.drawable.icon_back,
-                        title = "返回",
-                        titleColor = Color.RED,
-                        titleTextSize = 12f,
-                        listener = View.OnClickListener { shortToastCenter("返回") }
+                .showNavigationView(R.drawable.icon_back, "返回", Color.BLACK, 12f,
+                        View.OnClickListener { shortToastCenter("返回") }
                 )
                 .setNavigationViewMargin(42, 10, 20, 10)
                 .setNavigationViewContentPadding(0, 0, 30, 0)
-                .showNavigationViewMessageCount("99+", Color.DKGRAY, Color.YELLOW, 10)
+                .showNavigationViewMessageCount("99+", Color.WHITE, 10, Color.RED)
 
-                .showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.RED)
+                .showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.BLACK, 18f)
 
-                .showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0, Toolbar.OnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.action_0 -> {
-                            shortToastCenter("消息")
-                        }
-                        R.id.action_1 -> {
-                            shortToastCenter("添加")
-                        }
-                        R.id.action_2 -> {
-                            shortToastCenter("编辑")
-                        }
-                        R.id.action_3 -> {
-                            shortToastCenter("删除")
-                        }
-                        R.id.action_4 -> {
-                            shortToastCenter("查看")
-                        }
-                    }
-                    true
-                })
+                .showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0,
+                        Toolbar.OnMenuItemClickListener {
+                            when (it.itemId) {
+                                R.id.action_0 -> {
+                                    shortToastCenter("消息")
+                                }
+                                R.id.action_1 -> {
+                                    shortToastCenter("添加")
+                                }
+                                R.id.action_2 -> {
+                                    shortToastCenter("编辑")
+                                }
+                                R.id.action_3 -> {
+                                    shortToastCenter("删除")
+                                }
+                                R.id.action_4 -> {
+                                    shortToastCenter("查看")
+                                }
+                            }
+                            true
+                        })
 
                 .replaceMenuWithCustomView(R.id.action_0, View.OnClickListener { shortToastCenter("消息1") })
                 .setCustomViewMenuIcon(R.id.action_0, R.drawable.icon_0)
-                .setCustomViewMenuTitle(R.id.action_0, "消息1", Color.WHITE, 12f)
+                .setCustomViewMenuTitle(R.id.action_0, "消息1", Color.BLACK, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_0, "0", Color.WHITE, 10, Color.RED)
                 .setCustomViewMenuMargin(R.id.action_0, 0, 0)
-                .setCustomViewMenuContentPadding(R.id.action_0, 30, 30, 30, 30)
+                .setCustomViewMenuContentPadding(R.id.action_0, 30, 0, 30, 0)
 
                 .replaceMenuWithCustomView(R.id.action_1, View.OnClickListener { shortToastCenter("添加1") })
                 .setCustomViewMenuIcon(R.id.action_1, R.drawable.icon_0)
-                .setCustomViewMenuTitle(R.id.action_1, "添加1", Color.WHITE, 12f)
+                .setCustomViewMenuTitle(R.id.action_1, "添加1", Color.BLACK, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_1, "1", Color.WHITE, 10, Color.RED)
                 .setCustomViewMenuMargin(R.id.action_1, 0, 0)
-                .setCustomViewMenuContentPadding(R.id.action_1, 30, 30, 30, 30)
+                .setCustomViewMenuContentPadding(R.id.action_1, 0, 0, 30, 0)
 
                 .replaceMenuWithCustomView(R.id.action_2, View.OnClickListener { shortToastCenter("编辑1") })
                 .setCustomViewMenuIcon(R.id.action_2, R.drawable.icon_0)
-                .setCustomViewMenuTitle(R.id.action_2, "编辑1", Color.WHITE, 12f)
+                .setCustomViewMenuTitle(R.id.action_2, "编辑1", Color.BLACK, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_2, "2", Color.WHITE, 10, Color.RED)
                 .setCustomViewMenuMargin(R.id.action_2, 0, 0)
-                .setCustomViewMenuContentPadding(R.id.action_2, 30, 30, 30, 30)
+                .setCustomViewMenuContentPadding(R.id.action_2, 0, 0, 30, 0)
 
                 .replaceMenuWithCustomView(R.id.action_3, View.OnClickListener { shortToastCenter("删除1") })
                 .setCustomViewMenuIcon(R.id.action_3, R.drawable.icon_0)
-                .setCustomViewMenuTitle(R.id.action_3, "删除1", Color.WHITE, 12f)
+                .setCustomViewMenuTitle(R.id.action_3, "删除1", Color.BLACK, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_3, "3", Color.WHITE, 10, Color.RED)
                 .setCustomViewMenuMargin(R.id.action_3, 0, 0)
-                .setCustomViewMenuContentPadding(R.id.action_3, 30, 30, 30, 30)
+                .setCustomViewMenuContentPadding(R.id.action_3, 0, 0, 30, 0)
 
                 .replaceMenuWithCustomView(R.id.action_4, View.OnClickListener { shortToastCenter("查看1") })
                 .setCustomViewMenuIcon(R.id.action_4, R.drawable.icon_0)
-                .setCustomViewMenuTitle(R.id.action_4, "查看1", Color.WHITE, 12f)
+                .setCustomViewMenuTitle(R.id.action_4, "查看1", Color.BLACK, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_4, "4", Color.WHITE, 10, Color.RED)
                 .setCustomViewMenuMargin(R.id.action_4, 0, 0)
-                .setCustomViewMenuContentPadding(R.id.action_4, 30, 30, 30, 30)
+                .setCustomViewMenuContentPadding(R.id.action_4, 0, 0, 30, 0)
     }
     private val mBinding: ActivityMainBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
