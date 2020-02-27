@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
                         titleTextSize = 12f,
                         listener = View.OnClickListener { shortToastCenter("返回") }
                 )
-//                .setNavigationViewMargin(42, 10, 20, 10)
-//                .setNavigationViewContentPadding(0, 0, 30, 0)
+                .setNavigationViewMargin(42, 10, 20, 10)
+                .setNavigationViewContentPadding(0, 0, 30, 0)
                 .showNavigationViewMessageCount("99+", Color.DKGRAY, Color.YELLOW, 10)
 
                 .showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.RED)
