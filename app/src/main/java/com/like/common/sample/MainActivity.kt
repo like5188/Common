@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
                         titleTextSize = 12f,
                         listener = View.OnClickListener { shortToastCenter("返回") }
                 )
-                .setNavigationViewMargin(42, 10, 20, 10)
-                .setNavigationViewContentPadding(0, 0, 30, 0)
+//                .setNavigationViewMargin(42, 10, 20, 10)
+//                .setNavigationViewContentPadding(0, 0, 30, 0)
                 .showNavigationViewMessageCount("99+", Color.DKGRAY, Color.YELLOW, 10)
 
                 .showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.RED)
@@ -75,13 +75,15 @@ class MainActivity : AppCompatActivity() {
                 .setCustomViewMenuIcon(R.id.action_0, R.drawable.icon_0)
                 .setCustomViewMenuTitle(R.id.action_0, "消息1", Color.WHITE, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_0, "0", Color.WHITE, 10, Color.RED)
-//                .setCustomViewMenuMargin(R.id.action_0, 50, 0, 0, 0)
+//                .setCustomViewMenuMargin(R.id.action_0, 50, 10, 20, 10)
 //                .setCustomViewMenuContentPadding(R.id.action_0, 0, 50, 0, 0)
 
                 .replaceMenuWithCustomView(R.id.action_1, View.OnClickListener { shortToastCenter("添加1") })
                 .setCustomViewMenuIcon(R.id.action_1, R.drawable.icon_0)
                 .setCustomViewMenuTitle(R.id.action_1, "添加1", Color.WHITE, 12f)
                 .setCustomViewMenuMessageCount(R.id.action_1, "1", Color.WHITE, 10, Color.RED)
+//                .setCustomViewMenuMargin(R.id.action_1, 50, 10, 20, 10)
+//                .setCustomViewMenuContentPadding(R.id.action_1, 0, 50, 0, 0)
 
                 .replaceMenuWithCustomView(R.id.action_2, View.OnClickListener { shortToastCenter("编辑1") })
                 .setCustomViewMenuIcon(R.id.action_2, R.drawable.icon_0)
