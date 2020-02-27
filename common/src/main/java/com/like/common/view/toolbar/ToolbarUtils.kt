@@ -193,7 +193,6 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
      */
     fun getCustomViewMenuTitle(menuItemId: Int) = getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.getTitle() ?: ""
 
-
     /**
      * 设置指定菜单按钮的margin，只能指定top、bottom；left、right指定了也无效。
      */
