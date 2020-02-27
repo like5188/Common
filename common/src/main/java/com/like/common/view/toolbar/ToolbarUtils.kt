@@ -1,7 +1,9 @@
 package com.like.common.view.toolbar
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.ToolbarBinding
 import com.like.common.util.DimensionUtils
+import com.like.common.util.ImageUtils
 import com.like.common.view.badgeview.BadgeViewHelper
 
 /**
@@ -137,8 +140,11 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
      * @param menuResId
      * @param listener
      */
-    fun showMenu(@MenuRes menuResId: Int, listener: Toolbar.OnMenuItemClickListener? = null): ToolbarUtils {
+    fun showMenu(@MenuRes menuResId: Int, @DrawableRes overflowIconResId: Int? = null, listener: Toolbar.OnMenuItemClickListener? = null): ToolbarUtils {
         mBinding.toolbar.inflateMenu(menuResId)
+        if (overflowIconResId != null && overflowIconResId != 0) {
+            mBinding.toolbar.overflowIcon = BitmapDrawable(mContext.resources, BitmapFactory.decodeResource(mContext.resources, overflowIconResId))
+        }
         if (listener != null) {
             mBinding.toolbar.setOnMenuItemClickListener(listener)
         }

@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
                 .showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.RED)
 
-                .showMenu(R.menu.toolbar_right_menu_main, Toolbar.OnMenuItemClickListener {
+                .showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0, Toolbar.OnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.action_0 -> {
                             shortToastCenter("消息")
