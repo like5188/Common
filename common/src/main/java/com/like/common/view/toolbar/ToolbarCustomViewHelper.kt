@@ -44,9 +44,7 @@ class ToolbarCustomViewHelper(context: Context, binding: ToolbarCustomViewBindin
                         rightMargin = right
                         bottomMargin = bottom
                     }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && layoutParams is ActionMenuView.LayoutParams) {// 如果是Menu：ActionMenuView.LayoutParams
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && layoutParams is ActionMenuView.LayoutParams) {// 如果是Menu：ActionMenuView.LayoutParams
             mBinding.root.layoutParams = ActionMenuView.LayoutParams(ActionMenuView.LayoutParams.WRAP_CONTENT, ActionMenuView.LayoutParams.MATCH_PARENT)
                     .apply {
                         leftMargin = left

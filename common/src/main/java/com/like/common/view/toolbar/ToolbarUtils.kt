@@ -195,10 +195,10 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
 
 
     /**
-     * 设置指定菜单按钮的margin
+     * 设置指定菜单按钮的margin，只能指定top、bottom；left、right指定了也无效。
      */
-    fun setCustomViewMenuMargin(menuItemId: Int, left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.setMargin(left, top, right, bottom)
+    fun setCustomViewMenuMargin(menuItemId: Int, top: Int = 0, bottom: Int = 0): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.setMargin(0, top, 0, bottom)
         return this
     }
 
