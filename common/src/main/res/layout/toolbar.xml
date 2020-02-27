@@ -12,13 +12,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:gravity="center_vertical"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:theme="@style/ToolbarTheme"
-            app:title="">
+            app:contentInsetStart="0dp">
 
             <include
-                android:id="@+id/toolbar_navigation_custom_view"
+                android:id="@+id/navigation_view"
                 layout="@layout/toolbar_custom_view"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
@@ -26,10 +23,13 @@
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/picture_color_grey_3e"
                 android:layout_gravity="center_horizontal"
                 android:ellipsize="end"
+                android:gravity="center"
                 android:maxLines="1"
+                android:textColor="@color/common_text_white_0"
                 android:textSize="18sp" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -38,7 +38,8 @@
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/common_divider_gray" />
+            android:background="@color/common_divider_gray"
+            android:visibility="gone" />
     </LinearLayout>
 
 </layout>

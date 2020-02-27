@@ -5,10 +5,4 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <!-- ToolBar菜单样式 -->
-    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <item name="actionMenuTextColor">@color/common_text_white_0</item> <!--  颜色-->
-        <item name="android:textSize">14sp</item> <!--  字体大小-->
-    </style>
-
 </resources>

@@ -12,19 +12,19 @@
             android:id="@+id/cl"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="?actionBarItemBackground"
-            android:padding="5dp">
+            android:background="?actionBarItemBackground">
 
             <ImageView
                 android:id="@+id/iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerInside"
-                android:src="@drawable/download_pause"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/tv_title"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/download_pause" />
 
             <TextView
                 android:id="@+id/tv_title"
@@ -34,6 +34,7 @@
                 android:maxLines="1"
                 android:textColor="@color/common_text_black_0"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

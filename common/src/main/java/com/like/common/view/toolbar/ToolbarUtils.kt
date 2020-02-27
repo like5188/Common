@@ -1,364 +1,250 @@
 package com.like.common.view.toolbar
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.text.TextUtils
-import android.util.Log
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.ToolbarBinding
+import com.like.common.util.DimensionUtils
 import com.like.common.view.badgeview.BadgeViewHelper
 
 /**
  * Toolbar相关工具类
  */
 class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
-    private val mBinding: ToolbarBinding by lazy { DataBindingUtil.inflate<ToolbarBinding>(LayoutInflater.from(mContext), R.layout.toolbar, toolbarContainer, true) }
-    private var navigationBadgeViewHelper: BadgeViewHelper? = null
+    private val mBinding: ToolbarBinding by lazy {
+        DataBindingUtil.inflate<ToolbarBinding>(LayoutInflater.from(mContext), R.layout.toolbar, toolbarContainer, true)
+    }
+    private val mNavigationBadgeViewHelper: BadgeViewHelper by lazy {
+        BadgeViewHelper(mContext, mBinding.navigationView.cl)
+    }
+    private val mNavigationToolbarCustomViewHelper: ToolbarCustomViewHelper by lazy {
+        ToolbarCustomViewHelper(mContext, mBinding.navigationView)
+    }
 
     init {
-        mBinding.toolbar.title = ""// 屏蔽掉原来的标题
+        mBinding
     }
 
     fun getToolbar(): Toolbar = mBinding.toolbar
 
-    fun getToolbarHeight() = mBinding.root.height
+    /**
+     * 获取高度，包括标题栏和分割线
+     */
+    fun getHeight() = mBinding.root.height
 
     /**
-     * 显示标题栏底部的分割线，默认是显示的
+     * 设置背景色
      */
-    fun showDivider(): ToolbarUtils {
-        mBinding.divider.visibility = View.VISIBLE
-        return this
-    }
-
-    /**
-     * 隐藏标题栏底部的分割线
-     */
-    fun hideDivider(): ToolbarUtils {
-        mBinding.divider.visibility = View.GONE
-        return this
-    }
-
-    fun setDividerHeight(height: Int): ToolbarUtils {
-        if (height > 0)
-            mBinding.divider.layoutParams.height = height
-        return this
-    }
-
-    fun getDividerHeight() = mBinding.divider.height
-
-    /**
-     * 设置标题栏底部的分割线的颜色
-     */
-    fun setDividerColor(@ColorInt color: Int): ToolbarUtils {
-        mBinding.divider.setBackgroundColor(color)
-        return this
-    }
-
-    /**
-     * 设置标题栏背景颜色
-     *
-     * @return
-     */
-    fun setBackgroundByColor(@ColorInt color: Int): ToolbarUtils {
+    fun setBackgroundColor(@ColorInt color: Int): ToolbarUtils {
         mBinding.toolbar.setBackgroundColor(color)
         return this
     }
 
     /**
-     * 设置标题栏背景颜色
-     *
-     * @return
-     */
-    fun setBackgroundByColorResId(@ColorRes colorResId: Int): ToolbarUtils {
-        mBinding.toolbar.setBackgroundColor(ActivityCompat.getColor(mContext, colorResId))
-        return this
-    }
-
-    /**
-     * 设置导航按钮
-     *
-     * @param listener      导航按钮单击事件
-     * @param iconResId     导航按钮图片资源id
-     * @return
-     */
-    @JvmOverloads
-    fun showNavigationButton(@DrawableRes iconResId: Int = -1, listener: View.OnClickListener? = null): ToolbarUtils {
-        if (iconResId != -1) {
-            mBinding.toolbar.setNavigationIcon(iconResId)
-        }
-        if (listener != null) {
-            mBinding.toolbar.setNavigationOnClickListener(listener)
-        }
-        return this
-    }
-
-    /**
-     * 屏蔽掉navigation按钮
-     *
-     * @return
-     */
-    fun hideNavigationBotton(): ToolbarUtils {
-        mBinding.toolbar.navigationIcon = null
-        return this
-    }
-
-    /**
-     * 设置自定义视图的导航按钮
-     */
-    @JvmOverloads
-    fun showCustomNavigationView(@DrawableRes iconResId: Int = -1, name: String = "", listener: View.OnClickListener? = null): ToolbarUtils {
-        hideNavigationBotton()
-        navigationBadgeViewHelper = BadgeViewHelper(mContext, mBinding.toolbarNavigationCustomView.cl)
-        if (!TextUtils.isEmpty(name)) {
-            mBinding.toolbarNavigationCustomView.tvTitle.visibility = View.VISIBLE
-            mBinding.toolbarNavigationCustomView.tvTitle.text = name
-        }
-        if (iconResId != -1) {
-            mBinding.toolbarNavigationCustomView.iv.visibility = View.VISIBLE
-            mBinding.toolbarNavigationCustomView.iv.setImageResource(iconResId)
-        }
-        if (listener != null) {
-            mBinding.toolbarNavigationCustomView.root.setOnClickListener(listener)
-        }
-        return this
-    }
-
-    /**
-     * 设置自定义视图的导航按钮文本颜色
-     */
-    fun setCustomNavigationViewTextColor(@ColorInt color: Int): ToolbarUtils {
-        mBinding.toolbarNavigationCustomView.tvTitle.setTextColor(color)
-        return this
-    }
-
-    /**
-     * 设置自定义视图的导航按钮文本大小
-     *
-     * @param size sp
-     */
-    fun setCustomNavigationViewTextSize(size: Float): ToolbarUtils {
-        if (size > 0f)
-            mBinding.toolbarNavigationCustomView.tvTitle.textSize = size
-        return this
-    }
-
-    /**
-     * 设置自定义视图的左边距
-     */
-    fun setNavigationViewLeftMargin(leftMargin: Int): ToolbarUtils {
-        mBinding.toolbar.setContentInsetsAbsolute(leftMargin, 0)
-        return this
-    }
-
-    /**
-     * 设置自定义视图的导航按钮右上角显示的消息数
-     */
-    fun setCustomNavigationViewMessageCount(messageCount: String): ToolbarUtils {
-        navigationBadgeViewHelper?.setMessageCount(messageCount)
-        return this
-    }
-
-    /**
-     * 设置自定义视图的导航按钮右上角显示的消息数的文本颜色
-     */
-    fun setCustomNavigationViewMessageTextColor(@ColorInt color: Int): ToolbarUtils {
-        navigationBadgeViewHelper?.setTextColor(color)
-        return this
-    }
-
-    /**
-     * @param size sp
-     */
-    fun setCustomNavigationViewMessageTextSize(size: Int): ToolbarUtils {
-        navigationBadgeViewHelper?.setTextSize(size)
-        return this
-
-    }
-
-    fun setCustomNavigationViewMessageBackgroundColor(@ColorInt color: Int): ToolbarUtils {
-        navigationBadgeViewHelper?.setBackgroundColor(color)
-        return this
-    }
-
-    /**
-     * 设置标题
+     * 显示标题
      *
      * @param title
-     * @param colorResId 文本颜色
+     * @param color     文本颜色
      * @return
      */
-    fun showTitle(title: String, @ColorRes colorResId: Int): ToolbarUtils {
-        mBinding.tvTitle.setTextColor(ActivityCompat.getColor(mContext, colorResId))
+    fun showTitle(title: String, @ColorInt color: Int = Color.WHITE): ToolbarUtils {
+        mBinding.tvTitle.setTextColor(color)
         mBinding.tvTitle.text = title
         return this
     }
 
     /**
-     * 设置Toolbar右侧(标题右侧)的几个菜单按钮
+     * 显示标题栏底部的分割线，默认未显示
+     *
+     * @param height    分割线高度，dp
+     * @param color     分割线颜色
+     */
+    fun showDivider(
+            height: Float = 1f,
+            @ColorInt color: Int = Color.LTGRAY
+    ): ToolbarUtils {
+        mBinding.divider.visibility = View.VISIBLE
+        if (height > 0) {
+            mBinding.divider.layoutParams.height = DimensionUtils.dp2px(mContext, height)
+        }
+        mBinding.divider.setBackgroundColor(color)
+        return this
+    }
+
+    /**
+     * 显示自定义视图的导航按钮
+     *
+     * @param resid             图标资源id
+     * @param title             文本
+     * @param titleColor        文本颜色
+     * @param titleTextSize     文本字体大小
+     * @param listener          点击监听
+     */
+    fun showNavigationView(
+            @DrawableRes resid: Int = 0,
+            title: String? = null,
+            @ColorInt titleColor: Int = Color.WHITE,
+            titleTextSize: Float = 12f,
+            listener: View.OnClickListener? = null
+    ): ToolbarUtils {
+        mNavigationToolbarCustomViewHelper.setIcon(resid)
+        mNavigationToolbarCustomViewHelper.setTitle(title, titleColor, titleTextSize)
+        mNavigationToolbarCustomViewHelper.setOnClickListener(listener)
+        return this
+    }
+
+    /**
+     * 设置自定义视图的导航按钮的margin
+     */
+    fun setNavigationViewMargin(left: Int = 42, top: Int = 10, right: Int = 20, bottom: Int = 10): ToolbarUtils {
+        mNavigationToolbarCustomViewHelper.setMargin(left, top, right, bottom)
+        return this
+    }
+
+    /**
+     * 设置自定义视图的导航按钮的内容的padding，用于调整消息位置
+     */
+    fun setNavigationViewContentPadding(left: Int = 0, top: Int = 0, right: Int = 30, bottom: Int = 0): ToolbarUtils {
+        mNavigationToolbarCustomViewHelper.setContentPadding(left, top, right, bottom)
+        return this
+    }
+
+    /**
+     * 显示自定义视图的导航按钮的消息
+     */
+    fun showNavigationViewMessageCount(
+            messageCount: String,
+            @ColorInt textColor: Int = Color.WHITE,
+            @ColorInt backgroundColor: Int = Color.RED,
+            textSize: Int = 10
+    ): ToolbarUtils {
+        mNavigationBadgeViewHelper.setMessageCount(messageCount, textColor, textSize, backgroundColor)
+        return this
+    }
+
+    /**
+     * 显示Toolbar原生菜单
      *
      * @param menuResId
      * @param listener
-     * @return
      */
-    @JvmOverloads
-    fun setRightMenu(@MenuRes menuResId: Int, listener: Toolbar.OnMenuItemClickListener? = null): ToolbarUtils {
+    fun showMenu(@MenuRes menuResId: Int, listener: Toolbar.OnMenuItemClickListener? = null): ToolbarUtils {
         mBinding.toolbar.inflateMenu(menuResId)
-        if (listener != null)
+        if (listener != null) {
             mBinding.toolbar.setOnMenuItemClickListener(listener)
+        }
         return this
     }
 
     /**
-     * 替换menu为自定义的视图。并设置是否隐藏
+     * 替换原生菜单按钮为自定义的视图。注意：如果原生菜单是折叠的，那么将不会生效。
      *
      * @param menuItemId    menu中的某个item的id
      * @param listener
-     * @param iconResId     <=0即不显示图片，默认-1
-     * @param name          为empty时即不显示名称，默认""
-     * @param isShow        是否立即显示，默认true
-     * @return
      */
-    @SuppressLint("RestrictedApi")
-    @JvmOverloads
-    fun replaceMenuWithCustomView(menuItemId: Int, @DrawableRes iconResId: Int = -1, name: String = "", isShow: Boolean = true, listener: View.OnClickListener? = null): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.let {
-            it.reset()
-            if (listener != null)
-                it.setOnClickListener(listener)
-            if (!TextUtils.isEmpty(name))
-                it.name = name
-            if (iconResId != -1)
-                it.setIcon(iconResId)
-            if (isShow) {
-                it.show()
-            } else {
-                it.hide()
+    fun replaceMenuWithCustomView(menuItemId: Int, listener: View.OnClickListener? = null): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.apply {
+            if (listener != null) {
+                setOnClickListener(listener)
             }
         }
         return this
     }
 
     /**
-     * 设置右边指定菜单按钮的消息数量
+     * 设置指定菜单按钮的icon
+     *
+     * @param menuItemId
+     * @param iconResId
+     */
+    fun setCustomViewMenuIcon(menuItemId: Int, @DrawableRes iconResId: Int): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.apply {
+            setIcon(iconResId)
+        }
+        return this
+    }
+
+    /**
+     * 设置指定菜单按钮的文本
+     *
+     * @param menuItemId
+     * @param title
+     * @param color
+     * @param size   单位sp
+     */
+    fun setCustomViewMenuTitle(menuItemId: Int, title: String, @ColorInt color: Int? = null, size: Float? = null): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.apply {
+            setTitle(title, color, size)
+        }
+        return this
+    }
+
+    /**
+     * 获取指定菜单按钮的文本
+     */
+    fun getCustomViewMenuTitle(menuItemId: Int) = getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.getTitle() ?: ""
+
+
+    /**
+     * 设置指定菜单按钮的margin
+     */
+    fun setCustomViewMenuMargin(menuItemId: Int, left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.setMargin(left, top, right, bottom)
+        return this
+    }
+
+    /**
+     * 设置指定菜单按钮的内容的padding，用于调整消息位置
+     */
+    fun setCustomViewMenuContentPadding(menuItemId: Int, left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.setContentPadding(left, top, right, bottom)
+        return this
+    }
+
+    /**
+     * 设置指定菜单按钮的消息
      *
      * @param menuItemId
      * @param messageCount
-     * @return
      */
-    fun setRightMenuMessageCount(menuItemId: Int, messageCount: String): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.setMessageCount(messageCount)
+    fun setCustomViewMenuMessageCount(
+            menuItemId: Int,
+            messageCount: String,
+            @ColorInt textColor: Int? = null,
+            textSize: Int? = null,
+            @ColorInt backgroundColor: Int? = null
+    ): ToolbarUtils {
+        getCustomActionProvider(menuItemId)?.getBadgeViewHelper()?.apply {
+            setMessageCount(messageCount, textColor, textSize, backgroundColor)
+        }
         return this
     }
 
     /**
-     * 设置右边指定菜单按钮的文本颜色
-     *
-     * @param menuItemId
-     * @param color
-     * @return
-     */
-    fun setRightMenuTextColor(menuItemId: Int, @ColorInt color: Int): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.setTextColor(color)
-        return this
-    }
-
-    /**
-     * 设置右边指定菜单按钮的文本大小
-     *
-     * @param menuItemId
-     * @param size   单位sp
-     * @return
-     */
-    fun setRightMenuTextSize(menuItemId: Int, size: Float): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.setTextSize(size)
-        return this
-    }
-
-    /**
-     * 设置右边指定菜单按钮的文本
-     *
-     * @param menuItemId
-     * @param name
-     * @return
-     */
-    fun setRightMenuName(menuItemId: Int, name: String): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.name = name
-        return this
-    }
-
-    /**
-     * 设置右边指定菜单按钮的左右margin
-     */
-    fun setRightMenuMargin(menuItemId: Int, leftAndRightMargin: Int, topAndBottomMargin: Int): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.setMargin(leftAndRightMargin, topAndBottomMargin)
-        return this
-    }
-
-    /**
-     * 设置右边指定菜单按钮的消息视图距离图标的距离
-     */
-    fun setRightMenuMessageMargin(menuItemId: Int, left: Int, top: Int, right: Int, bottom: Int): ToolbarUtils {
-        getCustomActionProvider(menuItemId)?.setMessageMargin(left, top, right, bottom)
-        return this
-    }
-
-    /**
-     * 获取右边指定菜单按钮的文本
-     *
-     * @param menuItemId
-     * @return
-     */
-    fun getRightMenuName(menuItemId: Int) = getCustomActionProvider(menuItemId)?.name ?: ""
-
-    /**
-     * 隐藏右边指定菜单
+     * 获取指定菜单按钮的消息
      *
      * @param menuItemId
      */
-    fun hideRightMenu(menuItemId: Int) {
-        getCustomActionProvider(menuItemId)?.hide()
+    fun getCustomViewMenuMessageCount(menuItemId: Int): String {
+        return getCustomActionProvider(menuItemId)?.getBadgeViewHelper()?.getMessageCount() ?: ""
     }
 
     /**
-     * 显示右边指定菜单
+     * 获取自定义视图的控制器ActionProvider
      *
      * @param menuItemId
-     */
-    fun showRightMenu(menuItemId: Int) {
-        getCustomActionProvider(menuItemId)?.show()
-    }
-
-    /**
-     * 获取控制message视图相关功能的Provider
-     *
-     * @param menuItemId
-     * @return
      */
     private fun getCustomActionProvider(menuItemId: Int): CustomActionProvider? {
-        val item = mBinding.toolbar.menu.findItem(menuItemId)
-        if (item != null) {
-            val actionProvider = MenuItemCompat.getActionProvider(item)
-            if (actionProvider is CustomActionProvider) {
-                return actionProvider
-            } else {
-                Log.w("ToolbarUtils", "getActionProvider: item does not implement SupportMenuItem; returning null")
-                return null
-            }
-        } else {
-            return null
-        }
+        return MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(menuItemId)) as? CustomActionProvider
     }
 
 }
