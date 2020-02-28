@@ -34,12 +34,13 @@ class MainActivity : AppCompatActivity() {
     private val mToolbarUtils: ToolbarUtils by lazy {
         ToolbarUtils(this, fl_toolbarContainer).apply {
             showTitle("0123456789")
-            showDivider(1f)
+            showDivider()
             getNavigationManager().apply {
                 showView(R.drawable.icon_back, listener = View.OnClickListener { shortToastCenter("返回") })
                 setMargin(42, 0, 20, 0)
             }
         }
+        // 下面的代码包括了ToolbarUtils相关的所有设置
 //        ToolbarUtils(this, fl_toolbarContainer).apply {
 //            setBackgroundColor(Color.WHITE)
 //            showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.BLACK, 18f)
