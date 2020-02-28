@@ -13,6 +13,9 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.ToolbarCustomViewBinding
 
+/**
+ * [Toolbar]中的自定义视图管理类
+ */
 class ToolbarCustomViewHelper(context: Context, binding: ToolbarCustomViewBinding? = null) {
     private val mBinding: ToolbarCustomViewBinding by lazy {
         binding ?: DataBindingUtil.inflate<ToolbarCustomViewBinding>(

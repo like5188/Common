@@ -5,6 +5,9 @@ import android.view.View
 import androidx.core.view.ActionProvider
 import com.like.common.view.badgeview.BadgeViewHelper
 
+/**
+ * 自定义视图提供者
+ */
 class CustomActionProvider(context: Context) : ActionProvider(context) {
     private val mToolbarCustomViewHelper: ToolbarCustomViewHelper by lazy {
         ToolbarCustomViewHelper(context)
