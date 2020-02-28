@@ -1,4 +1,4 @@
-package com.like.common.view.toolbar
+package com.like.common.view.toolbar.custom
 
 import android.content.Context
 import android.os.Build
@@ -16,7 +16,7 @@ import com.like.common.databinding.ToolbarCustomViewBinding
 /**
  * [Toolbar]中的自定义视图管理类
  */
-class ToolbarCustomViewHelper(context: Context, binding: ToolbarCustomViewBinding? = null) {
+class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = null) {
     private val mBinding: ToolbarCustomViewBinding by lazy {
         binding ?: DataBindingUtil.inflate<ToolbarCustomViewBinding>(
                 LayoutInflater.from(context),

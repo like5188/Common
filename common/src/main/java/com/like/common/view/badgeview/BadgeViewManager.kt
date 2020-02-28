@@ -4,7 +4,10 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.ColorInt
 
-class BadgeViewHelper(context: Context, target: View) {
+/**
+ * [BadgeView]管理类
+ */
+class BadgeViewManager(context: Context, target: View) {
     private val mBadgeView: BadgeView by lazy {
         BadgeView(context).apply {
             setTargetView(target)

@@ -1,19 +1,19 @@
-package com.like.common.view.toolbar
+package com.like.common.view.toolbar.custom
 
 import android.content.Context
 import android.view.View
 import androidx.core.view.ActionProvider
-import com.like.common.view.badgeview.BadgeViewHelper
+import com.like.common.view.badgeview.BadgeViewManager
 
 /**
  * 自定义视图提供者
  */
 class CustomActionProvider(context: Context) : ActionProvider(context) {
-    private val mToolbarCustomViewHelper: ToolbarCustomViewHelper by lazy {
-        ToolbarCustomViewHelper(context)
+    private val mToolbarCustomViewHelper: CustomViewManager by lazy {
+        CustomViewManager(context)
     }
-    private val mBadgeViewHelper: BadgeViewHelper by lazy {
-        BadgeViewHelper(context, mToolbarCustomViewHelper.getContentView())
+    private val mBadgeViewHelper: BadgeViewManager by lazy {
+        BadgeViewManager(context, mToolbarCustomViewHelper.getContentView())
     }
 
     override fun onCreateActionView(): View {

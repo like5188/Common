@@ -30,7 +30,7 @@
 # Layout布局使用的View构造函数（自定义控件）、android:onClick等。
 
 #ToolbarUtils
--keep class com.like.common.view.toolbar.CustomActionProvider{*;}
+-keep class com.like.common.view.toolbar.custom.CustomActionProvider{*;}
 
 # 如果组件化时，在 module 中使用了自定义的 Application，它又实现了 IModuleApplication 接口，为了反射获取其实例，就需要保护这个实现。
 -keep class * implements com.like.common.base.IModuleApplication

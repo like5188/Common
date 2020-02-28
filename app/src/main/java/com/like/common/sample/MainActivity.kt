@@ -37,12 +37,12 @@ class MainActivity : AppCompatActivity() {
             showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.BLACK, 18f)
             showDivider(1f, Color.LTGRAY)
             getNavigationManager().apply {
-                showNavigationView(R.drawable.icon_back, "返回", Color.BLACK, 12f,
+                showView(R.drawable.icon_back, "返回", Color.BLACK, 12f,
                         View.OnClickListener { shortToastCenter("返回") }
                 )
-                setNavigationViewMargin(42, 10, 20, 10)
-                setNavigationViewContentPadding(0, 0, 30, 0)
-                showNavigationViewMessageCount("99+", Color.WHITE, 10, Color.RED)
+                setMargin(42, 10, 20, 10)
+                setContentPadding(0, 0, 30, 0)
+                showMessageCount("99+", Color.WHITE, 10, Color.RED)
             }
             getMenuManager().apply {
                 showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0, Toolbar.OnMenuItemClickListener {
