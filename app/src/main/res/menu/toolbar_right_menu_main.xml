@@ -6,11 +6,11 @@
         never 永远不会显示。只会在藏出列表中显示，而且只显示标题，所以在定义item的时候，最好把标题都带上。
         always 无论是否超出空间，总会显示。
         withText withText值示意Action bar要显示文本标题。Action bar会尽可能的显示这个标题，但是，如果图标有效并且受到Action bar空间的限制，文本标题有可能显示不全。
-        collapseActionView 声明了这个操作视窗应该被折叠到一个按钮中，当用户选择这个按钮时，这个操作视窗展开。
+        collapseActionView 声明了这个操作视窗应该被折叠到一个按钮中，当用户选择这个按钮时，这个操作视窗展开。一般要配合ifRoom一起使用才会有效。测试了有bug。所以最好不用
     -->
     <item
         android:id="@+id/action_0"
-        android:icon="@drawable/download_pause"
+        android:icon="@drawable/dialog_close"
         android:title="消息"
         app:showAsAction="ifRoom" />
 
