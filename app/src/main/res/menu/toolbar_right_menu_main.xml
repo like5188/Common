@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!--
-    1、always：使菜单项一直显示在ToolBar上。
-    2、ifRoom：如果有足够的空间，这个值会使菜单项显示在ToolBar上。
-    3、never：使菜单项永远都不出现在ToolBar上,在…的子项中显示。
-    4、withText：使菜单项和它的图标，菜单文本一起显示。
-    5、collapseActionView：
+        ifRoom 会显示在Item中，空间不足会将后面item收起来，如果已经有4个或者4个以上的Item时会隐藏在溢出列表中。
+        never 永远不会显示。只会在藏出列表中显示，而且只显示标题，所以在定义item的时候，最好把标题都带上。
+        always 无论是否超出空间，总会显示。
+        withText withText值示意Action bar要显示文本标题。Action bar会尽可能的显示这个标题，但是，如果图标有效并且受到Action bar空间的限制，文本标题有可能显示不全。
+        collapseActionView 声明了这个操作视窗应该被折叠到一个按钮中，当用户选择这个按钮时，这个操作视窗展开。否则，这个操作视窗在默认的情况下是可见的，并且即便在用于不适用的时候，也要占据操作栏的有效空间。
     -->
     <item
         android:id="@+id/action_0"
