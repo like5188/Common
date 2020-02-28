@@ -4,10 +4,10 @@ import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.widget.ActionMenuView
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
@@ -96,12 +96,18 @@ class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = n
      * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
      */
     fun setTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
-        mBinding.tvTitle.text = title
-        if (textColor != null) {
-            mBinding.tvTitle.setTextColor(textColor)
-        }
-        if (textSize != null) {
-            mBinding.tvTitle.textSize = textSize
+        if (title.isEmpty()) {
+            mBinding.tvTitle.visibility = View.GONE
+            mBinding.tvTitle.text = ""
+        } else {
+            mBinding.tvTitle.visibility = View.VISIBLE
+            mBinding.tvTitle.text = title
+            if (textColor != null) {
+                mBinding.tvTitle.setTextColor(textColor)
+            }
+            if (textSize != null) {
+                mBinding.tvTitle.textSize = textSize
+            }
         }
     }
 
@@ -116,8 +122,10 @@ class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = n
      */
     fun setIcon(@DrawableRes iconResId: Int) {
         if (iconResId == 0) {
+            mBinding.iv.visibility = View.GONE
             mBinding.iv.setImageDrawable(null)
         } else {
+            mBinding.iv.visibility = View.VISIBLE
             mBinding.iv.setImageResource(iconResId)
         }
     }
