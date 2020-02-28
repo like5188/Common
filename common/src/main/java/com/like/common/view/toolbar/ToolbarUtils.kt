@@ -42,19 +42,38 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
     }
 
     /**
-     * 显示标题
+     * 显示原生标题
+     *
+     * @param title             文本
+     * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
+     */
+    fun showTitle(title: String, @ColorInt textColor: Int? = null) {
+        mBinding.toolbar.title = title
+        if (textColor != null) {
+            mBinding.toolbar.setTitleTextColor(textColor)
+        }
+    }
+
+    /**
+     * 显示自定义的居中的标题
      *
      * @param title             文本
      * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
      * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
      */
-    fun showTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
-        mBinding.tvTitle.text = title
-        if (textColor != null) {
-            mBinding.tvTitle.setTextColor(textColor)
-        }
-        if (textSize != null) {
-            mBinding.tvTitle.textSize = textSize
+    fun showCustomTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
+        if (title.isEmpty()) {
+            mBinding.tvTitle.visibility = View.GONE
+            mBinding.tvTitle.text = ""
+        } else {
+            mBinding.tvTitle.visibility = View.VISIBLE
+            mBinding.tvTitle.text = title
+            if (textColor != null) {
+                mBinding.tvTitle.setTextColor(textColor)
+            }
+            if (textSize != null) {
+                mBinding.tvTitle.textSize = textSize
+            }
         }
     }
 

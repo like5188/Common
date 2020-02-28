@@ -5,33 +5,50 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.Toolbar
+import com.like.common.R
 import com.like.common.databinding.ToolbarBinding
 import com.like.common.view.badgeview.BadgeViewManager
 import com.like.common.view.toolbar.custom.CustomViewManager
+import kotlinx.android.synthetic.main.toolbar.view.*
 
 /**
  * [Toolbar]中的导航按钮管理类
  */
-class NavigationManager(context: Context, binding: ToolbarBinding) {
+class NavigationManager(private val mContext: Context, private val mBinding: ToolbarBinding) {
     // 自定义视图中的消息视图管理类，用于控制右上角的消息
     private val mBadgeViewHelper: BadgeViewManager by lazy {
-        BadgeViewManager(context, binding.navigationView.cl)
+        BadgeViewManager(mContext, mBinding.navigationView.cl)
     }
     // 自定义视图的管理类，用于控制自定义视图
     private val mCustomViewHelper: CustomViewManager by lazy {
-        CustomViewManager(context, binding.navigationView)
+        CustomViewManager(mContext, mBinding.navigationView)
+    }
+
+    /**
+     * 显示原生导航按钮
+     *
+     * @param resid             图标资源id。如果设置为0，表示去掉图标。
+     * @param listener          点击监听
+     */
+    fun showView(@DrawableRes resid: Int = 0, listener: View.OnClickListener? = null) {
+        if (resid == 0) {
+            mBinding.toolbar.navigationIcon = null
+        } else {
+            mBinding.toolbar.setNavigationIcon(resid)
+            mBinding.toolbar.setNavigationOnClickListener(listener)
+        }
     }
 
     /**
      * 显示自定义视图的导航按钮
      *
-     * @param resid             图标资源id
+     * @param resid             图标资源id。如果设置为0，表示去掉图标。
      * @param title             文本
      * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
      * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
      * @param listener          点击监听
      */
-    fun showView(
+    fun showCustomView(
             @DrawableRes resid: Int = 0,
             title: String = "",
             @ColorInt textColor: Int? = null,
@@ -46,14 +63,14 @@ class NavigationManager(context: Context, binding: ToolbarBinding) {
     /**
      * 设置自定义视图的导航按钮的margin
      */
-    fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
+    fun setCustomViewMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
         mCustomViewHelper.setMargin(left, top, right, bottom)
     }
 
     /**
      * 设置自定义视图的导航按钮的内容的padding，用于调整消息位置
      */
-    fun setContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
+    fun setCustomViewContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
         mCustomViewHelper.setContentPadding(left, top, right, bottom)
     }
 
@@ -65,7 +82,7 @@ class NavigationManager(context: Context, binding: ToolbarBinding) {
      * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
      * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
      */
-    fun showMessageCount(
+    fun showCustomViewMessageCount(
             messageCount: String,
             @ColorInt textColor: Int? = null,
             textSize: Int? = null,

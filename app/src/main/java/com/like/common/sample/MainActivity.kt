@@ -31,87 +31,112 @@ import com.like.common.view.toolbar.ToolbarUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val mToolbarUtils: ToolbarUtils by lazy {
+    private val mOriginToolbarUtils: ToolbarUtils by lazy {
+        // 使用原生Toolbar显示标题栏
         ToolbarUtils(this, fl_toolbarContainer).apply {
-            showTitle("0123456789")
-            showDivider()
+            showTitle("0123456789", Color.WHITE)
             getNavigationManager().apply {
-                showView(R.drawable.icon_back, listener = View.OnClickListener { shortToastCenter("返回") })
-                setMargin(42, 0, 20, 0)
+                showView(R.drawable.icon_back, View.OnClickListener { shortToastCenter("返回") })
+            }
+            getMenuManager().apply {
+                showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0, Toolbar.OnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.action_0 -> {
+                            shortToastCenter("消息")
+                        }
+                        R.id.action_1 -> {
+                            shortToastCenter("添加")
+                        }
+                        R.id.action_2 -> {
+                            shortToastCenter("编辑")
+                        }
+                        R.id.action_3 -> {
+                            shortToastCenter("删除")
+                        }
+                        R.id.action_4 -> {
+                            shortToastCenter("查看")
+                        }
+                    }
+                    true
+                })
+            }
+            showDivider()
+        }
+    }
+    private val mCustomToolbarUtils: ToolbarUtils by lazy {
+        // 使用自定义的Toolbar显示标题栏
+        ToolbarUtils(this, fl_toolbarContainer).apply {
+            setBackgroundColor(Color.WHITE)
+            showCustomTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.BLACK, 18f)
+            showDivider(1f, Color.LTGRAY)
+            getNavigationManager().apply {
+                showCustomView(R.drawable.icon_back, "返回", Color.BLACK, 12f,
+                        View.OnClickListener { shortToastCenter("返回") }
+                )
+                setCustomViewMargin(42, 10, 20, 10)
+                setCustomViewContentPadding(0, 0, 30, 0)
+                showCustomViewMessageCount("99+", Color.WHITE, 10, Color.RED)
+            }
+            getMenuManager().apply {
+                showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0, Toolbar.OnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.action_0 -> {
+                            shortToastCenter("消息")
+                        }
+                        R.id.action_1 -> {
+                            shortToastCenter("添加")
+                        }
+                        R.id.action_2 -> {
+                            shortToastCenter("编辑")
+                        }
+                        R.id.action_3 -> {
+                            shortToastCenter("删除")
+                        }
+                        R.id.action_4 -> {
+                            shortToastCenter("查看")
+                        }
+                    }
+                    true
+                })
+
+                replaceMenuWithCustomView(R.id.action_0, View.OnClickListener { shortToastCenter("消息1") })
+                setCustomViewMenuIcon(R.id.action_0, R.drawable.icon_0)
+                setCustomViewMenuTitle(R.id.action_0, "消息1", Color.BLACK, 12f)
+                setCustomViewMenuMessageCount(R.id.action_0, "0", Color.WHITE, 10, Color.RED)
+                setCustomViewMenuMargin(R.id.action_0, 10, 10)
+                setCustomViewMenuContentPadding(R.id.action_0, 30, 0, 30, 0)
+
+                replaceMenuWithCustomView(R.id.action_1, View.OnClickListener { shortToastCenter("添加1") })
+                setCustomViewMenuIcon(R.id.action_1, R.drawable.icon_0)
+                setCustomViewMenuTitle(R.id.action_1, "添加1", Color.BLACK, 12f)
+                setCustomViewMenuMessageCount(R.id.action_1, "1", Color.WHITE, 10, Color.RED)
+                setCustomViewMenuMargin(R.id.action_1, 10, 10)
+                setCustomViewMenuContentPadding(R.id.action_1, 0, 0, 30, 0)
+
+                replaceMenuWithCustomView(R.id.action_2, View.OnClickListener { shortToastCenter("编辑1") })
+                setCustomViewMenuIcon(R.id.action_2, R.drawable.icon_0)
+                setCustomViewMenuTitle(R.id.action_2, "编辑1", Color.BLACK, 12f)
+                setCustomViewMenuMessageCount(R.id.action_2, "2", Color.WHITE, 10, Color.RED)
+                setCustomViewMenuMargin(R.id.action_2, 10, 10)
+                setCustomViewMenuContentPadding(R.id.action_2, 0, 0, 30, 0)
+
+                replaceMenuWithCustomView(R.id.action_3, View.OnClickListener { shortToastCenter("删除1") })
+                setCustomViewMenuIcon(R.id.action_3, R.drawable.icon_0)
+                setCustomViewMenuTitle(R.id.action_3, "删除1", Color.BLACK, 12f)
+                setCustomViewMenuMessageCount(R.id.action_3, "3", Color.WHITE, 10, Color.RED)
+                setCustomViewMenuMargin(R.id.action_3, 10, 10)
+                setCustomViewMenuContentPadding(R.id.action_3, 0, 0, 30, 0)
+
+                replaceMenuWithCustomView(R.id.action_4, View.OnClickListener { shortToastCenter("查看1") })
+                setCustomViewMenuIcon(R.id.action_4, R.drawable.icon_0)
+                setCustomViewMenuTitle(R.id.action_4, "查看1", Color.BLACK, 12f)
+                setCustomViewMenuMessageCount(R.id.action_4, "4", Color.WHITE, 10, Color.RED)
+                setCustomViewMenuMargin(R.id.action_4, 10, 10)
+                setCustomViewMenuContentPadding(R.id.action_4, 0, 0, 30, 0)
             }
         }
-        // 下面的代码包括了ToolbarUtils相关的所有设置
-//        ToolbarUtils(this, fl_toolbarContainer).apply {
-//            setBackgroundColor(Color.WHITE)
-//            showTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.BLACK, 18f)
-//            showDivider(1f, Color.LTGRAY)
-//            getNavigationManager().apply {
-//                showView(R.drawable.icon_back, "返回", Color.BLACK, 12f,
-//                        View.OnClickListener { shortToastCenter("返回") }
-//                )
-//                setMargin(42, 10, 20, 10)
-//                setContentPadding(0, 0, 30, 0)
-//                showMessageCount("99+", Color.WHITE, 10, Color.RED)
-//            }
-//            getMenuManager().apply {
-//                showMenu(R.menu.toolbar_right_menu_main, R.drawable.icon_0, Toolbar.OnMenuItemClickListener {
-//                    when (it.itemId) {
-//                        R.id.action_0 -> {
-//                            shortToastCenter("消息")
-//                        }
-//                        R.id.action_1 -> {
-//                            shortToastCenter("添加")
-//                        }
-//                        R.id.action_2 -> {
-//                            shortToastCenter("编辑")
-//                        }
-//                        R.id.action_3 -> {
-//                            shortToastCenter("删除")
-//                        }
-//                        R.id.action_4 -> {
-//                            shortToastCenter("查看")
-//                        }
-//                    }
-//                    true
-//                })
-//
-//                replaceMenuWithCustomView(R.id.action_0, View.OnClickListener { shortToastCenter("消息1") })
-//                setCustomViewMenuIcon(R.id.action_0, R.drawable.icon_0)
-//                setCustomViewMenuTitle(R.id.action_0, "消息1", Color.BLACK, 12f)
-//                setCustomViewMenuMessageCount(R.id.action_0, "0", Color.WHITE, 10, Color.RED)
-//                setCustomViewMenuMargin(R.id.action_0, 10, 10)
-//                setCustomViewMenuContentPadding(R.id.action_0, 30, 0, 30, 0)
-//
-//                replaceMenuWithCustomView(R.id.action_1, View.OnClickListener { shortToastCenter("添加1") })
-//                setCustomViewMenuIcon(R.id.action_1, R.drawable.icon_0)
-//                setCustomViewMenuTitle(R.id.action_1, "添加1", Color.BLACK, 12f)
-//                setCustomViewMenuMessageCount(R.id.action_1, "1", Color.WHITE, 10, Color.RED)
-//                setCustomViewMenuMargin(R.id.action_1, 10, 10)
-//                setCustomViewMenuContentPadding(R.id.action_1, 0, 0, 30, 0)
-//
-//                replaceMenuWithCustomView(R.id.action_2, View.OnClickListener { shortToastCenter("编辑1") })
-//                setCustomViewMenuIcon(R.id.action_2, R.drawable.icon_0)
-//                setCustomViewMenuTitle(R.id.action_2, "编辑1", Color.BLACK, 12f)
-//                setCustomViewMenuMessageCount(R.id.action_2, "2", Color.WHITE, 10, Color.RED)
-//                setCustomViewMenuMargin(R.id.action_2, 10, 10)
-//                setCustomViewMenuContentPadding(R.id.action_2, 0, 0, 30, 0)
-//
-//                replaceMenuWithCustomView(R.id.action_3, View.OnClickListener { shortToastCenter("删除1") })
-//                setCustomViewMenuIcon(R.id.action_3, R.drawable.icon_0)
-//                setCustomViewMenuTitle(R.id.action_3, "删除1", Color.BLACK, 12f)
-//                setCustomViewMenuMessageCount(R.id.action_3, "3", Color.WHITE, 10, Color.RED)
-//                setCustomViewMenuMargin(R.id.action_3, 10, 10)
-//                setCustomViewMenuContentPadding(R.id.action_3, 0, 0, 30, 0)
-//
-//                replaceMenuWithCustomView(R.id.action_4, View.OnClickListener { shortToastCenter("查看1") })
-//                setCustomViewMenuIcon(R.id.action_4, R.drawable.icon_0)
-//                setCustomViewMenuTitle(R.id.action_4, "查看1", Color.BLACK, 12f)
-//                setCustomViewMenuMessageCount(R.id.action_4, "4", Color.WHITE, 10, Color.RED)
-//                setCustomViewMenuMargin(R.id.action_4, 10, 10)
-//                setCustomViewMenuContentPadding(R.id.action_4, 0, 0, 30, 0)
-//            }
-//        }
     }
+
     private val mBinding: ActivityMainBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
@@ -119,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        mToolbarUtils
+        mOriginToolbarUtils
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {

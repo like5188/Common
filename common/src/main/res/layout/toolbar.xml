@@ -29,7 +29,8 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:textColor="@color/common_text_white_0"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone" />
 
         </androidx.appcompat.widget.Toolbar>
 
