@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         // 使用自定义的Toolbar显示标题栏
         ToolbarUtils(this, fl_toolbarContainer).apply {
             setBackgroundColor(Color.WHITE)
-            showCustomTitle("title", Color.BLACK, 18f)
+            showCustomTitle("title", Color.BLACK, 18f, Gravity.START)
             showDivider(1f, Color.LTGRAY)
             getNavigationManager().apply {
                 showCustomView(R.drawable.icon_back, "返回", Color.BLACK, 12f,

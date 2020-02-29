@@ -26,6 +26,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:ellipsize="end"
+                android:background="@color/common_text_red_0"
                 android:gravity="center"
                 android:maxLines="1"
                 android:textColor="@color/common_text_white_0"

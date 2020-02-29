@@ -2,6 +2,7 @@ package com.like.common.view.toolbar
 
 import android.content.Context
 import android.graphics.Color
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,14 +61,16 @@ class ToolbarUtils(private val mContext: Context, toolbarContainer: ViewGroup) {
      * @param title             文本
      * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
      * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
+     * @param gravity           文本位置。默认为[Gravity.CENTER_HORIZONTAL]
      */
-    fun showCustomTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
+    fun showCustomTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null, gravity: Int = Gravity.CENTER_HORIZONTAL) {
         if (title.isEmpty()) {
             mBinding.tvTitle.visibility = View.GONE
             mBinding.tvTitle.text = ""
         } else {
             mBinding.tvTitle.visibility = View.VISIBLE
             mBinding.tvTitle.text = title
+            (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = gravity
             if (textColor != null) {
                 mBinding.tvTitle.setTextColor(textColor)
             }
