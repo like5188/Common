@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val mOriginToolbarUtils: ToolbarUtils by lazy {
         // 使用原生Toolbar显示标题栏
         ToolbarUtils(this, fl_toolbarContainer).apply {
-            showTitle("0123456789", Color.WHITE)
+            showTitle("title", Color.WHITE)
             getNavigationManager().apply {
                 showView(R.drawable.icon_back, View.OnClickListener { shortToastCenter("返回") })
             }
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         // 使用自定义的Toolbar显示标题栏
         ToolbarUtils(this, fl_toolbarContainer).apply {
             setBackgroundColor(Color.WHITE)
-            showCustomTitle("0123456789aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", Color.BLACK, 18f)
+            showCustomTitle("title", Color.BLACK, 18f)
             showDivider(1f, Color.LTGRAY)
             getNavigationManager().apply {
                 showCustomView(R.drawable.icon_back, "返回", Color.BLACK, 12f,
