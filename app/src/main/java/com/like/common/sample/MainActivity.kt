@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        mOriginToolbarUtils
+        mCustomToolbarUtils
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {

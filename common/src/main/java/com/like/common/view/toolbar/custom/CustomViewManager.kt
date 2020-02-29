@@ -12,9 +12,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.ToolbarCustomViewBinding
+import com.like.common.view.badgeview.BadgeViewManager
 
 /**
- * [Toolbar]中的自定义视图管理类
+ * 用于标题栏中的自定义视图管理类。
+ * 此视图包括图标、文本、消息数三个元素。
  */
 class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = null) {
     private val mBinding: ToolbarCustomViewBinding by lazy {
@@ -24,16 +26,14 @@ class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = n
                 null, false
         )
     }
+    private val mBadgeViewHelper: BadgeViewManager by lazy {
+        BadgeViewManager(context, mBinding.cl)
+    }
 
     /**
      * 获取自定义视图
      */
-    fun getRootView(): View = mBinding.root
-
-    /**
-     * 获取自定义视图的第一层孩子根目录，用于配合[com.like.common.view.badgeview.BadgeView]来显示消息并调整其位置
-     */
-    fun getContentView(): View = mBinding.cl
+    fun getView(): View = mBinding.root
 
     /**
      * 设置自定义视图的内容的 padding
@@ -128,5 +128,24 @@ class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = n
             mBinding.iv.visibility = View.VISIBLE
             mBinding.iv.setImageResource(iconResId)
         }
+    }
+
+    /**
+     * 设置消息数
+     *
+     * @param messageCount      消息数
+     * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
+     * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
+     * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
+     */
+    fun setMessageCount(messageCount: String, @ColorInt textColor: Int? = null, textSize: Int? = null, @ColorInt backgroundColor: Int? = null) {
+        mBadgeViewHelper.setMessageCount(messageCount, textColor, textSize, backgroundColor)
+    }
+
+    /**
+     * 获取显示的消息数
+     */
+    fun getMessageCount(): String {
+        return mBadgeViewHelper.getMessageCount()
     }
 } 

@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import com.like.common.databinding.ToolbarBinding
 import com.like.common.view.toolbar.custom.CustomActionProvider
+import com.like.common.view.toolbar.custom.CustomViewManager
 
 /**
  * [Toolbar]中的菜单管理类
@@ -43,7 +44,7 @@ class MenuManager(private val mContext: Context, private val mBinding: ToolbarBi
      * @param listener
      */
     fun replaceMenuWithCustomView(menuItemId: Int, listener: View.OnClickListener? = null) {
-        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.apply {
+        getCustomViewManager(menuItemId)?.apply {
             if (listener != null) {
                 setOnClickListener(listener)
             }
@@ -57,7 +58,7 @@ class MenuManager(private val mContext: Context, private val mBinding: ToolbarBi
      * @param iconResId     图标资源id
      */
     fun setCustomViewMenuIcon(menuItemId: Int, @DrawableRes iconResId: Int) {
-        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.apply {
+        getCustomViewManager(menuItemId)?.apply {
             setIcon(iconResId)
         }
     }
@@ -71,7 +72,7 @@ class MenuManager(private val mContext: Context, private val mBinding: ToolbarBi
      * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
      */
     fun setCustomViewMenuTitle(menuItemId: Int, title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
-        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.apply {
+        getCustomViewManager(menuItemId)?.apply {
             setTitle(title, textColor, textSize)
         }
     }
@@ -79,21 +80,21 @@ class MenuManager(private val mContext: Context, private val mBinding: ToolbarBi
     /**
      * 获取指定自定义视图菜单按钮的文本
      */
-    fun getCustomViewMenuTitle(menuItemId: Int) = getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.getTitle() ?: ""
+    fun getCustomViewMenuTitle(menuItemId: Int) = getCustomViewManager(menuItemId)?.getTitle() ?: ""
 
     /**
      * 设置指定自定义视图菜单按钮的margin
      * 只能指定top、bottom；由于[ActionMenuView]的原因，left、right指定了也无效。
      */
     fun setCustomViewMenuMargin(menuItemId: Int, top: Int = 0, bottom: Int = 0) {
-        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.setMargin(0, top, 0, bottom)
+        getCustomViewManager(menuItemId)?.setMargin(0, top, 0, bottom)
     }
 
     /**
      * 设置指定自定义视图菜单按钮的内容的padding，用于调整消息位置
      */
     fun setCustomViewMenuContentPadding(menuItemId: Int, left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
-        getCustomActionProvider(menuItemId)?.getToolbarCustomViewHelper()?.setContentPadding(left, top, right, bottom)
+        getCustomViewManager(menuItemId)?.setContentPadding(left, top, right, bottom)
     }
 
     /**
@@ -112,7 +113,7 @@ class MenuManager(private val mContext: Context, private val mBinding: ToolbarBi
             textSize: Int? = null,
             @ColorInt backgroundColor: Int? = null
     ) {
-        getCustomActionProvider(menuItemId)?.getBadgeViewHelper()?.apply {
+        getCustomViewManager(menuItemId)?.apply {
             setMessageCount(messageCount, textColor, textSize, backgroundColor)
         }
     }
@@ -123,15 +124,11 @@ class MenuManager(private val mContext: Context, private val mBinding: ToolbarBi
      * @param menuItemId
      */
     fun getCustomViewMenuMessageCount(menuItemId: Int): String {
-        return getCustomActionProvider(menuItemId)?.getBadgeViewHelper()?.getMessageCount() ?: ""
+        return getCustomViewManager(menuItemId)?.getMessageCount() ?: ""
     }
 
-    /**
-     * 获取自定义视图的控制器ActionProvider
-     *
-     * @param menuItemId
-     */
-    private fun getCustomActionProvider(menuItemId: Int): CustomActionProvider? {
-        return MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(menuItemId)) as? CustomActionProvider
+    private fun getCustomViewManager(menuItemId: Int): CustomViewManager? {
+        val customActionProvider = MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(menuItemId)) as? CustomActionProvider
+        return customActionProvider?.getCustomViewManager()
     }
 }

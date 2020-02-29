@@ -5,22 +5,15 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.Toolbar
-import com.like.common.R
 import com.like.common.databinding.ToolbarBinding
-import com.like.common.view.badgeview.BadgeViewManager
 import com.like.common.view.toolbar.custom.CustomViewManager
-import kotlinx.android.synthetic.main.toolbar.view.*
 
 /**
  * [Toolbar]中的导航按钮管理类
  */
 class NavigationManager(private val mContext: Context, private val mBinding: ToolbarBinding) {
-    // 自定义视图中的消息视图管理类，用于控制右上角的消息
-    private val mBadgeViewHelper: BadgeViewManager by lazy {
-        BadgeViewManager(mContext, mBinding.navigationView.cl)
-    }
     // 自定义视图的管理类，用于控制自定义视图
-    private val mCustomViewHelper: CustomViewManager by lazy {
+    private val mCustomViewManager: CustomViewManager by lazy {
         CustomViewManager(mContext, mBinding.navigationView)
     }
 
@@ -55,23 +48,23 @@ class NavigationManager(private val mContext: Context, private val mBinding: Too
             textSize: Float? = null,
             listener: View.OnClickListener? = null
     ) {
-        mCustomViewHelper.setIcon(resid)
-        mCustomViewHelper.setTitle(title, textColor, textSize)
-        mCustomViewHelper.setOnClickListener(listener)
+        mCustomViewManager.setIcon(resid)
+        mCustomViewManager.setTitle(title, textColor, textSize)
+        mCustomViewManager.setOnClickListener(listener)
     }
 
     /**
      * 设置自定义视图的导航按钮的margin
      */
     fun setCustomViewMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
-        mCustomViewHelper.setMargin(left, top, right, bottom)
+        mCustomViewManager.setMargin(left, top, right, bottom)
     }
 
     /**
      * 设置自定义视图的导航按钮的内容的padding，用于调整消息位置
      */
     fun setCustomViewContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
-        mCustomViewHelper.setContentPadding(left, top, right, bottom)
+        mCustomViewManager.setContentPadding(left, top, right, bottom)
     }
 
     /**
@@ -88,6 +81,6 @@ class NavigationManager(private val mContext: Context, private val mBinding: Too
             textSize: Int? = null,
             @ColorInt backgroundColor: Int? = null
     ) {
-        mBadgeViewHelper.setMessageCount(messageCount, textColor, textSize, backgroundColor)
+        mCustomViewManager.setMessageCount(messageCount, textColor, textSize, backgroundColor)
     }
 }
