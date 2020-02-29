@@ -2,23 +2,20 @@ package com.like.common.view.titlebar
 
 import android.content.Context
 import android.os.Build
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
-import androidx.databinding.DataBindingUtil
-import com.like.common.R
-import com.like.common.databinding.ToolbarCustomViewBinding
+import com.like.common.databinding.TitlebarCustomButtonBinding
 import com.like.common.view.badgeview.BadgeViewManager
 
 /**
- * 用于标题栏中的自定义视图管理类。
- * 此视图包括图标、文本、消息数三个元素。
+ * 用于标题栏中的自定义按钮管理类。
+ * 此按钮视图包括图标、文本、消息数三个元素。
  */
-class CustomViewManager(context: Context, private val mBinding: ToolbarCustomViewBinding) {
+class TitlebarCustomButtonManager(context: Context, private val mBinding: TitlebarCustomButtonBinding) {
     private val mBadgeViewHelper: BadgeViewManager by lazy {
         BadgeViewManager(context, mBinding.cl)
     }

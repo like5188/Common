@@ -5,20 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.ActionProvider
 import androidx.databinding.DataBindingUtil
-import com.like.common.databinding.ToolbarCustomViewBinding
-import com.like.common.view.titlebar.CustomViewManager
+import com.like.common.databinding.TitlebarCustomButtonBinding
+import com.like.common.view.titlebar.TitlebarCustomButtonManager
 
 /**
  * Menu菜单的自定义视图提供者
  */
 class CustomActionProvider(context: Context) : ActionProvider(context) {
-    private val mCustomViewManager: CustomViewManager by lazy {
-        val toolbarCustomViewBinding = DataBindingUtil.inflate<ToolbarCustomViewBinding>(
+    private val mCustomViewManager: TitlebarCustomButtonManager by lazy {
+        val toolbarCustomViewBinding = DataBindingUtil.inflate<TitlebarCustomButtonBinding>(
                 LayoutInflater.from(context),
-                R.layout.toolbar_custom_view,
+                R.layout.titlebar_custom_button,
                 null, false
         )
-        CustomViewManager(context, toolbarCustomViewBinding)
+        TitlebarCustomButtonManager(context, toolbarCustomViewBinding)
     }
 
     override fun onCreateActionView(): View {

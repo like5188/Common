@@ -29,7 +29,7 @@ import com.like.common.util.setSelectorBackgroundResource
 import com.like.common.util.setSelectorSrcResource
 import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
-import com.like.common.view.titlebar.CustomViewManager
+import com.like.common.view.titlebar.TitlebarCustomButtonManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,8 +40,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        initOriginToolBar()
-//        initCustomToolbar()
+//        initOriginToolBar()
+        initCustomToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         mBinding.tvTitle.setTextColor(Color.BLACK)
         (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.START
 
-        val customNavigationView = CustomViewManager(this, mBinding.navigationView)
+        val customNavigationView = TitlebarCustomButtonManager(this, mBinding.navigationView)
         customNavigationView.setIcon(R.drawable.icon_back)
         customNavigationView.setTitle("返回")
         customNavigationView.setOnClickListener(View.OnClickListener { shortToastCenter("返回") })
