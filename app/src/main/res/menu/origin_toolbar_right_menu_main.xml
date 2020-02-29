@@ -11,36 +11,31 @@
     <item
         android:id="@+id/action_0"
         android:icon="@drawable/dialog_close"
-        android:title="消息"
-        app:actionProviderClass="com.like.common.view.toolbar.custom.CustomActionProvider"
+        android:title="菜单0"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_1"
         android:icon="@drawable/download_pause"
-        android:title="添加"
-        app:actionProviderClass="com.like.common.view.toolbar.custom.CustomActionProvider"
+        android:title="菜单1"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_2"
         android:icon="@drawable/download_pause"
-        android:title="编辑"
-        app:actionProviderClass="com.like.common.view.toolbar.custom.CustomActionProvider"
+        android:title="菜单2"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_3"
         android:icon="@drawable/download_pause"
-        android:title="删除"
-        app:actionProviderClass="com.like.common.view.toolbar.custom.CustomActionProvider"
+        android:title="菜单3"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_4"
         android:icon="@drawable/download_pause"
-        android:title="查看"
-        app:actionProviderClass="com.like.common.view.toolbar.custom.CustomActionProvider"
+        android:title="菜单4"
         app:showAsAction="ifRoom" />
 
 </menu>

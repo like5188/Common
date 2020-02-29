@@ -1,4 +1,4 @@
-package com.like.common.view.toolbar.custom
+package com.like.common.view.titlebar
 
 import android.content.Context
 import android.os.Build
@@ -18,14 +18,7 @@ import com.like.common.view.badgeview.BadgeViewManager
  * 用于标题栏中的自定义视图管理类。
  * 此视图包括图标、文本、消息数三个元素。
  */
-class CustomViewManager(context: Context, binding: ToolbarCustomViewBinding? = null) {
-    private val mBinding: ToolbarCustomViewBinding by lazy {
-        binding ?: DataBindingUtil.inflate<ToolbarCustomViewBinding>(
-                LayoutInflater.from(context),
-                R.layout.toolbar_custom_view,
-                null, false
-        )
-    }
+class CustomViewManager(context: Context, private val mBinding: ToolbarCustomViewBinding) {
     private val mBadgeViewHelper: BadgeViewManager by lazy {
         BadgeViewManager(context, mBinding.cl)
     }

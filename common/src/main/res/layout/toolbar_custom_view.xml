@@ -5,8 +5,8 @@
     <!--外面必须包一层，用于com.like.common.view.badgeview.BadgeView的显示-->
     <FrameLayout
         android:layout_width="wrap_content"
-        android:background="@color/common_divider_gray"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/common_divider_gray">
 
         <!--android:background="?actionBarItemBackground"是引用系统默认Toolbar/ActionBar的Menu的点击效果。-->
         <androidx.constraintlayout.widget.ConstraintLayout
