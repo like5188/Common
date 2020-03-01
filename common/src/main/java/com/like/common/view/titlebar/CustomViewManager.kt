@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.TitlebarCustomViewBinding
+import com.like.common.util.onPreDrawListener
 import com.like.common.view.badgeview.BadgeViewManager
 
 /**
@@ -51,34 +52,36 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
     }
 
     /**
-     * 设置自定义视图的 margin
+     * 设置自定义视图的 margin，必须设置一遍，才会有layoutParams属性
      */
     fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
-        val layoutParams = mBinding.root.layoutParams
-        if (layoutParams is Toolbar.LayoutParams) {// 如果是NavigationView：Toolbar.LayoutParams
-            mBinding.root.layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.MATCH_PARENT)
-                    .apply {
-                        leftMargin = left
-                        topMargin = top
-                        rightMargin = right
-                        bottomMargin = bottom
-                    }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && layoutParams is ActionMenuView.LayoutParams) {// 如果是Menu：ActionMenuView.LayoutParams
-            mBinding.root.layoutParams = ActionMenuView.LayoutParams(ActionMenuView.LayoutParams.WRAP_CONTENT, ActionMenuView.LayoutParams.MATCH_PARENT)
-                    .apply {
-                        leftMargin = left
-                        topMargin = top
-                        rightMargin = right
-                        bottomMargin = bottom
-                    }
-        } else {
-            mBinding.root.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT)
-                    .apply {
-                        leftMargin = left
-                        topMargin = top
-                        rightMargin = right
-                        bottomMargin = bottom
-                    }
+        mBinding.root.onPreDrawListener {
+            val layoutParams = mBinding.root.layoutParams
+            if (layoutParams is Toolbar.LayoutParams) {// 如果是Toolbar中的NavigationView：Toolbar.LayoutParams
+                mBinding.root.layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.MATCH_PARENT)
+                        .apply {
+                            leftMargin = left
+                            topMargin = top
+                            rightMargin = right
+                            bottomMargin = bottom
+                        }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && layoutParams is ActionMenuView.LayoutParams) {// 如果是Toolbar中的Menu：ActionMenuView.LayoutParams
+                mBinding.root.layoutParams = ActionMenuView.LayoutParams(ActionMenuView.LayoutParams.WRAP_CONTENT, ActionMenuView.LayoutParams.MATCH_PARENT)
+                        .apply {
+                            leftMargin = left
+                            topMargin = top
+                            rightMargin = right
+                            bottomMargin = bottom
+                        }
+            } else {// 如果是Titlebar中的Default
+                mBinding.root.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT)
+                        .apply {
+                            leftMargin = left
+                            topMargin = top
+                            rightMargin = right
+                            bottomMargin = bottom
+                        }
+            }
         }
     }
 
