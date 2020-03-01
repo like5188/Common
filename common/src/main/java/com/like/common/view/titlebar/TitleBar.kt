@@ -9,6 +9,7 @@ import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.TitlebarBinding
+import kotlin.math.min
 
 /**
  * 标题栏封装，保证了中间部分不遮挡左边和右边部分。
@@ -57,14 +58,23 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
 
         // 取左右部分剩余的最小宽度
         val minRemaining = Math.min(leftRemaining, rightRemaining)
-        // 重新计算中间部分的left、right、width
-        mCenterLeft = verticalCenterLine - minRemaining
-        mCenterRight = verticalCenterLine + minRemaining
+        // 重新计算中间部分的left、right
+        when {
+            minRemaining > 0 -> {
+                mCenterLeft = verticalCenterLine - minRemaining
+                mCenterRight = verticalCenterLine + minRemaining
+            }
+            minRemaining <= 0 -> {
+                mCenterLeft = leftRightMost
+                mCenterRight = rightLeftMost
+            }
+        }
+        // 计算中间部分的width
         val newCenterWidth = mCenterRight - mCenterLeft
-        val newCenterHeight = mBinding.titleBarCenter.measuredHeight// 高度不变
+        // 中间部分的高度不变
+        val newCenterHeight = mBinding.titleBarCenter.measuredHeight
         val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newCenterWidth)
         val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newCenterHeight)
-        // 重新测量中间部分的宽度
         mBinding.titleBarCenter.measure(childWidthMeasureSpec, childHeightMeasureSpec)
         Log.w("tag", "onMeasure menuLeft=$rightLeft titleLeft=$mCenterLeft titleRight=$mCenterRight")
     }
