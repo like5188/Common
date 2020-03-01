@@ -14,7 +14,7 @@ import com.like.common.databinding.TitlebarBinding
  * 定义了左边部分、右边部分、中间部分。
  * 重新计算了中间部分的宽度，保证中间部分不会因为内容太多而遮挡左边部分或者右边部分。
  */
-class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     private val mBinding: TitlebarBinding by lazy {
         DataBindingUtil.inflate<TitlebarBinding>(LayoutInflater.from(context), R.layout.titlebar, this, true)
     }
@@ -32,12 +32,12 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         val verticalCenterLine = measuredWidth / 2
 
         // 左边部分的right
-        val leftRight = mBinding.titleBarLeft.measuredWidth
+        val leftRight = mBinding.titlebarLeft.measuredWidth
         // 垂直中心线左边剩余的宽度
         val leftRemaining = verticalCenterLine - leftRight
 
         // 右边部分的left
-        val rightLeft = measuredWidth - mBinding.titleBarRight.measuredWidth
+        val rightLeft = measuredWidth - mBinding.titlebarRight.measuredWidth
         // 垂直中心线右边剩余的宽度
         val rightRemaining = rightLeft - verticalCenterLine
 
@@ -57,16 +57,16 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         // 计算中间部分的width
         val newCenterWidth = mCenterRight - mCenterLeft
         // 中间部分的高度不变
-        val newCenterHeight = mBinding.titleBarCenter.measuredHeight
+        val newCenterHeight = mBinding.titlebarCenter.measuredHeight
         val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newCenterWidth)
         val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newCenterHeight)
-        mBinding.titleBarCenter.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+        mBinding.titlebarCenter.measure(childWidthMeasureSpec, childHeightMeasureSpec)
         Log.w("tag", "onMeasure menuLeft=$rightLeft titleLeft=$mCenterLeft titleRight=$mCenterRight")
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
         Log.e("tag", "onLayout")
-        mBinding.titleBarCenter.layout(mCenterLeft, mBinding.titleBarCenter.top, mCenterRight, mBinding.titleBarCenter.bottom)
+        mBinding.titlebarCenter.layout(mCenterLeft, mBinding.titlebarCenter.top, mCenterRight, mBinding.titlebarCenter.bottom)
     }
 }
