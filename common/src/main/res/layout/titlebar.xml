@@ -11,7 +11,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:gravity="center_vertical"
-            tools:background="@color/picture_color_grey"
+            tools:background="@color/common_divider_gray"
             tools:layout_height="56dp">
 
             <ImageView
