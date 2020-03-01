@@ -14,7 +14,7 @@ class CustomActionProvider(context: Context) : ActionProvider(context) {
     }
 
     override fun onCreateActionView(): View {
-        return mCustomViewManager.getViewDataBinding().root
+        return mCustomViewManager.getView()
     }
 
     /**

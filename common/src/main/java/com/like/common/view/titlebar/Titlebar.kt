@@ -4,35 +4,27 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import com.like.common.R
-import com.like.common.databinding.*
+import com.like.common.databinding.TitlebarBinding
+import com.like.common.util.DimensionUtils
 
 /**
  * 标题栏封装
- * 定义了左边部分、右边部分、中间部分。
+ *
+ * 定义了左边部分、右边部分、中间部分的容器。
  * 重新计算了中间部分的宽度，保证中间部分不会因为内容太多而遮挡左边部分或者右边部分。
  */
 class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
-    private val mLayoutInflater: LayoutInflater by lazy {
-        LayoutInflater.from(context)
-    }
     private val mBinding: TitlebarBinding by lazy {
-        DataBindingUtil.inflate<TitlebarBinding>(mLayoutInflater, R.layout.titlebar, this, true)
+        DataBindingUtil.inflate<TitlebarBinding>(LayoutInflater.from(context), R.layout.titlebar, this, true)
     }
-    private var mLeftBinding: ViewDataBinding? =
-            DataBindingUtil.inflate<TitlebarDefaultLeftBinding>(mLayoutInflater, R.layout.titlebar_default_left, mBinding.leftContainer, true)
-
-    private var mCenterBinding: ViewDataBinding? =
-            DataBindingUtil.inflate<TitlebarDefaultCenterBinding>(mLayoutInflater, R.layout.titlebar_default_center, mBinding.centerContainer, true)
-
-    private var mRightBinding: ViewDataBinding? =
-            DataBindingUtil.inflate<TitlebarDefaultRightBinding>(mLayoutInflater, R.layout.titlebar_default_right, mBinding.rightContainer, true)
-
-    private var mDividerBinding: ViewDataBinding? =
-            DataBindingUtil.inflate<TitlebarDefaultDividerBinding>(mLayoutInflater, R.layout.titlebar_default_divider, this, true)
 
     private var mCenterLeft = 0
     private var mCenterRight = 0
@@ -40,62 +32,139 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     init {
         orientation = VERTICAL
         mBinding
-        mLeftBinding
-        mCenterBinding
-        mRightBinding
-        mDividerBinding
     }
 
     /**
-     * 如果没有通过[setLeftView]方法重新设置，那么默认为[TitlebarDefaultLeftBinding]
+     * 设置自定义的左边布局
      */
-    fun getLeftViewDataBinding() = mLeftBinding
-
-    /**
-     * 如果没有通过[setCenterView]方法重新设置，那么默认为[TitlebarDefaultCenterBinding]
-     */
-    fun getCenterViewDataBinding() = mCenterBinding
-
-    /**
-     * 如果没有通过[setRightView]方法重新设置，那么默认为[TitlebarDefaultRightBinding]
-     */
-    fun getRightViewDataBinding() = mRightBinding
-
-    /**
-     * 如果没有通过[setDivider]方法重新设置，那么默认为[TitlebarDefaultDividerBinding]
-     */
-    fun getDividerViewDataBinding() = mDividerBinding
-
-    fun setLeftView(binding: ViewDataBinding? = null) {
-        mLeftBinding = binding
+    fun setLeftView(view: View? = null) {
         mBinding.leftContainer.removeAllViews()
-        binding?.let {
-            mBinding.leftContainer.addView(it.root)
+        view?.let {
+            mBinding.leftContainer.addView(it)
         }
     }
 
-    fun setCenterView(binding: ViewDataBinding? = null) {
-        mCenterBinding = binding
+    /**
+     * 设置自定义的中间布局
+     */
+    fun setCenterView(view: View? = null) {
         mBinding.centerContainer.removeAllViews()
-        binding?.let {
-            mBinding.centerContainer.addView(it.root)
+        view?.let {
+            mBinding.centerContainer.addView(it)
         }
     }
 
-    fun setRightView(binding: ViewDataBinding? = null) {
-        mRightBinding = binding
+    /**
+     * 设置自定义的右边布局
+     */
+    fun setRightView(view: View? = null) {
         mBinding.rightContainer.removeAllViews()
-        binding?.let {
-            mBinding.rightContainer.addView(it.root)
+        view?.let {
+            mBinding.rightContainer.addView(it)
         }
     }
 
-    fun setDivider(binding: ViewDataBinding? = null) {
-        mDividerBinding = binding
-        removeView(mDividerBinding?.root)
-        binding?.let {
-            addView(it.root)
+    /**
+     * 设置自定义的分割线
+     */
+    fun setDivider(view: View? = null) {
+        removeView(mBinding.divider)
+        view?.let {
+            addView(it)
         }
+    }
+
+    /**
+     * 使用默认的标题栏布局。
+     *
+     * 包括以下三个部分：
+     * 左边部分：一个[ImageView]
+     * 中间部分：一个[TextView]
+     * 右边部分：一个水平的[LinearLayout]，可以随意添加menu
+     */
+    inner class Default {
+
+        /**
+         * 显示分割线
+         *
+         * @param height        分割线高度，dp。默认为0.5dp。如果设置为小于等于0，表示隐藏分割线。
+         * @param color         背景颜色。默认为null，表示不设置，保持原样。
+         */
+        fun showDivider(height: Float = 0.5f, @ColorInt color: Int? = null) {
+            if (height > 0) {
+                mBinding.divider.visibility = View.VISIBLE
+                mBinding.divider.layoutParams.height = DimensionUtils.dp2px(context, height)
+                if (color != null) {
+                    mBinding.divider.setBackgroundColor(color)
+                }
+            } else {
+                mBinding.divider.visibility = View.GONE
+            }
+        }
+
+        /**
+         * 添加右边部分的菜单按钮。可以添加多个，父布局为水平的LinearLayout
+         */
+        fun addMenu(view: View) {
+            mBinding.rightContainer.addView(view)
+        }
+
+        /**
+         * 显示导航按钮
+         *
+         * @param iconResId         图标资源id。如果设置为0，表示去掉图标及其点击监听。
+         * @param listener          点击监听。默认为null，表示不设置，保持原样。
+         */
+        fun showNavigation(@DrawableRes iconResId: Int, listener: View.OnClickListener? = null) {
+            if (iconResId == 0) {
+                mBinding.ivNavigation.visibility = View.GONE
+                mBinding.ivNavigation.setImageDrawable(null)
+                mBinding.ivNavigation.setOnClickListener(null)
+            } else {
+                mBinding.ivNavigation.visibility = View.VISIBLE
+                mBinding.ivNavigation.setImageResource(iconResId)
+                if (listener != null) {
+                    mBinding.ivNavigation.setOnClickListener(listener)
+                }
+            }
+        }
+
+        /**
+         * 显示标题
+         *
+         * @param title             文本，如果文本为空，会去掉点击监听
+         * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
+         * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
+         * @param listener          点击监听。默认为null，表示不设置，保持原样。
+         */
+        fun showTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null, listener: View.OnClickListener? = null) {
+            if (title.isEmpty()) {
+                mBinding.tvTitle.visibility = View.GONE
+                mBinding.tvTitle.text = ""
+                mBinding.tvTitle.setOnClickListener(null)
+            } else {
+                mBinding.tvTitle.visibility = View.VISIBLE
+                mBinding.tvTitle.text = title
+                if (textColor != null) {
+                    mBinding.tvTitle.setTextColor(textColor)
+                }
+                if (textSize != null) {
+                    mBinding.tvTitle.textSize = textSize
+                }
+                if (listener != null) {
+                    mBinding.tvTitle.setOnClickListener(listener)
+                }
+            }
+        }
+
+        fun getTitle(): String {
+            return mBinding.tvTitle.text.toString()
+        }
+
+        fun getLeftView(): ImageView = mBinding.ivNavigation
+
+        fun getCenterView(): TextView = mBinding.tvTitle
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

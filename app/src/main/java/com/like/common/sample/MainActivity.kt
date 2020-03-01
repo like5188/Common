@@ -8,13 +8,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
-import com.like.common.databinding.TitlebarDefaultCenterBinding
-import com.like.common.databinding.TitlebarDefaultLeftBinding
-import com.like.common.databinding.TitlebarDefaultRightBinding
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
@@ -75,61 +73,62 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTitleBar() {
-        (mBinding.titlebar.getLeftViewDataBinding() as? TitlebarDefaultLeftBinding)?.apply {
-            iv.setImageResource(R.drawable.picture_icon_back)
-            iv.setOnClickListener {
+        mBinding.titlebar.Default().apply {
+            showNavigation(R.drawable.picture_icon_back, View.OnClickListener {
                 shortToastCenter("返回")
-            }
-        }
-        (mBinding.titlebar.getCenterViewDataBinding() as? TitlebarDefaultCenterBinding)?.apply {
-            tv.text = "titletitletitletitletitle"
-        }
-        (mBinding.titlebar.getRightViewDataBinding() as? TitlebarDefaultRightBinding)?.apply {
-            CustomViewManager(this@MainActivity).apply {
+            })
+
+            showTitle("titletitletitletitletitle")
+
+            val menu0 = CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单0") })
                 setTitle("菜单0", Color.BLACK, 12f)
                 setMessageCount("0", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
+                setMargin(20, 10, 0, 10)
                 setContentPadding(30, 0, 30, 0)
-                ll.addView(this.getViewDataBinding().root)
-            }
-            CustomViewManager(this@MainActivity).apply {
+            }.getView()
+            addMenu(menu0)
+
+            val menu1 = CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
                 setTitle("菜单1", Color.BLACK, 12f)
                 setMessageCount("1", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 0, 10)
                 setContentPadding(30, 0, 30, 0)
-                ll.addView(this.getViewDataBinding().root)
-            }
-            CustomViewManager(this@MainActivity).apply {
+            }.getView()
+            addMenu(menu1)
+
+            val menu2 = CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
                 setTitle("菜单2", Color.BLACK, 12f)
                 setMessageCount("2", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 0, 10)
                 setContentPadding(30, 0, 30, 0)
-                ll.addView(this.getViewDataBinding().root)
-            }
-            CustomViewManager(this@MainActivity).apply {
+            }.getView()
+            addMenu(menu2)
+
+            val menu3 = CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
                 setTitle("菜单3", Color.BLACK, 12f)
                 setMessageCount("3", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 0, 10)
                 setContentPadding(30, 0, 30, 0)
-                ll.addView(this.getViewDataBinding().root)
-            }
-            CustomViewManager(this@MainActivity).apply {
+            }.getView()
+            addMenu(menu3)
+
+            val menu4 = CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
                 setTitle("菜单4", Color.BLACK, 12f)
                 setMessageCount("4", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
                 setContentPadding(30, 0, 30, 0)
-                ll.addView(this.getViewDataBinding().root)
             }
+            addMenu(menu4.getView())
+            menu4.setMargin(0, 0, 20, 10)
         }
     }
 

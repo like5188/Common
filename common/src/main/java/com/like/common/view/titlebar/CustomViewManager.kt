@@ -4,13 +4,14 @@ import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import com.like.common.R
 import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.view.badgeview.BadgeViewManager
@@ -31,7 +32,7 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
         BadgeViewManager(context, mBinding.cl)
     }
 
-    fun getViewDataBinding(): ViewDataBinding = mBinding
+    fun getView(): View = mBinding.root
 
     /**
      * 设置自定义视图的内容的 padding
@@ -64,6 +65,14 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
                     }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && layoutParams is ActionMenuView.LayoutParams) {// 如果是Menu：ActionMenuView.LayoutParams
             mBinding.root.layoutParams = ActionMenuView.LayoutParams(ActionMenuView.LayoutParams.WRAP_CONTENT, ActionMenuView.LayoutParams.MATCH_PARENT)
+                    .apply {
+                        leftMargin = left
+                        topMargin = top
+                        rightMargin = right
+                        bottomMargin = bottom
+                    }
+        } else {
+            mBinding.root.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT)
                     .apply {
                         leftMargin = left
                         topMargin = top
@@ -110,7 +119,7 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
     }
 
     /**
-     * 设置自定义视图的文本
+     * 设置自定义视图的图标
      *
      * @param iconResId         图标资源id。如果设置为0，表示去掉图标。
      */
