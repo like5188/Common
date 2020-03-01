@@ -61,7 +61,7 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         mCenterLeft = verticalCenterLine - minRemaining
         mCenterRight = verticalCenterLine + minRemaining
         val newCenterWidth = mCenterRight - mCenterLeft
-        val newCenterHeight = mBinding.titleBarCenter.measuredHeight
+        val newCenterHeight = mBinding.titleBarCenter.measuredHeight// 高度不变
         val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newCenterWidth)
         val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newCenterHeight)
         // 重新测量中间部分的宽度
