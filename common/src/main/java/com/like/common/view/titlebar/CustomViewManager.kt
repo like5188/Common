@@ -1,16 +1,17 @@
 package com.like.common.view.titlebar
 
 import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.TitlebarCustomViewBinding
@@ -61,31 +62,33 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
      */
     fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
         mBinding.root.onPreDrawListener {
-            val layoutParams = mBinding.root.layoutParams
-            if (layoutParams is Toolbar.LayoutParams) {// 如果是Toolbar中的NavigationView：Toolbar.LayoutParams
-                mBinding.root.layoutParams = Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.MATCH_PARENT)
-                        .apply {
-                            leftMargin = left
-                            topMargin = top
-                            rightMargin = right
-                            bottomMargin = bottom
-                        }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && layoutParams is ActionMenuView.LayoutParams) {// 如果是Toolbar中的Menu：ActionMenuView.LayoutParams
-                mBinding.root.layoutParams = ActionMenuView.LayoutParams(ActionMenuView.LayoutParams.WRAP_CONTENT, ActionMenuView.LayoutParams.MATCH_PARENT)
-                        .apply {
-                            leftMargin = left
-                            topMargin = top
-                            rightMargin = right
-                            bottomMargin = bottom
-                        }
-            } else {// 如果是Titlebar中的Default
-                mBinding.root.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT)
-                        .apply {
-                            leftMargin = left
-                            topMargin = top
-                            rightMargin = right
-                            bottomMargin = bottom
-                        }
+            mBinding.root.layoutParams = when (mBinding.root.layoutParams) {
+                is Toolbar.LayoutParams -> {// 如果是Toolbar中的NavigationView：Toolbar.LayoutParams
+                    Toolbar.LayoutParams(Toolbar.LayoutParams.WRAP_CONTENT, Toolbar.LayoutParams.MATCH_PARENT)
+                }
+                is ActionMenuView.LayoutParams -> {// 如果是Toolbar中的Menu：ActionMenuView.LayoutParams
+                    ActionMenuView.LayoutParams(ActionMenuView.LayoutParams.WRAP_CONTENT, ActionMenuView.LayoutParams.MATCH_PARENT)
+                }
+                is LinearLayout.LayoutParams -> {// 如果是Titlebar中的Default
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT)
+                }
+                is RelativeLayout.LayoutParams -> {
+                    RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT)
+                }
+                is FrameLayout.LayoutParams -> {
+                    FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                }
+                is ConstraintLayout.LayoutParams -> {
+                    ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.MATCH_PARENT)
+                }
+                else -> {
+                    MarginLayoutParams(MarginLayoutParams.WRAP_CONTENT, MarginLayoutParams.MATCH_PARENT)
+                }
+            }.apply {
+                leftMargin = left
+                topMargin = top
+                rightMargin = right
+                bottomMargin = bottom
             }
         }
     }
