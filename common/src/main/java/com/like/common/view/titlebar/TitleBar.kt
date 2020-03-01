@@ -9,10 +9,11 @@ import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.TitlebarBinding
-import kotlin.math.min
 
 /**
- * 标题栏封装，保证了中间部分不遮挡左边和右边部分。
+ * 标题栏封装
+ * 定义了左边部分、右边部分、中间部分。
+ * 重新计算了中间部分的宽度，保证中间部分不会因为内容太多而遮挡左边部分或者右边部分。
  */
 class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     private val mBinding: TitlebarBinding by lazy {
@@ -26,9 +27,6 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         mBinding
     }
 
-    /**
-     * 因为是在RelativeLayout中，为了避免中间部分内容太多导致遮挡左右部分，所以要重新计算中间部分的宽度
-     */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         // 垂直中心线的位置
