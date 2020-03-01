@@ -71,11 +71,7 @@ class CustomViewManager(context: Context, private val mBinding: TitlebarCustomVi
      * @param clickListener     点击监听。默认为null，表示取消监听。
      */
     fun setOnClickListener(clickListener: View.OnClickListener? = null) {
-        if (clickListener == null) {
-            mBinding.root.setOnClickListener(null)
-        } else {
-            mBinding.root.setOnClickListener { view -> clickListener.onClick(view) }
-        }
+        mBinding.root.setOnClickListener(clickListener)
     }
 
     /**
