@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initTitleBar() {
         (mBinding.titlebar.getLeftViewDataBinding() as? TitlebarDefaultLeftBinding)?.apply {
-            iv.setImageResource(R.drawable.icon_back)
+            iv.setImageResource(R.drawable.picture_icon_back)
             iv.setOnClickListener {
                 shortToastCenter("返回")
             }
