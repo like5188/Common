@@ -1,11 +1,8 @@
 package com.like.common.sample
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.ActionProvider
-import androidx.databinding.DataBindingUtil
-import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.view.titlebar.CustomViewManager
 
 /**
@@ -13,16 +10,11 @@ import com.like.common.view.titlebar.CustomViewManager
  */
 class CustomActionProvider(context: Context) : ActionProvider(context) {
     private val mCustomViewManager: CustomViewManager by lazy {
-        val toolbarCustomViewBinding = DataBindingUtil.inflate<TitlebarCustomViewBinding>(
-                LayoutInflater.from(context),
-                R.layout.titlebar_custom_view,
-                null, false
-        )
-        CustomViewManager(context, toolbarCustomViewBinding)
+        CustomViewManager(context)
     }
 
     override fun onCreateActionView(): View {
-        return mCustomViewManager.getView()
+        return mCustomViewManager.getViewDataBinding().root
     }
 
     /**

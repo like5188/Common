@@ -2,12 +2,16 @@ package com.like.common.view.titlebar
 
 import android.content.Context
 import android.os.Build
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import com.like.common.R
 import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.view.badgeview.BadgeViewManager
 
@@ -15,15 +19,19 @@ import com.like.common.view.badgeview.BadgeViewManager
  * 用于标题栏中的自定义按钮管理类。
  * 此按钮视图包括图标、文本、消息数三个元素。
  */
-class CustomViewManager(context: Context, private val mBinding: TitlebarCustomViewBinding) {
+class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = null) {
+    private val mBinding: TitlebarCustomViewBinding by lazy {
+        binding ?: DataBindingUtil.inflate<TitlebarCustomViewBinding>(
+                LayoutInflater.from(context),
+                R.layout.titlebar_custom_view,
+                null, false
+        )
+    }
     private val mBadgeViewHelper: BadgeViewManager by lazy {
         BadgeViewManager(context, mBinding.cl)
     }
 
-    /**
-     * 获取自定义视图
-     */
-    fun getView(): View = mBinding.root
+    fun getViewDataBinding(): ViewDataBinding = mBinding
 
     /**
      * 设置自定义视图的内容的 padding

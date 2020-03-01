@@ -1,9 +1,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <View
-        android:id="@+id/divider"
+        android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/common_text_red_0" />
+        android:background="@color/common_divider_gray" />
 
 </layout>

@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import com.like.common.R
 import com.like.common.databinding.*
 
@@ -22,47 +22,79 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     private val mBinding: TitlebarBinding by lazy {
         DataBindingUtil.inflate<TitlebarBinding>(mLayoutInflater, R.layout.titlebar, this, true)
     }
+    private var mLeftBinding: ViewDataBinding? =
+            DataBindingUtil.inflate<TitlebarDefaultLeftBinding>(mLayoutInflater, R.layout.titlebar_default_left, mBinding.leftContainer, true)
+
+    private var mCenterBinding: ViewDataBinding? =
+            DataBindingUtil.inflate<TitlebarDefaultCenterBinding>(mLayoutInflater, R.layout.titlebar_default_center, mBinding.centerContainer, true)
+
+    private var mRightBinding: ViewDataBinding? =
+            DataBindingUtil.inflate<TitlebarDefaultRightBinding>(mLayoutInflater, R.layout.titlebar_default_right, mBinding.rightContainer, true)
+
+    private var mDividerBinding: ViewDataBinding? =
+            DataBindingUtil.inflate<TitlebarDefaultDividerBinding>(mLayoutInflater, R.layout.titlebar_default_divider, this, true)
+
     private var mCenterLeft = 0
     private var mCenterRight = 0
 
     init {
         orientation = VERTICAL
         mBinding
+        mLeftBinding
+        mCenterBinding
+        mRightBinding
+        mDividerBinding
     }
 
-    fun addLeftView(view: View? = null) {
-        if (view == null) {
-            val leftViewBinding = DataBindingUtil.inflate<TitlebarDefaultLeftBinding>(mLayoutInflater, R.layout.titlebar_default_left, mBinding.leftContainer, false)
-            mBinding.leftContainer.addView(leftViewBinding.root)
-        } else {
-            mBinding.leftContainer.addView(view)
+    /**
+     * 如果没有通过[setLeftView]方法重新设置，那么默认为[TitlebarDefaultLeftBinding]
+     */
+    fun getLeftViewDataBinding() = mLeftBinding
+
+    /**
+     * 如果没有通过[setCenterView]方法重新设置，那么默认为[TitlebarDefaultCenterBinding]
+     */
+    fun getCenterViewDataBinding() = mCenterBinding
+
+    /**
+     * 如果没有通过[setRightView]方法重新设置，那么默认为[TitlebarDefaultRightBinding]
+     */
+    fun getRightViewDataBinding() = mRightBinding
+
+    /**
+     * 如果没有通过[setDivider]方法重新设置，那么默认为[TitlebarDefaultDividerBinding]
+     */
+    fun getDividerViewDataBinding() = mDividerBinding
+
+    fun setLeftView(binding: ViewDataBinding? = null) {
+        mLeftBinding = binding
+        mBinding.leftContainer.removeAllViews()
+        binding?.let {
+            mBinding.leftContainer.addView(it.root)
         }
     }
 
-    fun addCenterView(view: View? = null) {
-        if (view == null) {
-            val centerViewBinding = DataBindingUtil.inflate<TitlebarDefaultCenterBinding>(mLayoutInflater, R.layout.titlebar_default_center, mBinding.centerContainer, false)
-            mBinding.centerContainer.addView(centerViewBinding.root)
-        } else {
-            mBinding.centerContainer.addView(view)
+    fun setCenterView(binding: ViewDataBinding? = null) {
+        mCenterBinding = binding
+        mBinding.centerContainer.removeAllViews()
+        binding?.let {
+            mBinding.centerContainer.addView(it.root)
         }
     }
 
-    fun addRightView(view: View? = null) {
-        if (view == null) {
-            val rightViewBinding = DataBindingUtil.inflate<TitlebarDefaultRightBinding>(mLayoutInflater, R.layout.titlebar_default_right, mBinding.rightContainer, false)
-            mBinding.rightContainer.addView(rightViewBinding.root)
-        } else {
-            mBinding.rightContainer.addView(view)
+    fun setRightView(binding: ViewDataBinding? = null) {
+        mRightBinding = binding
+        mBinding.rightContainer.removeAllViews()
+        binding?.let {
+            mBinding.rightContainer.addView(it.root)
         }
     }
 
-    fun addDivider(view: View? = null) {
-        if (view == null) {
-            val dividerViewBinding = DataBindingUtil.inflate<TitlebarDefaultDividerBinding>(mLayoutInflater, R.layout.titlebar_default_divider, this, false)
-            addView(dividerViewBinding.root)
-        } else {
-            addView(view)
+    fun setDivider(binding: ViewDataBinding? = null) {
+        mDividerBinding = binding
+        removeView(mDividerBinding?.root)
+        binding?.let {
+            addView(it.root)
         }
     }
 
