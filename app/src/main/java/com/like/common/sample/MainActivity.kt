@@ -1,7 +1,9 @@
 package com.like.common.sample
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -80,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         (mBinding.titlebar.getCenterViewDataBinding() as? TitlebarDefaultCenterBinding)?.apply {
-            tv.text = "title"
+            tv.text = "titletitletitletitletitle"
         }
         (mBinding.titlebar.getRightViewDataBinding() as? TitlebarDefaultRightBinding)?.apply {
             CustomViewManager(this@MainActivity).apply {
@@ -101,6 +103,33 @@ class MainActivity : AppCompatActivity() {
                 setContentPadding(30, 0, 30, 0)
                 ll.addView(this.getViewDataBinding().root)
             }
+            CustomViewManager(this@MainActivity).apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
+                setTitle("菜单2", Color.BLACK, 12f)
+                setMessageCount("2", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+                ll.addView(this.getViewDataBinding().root)
+            }
+            CustomViewManager(this@MainActivity).apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
+                setTitle("菜单3", Color.BLACK, 12f)
+                setMessageCount("3", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+                ll.addView(this.getViewDataBinding().root)
+            }
+            CustomViewManager(this@MainActivity).apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
+                setTitle("菜单4", Color.BLACK, 12f)
+                setMessageCount("4", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+                ll.addView(this.getViewDataBinding().root)
+            }
         }
     }
 
@@ -112,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             shortToastCenter("返回")
         }
         mBinding.toolbar.inflateMenu(R.menu.origin_toolbar_right_menu_main)
-//        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
+        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
         mBinding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_0 -> {
@@ -151,7 +180,7 @@ class MainActivity : AppCompatActivity() {
         customNavigationView.setMessageCount("99+", Color.WHITE, 10, Color.RED)
 
         mBinding.toolbar.inflateMenu(R.menu.custom_toolbar_right_menu_main)
-//        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
+        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
         (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_0)) as? CustomActionProvider)
                 ?.getCustomViewManager()
                 ?.apply {
