@@ -7,8 +7,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
@@ -18,6 +18,7 @@ import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
 import com.like.common.sample.databinding.ViewMarqueeBinding
+import com.like.common.sample.databinding.ViewTitlebarButtonBinding
 import com.like.common.sample.dialog.DialogActivity
 import com.like.common.sample.drag.DragViewTestActivity
 import com.like.common.sample.flexbox.FlexBoxActivity
@@ -43,7 +44,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        initTitleBar()
+//        initDefaultTitlebar()
+        initCustomTitlebar()
 //        initOriginToolBar()
         initCustomToolbar()
         SPUtils.getInstance().init(this)
@@ -72,13 +74,28 @@ class MainActivity : AppCompatActivity() {
         mBinding.btnTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
     }
 
-    private fun initTitleBar() {
+    private fun initCustomTitlebar() {
+        val viewTitlebarButtonBinding1 = DataBindingUtil.inflate<ViewTitlebarButtonBinding>(LayoutInflater.from(this), R.layout.view_titlebar_button, null, false)
+        viewTitlebarButtonBinding1.tv1.text = "返回1"
+        viewTitlebarButtonBinding1.tv2.text = "返回2"
+        mBinding.titlebar.setLeftView(viewTitlebarButtonBinding1.root)
+        val viewTitlebarButtonBinding2 = DataBindingUtil.inflate<ViewTitlebarButtonBinding>(LayoutInflater.from(this), R.layout.view_titlebar_button, null, false)
+        viewTitlebarButtonBinding2.tv1.text = "标题1"
+        viewTitlebarButtonBinding2.tv2.text = "标题2"
+        mBinding.titlebar.setCenterView(viewTitlebarButtonBinding2.root)
+        val viewTitlebarButtonBinding3 = DataBindingUtil.inflate<ViewTitlebarButtonBinding>(LayoutInflater.from(this), R.layout.view_titlebar_button, null, false)
+        viewTitlebarButtonBinding3.tv1.text = "菜单1菜单1"
+        viewTitlebarButtonBinding3.tv2.text = "菜单2菜单1"
+        mBinding.titlebar.setRightView(viewTitlebarButtonBinding3.root)
+    }
+
+    private fun initDefaultTitlebar() {
         mBinding.titlebar.Default().apply {
             showNavigation(R.drawable.picture_icon_back, View.OnClickListener {
                 shortToastCenter("返回")
             })
 
-            showTitle("titletitletitletitletitle")
+            showTitle("title")
 
             val menu0 = CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
@@ -95,40 +112,10 @@ class MainActivity : AppCompatActivity() {
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
                 setTitle("菜单1", Color.BLACK, 12f)
                 setMessageCount("1", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-            }.getView()
-            addMenu(menu1)
-
-            val menu2 = CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
-                setTitle("菜单2", Color.BLACK, 12f)
-                setMessageCount("2", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-            }.getView()
-            addMenu(menu2)
-
-            val menu3 = CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
-                setTitle("菜单3", Color.BLACK, 12f)
-                setMessageCount("3", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-            }.getView()
-            addMenu(menu3)
-
-            val menu4 = CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
-                setTitle("菜单4", Color.BLACK, 12f)
-                setMessageCount("4", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 20, 10)
                 setContentPadding(30, 0, 30, 0)
             }.getView()
-            addMenu(menu4)
+            addMenu(menu1)
         }
     }
 
