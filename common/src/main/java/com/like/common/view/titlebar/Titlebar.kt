@@ -2,7 +2,6 @@ package com.like.common.view.titlebar
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -19,7 +18,8 @@ import com.like.common.util.DimensionUtils
  * 标题栏封装
  *
  * 定义了左边部分、右边部分、中间部分的容器。
- * 重新计算了中间部分的宽度，保证中间部分不会因为内容太多而遮挡左边部分或者右边部分。
+ * 重新measure、layout了中间部分，保证中间部分不会因为内容太多而遮挡左边部分或者右边部分。
+ * 重新layout右边部分，保证不会出现各部分交叉的情况。
  */
 class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     private val mBinding: TitlebarBinding by lazy {
@@ -28,6 +28,8 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
 
     private var mCenterLeft = 0
     private var mCenterRight = 0
+    private var mRightLeft = 0
+    private var mRightRight = 0
 
     init {
         orientation = VERTICAL
@@ -186,28 +188,37 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         val minRemaining = Math.min(leftRemaining, rightRemaining)
         // 重新计算中间部分的left、right
         when {
-            minRemaining > 0 -> {
+            minRemaining > 0 -> {// 垂直中心线左右两边都有剩余空间。调整中间部分的宽度，使得标题居中
                 mCenterLeft = verticalCenterLine - minRemaining
                 mCenterRight = verticalCenterLine + minRemaining
+                mRightLeft = rightLeft
+                mRightRight = measuredWidth
             }
-            minRemaining <= 0 -> {
+            leftRight > rightLeft -> {// 垂直中心线左右两边交叉。直接把三部分按照水平平铺，效果如水平LinearLayout
+                mCenterLeft = leftRight
+                mCenterRight = mCenterLeft + mBinding.centerContainer.measuredWidth
+                mRightLeft = mCenterRight
+                mRightRight = mCenterRight + mBinding.rightContainer.measuredWidth
+            }
+            minRemaining <= 0 -> {// 垂直中心线左右两边至少一边没有剩余空间。调整中间部分的宽度，并使三部分按照水平平铺，效果如水平LinearLayout
                 mCenterLeft = leftRight
                 mCenterRight = rightLeft
+                mRightLeft = rightLeft
+                mRightRight = measuredWidth
             }
         }
-        // 计算中间部分的width
+        // 重新计算中间部分的width
         val newCenterWidth = mCenterRight - mCenterLeft
         // 中间部分的高度不变
         val newCenterHeight = mBinding.centerContainer.measuredHeight
         val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newCenterWidth)
         val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newCenterHeight)
         mBinding.centerContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-        Log.w("tag", "onMeasure menuLeft=$rightLeft titleLeft=$mCenterLeft titleRight=$mCenterRight")
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
-        Log.e("tag", "onLayout")
         mBinding.centerContainer.layout(mCenterLeft, mBinding.centerContainer.top, mCenterRight, mBinding.centerContainer.bottom)
+        mBinding.rightContainer.layout(mRightLeft, mBinding.rightContainer.top, mRightRight, mBinding.rightContainer.bottom)
     }
 }
