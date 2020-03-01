@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.TitlebarBinding
@@ -32,27 +31,15 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         // 垂直中心线的位置
         val verticalCenterLine = measuredWidth / 2
 
-        // 左边部分的marginStart、marginEnd
-        val leftLayoutParams = mBinding.titleBarLeft.layoutParams as RelativeLayout.LayoutParams
-        val leftMarginStart = leftLayoutParams.marginStart
-        val leftMarginEnd = leftLayoutParams.marginEnd
         // 左边部分的right
-        val leftRight = leftMarginStart + mBinding.titleBarLeft.measuredWidth
-        // 左边部分的最右边
-        val leftRightMost = leftRight + leftMarginEnd
+        val leftRight = mBinding.titleBarLeft.measuredWidth
         // 垂直中心线左边剩余的宽度
-        val leftRemaining = verticalCenterLine - leftRightMost
+        val leftRemaining = verticalCenterLine - leftRight
 
-        // 右边部分的marginStart、marginEnd
-        val rightLayoutParams = mBinding.titleBarRight.layoutParams as RelativeLayout.LayoutParams
-        val rightMarginStart = rightLayoutParams.marginStart
-        val rightMarginEnd = rightLayoutParams.marginEnd
         // 右边部分的left
-        val rightLeft = measuredWidth - rightMarginEnd - mBinding.titleBarRight.measuredWidth
-        // 右边部分的最左边
-        val rightLeftMost = rightLeft - rightMarginStart
+        val rightLeft = measuredWidth - mBinding.titleBarRight.measuredWidth
         // 垂直中心线右边剩余的宽度
-        val rightRemaining = rightLeftMost - verticalCenterLine
+        val rightRemaining = rightLeft - verticalCenterLine
 
         // 取左右部分剩余的最小宽度
         val minRemaining = Math.min(leftRemaining, rightRemaining)
@@ -63,8 +50,8 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 mCenterRight = verticalCenterLine + minRemaining
             }
             minRemaining <= 0 -> {
-                mCenterLeft = leftRightMost
-                mCenterRight = rightLeftMost
+                mCenterLeft = leftRight
+                mCenterRight = rightLeft
             }
         }
         // 计算中间部分的width
