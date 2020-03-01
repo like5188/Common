@@ -38,7 +38,7 @@ class TitleBar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         val leftMarginStart = leftLayoutParams.marginStart
         val leftMarginEnd = leftLayoutParams.marginEnd
         // 左边部分的right
-        val leftRight = leftMarginStart - mBinding.titleBarLeft.measuredWidth
+        val leftRight = leftMarginStart + mBinding.titleBarLeft.measuredWidth
         // 左边部分的最右边
         val leftRightMost = leftRight + leftMarginEnd
         // 垂直中心线左边剩余的宽度
