@@ -8,14 +8,14 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
-import com.like.common.databinding.TitlebarCustomButtonBinding
+import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.view.badgeview.BadgeViewManager
 
 /**
  * 用于标题栏中的自定义按钮管理类。
  * 此按钮视图包括图标、文本、消息数三个元素。
  */
-class TitlebarCustomButtonManager(context: Context, private val mBinding: TitlebarCustomButtonBinding) {
+class CustomViewManager(context: Context, private val mBinding: TitlebarCustomViewBinding) {
     private val mBadgeViewHelper: BadgeViewManager by lazy {
         BadgeViewManager(context, mBinding.cl)
     }
