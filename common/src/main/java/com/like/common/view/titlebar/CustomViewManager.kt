@@ -33,6 +33,11 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
         BadgeViewManager(context, mBinding.cl)
     }
 
+    init {
+        // 必须设置一遍，才会有layoutParams属性
+        setMargin(0, 0, 0, 0)
+    }
+
     fun getView(): View = mBinding.root
 
     /**
@@ -52,7 +57,7 @@ class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = 
     }
 
     /**
-     * 设置自定义视图的 margin，必须设置一遍，才会有layoutParams属性
+     * 设置自定义视图的 margin
      */
     fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
         mBinding.root.onPreDrawListener {
