@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
+import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
@@ -75,18 +76,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCustomTitlebar() {
-        val viewTitlebarButtonBinding1 = DataBindingUtil.inflate<ViewTitlebarButtonBinding>(LayoutInflater.from(this), R.layout.view_titlebar_button, null, false)
-        viewTitlebarButtonBinding1.tv1.text = "返回1"
-        viewTitlebarButtonBinding1.tv2.text = "返回2"
-        mBinding.titlebar.setLeftView(viewTitlebarButtonBinding1.root)
-        val viewTitlebarButtonBinding2 = DataBindingUtil.inflate<ViewTitlebarButtonBinding>(LayoutInflater.from(this), R.layout.view_titlebar_button, null, false)
-        viewTitlebarButtonBinding2.tv1.text = "标题1"
-        viewTitlebarButtonBinding2.tv2.text = "标题2"
-        mBinding.titlebar.setCenterView(viewTitlebarButtonBinding2.root)
-        val viewTitlebarButtonBinding3 = DataBindingUtil.inflate<ViewTitlebarButtonBinding>(LayoutInflater.from(this), R.layout.view_titlebar_button, null, false)
-        viewTitlebarButtonBinding3.tv1.text = "菜单1菜单1"
-        viewTitlebarButtonBinding3.tv2.text = "菜单2菜单1"
-        mBinding.titlebar.setRightView(viewTitlebarButtonBinding3.root)
+        val customViewManager = CustomViewManager(this, mBinding.titlebar.setLeftView(R.layout.titlebar_custom_view) as TitlebarCustomViewBinding)
+        customViewManager.setTitle("123")
+        val centerBinding = mBinding.titlebar.setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
+        centerBinding.tv1.text = "hahahhahahhahahahhahahahhahahahhaha"
+        mBinding.titlebar.setRightView(R.layout.view_titlebar_button)
     }
 
     private fun initDefaultTitlebar() {

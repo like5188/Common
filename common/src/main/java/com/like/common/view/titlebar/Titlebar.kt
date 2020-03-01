@@ -9,7 +9,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import com.like.common.R
 import com.like.common.databinding.TitlebarBinding
 import com.like.common.util.DimensionUtils
@@ -22,8 +24,11 @@ import com.like.common.util.DimensionUtils
  * 重新layout右边部分，保证不会出现各部分交叉的情况。
  */
 class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+    private val mLayoutInflater: LayoutInflater by lazy {
+        LayoutInflater.from(context)
+    }
     private val mBinding: TitlebarBinding by lazy {
-        DataBindingUtil.inflate<TitlebarBinding>(LayoutInflater.from(context), R.layout.titlebar, this, true)
+        DataBindingUtil.inflate<TitlebarBinding>(mLayoutInflater, R.layout.titlebar, this, true)
     }
 
     private var mCenterLeft = 0
@@ -37,43 +42,47 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     /**
-     * 设置自定义的左边布局
+     * 设置自定义的左边布局。默认为null，会移除左边布局
      */
-    fun setLeftView(view: View? = null) {
+    fun setLeftView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         mBinding.leftContainer.removeAllViews()
-        view?.let {
-            mBinding.leftContainer.addView(it)
+        if (layoutId == null) {
+            return null
         }
+        return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.leftContainer, true)
     }
 
     /**
-     * 设置自定义的中间布局
+     * 设置自定义的中间布局。默认为null，会移除中间布局
      */
-    fun setCenterView(view: View? = null) {
+    fun setCenterView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         mBinding.centerContainer.removeAllViews()
-        view?.let {
-            mBinding.centerContainer.addView(it)
+        if (layoutId == null) {
+            return null
         }
+        return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.centerContainer, true)
     }
 
     /**
-     * 设置自定义的右边布局
+     * 设置自定义的右边布局。默认为null，会移除右边布局
      */
-    fun setRightView(view: View? = null) {
+    fun setRightView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         mBinding.rightContainer.removeAllViews()
-        view?.let {
-            mBinding.rightContainer.addView(it)
+        if (layoutId == null) {
+            return null
         }
+        return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.rightContainer, true)
     }
 
     /**
-     * 设置自定义的分割线
+     * 设置自定义的分割线。默认为null，会移除分割线
      */
-    fun setDivider(view: View? = null) {
+    fun setDivider(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         removeView(mBinding.divider)
-        view?.let {
-            addView(it)
+        if (layoutId == null) {
+            return null
         }
+        return DataBindingUtil.inflate(mLayoutInflater, layoutId, this, true)
     }
 
     /**
