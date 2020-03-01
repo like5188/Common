@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding
 //        initOriginToolBar()
-        initCustomToolbar()
+//        initCustomToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {
@@ -68,105 +68,105 @@ class MainActivity : AppCompatActivity() {
         mBinding.btnTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
     }
 
-    private fun initOriginToolBar() {
-        mBinding.toolbar.title = "title"
-        mBinding.toolbar.setTitleTextColor(Color.WHITE)
-        mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
-        mBinding.toolbar.setNavigationOnClickListener {
-            shortToastCenter("返回")
-        }
-        mBinding.toolbar.inflateMenu(R.menu.origin_toolbar_right_menu_main)
-//        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
-        mBinding.toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.action_0 -> {
-                    shortToastCenter("消息")
-                }
-                R.id.action_1 -> {
-                    shortToastCenter("添加")
-                }
-                R.id.action_2 -> {
-                    shortToastCenter("编辑")
-                }
-                R.id.action_3 -> {
-                    shortToastCenter("删除")
-                }
-                R.id.action_4 -> {
-                    shortToastCenter("查看")
-                }
-            }
-            true
-        }
-    }
-
-    private fun initCustomToolbar() {
-        mBinding.toolbar.setBackgroundColor(Color.WHITE)
-        mBinding.tvTitle.text = "title1"
-        mBinding.tvTitle.textSize = 18f
-        mBinding.tvTitle.setTextColor(Color.BLACK)
-        (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.START
-
-        val customNavigationView = TitlebarCustomButtonManager(this, mBinding.navigationView)
-        customNavigationView.setIcon(R.drawable.icon_back)
-        customNavigationView.setTitle("返回")
-        customNavigationView.setOnClickListener(View.OnClickListener { shortToastCenter("返回") })
-        customNavigationView.setMargin(42, 10, 20, 10)
-        customNavigationView.setContentPadding(0, 0, 30, 0)
-        customNavigationView.setMessageCount("99+", Color.WHITE, 10, Color.RED)
-
-        mBinding.toolbar.inflateMenu(R.menu.custom_toolbar_right_menu_main)
-//        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_0)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单0") })
-                    setTitle("菜单0", Color.BLACK, 12f)
-                    setMessageCount("0", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_1)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
-                    setTitle("菜单1", Color.BLACK, 12f)
-                    setMessageCount("1", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_2)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
-                    setTitle("菜单2", Color.BLACK, 12f)
-                    setMessageCount("2", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_3)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
-                    setTitle("菜单3", Color.BLACK, 12f)
-                    setMessageCount("3", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_4)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
-                    setTitle("菜单4", Color.BLACK, 12f)
-                    setMessageCount("4", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-    }
+//    private fun initOriginToolBar() {
+//        mBinding.toolbar.title = "title"
+//        mBinding.toolbar.setTitleTextColor(Color.WHITE)
+//        mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
+//        mBinding.toolbar.setNavigationOnClickListener {
+//            shortToastCenter("返回")
+//        }
+//        mBinding.toolbar.inflateMenu(R.menu.origin_toolbar_right_menu_main)
+////        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
+//        mBinding.toolbar.setOnMenuItemClickListener {
+//            when (it.itemId) {
+//                R.id.action_0 -> {
+//                    shortToastCenter("消息")
+//                }
+//                R.id.action_1 -> {
+//                    shortToastCenter("添加")
+//                }
+//                R.id.action_2 -> {
+//                    shortToastCenter("编辑")
+//                }
+//                R.id.action_3 -> {
+//                    shortToastCenter("删除")
+//                }
+//                R.id.action_4 -> {
+//                    shortToastCenter("查看")
+//                }
+//            }
+//            true
+//        }
+//    }
+//
+//    private fun initCustomToolbar() {
+//        mBinding.toolbar.setBackgroundColor(Color.WHITE)
+//        mBinding.tvTitle.text = "title1"
+//        mBinding.tvTitle.textSize = 18f
+//        mBinding.tvTitle.setTextColor(Color.BLACK)
+//        (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.START
+//
+//        val customNavigationView = TitlebarCustomButtonManager(this, mBinding.navigationView)
+//        customNavigationView.setIcon(R.drawable.icon_back)
+//        customNavigationView.setTitle("返回")
+//        customNavigationView.setOnClickListener(View.OnClickListener { shortToastCenter("返回") })
+//        customNavigationView.setMargin(42, 10, 20, 10)
+//        customNavigationView.setContentPadding(0, 0, 30, 0)
+//        customNavigationView.setMessageCount("99+", Color.WHITE, 10, Color.RED)
+//
+//        mBinding.toolbar.inflateMenu(R.menu.custom_toolbar_right_menu_main)
+////        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
+//        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_0)) as? CustomActionProvider)
+//                ?.getCustomViewManager()
+//                ?.apply {
+//                    setIcon(R.drawable.icon_back)
+//                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单0") })
+//                    setTitle("菜单0", Color.BLACK, 12f)
+//                    setMessageCount("0", Color.WHITE, 10, Color.RED)
+//                    setMargin(0, 10, 0, 10)
+//                    setContentPadding(30, 0, 30, 0)
+//                }
+//        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_1)) as? CustomActionProvider)
+//                ?.getCustomViewManager()
+//                ?.apply {
+//                    setIcon(R.drawable.icon_back)
+//                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
+//                    setTitle("菜单1", Color.BLACK, 12f)
+//                    setMessageCount("1", Color.WHITE, 10, Color.RED)
+//                    setMargin(0, 10, 0, 10)
+//                    setContentPadding(30, 0, 30, 0)
+//                }
+//        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_2)) as? CustomActionProvider)
+//                ?.getCustomViewManager()
+//                ?.apply {
+//                    setIcon(R.drawable.icon_back)
+//                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
+//                    setTitle("菜单2", Color.BLACK, 12f)
+//                    setMessageCount("2", Color.WHITE, 10, Color.RED)
+//                    setMargin(0, 10, 0, 10)
+//                    setContentPadding(30, 0, 30, 0)
+//                }
+//        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_3)) as? CustomActionProvider)
+//                ?.getCustomViewManager()
+//                ?.apply {
+//                    setIcon(R.drawable.icon_back)
+//                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
+//                    setTitle("菜单3", Color.BLACK, 12f)
+//                    setMessageCount("3", Color.WHITE, 10, Color.RED)
+//                    setMargin(0, 10, 0, 10)
+//                    setContentPadding(30, 0, 30, 0)
+//                }
+//        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_4)) as? CustomActionProvider)
+//                ?.getCustomViewManager()
+//                ?.apply {
+//                    setIcon(R.drawable.icon_back)
+//                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
+//                    setTitle("菜单4", Color.BLACK, 12f)
+//                    setMessageCount("4", Color.WHITE, 10, Color.RED)
+//                    setMargin(0, 10, 0, 10)
+//                    setContentPadding(30, 0, 30, 0)
+//                }
+//    }
 
     private fun initMarqueeView() {
         val list = listOf(Pair("like1", "like2"), Pair("like3", "like4"))
