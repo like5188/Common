@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-//        initDefaultTitlebar()
-        initCustomTitlebar()
+        initDefaultTitlebar()
+//        initCustomTitlebar()
 //        initOriginToolBar()
         initCustomToolbar()
         SPUtils.getInstance().init(this)
@@ -85,31 +85,57 @@ class MainActivity : AppCompatActivity() {
 
     private fun initDefaultTitlebar() {
         mBinding.titlebar.Default().apply {
-            showNavigation(R.drawable.picture_icon_back, View.OnClickListener {
+            showNavigation(R.drawable.icon_back, View.OnClickListener {
                 shortToastCenter("返回")
             })
 
-            showTitle("title")
+            showTitle("顶顶顶顶顶顶顶顶")
 
-            val menu0 = CustomViewManager(this@MainActivity).apply {
+            CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单0") })
                 setTitle("菜单0", Color.BLACK, 12f)
                 setMessageCount("0", Color.WHITE, 10, Color.RED)
                 setMargin(20, 10, 0, 10)
                 setContentPadding(30, 0, 30, 0)
-            }.getView()
-            addMenu(menu0)
-
-            val menu1 = CustomViewManager(this@MainActivity).apply {
+                addMenu(getView())
+            }
+            CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
                 setTitle("菜单1", Color.BLACK, 12f)
                 setMessageCount("1", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+                addMenu(getView())
+            }
+            CustomViewManager(this@MainActivity).apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
+                setTitle("菜单2", Color.BLACK, 12f)
+                setMessageCount("2", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+                addMenu(getView())
+            }
+            CustomViewManager(this@MainActivity).apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
+                setTitle("菜单3", Color.BLACK, 12f)
+                setMessageCount("3", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+                addMenu(getView())
+            }
+            CustomViewManager(this@MainActivity).apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
+                setTitle("菜单4", Color.BLACK, 12f)
+                setMessageCount("4", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 20, 10)
                 setContentPadding(30, 0, 30, 0)
-            }.getView()
-            addMenu(menu1)
+                addMenu(getView())
+            }
         }
     }
 

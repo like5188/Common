@@ -31,14 +31,131 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         DataBindingUtil.inflate<TitlebarBinding>(mLayoutInflater, R.layout.titlebar, this, true)
     }
 
+    private val mMinCenterWidth = DimensionUtils.dp2px(context, 70f)
+    private var mLeftLeft = 0
+    private var mLeftRight = 0
     private var mCenterLeft = 0
     private var mCenterRight = 0
     private var mRightLeft = 0
     private var mRightRight = 0
+    private var mNeedUpdateLeft = false
+    private var mNeedUpdateCenter = false
+    private var mNeedUpdateRight = false
 
     init {
         orientation = VERTICAL
         mBinding
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        // 中间部分的最小宽度的一半
+        val halfMinCenterWidth = mMinCenterWidth / 2
+
+        // 垂直中心线的位置
+        val verticalCenterLine = measuredWidth / 2
+
+        // 左边部分的right
+        val leftRight = mBinding.leftContainer.measuredWidth
+        // 垂直中心线左边剩余的宽度
+        val leftRemaining = verticalCenterLine - leftRight
+        // 右边部分的left
+        val rightLeft = measuredWidth - mBinding.rightContainer.measuredWidth
+        // 垂直中心线右边剩余的宽度
+        val rightRemaining = rightLeft - verticalCenterLine
+
+        when {
+            // 左右剩余空间都不够放下halfMinCenterWidth。那么中间部分取最小宽度。
+            leftRemaining < halfMinCenterWidth && rightRemaining < halfMinCenterWidth -> {
+                mLeftLeft = 0
+                mLeftRight = verticalCenterLine - halfMinCenterWidth
+                mCenterLeft = mLeftRight
+                mCenterRight = verticalCenterLine + halfMinCenterWidth
+                mRightLeft = mCenterRight
+                mRightRight = measuredWidth
+                mNeedUpdateLeft = true
+                mNeedUpdateCenter = true
+                mNeedUpdateRight = true
+            }
+            // 左右剩余空间都能放下halfMinCenterWidth。那么中间部分取剩余宽度，并调整中间部分的宽度，使得标题居中。
+            leftRemaining >= halfMinCenterWidth && rightRemaining >= halfMinCenterWidth -> {
+                mLeftLeft = 0
+                mLeftRight = leftRight
+                mRightLeft = rightLeft
+                mRightRight = measuredWidth
+                // 取左右部分剩余的最小宽度
+                val minRemaining = Math.min(leftRemaining, rightRemaining)
+                mCenterLeft = verticalCenterLine - minRemaining
+                mCenterRight = verticalCenterLine + minRemaining
+                mNeedUpdateCenter = true
+            }
+            // 只是左边剩余空间不够放下halfMinCenterWidth。
+            leftRemaining < halfMinCenterWidth -> {
+                mLeftLeft = 0
+                mLeftRight = verticalCenterLine - halfMinCenterWidth
+                mCenterLeft = mLeftRight
+                mCenterRight = verticalCenterLine + halfMinCenterWidth
+                mRightLeft = rightLeft
+                mRightRight = measuredWidth
+                mNeedUpdateLeft = true
+                mNeedUpdateCenter = true
+            }
+            // 只是右边剩余空间不够放下halfMinCenterWidth。
+            rightRemaining < halfMinCenterWidth -> {
+                mLeftLeft = 0
+                mLeftRight = leftRight
+                mCenterLeft = verticalCenterLine - halfMinCenterWidth
+                mCenterRight = verticalCenterLine + halfMinCenterWidth
+                mRightLeft = mCenterRight
+                mRightRight = measuredWidth
+                mNeedUpdateCenter = true
+                mNeedUpdateRight = true
+            }
+        }
+
+        if (mNeedUpdateLeft) {
+            // 重新计算width
+            val newWidth = mLeftRight - mLeftLeft
+            // 高度不变
+            val newHeight = mBinding.leftContainer.measuredHeight
+            val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
+            val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
+            mBinding.leftContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+        }
+        if (mNeedUpdateCenter) {
+            // 重新计算width
+            val newWidth = mCenterRight - mCenterLeft
+            // 高度不变
+            val newHeight = mBinding.centerContainer.measuredHeight
+            val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
+            val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
+            mBinding.centerContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+        }
+        if (mNeedUpdateRight) {
+            // 重新计算width
+            val newWidth = mRightRight - mRightLeft
+            // 高度不变
+            val newHeight = mBinding.rightContainer.measuredHeight
+            val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
+            val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
+            mBinding.rightContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+        }
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
+        if (mNeedUpdateLeft) {
+            mBinding.leftContainer.layout(mLeftLeft, mBinding.leftContainer.top, mLeftRight, mBinding.leftContainer.bottom)
+            mNeedUpdateLeft = false
+        }
+        if (mNeedUpdateCenter) {
+            mBinding.centerContainer.layout(mCenterLeft, mBinding.centerContainer.top, mCenterRight, mBinding.centerContainer.bottom)
+            mNeedUpdateCenter = false
+        }
+        if (mNeedUpdateRight) {
+            mBinding.rightContainer.layout(mRightLeft, mBinding.rightContainer.top, mRightRight, mBinding.rightContainer.bottom)
+            mNeedUpdateRight = false
+        }
     }
 
     /**
@@ -117,7 +234,8 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
          * 添加右边部分的菜单按钮。可以添加多个，父布局为水平的LinearLayout
          */
         fun addMenu(view: View) {
-            mBinding.rightContainer.addView(view)
+            mBinding.llMenuContainer.visibility = View.VISIBLE
+            mBinding.llMenuContainer.addView(view)
         }
 
         /**
@@ -126,7 +244,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
          * @param iconResId         图标资源id。如果设置为0，表示去掉图标及其点击监听。
          * @param listener          点击监听。默认为null，表示不设置，保持原样。
          */
-        fun showNavigation(@DrawableRes iconResId: Int, listener: View.OnClickListener? = null) {
+        fun showNavigation(@DrawableRes iconResId: Int, listener: OnClickListener? = null) {
             if (iconResId == 0) {
                 mBinding.ivNavigation.visibility = View.GONE
                 mBinding.ivNavigation.setImageDrawable(null)
@@ -148,7 +266,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
          * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
          * @param listener          点击监听。默认为null，表示不设置，保持原样。
          */
-        fun showTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null, listener: View.OnClickListener? = null) {
+        fun showTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null, listener: OnClickListener? = null) {
             if (title.isEmpty()) {
                 mBinding.tvTitle.visibility = View.GONE
                 mBinding.tvTitle.text = ""
@@ -176,58 +294,8 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
 
         fun getCenterView(): TextView = mBinding.tvTitle
 
+        fun getRightView(): LinearLayout = mBinding.llMenuContainer
+
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        // 垂直中心线的位置
-        val verticalCenterLine = measuredWidth / 2
-
-        // 左边部分的right
-        val leftRight = mBinding.leftContainer.measuredWidth
-        // 垂直中心线左边剩余的宽度
-        val leftRemaining = verticalCenterLine - leftRight
-
-        // 右边部分的left
-        val rightLeft = measuredWidth - mBinding.rightContainer.measuredWidth
-        // 垂直中心线右边剩余的宽度
-        val rightRemaining = rightLeft - verticalCenterLine
-
-        // 取左右部分剩余的最小宽度
-        val minRemaining = Math.min(leftRemaining, rightRemaining)
-        // 重新计算中间部分的left、right
-        when {
-            minRemaining > 0 -> {// 垂直中心线左右两边都有剩余空间。调整中间部分的宽度，使得标题居中
-                mCenterLeft = verticalCenterLine - minRemaining
-                mCenterRight = verticalCenterLine + minRemaining
-                mRightLeft = rightLeft
-                mRightRight = measuredWidth
-            }
-            leftRight > rightLeft -> {// 垂直中心线左右两边交叉。直接把三部分按照水平平铺，效果如水平LinearLayout
-                mCenterLeft = leftRight
-                mCenterRight = mCenterLeft + mBinding.centerContainer.measuredWidth
-                mRightLeft = mCenterRight
-                mRightRight = mCenterRight + mBinding.rightContainer.measuredWidth
-            }
-            minRemaining <= 0 -> {// 垂直中心线左右两边至少一边没有剩余空间。调整中间部分的宽度，并使三部分按照水平平铺，效果如水平LinearLayout
-                mCenterLeft = leftRight
-                mCenterRight = rightLeft
-                mRightLeft = rightLeft
-                mRightRight = measuredWidth
-            }
-        }
-        // 重新计算中间部分的width
-        val newCenterWidth = mCenterRight - mCenterLeft
-        // 中间部分的高度不变
-        val newCenterHeight = mBinding.centerContainer.measuredHeight
-        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newCenterWidth)
-        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newCenterHeight)
-        mBinding.centerContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-    }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        super.onLayout(changed, l, t, r, b)
-        mBinding.centerContainer.layout(mCenterLeft, mBinding.centerContainer.top, mCenterRight, mBinding.centerContainer.bottom)
-        mBinding.rightContainer.layout(mRightLeft, mBinding.rightContainer.top, mRightRight, mBinding.rightContainer.bottom)
-    }
 }

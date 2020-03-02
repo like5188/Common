@@ -1,61 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <merge>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary">
+            android:background="?attr/colorPrimary"
+            tools:background="#888888"
+            tools:layout_height="56dp">
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/left_container"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="#00ff00"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:background="#00ff00">
 
                 <ImageView
                     android:id="@+id/iv_navigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:background="@color/picture_color_grey"
-                    android:visibility="gone" />
+                    android:background="#ffffff"
+                    android:visibility="gone"
+                    tools:src="@drawable/common_back"
+                    tools:visibility="visible" />
                 <!--android:background="?actionBarItemBackground"-->
-            </LinearLayout>
+            </FrameLayout>
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/center_container"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
-                android:background="#0000ff"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:background="#0000ff">
 
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:background="@color/picture_color_grey"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/common_text_white_0"
                     android:textSize="18sp"
-                    android:visibility="gone" />
-            </LinearLayout>
+                    android:visibility="gone"
+                    tools:text="title"
+                    tools:visibility="visible" />
+            </FrameLayout>
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/right_container"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:background="#ff0000"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" />
+                android:background="#ff0000">
+
+                <LinearLayout
+                    android:id="@+id/ll_menu_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@color/picture_color_grey"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </FrameLayout>
 
         </RelativeLayout>
 
@@ -64,6 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/common_divider_gray"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
     </merge>
 </layout>
