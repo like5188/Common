@@ -53,22 +53,63 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     private fun measureStart(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // 左边部分的width
+        val leftWidth = mBinding.leftContainer.measuredWidth
+        // 中间部分的width
+        val centerWidth = mBinding.centerContainer.measuredWidth
+        // 右边部分的width
+        val rightWidth = mBinding.rightContainer.measuredWidth
         // 除了左边部分剩余的宽度
         val remaining = measuredWidth - mBinding.leftContainer.measuredWidth
-        if (remaining <= mMinCenterWidth) {
-            mLeftLeft = 0
-            mLeftRight = measuredWidth - mMinCenterWidth
-            mCenterLeft = mLeftRight
-            mCenterRight = mMinCenterWidth
-            mRightLeft = mCenterRight
-            mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
+        if (centerWidth <= 0) {// 如果没有中间部分
+            when {
+                remaining < 0 -> {
+                    mLeftLeft = 0
+                    mLeftRight = measuredWidth
+                    mCenterLeft = measuredWidth
+                    mCenterRight = measuredWidth
+                    mRightLeft = measuredWidth
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateRight = true
+                }
+                remaining <= rightWidth -> {
+                    mLeftLeft = 0
+                    mLeftRight = leftWidth
+                    mCenterLeft = mLeftRight
+                    mCenterRight = mLeftRight
+                    mRightLeft = mLeftRight
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateRight = true
+                }
+                else -> {
+                    mLeftLeft = 0
+                    mLeftRight = leftWidth
+                    mCenterLeft = mLeftRight
+                    mCenterRight = mLeftRight
+                    mRightLeft = measuredWidth - rightWidth
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateRight = true
+                }
+            }
         } else {
-            mLeftLeft = 0
-            mLeftRight = mBinding.leftContainer.measuredWidth
-            mCenterLeft = mLeftRight
-            mCenterRight = mMinCenterWidth
-            mRightLeft = mCenterRight
-            mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
+            if (remaining <= mMinCenterWidth) {
+                mLeftLeft = 0
+                mLeftRight = measuredWidth - mMinCenterWidth
+                mCenterLeft = mLeftRight
+                mCenterRight = measuredWidth
+                mRightLeft = measuredWidth
+                mRightRight = measuredWidth
+            } else {
+                mLeftLeft = 0
+                mLeftRight = leftWidth
+                mCenterLeft = mLeftRight
+                mCenterRight = mCenterLeft + centerWidth
+                mRightLeft = mCenterRight
+                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
+            }
         }
     }
 
@@ -98,7 +139,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
 
         if (centerWidth <= 0) {// 如果没有中间部分
             // 除了左边部分后，剩余的宽度
-            val remaining = measuredWidth - leftRight
+            val remaining = measuredWidth - leftWidth
             when {
                 remaining < 0 -> {
                     mLeftLeft = 0
