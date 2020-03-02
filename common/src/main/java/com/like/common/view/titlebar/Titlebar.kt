@@ -159,7 +159,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     /**
-     * 设置自定义的左边布局。默认为null，会移除左边布局
+     * 设置自定义的左边布局，它的父布局为[FrameLayout]。默认为null，会移除左边布局
      */
     fun setLeftView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         mBinding.leftContainer.removeAllViews()
@@ -170,7 +170,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     /**
-     * 设置自定义的中间布局。默认为null，会移除中间布局
+     * 设置自定义的中间布局，它的父布局为[FrameLayout]。默认为null，会移除中间布局
      */
     fun setCenterView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         mBinding.centerContainer.removeAllViews()
@@ -181,7 +181,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     /**
-     * 设置自定义的右边布局。默认为null，会移除右边布局
+     * 设置自定义的右边布局，它的父布局为[FrameLayout]。默认为null，会移除右边布局
      */
     fun setRightView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         mBinding.rightContainer.removeAllViews()
@@ -192,7 +192,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     /**
-     * 设置自定义的分割线。默认为null，会移除分割线
+     * 设置自定义的分割线，它的父布局为[LinearLayout]。默认为null，会移除分割线
      */
     fun setDivider(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
         removeView(mBinding.divider)
