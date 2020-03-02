@@ -78,8 +78,10 @@ class MainActivity : AppCompatActivity() {
     private fun initCustomTitlebar() {
         val customViewManager = CustomViewManager(this, mBinding.titlebar.setLeftView(R.layout.titlebar_custom_view) as TitlebarCustomViewBinding)
         customViewManager.setTitle("123")
+
         val centerBinding = mBinding.titlebar.setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
         centerBinding.tv1.text = "hahahhahahhahahahhahahahhahahahhaha"
+
         mBinding.titlebar.setRightView(R.layout.view_titlebar_button)
     }
 
