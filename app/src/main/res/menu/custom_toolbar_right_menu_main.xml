@@ -13,34 +13,34 @@
         android:icon="@drawable/dialog_close"
         android:title="菜单0"
         app:actionProviderClass="com.like.common.sample.CustomActionProvider"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_1"
         android:icon="@drawable/download_pause"
         android:title="菜单1"
         app:actionProviderClass="com.like.common.sample.CustomActionProvider"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_2"
         android:icon="@drawable/download_pause"
         android:title="菜单2"
         app:actionProviderClass="com.like.common.sample.CustomActionProvider"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_3"
         android:icon="@drawable/download_pause"
         android:title="菜单3"
         app:actionProviderClass="com.like.common.sample.CustomActionProvider"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_4"
         android:icon="@drawable/download_pause"
         android:title="菜单4"
         app:actionProviderClass="com.like.common.sample.CustomActionProvider"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
 </menu>
