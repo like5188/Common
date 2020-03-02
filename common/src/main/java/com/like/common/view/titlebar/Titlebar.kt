@@ -72,7 +72,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 mCenterLeft = mLeftRight
                 mCenterRight = verticalCenterLine + halfMinCenterWidth
                 mRightLeft = mCenterRight
-                mRightRight = measuredWidth
+                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
                 mNeedUpdateLeft = true
                 mNeedUpdateCenter = true
                 mNeedUpdateRight = true
@@ -82,7 +82,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 mLeftLeft = 0
                 mLeftRight = leftRight
                 mRightLeft = rightLeft
-                mRightRight = measuredWidth
+                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
                 // 取左右部分剩余的最小宽度
                 val minRemaining = Math.min(leftRemaining, rightRemaining)
                 mCenterLeft = verticalCenterLine - minRemaining
@@ -96,7 +96,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 mCenterLeft = mLeftRight
                 mCenterRight = verticalCenterLine + halfMinCenterWidth
                 mRightLeft = rightLeft
-                mRightRight = measuredWidth
+                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
                 mNeedUpdateLeft = true
                 mNeedUpdateCenter = true
             }
@@ -107,7 +107,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 mCenterLeft = verticalCenterLine - halfMinCenterWidth
                 mCenterRight = verticalCenterLine + halfMinCenterWidth
                 mRightLeft = mCenterRight
-                mRightRight = measuredWidth
+                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
                 mNeedUpdateCenter = true
                 mNeedUpdateRight = true
             }
