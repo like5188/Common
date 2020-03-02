@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-//        initDefaultTitlebar()
-        initCustomTitlebar()
+        initDefaultTitlebar()
+//        initCustomTitlebar()
 //        initOriginToolBar()
         initCustomToolbar()
         SPUtils.getInstance().init(this)
