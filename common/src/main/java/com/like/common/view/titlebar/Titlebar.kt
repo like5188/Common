@@ -20,8 +20,7 @@ import com.like.common.util.DimensionUtils
  * 标题栏封装
  *
  * 定义了左边部分、右边部分、中间部分的容器。
- * 重新measure、layout了中间部分，保证中间部分不会因为内容太多而遮挡左边部分或者右边部分。
- * 重新layout右边部分，保证不会出现各部分交叉的情况。
+ * 根据情况重新measure、layout了各部分，保证中间部分始终居中，并且不会因为内容太多而遮挡左边部分或者右边部分，保证不会出现各部分交叉的情况。
  */
 class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     private val mLayoutInflater: LayoutInflater by lazy {

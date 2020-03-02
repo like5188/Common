@@ -35,7 +35,6 @@
                 android:id="@+id/center_container"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
                 android:background="#0000ff">
 
                 <TextView
