@@ -79,61 +79,106 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         // 垂直中心线的位置
         val verticalCenterLine = measuredWidth / 2
 
+        // 左边部分的width
+        val leftWidth = mBinding.leftContainer.measuredWidth
         // 左边部分的right
-        val leftRight = mBinding.leftContainer.measuredWidth
+        val leftRight = leftWidth
         // 垂直中心线左边剩余的宽度
         val leftRemaining = verticalCenterLine - leftRight
+
+        // 中间部分的width
+        val centerWidth = mBinding.centerContainer.measuredWidth
+
+        // 右边部分的width
+        val rightWidth = mBinding.rightContainer.measuredWidth
         // 右边部分的left
-        val rightLeft = measuredWidth - mBinding.rightContainer.measuredWidth
+        val rightLeft = measuredWidth - rightWidth
         // 垂直中心线右边剩余的宽度
         val rightRemaining = rightLeft - verticalCenterLine
 
-        when {
-            // 左右剩余空间都不够放下halfMinCenterWidth。那么中间部分取最小宽度。
-            leftRemaining < halfMinCenterWidth && rightRemaining < halfMinCenterWidth -> {
-                mLeftLeft = 0
-                mLeftRight = verticalCenterLine - halfMinCenterWidth
-                mCenterLeft = mLeftRight
-                mCenterRight = verticalCenterLine + halfMinCenterWidth
-                mRightLeft = mCenterRight
-                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
-                mNeedUpdateLeft = true
-                mNeedUpdateCenter = true
-                mNeedUpdateRight = true
+        if (centerWidth <= 0) {// 如果没有中间部分
+            // 除了左边部分后，剩余的宽度
+            val remaining = measuredWidth - leftRight
+            when {
+                remaining < 0 -> {
+                    mLeftLeft = 0
+                    mLeftRight = measuredWidth
+                    mCenterLeft = measuredWidth
+                    mCenterRight = measuredWidth
+                    mRightLeft = measuredWidth
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateRight = true
+                }
+                remaining <= rightWidth -> {
+                    mLeftLeft = 0
+                    mLeftRight = leftRight
+                    mCenterLeft = mLeftRight
+                    mCenterRight = mLeftRight
+                    mRightLeft = mLeftRight
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateRight = true
+                }
+                else -> {
+                    mLeftLeft = 0
+                    mLeftRight = leftRight
+                    mCenterLeft = mLeftRight
+                    mCenterRight = mLeftRight
+                    mRightLeft = measuredWidth - rightWidth
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateRight = true
+                }
             }
-            // 左右剩余空间都能放下halfMinCenterWidth。那么中间部分取剩余宽度，并调整中间部分的宽度，使得标题居中。
-            leftRemaining >= halfMinCenterWidth && rightRemaining >= halfMinCenterWidth -> {
-                mLeftLeft = 0
-                mLeftRight = leftRight
-                mRightLeft = rightLeft
-                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
-                // 取左右部分剩余的最小宽度
-                val minRemaining = Math.min(leftRemaining, rightRemaining)
-                mCenterLeft = verticalCenterLine - minRemaining
-                mCenterRight = verticalCenterLine + minRemaining
-                mNeedUpdateCenter = true
-            }
-            // 只是左边剩余空间不够放下halfMinCenterWidth。
-            leftRemaining < halfMinCenterWidth -> {
-                mLeftLeft = 0
-                mLeftRight = verticalCenterLine - halfMinCenterWidth
-                mCenterLeft = mLeftRight
-                mCenterRight = verticalCenterLine + halfMinCenterWidth
-                mRightLeft = rightLeft
-                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
-                mNeedUpdateLeft = true
-                mNeedUpdateCenter = true
-            }
-            // 只是右边剩余空间不够放下halfMinCenterWidth。
-            rightRemaining < halfMinCenterWidth -> {
-                mLeftLeft = 0
-                mLeftRight = leftRight
-                mCenterLeft = verticalCenterLine - halfMinCenterWidth
-                mCenterRight = verticalCenterLine + halfMinCenterWidth
-                mRightLeft = mCenterRight
-                mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
-                mNeedUpdateCenter = true
-                mNeedUpdateRight = true
+        } else {
+            when {
+                // 左右剩余空间都不够放下halfMinCenterWidth。那么中间部分取最小宽度。
+                leftRemaining < halfMinCenterWidth && rightRemaining < halfMinCenterWidth -> {
+                    mLeftLeft = 0
+                    mLeftRight = verticalCenterLine - halfMinCenterWidth
+                    mCenterLeft = mLeftRight
+                    mCenterRight = verticalCenterLine + halfMinCenterWidth
+                    mRightLeft = mCenterRight
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateCenter = true
+                    mNeedUpdateRight = true
+                }
+                // 左右剩余空间都能放下halfMinCenterWidth。那么中间部分取剩余宽度，并调整中间部分的宽度，使得标题居中。
+                leftRemaining >= halfMinCenterWidth && rightRemaining >= halfMinCenterWidth -> {
+                    mLeftLeft = 0
+                    mLeftRight = leftRight
+                    mRightLeft = rightLeft
+                    mRightRight = measuredWidth
+                    // 取左右部分剩余的最小宽度
+                    val minRemaining = Math.min(leftRemaining, rightRemaining)
+                    mCenterLeft = verticalCenterLine - minRemaining
+                    mCenterRight = verticalCenterLine + minRemaining
+                    mNeedUpdateCenter = true
+                }
+                // 只是左边剩余空间不够放下halfMinCenterWidth。
+                leftRemaining < halfMinCenterWidth -> {
+                    mLeftLeft = 0
+                    mLeftRight = verticalCenterLine - halfMinCenterWidth
+                    mCenterLeft = mLeftRight
+                    mCenterRight = verticalCenterLine + halfMinCenterWidth
+                    mRightLeft = rightLeft
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateCenter = true
+                }
+                // 只是右边剩余空间不够放下halfMinCenterWidth。
+                rightRemaining < halfMinCenterWidth -> {
+                    mLeftLeft = 0
+                    mLeftRight = leftRight
+                    mCenterLeft = verticalCenterLine - halfMinCenterWidth
+                    mCenterRight = verticalCenterLine + halfMinCenterWidth
+                    mRightLeft = mCenterRight
+                    mRightRight = measuredWidth
+                    mNeedUpdateCenter = true
+                    mNeedUpdateRight = true
+                }
             }
         }
 
