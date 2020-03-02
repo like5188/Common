@@ -2,6 +2,7 @@ package com.like.common.view.titlebar
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -30,6 +31,11 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         DataBindingUtil.inflate<TitlebarBinding>(mLayoutInflater, R.layout.titlebar, this, true)
     }
 
+    /**
+     * 中间部分的对齐方式，默认为[Gravity.CENTER_HORIZONTAL]
+     */
+    private var mOrientation = Gravity.CENTER_HORIZONTAL
+
     private val mMinCenterWidth = DimensionUtils.dp2px(context, 70f)
     private var mLeftLeft = 0
     private var mLeftRight = 0
@@ -46,8 +52,27 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         mBinding
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    private fun measureStart(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // 除了左边部分剩余的宽度
+        val remaining = measuredWidth - mBinding.leftContainer.measuredWidth
+        if (remaining <= mMinCenterWidth) {
+            mLeftLeft = 0
+            mLeftRight = measuredWidth - mMinCenterWidth
+            mCenterLeft = mLeftRight
+            mCenterRight = mMinCenterWidth
+            mRightLeft = mCenterRight
+            mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
+        } else {
+            mLeftLeft = 0
+            mLeftRight = mBinding.leftContainer.measuredWidth
+            mCenterLeft = mLeftRight
+            mCenterRight = mMinCenterWidth
+            mRightLeft = mCenterRight
+            mRightRight = mRightLeft + mBinding.rightContainer.measuredWidth
+        }
+    }
+
+    private fun measureCenterHorizontal(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         // 中间部分的最小宽度的一半
         val halfMinCenterWidth = mMinCenterWidth / 2
 
@@ -112,32 +137,53 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
             }
         }
 
-        if (mNeedUpdateLeft) {
-            // 重新计算width
-            val newWidth = mLeftRight - mLeftLeft
-            // 高度不变
-            val newHeight = mBinding.leftContainer.measuredHeight
-            val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
-            val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
-            mBinding.leftContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-        }
-        if (mNeedUpdateCenter) {
-            // 重新计算width
-            val newWidth = mCenterRight - mCenterLeft
-            // 高度不变
-            val newHeight = mBinding.centerContainer.measuredHeight
-            val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
-            val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
-            mBinding.centerContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-        }
-        if (mNeedUpdateRight) {
-            // 重新计算width
-            val newWidth = mRightRight - mRightLeft
-            // 高度不变
-            val newHeight = mBinding.rightContainer.measuredHeight
-            val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
-            val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
-            mBinding.rightContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+        measureLeft(widthMeasureSpec, heightMeasureSpec)
+        measureCenter(widthMeasureSpec, heightMeasureSpec)
+        measureRight(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    private fun measureLeft(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (!mNeedUpdateLeft) return
+        // 重新计算width
+        val newWidth = mLeftRight - mLeftLeft
+        // 高度不变
+        val newHeight = mBinding.leftContainer.measuredHeight
+        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
+        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
+        mBinding.leftContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+    }
+
+    private fun measureCenter(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (!mNeedUpdateCenter) return
+        // 重新计算width
+        val newWidth = mCenterRight - mCenterLeft
+        // 高度不变
+        val newHeight = mBinding.centerContainer.measuredHeight
+        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
+        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
+        mBinding.centerContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+    }
+
+    private fun measureRight(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        if (!mNeedUpdateRight) return
+        // 重新计算width
+        val newWidth = mRightRight - mRightLeft
+        // 高度不变
+        val newHeight = mBinding.rightContainer.measuredHeight
+        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
+        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
+        mBinding.rightContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        when (mOrientation) {
+            Gravity.START, Gravity.LEFT -> {
+                measureStart(widthMeasureSpec, heightMeasureSpec)
+            }
+            Gravity.CENTER_HORIZONTAL -> {
+                measureCenterHorizontal(widthMeasureSpec, heightMeasureSpec)
+            }
         }
     }
 
