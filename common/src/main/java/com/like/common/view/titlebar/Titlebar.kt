@@ -306,6 +306,13 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
             }
         }
 
+        /**
+         * 设置标题栏的宽度。dp
+         */
+        fun setTitleWidth(width: Float) {
+            mBinding.tvTitle.layoutParams.width = DimensionUtils.dp2px(context, width)
+        }
+
         fun setBackgroundColor(@ColorInt color: Int) {
             mBinding.titlebarContainer.setBackgroundColor(color)
         }

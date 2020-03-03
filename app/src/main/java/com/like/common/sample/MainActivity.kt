@@ -28,10 +28,7 @@ import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.zxing.ZXingActivity
-import com.like.common.util.SPUtils
-import com.like.common.util.setSelectorBackgroundResource
-import com.like.common.util.setSelectorSrcResource
-import com.like.common.util.shortToastCenter
+import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -78,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         mBinding.titlebar.Custom().apply {
             val leftBinding = setLeftView(R.layout.titlebar_custom_view) as TitlebarCustomViewBinding
             val customViewManager = CustomViewManager(this@MainActivity, leftBinding)
-            customViewManager.setTitle("012345012345678901234567896789")
+            customViewManager.setTitle("哈哈哈哈啊哈")
 
             val centerBinding = setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
             centerBinding.tv1.text = "111111111111111"
@@ -96,7 +93,8 @@ class MainActivity : AppCompatActivity() {
                 shortToastCenter("返回")
             })
 
-            showTitle("1")
+            showTitle("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
+            setTitleWidth(100f)
 
             showDivider(1f, Color.GREEN)
 
@@ -122,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initOriginToolBar() {
-        mBinding.toolbar.title = "titletitletitletitletitletitle"
+        mBinding.toolbar.title = "哈哈哈哈哈哈哈哈哈哈的的"
         mBinding.toolbar.setTitleTextColor(Color.WHITE)
         mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
         mBinding.toolbar.setNavigationOnClickListener {

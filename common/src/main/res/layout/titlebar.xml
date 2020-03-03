@@ -40,7 +40,7 @@
 
                 <TextView
                     android:id="@+id/tv_title"
-                    android:layout_width="110dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="16dp"
@@ -49,9 +49,9 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/common_text_white_0"
-                    android:textSize="21sp"
+                    android:textSize="20sp"
                     android:visibility="gone"
-                    tools:text="title"
+                    tools:text="哈哈哈哈哈哈哈哈"
                     tools:visibility="visible" />
             </FrameLayout>
 
