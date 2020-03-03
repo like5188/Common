@@ -44,10 +44,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-//        initDefaultTitlebar()
-        initCustomTitlebar()
-//        initOriginToolBar()
-        initCustomToolbar()
+        initDefaultTitlebar()
+//        initCustomTitlebar()
+        initOriginToolBar()
+//        initCustomToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCustomToolbar() {
         mBinding.toolbar.setBackgroundColor(Color.WHITE)
-        mBinding.tvTitle.text = "title1"
+        mBinding.tvTitle.text = "title1title1title1title1"
         mBinding.tvTitle.textSize = 18f
         mBinding.tvTitle.setTextColor(Color.BLACK)
         (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.START
