@@ -2,6 +2,7 @@ package com.like.common.view.titlebar
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -259,6 +260,14 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
             } else {
                 mBinding.tvTitle.visibility = View.VISIBLE
                 mBinding.tvTitle.text = title
+                when (mCenterGravity) {
+                    0 -> {
+                        mBinding.tvTitle.gravity = Gravity.START
+                    }
+                    1 -> {
+                        mBinding.tvTitle.gravity = Gravity.CENTER
+                    }
+                }
                 if (textColor != null) {
                     mBinding.tvTitle.setTextColor(textColor)
                 }
