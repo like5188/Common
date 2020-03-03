@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -76,13 +75,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCustomTitlebar() {
-        val customViewManager = CustomViewManager(this, mBinding.titlebar.setLeftView(R.layout.titlebar_custom_view) as TitlebarCustomViewBinding)
-        customViewManager.setTitle("012345012345678901234567896789")
+        mBinding.titlebar.Custom().apply {
+            val leftBinding = setLeftView(R.layout.titlebar_custom_view) as TitlebarCustomViewBinding
+            val customViewManager = CustomViewManager(this@MainActivity, leftBinding)
+            customViewManager.setTitle("012345012345678901234567896789")
 
-        val centerBinding = mBinding.titlebar.setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
-        centerBinding.tv1.text = "hahahhahahhahahahhahahahhahahahhaha"
+            val centerBinding = setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
+            centerBinding.tv1.text = "111111111111111"
+            centerBinding.tv2.text = "2"
 
-        mBinding.titlebar.setRightView(R.layout.view_titlebar_button)
+            val rightBinding = setRightView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
+            rightBinding.tv1.text = "11111111111111111111"
+            rightBinding.tv2.text = "222"
+        }
     }
 
     private fun initDefaultTitlebar() {
@@ -91,7 +96,9 @@ class MainActivity : AppCompatActivity() {
                 shortToastCenter("返回")
             })
 
-            showTitle("顶顶顶顶顶顶顶顶")
+            showTitle("顶顶顶顶顶顶顶")
+
+            showDivider(1f, Color.GREEN)
 
             CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
@@ -107,33 +114,6 @@ class MainActivity : AppCompatActivity() {
                 setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
                 setTitle("菜单1", Color.BLACK, 12f)
                 setMessageCount("1", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-                addMenu(getView())
-            }
-            CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
-                setTitle("菜单2", Color.BLACK, 12f)
-                setMessageCount("2", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-                addMenu(getView())
-            }
-            CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
-                setTitle("菜单3", Color.BLACK, 12f)
-                setMessageCount("3", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-                addMenu(getView())
-            }
-            CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
-                setTitle("菜单4", Color.BLACK, 12f)
-                setMessageCount("4", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 20, 10)
                 setContentPadding(30, 0, 30, 0)
                 addMenu(getView())

@@ -161,84 +161,67 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
     }
 
     /**
-     * 设置自定义的左边布局，它的父布局为[FrameLayout]。默认为null，会移除左边布局
+     * 使用自定义的标题栏布局。
      */
-    fun setLeftView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
-        mBinding.leftContainer.removeAllViews()
-        if (layoutId == null) {
-            return null
+    inner class Custom {
+        /**
+         * 设置自定义的左边布局，它的父布局为[FrameLayout]。默认为null，会移除左边布局
+         */
+        fun setLeftView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
+            mBinding.leftContainer.removeAllViews()
+            if (layoutId == null) {
+                return null
+            }
+            return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.leftContainer, true)
         }
-        return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.leftContainer, true)
+
+        /**
+         * 设置自定义的中间布局，它的父布局为[FrameLayout]。默认为null，会移除中间布局
+         */
+        fun setCenterView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
+            mBinding.centerContainer.removeAllViews()
+            if (layoutId == null) {
+                return null
+            }
+            return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.centerContainer, true)
+        }
+
+        /**
+         * 设置自定义的右边布局，它的父布局为[FrameLayout]。默认为null，会移除右边布局
+         */
+        fun setRightView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
+            mBinding.rightContainer.removeAllViews()
+            if (layoutId == null) {
+                return null
+            }
+            return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.rightContainer, true)
+        }
+
+        /**
+         * 设置自定义的分割线，它的父布局为[LinearLayout]。默认为null，会移除分割线
+         */
+        fun setDivider(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
+            removeView(mBinding.divider)
+            if (layoutId == null) {
+                return null
+            }
+            return DataBindingUtil.inflate(mLayoutInflater, layoutId, this@Titlebar, true)
+        }
+
+        fun setBackgroundColor(@ColorInt color: Int) {
+            mBinding.titlebarContainer.setBackgroundColor(color)
+        }
     }
 
     /**
-     * 设置自定义的中间布局，它的父布局为[FrameLayout]。默认为null，会移除中间布局
-     */
-    fun setCenterView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
-        mBinding.centerContainer.removeAllViews()
-        if (layoutId == null) {
-            return null
-        }
-        return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.centerContainer, true)
-    }
-
-    /**
-     * 设置自定义的右边布局，它的父布局为[FrameLayout]。默认为null，会移除右边布局
-     */
-    fun setRightView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
-        mBinding.rightContainer.removeAllViews()
-        if (layoutId == null) {
-            return null
-        }
-        return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.rightContainer, true)
-    }
-
-    /**
-     * 设置自定义的分割线，它的父布局为[LinearLayout]。默认为null，会移除分割线
-     */
-    fun setDivider(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
-        removeView(mBinding.divider)
-        if (layoutId == null) {
-            return null
-        }
-        return DataBindingUtil.inflate(mLayoutInflater, layoutId, this, true)
-    }
-
-    /**
-     * 使用默认的标题栏布局。
+     * 使用库中默认的标题栏布局。
      *
      * 包括以下三个部分：
      * 左边部分：一个[ImageView]
      * 中间部分：一个[TextView]
-     * 右边部分：一个水平的[LinearLayout]，可以随意添加menu
+     * 右边部分：一个水平的[LinearLayout]，可以随意添加menu菜单
      */
     inner class Default {
-
-        /**
-         * 显示分割线
-         *
-         * @param height        分割线高度，dp。默认为0.5dp。如果设置为小于等于0，表示隐藏分割线。
-         * @param color         背景颜色。默认为null，表示不设置，保持原样。
-         */
-        fun showDivider(height: Float = 0.5f, @ColorInt color: Int? = null) {
-            if (height > 0) {
-                mBinding.divider.visibility = View.VISIBLE
-                mBinding.divider.layoutParams.height = DimensionUtils.dp2px(context, height)
-                if (color != null) {
-                    mBinding.divider.setBackgroundColor(color)
-                }
-            } else {
-                mBinding.divider.visibility = View.GONE
-            }
-        }
-
-        /**
-         * 添加右边部分的菜单按钮。可以添加多个，父布局为水平的LinearLayout
-         */
-        fun addMenu(view: View) {
-            mBinding.llMenuContainer.visibility = View.VISIBLE
-            mBinding.llMenuContainer.addView(view)
-        }
 
         /**
          * 显示导航按钮
@@ -286,6 +269,36 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                     mBinding.tvTitle.setOnClickListener(listener)
                 }
             }
+        }
+
+        /**
+         * 添加右边部分的菜单按钮。可以添加多个，父布局为水平的LinearLayout
+         */
+        fun addMenu(view: View) {
+            mBinding.llMenuContainer.visibility = View.VISIBLE
+            mBinding.llMenuContainer.addView(view)
+        }
+
+        /**
+         * 显示分割线
+         *
+         * @param height        分割线高度，dp。默认为0.5dp。如果设置为小于等于0，表示隐藏分割线。
+         * @param color         背景颜色。默认为null，表示不设置，保持原样。
+         */
+        fun showDivider(height: Float = 0.5f, @ColorInt color: Int? = null) {
+            if (height > 0) {
+                mBinding.divider.visibility = View.VISIBLE
+                mBinding.divider.layoutParams.height = DimensionUtils.dp2px(context, height)
+                if (color != null) {
+                    mBinding.divider.setBackgroundColor(color)
+                }
+            } else {
+                mBinding.divider.visibility = View.GONE
+            }
+        }
+
+        fun setBackgroundColor(@ColorInt color: Int) {
+            mBinding.titlebarContainer.setBackgroundColor(color)
         }
 
         fun getTitle(): String {
