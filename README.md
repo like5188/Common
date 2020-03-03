@@ -65,6 +65,7 @@
     DoubleFormatUtils
     Executors.kt
     FilterUtils
+    GlideEngineForPictureSelector
     GlideUtils.kt
     HexUtil
     HighLightUtils
@@ -82,6 +83,7 @@
     RadioManager
     RectEx.kt
     RxJavaUtils
+    SelectorDrawableEx.kt
     SerializableUtils
     SingletonHolder
     SPUtils.kt
@@ -90,7 +92,7 @@
     TabLayoutUtils
     TextViewEx.kt
     TimerUtils
-    ToastUtils.kt
+    ToastEx.kt
     UnitEx.kt
     UriEx.kt
     VibrateUtils
@@ -104,8 +106,7 @@
     callback
     dragview
     pwdedittext
-    toolbar
-    viewPagerTransformer
+    titlebar
     AspectRatioImageView
     CircleTextView
     ContainsEmojiEditText
@@ -116,14 +117,14 @@
     SidebarView
     SquareImageView
     TimerTextView
-    VerticalMarqueeView
 ```
 
 5、常用第三方库的引用
 ```java
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    api 'com.google.android.material:material:1.0.0'
+    api 'com.google.android.material:material:1.1.0'
     api 'androidx.recyclerview:recyclerview:1.1.0'
+    api 'androidx.constraintlayout:constraintlayout:1.1.3'
     // 调色板
     api 'androidx.palette:palette:1.0.0'
 
@@ -152,48 +153,63 @@
     api 'com.alibaba:arouter-api:1.5.0'
 
     // ViewModelProviders
-    api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    api 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     // paging
     api 'androidx.paging:paging-runtime:2.1.1'
 
     // work
-    api 'androidx.work:work-runtime-ktx:2.2.0'// workmanager 对协程的支持：suspend
+    api 'androidx.work:work-runtime-ktx:2.3.2'// workmanager 对协程的支持：suspend
 
     // room
-    api 'androidx.room:room-runtime:2.2.3'
-    api 'androidx.room:room-rxjava2:2.2.3'
-    api 'androidx.room:room-ktx:2.2.3'// room 对协程的支持：suspend
+    api 'androidx.room:room-runtime:2.2.4'
+    api 'androidx.room:room-rxjava2:2.2.4'
+    api 'androidx.room:room-ktx:2.2.4'// room 对协程的支持：suspend
 
     // coroutines
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
-    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03'
-    // Activity 或 Fragment 对协程的支持：lifecycleScope
-    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03'// ViewModel 对协程的支持：viewModelScope
-    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03'// livedata 对协程的支持：liveData{}
+    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'// Activity 或 Fragment 对协程的支持：lifecycleScope
+    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'// ViewModel 对协程的支持：viewModelScope
+    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'// livedata 对协程的支持：liveData{}
 
     // glide
     api "com.github.bumptech.glide:glide:4.8.0"
     api "com.github.bumptech.glide:okhttp3-integration:4.8.0"
     api 'jp.wasabeef:glide-transformations:4.0.1'// glide对应的图片处理库，可以转换图片为圆形、圆角矩形、高斯模糊等等效果
 
-    // zxing
+    // zxing。（zxing 3.4.0：要求最低api等级为24）
     api 'com.google.zxing:core:3.3.3'
+
+    // 扫描器
+    api 'com.shouzhong:Scanner:1.1.2-beta1'
 
     // rxbinding
     api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
 
     // PhotoView
-    api 'com.github.chrisbanes:PhotoView:2.1.4'// 不能升级2.2.0，因为使用了AndroidX库，不能和support库共存。
+    api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // 图片选择器
-    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
+    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.4.6'
 
     // 日期时间格式化工具
     api 'net.danlew:android.joda:2.10.1.2'
 
     api 'com.google.android:flexbox:1.0.0'
+
+    api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
+
+    api 'com.github.OCNYang:PageTransformerHelp:v1.0.1'
+
+    // 汉字转拼音
+    api 'com.github.promeg:tinypinyin:2.0.3'
+
+    // 选择器
+    api 'com.contrarywind:Android-PickerView:4.1.9'
+
+    // 手写签名
+    api 'com.github.gcacace:signature-pad:1.2.1'
 
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
