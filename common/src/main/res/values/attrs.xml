@@ -9,4 +9,11 @@
         <attr name="width_ratio" format="float" />
         <attr name="height_ratio" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="Titlebar">
+        <attr name="center_gravity">
+            <flag name="left" value="0" />
+            <flag name="center_horizontal" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>

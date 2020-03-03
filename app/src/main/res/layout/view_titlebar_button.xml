@@ -3,11 +3,9 @@
 
     <LinearLayout
         android:id="@+id/ll"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_gravity="center_vertical|end"
         android:background="@color/common_divider_gray"
         android:gravity="center_horizontal"
         android:orientation="vertical">
