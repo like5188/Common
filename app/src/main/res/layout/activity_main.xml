@@ -3,183 +3,190 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.like.common.view.titlebar.Titlebar
+            android:id="@+id/titlebar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:center_gravity="left" />
 
-            <com.like.common.view.titlebar.Titlebar
-                android:id="@+id/titlebar"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:center_gravity="center_horizontal" />
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:contentInsetStart="0dp">
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:contentInsetStart="0dp"
+                    app:navigationIcon="@drawable/common_back">
 
-                <include
-                    android:id="@+id/navigation_view"
-                    layout="@layout/titlebar_custom_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    <include
+                        android:id="@+id/navigation_view"
+                        layout="@layout/titlebar_custom_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
 
-                <TextView
-                    android:id="@+id/tv_title"
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/common_text_red_0"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/common_text_white_0"
+                        android:textSize="18sp"
+                        tools:text="title" />
+
+                </androidx.appcompat.widget.Toolbar>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/common_text_red_0" />
+
+                <ViewFlipper
+                    android:id="@+id/view_flipper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:inAnimation="@anim/marquee_anim_bottom_in"
+                    android:outAnimation="@anim/marquee_anim_top_out" />
+
+                <com.like.common.view.TimerTextView
+                    android:id="@+id/timerTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/common_text_red_0"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/common_text_white_0"
-                    android:textSize="18sp"
-                    tools:text="title" />
+                    android:text="获取验证码" />
 
-            </androidx.appcompat.widget.Toolbar>
+                <RadioButton
+                    android:id="@+id/rb_tint_test"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dialog_close"
+                    android:button="@color/common_transparent"
+                    android:textSize="1sp" />
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/common_text_red_0" />
+                <CheckBox
+                    android:id="@+id/cb_tint_test"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dialog_close"
+                    android:button="@color/common_transparent"
+                    android:textSize="1sp" />
 
-            <ViewFlipper
-                android:id="@+id/view_flipper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:inAnimation="@anim/marquee_anim_bottom_in"
-                android:outAnimation="@anim/marquee_anim_top_out" />
+                <ImageView
+                    android:id="@+id/iv_tint_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dialog_close"
+                    android:clickable="true"
+                    android:src="@drawable/dialog_close" />
 
-            <com.like.common.view.TimerTextView
-                android:id="@+id/timerTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="获取验证码" />
+                <Button
+                    android:id="@+id/btn_tint_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dialog_close"
+                    android:clickable="true" />
 
-            <RadioButton
-                android:id="@+id/rb_tint_test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/dialog_close"
-                android:button="@color/common_transparent"
-                android:textSize="1sp" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoZXingActivity"
+                    android:text="ZXing测试"
+                    android:textAllCaps="false" />
 
-            <CheckBox
-                android:id="@+id/cb_tint_test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/dialog_close"
-                android:button="@color/common_transparent"
-                android:textSize="1sp" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoDialogActivity"
+                    android:text="DialogFragment测试"
+                    android:textAllCaps="false" />
 
-            <ImageView
-                android:id="@+id/iv_tint_test"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/dialog_close"
-                android:clickable="true"
-                android:src="@drawable/dialog_close" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoTestActivity"
+                    android:text="Activity相关的测试"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:id="@+id/btn_tint_test"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/dialog_close"
-                android:clickable="true" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoFlexBoxActivity"
+                    android:text="FlexBox测试"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoZXingActivity"
-                android:text="ZXing测试"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoCoroutinesActivity"
+                    android:text="启动协程测试界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoDialogActivity"
-                android:text="DialogFragment测试"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoImageActivity"
+                    android:text="启动图片压缩界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoTestActivity"
-                android:text="Activity相关的测试"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoPictureSelectorActivity"
+                    android:text="启动PictureSelector界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoFlexBoxActivity"
-                android:text="FlexBox测试"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoDragViewTestActivity"
+                    android:text="启动DragView界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoCoroutinesActivity"
-                android:text="启动协程测试界面"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoCheckAndRadioActivity"
+                    android:text="启动CheckAndRadio界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoImageActivity"
-                android:text="启动图片压缩界面"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoSidebarViewActivity"
+                    android:text="启动SidebarView界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoPictureSelectorActivity"
-                android:text="启动PictureSelector界面"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoNotificationActivity"
+                    android:text="启动Notification界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoDragViewTestActivity"
-                android:text="启动DragView界面"
-                android:textAllCaps="false" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="gotoSerializableActivity"
+                    android:text="启动SerializableActivity界面"
+                    android:textAllCaps="false" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoCheckAndRadioActivity"
-                android:text="启动CheckAndRadio界面"
-                android:textAllCaps="false" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoSidebarViewActivity"
-                android:text="启动SidebarView界面"
-                android:textAllCaps="false" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoNotificationActivity"
-                android:text="启动Notification界面"
-                android:textAllCaps="false" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="gotoSerializableActivity"
-                android:text="启动SerializableActivity界面"
-                android:textAllCaps="false" />
-
-        </LinearLayout>
-    </ScrollView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
 </layout>

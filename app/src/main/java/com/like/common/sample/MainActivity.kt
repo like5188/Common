@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                 shortToastCenter("返回")
             })
 
-            showTitle("顶顶顶顶顶顶顶")
+            showTitle("1")
 
             showDivider(1f, Color.GREEN)
 
@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initOriginToolBar() {
-        mBinding.toolbar.title = "title"
+        mBinding.toolbar.title = "titletitletitletitletitletitle"
         mBinding.toolbar.setTitleTextColor(Color.WHITE)
         mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
         mBinding.toolbar.setNavigationOnClickListener {
@@ -186,36 +186,6 @@ class MainActivity : AppCompatActivity() {
                     setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
                     setTitle("菜单1", Color.BLACK, 12f)
                     setMessageCount("1", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_2)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单2") })
-                    setTitle("菜单2", Color.BLACK, 12f)
-                    setMessageCount("2", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_3)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单3") })
-                    setTitle("菜单3", Color.BLACK, 12f)
-                    setMessageCount("3", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_4)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单4") })
-                    setTitle("菜单4", Color.BLACK, 12f)
-                    setMessageCount("4", Color.WHITE, 10, Color.RED)
                     setMargin(0, 10, 0, 10)
                     setContentPadding(30, 0, 30, 0)
                 }
