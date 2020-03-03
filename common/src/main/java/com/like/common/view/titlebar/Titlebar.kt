@@ -2,7 +2,6 @@ package com.like.common.view.titlebar
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -62,13 +61,10 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         mBinding
     }
 
-    /**
-     * 当中间部分需要靠左时。对应[Gravity.START]、[Gravity.LEFT]
-     */
-    private fun measureLeft1(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         // 左边部分的width
         val leftWidth = mBinding.leftContainer.measuredWidth
-
         // 中间部分的width
         val centerWidth = mBinding.centerContainer.measuredWidth
 
@@ -79,55 +75,35 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
             mRightRight = measuredWidth
             mNeedUpdateLeft = true
             mNeedUpdateRight = true
-        } else {// 如果有中间部分，那么空间分配顺序依次为：左边、中间、右边。
-            mLeftLeft = 0
-            mLeftRight = leftWidth
-            mCenterLeft = mLeftRight
-            mCenterRight = mCenterLeft + centerWidth
-            mRightLeft = mCenterRight
-            mRightRight = measuredWidth
-            mNeedUpdateLeft = true
-            mNeedUpdateCenter = true
-            mNeedUpdateRight = true
-        }
-
-        measureLeft(widthMeasureSpec, heightMeasureSpec)
-        measureCenter(widthMeasureSpec, heightMeasureSpec)
-        measureRight(widthMeasureSpec, heightMeasureSpec)
-    }
-
-    /**
-     * 当中间部分需要水平居中时。对应[Gravity.CENTER_HORIZONTAL]
-     */
-    private fun measureCenterHorizontal(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        // 垂直中心线的位置
-        val verticalCenterLine = measuredWidth / 2
-
-        // 左边部分的width
-        val leftWidth = mBinding.leftContainer.measuredWidth
-
-        // 中间部分的width
-        val centerWidth = mBinding.centerContainer.measuredWidth
-        // 中间部分的width的一半
-        val halfCenterWidth = centerWidth / 2
-
-        if (centerWidth <= 0) {// 如果没有中间部分，那么空间分配顺序依次为：左边、右边
-            mLeftLeft = 0
-            mLeftRight = leftWidth
-            mRightLeft = mLeftRight
-            mRightRight = measuredWidth
-            mNeedUpdateLeft = true
-            mNeedUpdateRight = true
-        } else {// 如果有中间部分，那么空间分配顺序依次为：中间、左边或者右边
-            mCenterLeft = verticalCenterLine - halfCenterWidth
-            mCenterRight = verticalCenterLine + halfCenterWidth
-            mLeftLeft = 0
-            mLeftRight = mCenterLeft
-            mRightLeft = mCenterRight
-            mRightRight = measuredWidth
-            mNeedUpdateLeft = true
-            mNeedUpdateCenter = true
-            mNeedUpdateRight = true
+        } else {// 如果有中间部分，分两种情况
+            when (mCenterGravity) {
+                0 -> {// 当中间部分需要靠左时。那么空间分配顺序依次为：左边、中间、右边。
+                    mLeftLeft = 0
+                    mLeftRight = leftWidth
+                    mCenterLeft = mLeftRight
+                    mCenterRight = mCenterLeft + centerWidth
+                    mRightLeft = mCenterRight
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateCenter = true
+                    mNeedUpdateRight = true
+                }
+                1 -> {// 当中间部分需要水平居中时。那么空间分配顺序依次为：中间、左边或者右边
+                    // 垂直中心线的位置
+                    val verticalCenterLine = measuredWidth / 2
+                    // 中间部分的width的一半
+                    val halfCenterWidth = centerWidth / 2
+                    mCenterLeft = verticalCenterLine - halfCenterWidth
+                    mCenterRight = verticalCenterLine + halfCenterWidth
+                    mLeftLeft = 0
+                    mLeftRight = mCenterLeft
+                    mRightLeft = mCenterRight
+                    mRightRight = measuredWidth
+                    mNeedUpdateLeft = true
+                    mNeedUpdateCenter = true
+                    mNeedUpdateRight = true
+                }
+            }
         }
 
         measureLeft(widthMeasureSpec, heightMeasureSpec)
@@ -166,18 +142,6 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
         val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
         mBinding.rightContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        when (mCenterGravity) {
-            0 -> {
-                measureLeft1(widthMeasureSpec, heightMeasureSpec)
-            }
-            1 -> {
-                measureCenterHorizontal(widthMeasureSpec, heightMeasureSpec)
-            }
-        }
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
