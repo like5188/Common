@@ -94,7 +94,7 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
     /**
      * 控制相关动画，由子类调用
      */
-    fun onActionUp(event: MotionEvent) {
+    protected fun onActionUp(event: MotionEvent) {
         // 防止下拉的时候双手缩放
         if (event.pointerCount == 1) {
             if (mConfig.curCanvasTranslationY > mConfig.mMaxCanvasTranslationY) {
