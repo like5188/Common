@@ -17,7 +17,7 @@ class BadgeViewManager(context: Context, target: View) {
     /**
      * 设置消息数
      *
-     * @param messageCount      消息数
+     * @param messageCount      消息数，传"0"可以隐藏。
      * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
      * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
      * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
