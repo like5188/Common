@@ -12,7 +12,7 @@ class AnimationConfig(curClickInfo: DragInfo, val view: BaseDragView) {
     /**
      * 允许y方向滑动的最大值，超过就会退出界面
      */
-    val MAX_CANVAS_TRANSLATION_Y = view.height.toFloat() / 4
+    val mMaxCanvasTranslationY = view.height.toFloat() / 4
 
     var curCanvasBgAlpha = 255
     var curCanvasTranslationX = 0f
@@ -40,6 +40,7 @@ class AnimationConfig(curClickInfo: DragInfo, val view: BaseDragView) {
         val activity = view.context
         if (activity is Activity) {
             activity.finish()
+            // 去掉默认的切换效果
             activity.overridePendingTransition(0, 0)
         }
     }

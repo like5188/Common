@@ -97,7 +97,7 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
     fun onActionUp(event: MotionEvent) {
         // 防止下拉的时候双手缩放
         if (event.pointerCount == 1) {
-            if (mConfig.curCanvasTranslationY > mConfig.MAX_CANVAS_TRANSLATION_Y) {
+            if (mConfig.curCanvasTranslationY > mConfig.mMaxCanvasTranslationY) {
                 onDestroy()
                 exit()
             } else {

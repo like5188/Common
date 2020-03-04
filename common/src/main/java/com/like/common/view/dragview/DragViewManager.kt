@@ -43,6 +43,7 @@ object DragViewManager {
         intent.putExtra(DragViewActivity.KEY_CUR_CLICK_POSITION, curClickPosition)
         intent.putParcelableArrayListExtra(DragViewActivity.KEY_DATA_FOR_PREVIEW_IMAGE, list)
         activity.startActivity(intent)
+        // 去掉默认的切换效果
         activity.overridePendingTransition(0, 0)
     }
 
