@@ -38,7 +38,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                 addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
                         curClickPosition = position
-                        mConfig.setData(infos[curClickPosition])
+                        setData(infos[curClickPosition])
                         showImage(curClickPosition)
                     }
                 })
@@ -46,7 +46,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
             })
 
             onGlobalLayoutListener {
-                mConfig.setData(infos[curClickPosition])
+                setData(infos[curClickPosition])
                 showImage(curClickPosition)
                 enter()
             }

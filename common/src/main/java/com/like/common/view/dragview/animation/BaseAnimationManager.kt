@@ -10,7 +10,7 @@ import android.animation.AnimatorSet
  * ObjectAnimator： ValueAnimator 的子类，对指定对象的属性执行动画。
  * AnimatorSet：Animator 的子类，用于组合多个 Animator。
  */
-abstract class BaseAnimationManager(val config: AnimationConfig) {
+abstract class BaseAnimationManager {
     companion object {
         private const val DURATION = 300L
     }

@@ -2,6 +2,7 @@ package com.like.common.view.dragview.entity
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.view.View
 
 /**
  * @param originLeft        原始imageview的left
@@ -22,6 +23,11 @@ class DragInfo(val originLeft: Float,
     // 下面是根据原始尺寸计算出来的辅助尺寸
     var originCenterX: Float = originLeft + originWidth / 2
     var originCenterY: Float = originTop + originHeight / 2
+
+    fun getInitScaleX(view: View) = originWidth / view.width.toFloat()
+    fun getInitScaleY(view: View) = originHeight / view.height.toFloat()
+    fun getInitTranslationX(view: View) = originCenterX - view.width / 2
+    fun getInitTranslationY(view: View) = originCenterY - view.height / 2
 
     constructor(parcel: Parcel) : this(
             parcel.readFloat(),

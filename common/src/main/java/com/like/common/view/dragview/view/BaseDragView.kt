@@ -1,5 +1,6 @@
 package com.like.common.view.dragview.view
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,7 +12,7 @@ import com.like.common.view.dragview.animation.*
 import com.like.common.view.dragview.entity.DragInfo
 import kotlin.math.abs
 
-abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) : RelativeLayout(context) {
+abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : RelativeLayout(context) {
     companion object {
         // 辅助判断单击、双击、长按事件
         private const val DOUBLE_CLICK_INTERVAL = 300L
@@ -38,17 +39,28 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
     private var mCanvasTranslationY = 0f
     private var mCanvasScale = 1f
 
-    protected val mConfig: AnimationConfig by lazy { AnimationConfig(mClickInfo, this) }
-
-    private val mRestoreAnimationManager: RestoreAnimationManager by lazy { RestoreAnimationManager(mConfig) }
-    private val mEnterAnimationManager: EnterAnimationManager by lazy { EnterAnimationManager(mConfig) }
-    private val mExitAnimationManager: ExitAnimationManager by lazy { ExitAnimationManager(mConfig) }
-    private val mDisappearAnimationManager: DisappearAnimationManager by lazy { DisappearAnimationManager(mConfig) }
+    private val mDisappearAnimationManager: BaseAnimationManager by lazy { DisappearAnimationManager(this, mSelectedDragInfo) }
+    private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
+    private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
+    private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
 
     protected val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
 
     init {
         setBackgroundColor(Color.BLACK)
+    }
+
+    fun finishActivity() {
+        val activity = context
+        if (activity is Activity) {
+            activity.finish()
+            // 去掉默认的切换效果
+            activity.overridePendingTransition(0, 0)
+        }
+    }
+
+    protected fun setData(dragInfo: DragInfo) {
+        mSelectedDragInfo = dragInfo
     }
 
     fun setCanvasTranslationX(translationX: Float) {
@@ -115,7 +127,7 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mMaxCanvasTranslationY = measuredHeight / 4f
-        mMinCanvasScale = mClickInfo.originWidth / measuredWidth
+        mMinCanvasScale = mSelectedDragInfo.originWidth / measuredWidth
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
