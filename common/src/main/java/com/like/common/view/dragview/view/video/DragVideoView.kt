@@ -26,6 +26,7 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
                 MotionEvent.ACTION_DOWN -> {
                     mDownX = event.x
                     mDownY = event.y
+                    super.dispatchTouchEvent(event)
                     return true
                 }
                 MotionEvent.ACTION_MOVE -> {
