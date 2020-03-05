@@ -1,9 +1,7 @@
 package com.like.common.view.dragview.view.video
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.media.MediaMetadataRetriever
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.bumptech.glide.load.DataSource
@@ -27,25 +25,21 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
         if (thumbImageUrl.isNotEmpty()) {
             mViewHelper.addThumbnailImageView()
             mViewHelper.addProgressBar()
+            mGlideUtils.display(thumbImageUrl, mViewHelper.mThumbnailImageView, object : RequestListener<Drawable> {
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    delay1000Millis {
+                        mViewHelper.removeProgressBar()
+                        mViewHelper.removeThumbnailImageView()
+                        Toast.makeText(context, "获取视频缩略图失败！", Toast.LENGTH_SHORT).show()
+                    }
+                    return false
+                }
 
-            mViewHelper.mThumbnailImageView.setImageBitmap(getThumbnail(videoUrl))
-            playVideo(videoUrl)
-
-//            mGlideUtils.display(thumbImageUrl, mViewHelper.mThumbnailImageView, object : RequestListener<Drawable> {
-//                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-//                    delay1000Millis {
-//                        mViewHelper.removeProgressBar()
-//                        mViewHelper.removeThumbnailImageView()
-//                        Toast.makeText(context, "获取视频缩略图失败！", Toast.LENGTH_SHORT).show()
-//                    }
-//                    return false
-//                }
-//
-//                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-//                    playVideo(videoUrl)
-//                    return false
-//                }
-//            })
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    playVideo(videoUrl)
+                    return false
+                }
+            })
         } else {
             mViewHelper.addProgressBar()
             playVideo(videoUrl)
@@ -69,25 +63,6 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
 
     fun stop() {
         mViewHelper.mVideoView.stopPlayback()
-    }
-
-    /**
-     * 根据视频网络地址获取第一帧图片
-     */
-    fun getThumbnail(videoUrl: String): Bitmap? {
-        var bitmap: Bitmap? = null
-        val retriever = MediaMetadataRetriever()
-        try {
-            // 根据网络视频的url获取第一帧--亲测可用。但是这个方法获取本地视频的第一帧，不可用，还没找到方法解决。
-            retriever.setDataSource(videoUrl, HashMap())
-            // 获得第一帧图片
-            bitmap = retriever.frameAtTime
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        } finally {
-            retriever.release()
-        }
-        return bitmap
     }
 
 }
