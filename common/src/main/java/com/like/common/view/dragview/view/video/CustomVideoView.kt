@@ -3,7 +3,6 @@ package com.like.common.view.dragview.view.video
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.widget.FrameLayout
-import android.widget.MediaController
 import android.widget.Toast
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -42,7 +41,6 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
                 }
                 true
             }
-            mVideoView.setMediaController(MediaController(context))
         }
     }
 
