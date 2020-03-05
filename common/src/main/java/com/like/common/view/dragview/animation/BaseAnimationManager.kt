@@ -1,7 +1,5 @@
 package com.like.common.view.dragview.animation
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 
 /**
@@ -11,42 +9,18 @@ import android.animation.AnimatorSet
  * AnimatorSet：Animator 的子类，用于组合多个 Animator。
  */
 abstract class BaseAnimationManager {
-    companion object {
-        private const val DURATION = 300L
-    }
-
-    private var isStart: Boolean = false
-    private val animatorSet: AnimatorSet = AnimatorSet().apply {
-        duration = DURATION
-        addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) {
-                isStart = true
-                onStart()
-            }
-
-            override fun onAnimationEnd(animation: Animator?) {
-                animation?.removeAllListeners()
-                isStart = false
-                onEnd()
-            }
-        })
-    }
+    private val mAnimatorSet: AnimatorSet = AnimatorSet()
 
     @Synchronized
     fun start() {
-        if (isStart) {
+        if (mAnimatorSet.isStarted) {
             return
         }
-        fillAnimatorSet(animatorSet)
-        animatorSet.start()
-    }
-
-    fun cancel() {
-        animatorSet.cancel()
+        mAnimatorSet.removeAllListeners()
+        fillAnimatorSet(mAnimatorSet)
+        mAnimatorSet.start()
     }
 
     abstract fun fillAnimatorSet(animatorSet: AnimatorSet)
-    open fun onStart() {}
-    open fun onEnd() {}
 
 }
