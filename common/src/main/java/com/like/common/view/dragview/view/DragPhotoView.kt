@@ -35,9 +35,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
             }
 
             addView(DragViewPager(context).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
-                    addRule(CENTER_IN_PARENT)
-                }
+                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
                 adapter = MyPagerAdapter(mPagerViews)
                 addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
@@ -175,7 +173,9 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
     class PagerView(context: Context) : RelativeLayout(context) {
         val thumbnailImageView: ImageView by lazy {
             ImageView(context).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
+                    addRule(CENTER_IN_PARENT)
+                }
             }
         }
         val progressBar: ProgressBar by lazy {
@@ -187,7 +187,9 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
         }
         val photoView: PhotoView by lazy {
             PhotoView(context).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
+                    addRule(CENTER_IN_PARENT)
+                }
             }
         }
 

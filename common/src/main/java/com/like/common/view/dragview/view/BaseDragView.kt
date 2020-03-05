@@ -5,12 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.util.Log
 import android.view.MotionEvent
-import android.widget.RelativeLayout
+import android.widget.FrameLayout
 import com.like.common.view.dragview.animation.*
 import com.like.common.view.dragview.entity.DragInfo
 import kotlin.math.abs
 
-abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : RelativeLayout(context) {
+abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : FrameLayout(context) {
     companion object {
         // 辅助判断单击、双击、长按事件
         private const val DOUBLE_CLICK_INTERVAL = 300L
