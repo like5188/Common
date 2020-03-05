@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.NinePatchDrawable
 import android.media.ExifInterface
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Environment
 import android.util.Base64
@@ -18,6 +19,8 @@ import android.widget.ImageView
 import androidx.annotation.RequiresPermission
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Target
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -506,4 +509,21 @@ object ImageUtils {
 
     private fun getFileSizeKB(file: File): Double = DoubleFormatUtils.formatTwoDecimals(file.length() / 1024.0).toDouble()
 
+    /**
+     * 根据视频网络地址获取第一帧图片
+     */
+    suspend fun getThumbnail(videoUrl: String): Bitmap? = withContext(Dispatchers.IO) {
+        val retriever = MediaMetadataRetriever()
+        try {
+            // 根据网络视频的url获取第一帧--亲测可用。但是这个方法获取本地视频的第一帧，不可用，还没找到方法解决。
+            retriever.setDataSource(videoUrl, HashMap())
+            // 获得第一帧图片
+            retriever.frameAtTime
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            null
+        } finally {
+            retriever.release()
+        }
+    }
 }
