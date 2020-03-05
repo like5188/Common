@@ -177,6 +177,7 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
                 MotionEvent.ACTION_DOWN -> {
                     mDownX = event.x
                     mDownY = event.y
+                    return true
                 }
                 MotionEvent.ACTION_MOVE -> {
                     // 单手指按下，并在Y方向上拖动了一段距离
@@ -190,7 +191,7 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
                 }
             }
         }
-        return true
+        return super.dispatchTouchEvent(event)
     }
 
     override fun onDestroy() {
