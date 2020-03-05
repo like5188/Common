@@ -1,4 +1,4 @@
-package com.like.common.view.dragview.view
+package com.like.common.view.dragview.view.photo
 
 import android.content.Context
 import android.util.AttributeSet

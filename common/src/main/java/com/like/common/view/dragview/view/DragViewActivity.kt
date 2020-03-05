@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.like.common.R
 import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.photo.DragPhotoView
+import com.like.common.view.dragview.view.video.DragVideoView
 
 class DragViewActivity : AppCompatActivity() {
     companion object {

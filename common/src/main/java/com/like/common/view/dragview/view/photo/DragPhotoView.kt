@@ -1,10 +1,11 @@
-package com.like.common.view.dragview.view
+package com.like.common.view.dragview.view.photo
 
 import android.content.Context
 import android.view.MotionEvent
 import androidx.viewpager.widget.ViewPager
 import com.like.common.util.onGlobalLayoutListener
 import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.BaseDragView
 
 class DragPhotoView(context: Context, dragInfos: List<DragInfo>, selectedPosition: Int) : BaseDragView(context, dragInfos[selectedPosition]) {
     private val mPhotoViews = mutableListOf<CustomPhotoView>()

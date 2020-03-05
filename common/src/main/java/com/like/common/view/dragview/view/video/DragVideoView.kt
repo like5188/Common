@@ -1,9 +1,10 @@
-package com.like.common.view.dragview.view
+package com.like.common.view.dragview.view.video
 
 import android.content.Context
 import android.view.MotionEvent
 import com.like.common.util.onGlobalLayoutListener
 import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.BaseDragView
 
 class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
     private var mDownX = 0f

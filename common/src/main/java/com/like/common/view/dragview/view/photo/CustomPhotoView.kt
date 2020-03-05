@@ -1,4 +1,4 @@
-package com.like.common.view.dragview.view
+package com.like.common.view.dragview.view.photo
 
 import android.R
 import android.content.Context
