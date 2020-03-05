@@ -25,9 +25,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     private var isUp = false
     private var isDoubleClick = false
 
-    private var mWidth = 0f
-    private var mHeight = 0f
-
     /**
      * 允许y方向滑动的最大值，超过就会退出界面
      */
@@ -95,7 +92,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
      * 当手指拖动时，scale是根据translationY来计算的
      */
     protected fun calcCanvasScaleByCanvasTranslationY(translationY: Float): Float {
-        val translateYPercent = abs(translationY) / mHeight
+        val translateYPercent = abs(translationY) / measuredHeight
         val scale = 1 - translateYPercent
         return when {
             scale < mMinCanvasScale -> mMinCanvasScale
@@ -108,7 +105,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
      * 当手指拖动时，backgroundAlpha是根据translationY来计算的
      */
     protected fun calcCanvasBackgroundAlphaByCanvasTranslationY(translationY: Float): Int {
-        val translateYPercent = abs(translationY) / mHeight
+        val translateYPercent = abs(translationY) / measuredHeight
         val alpha = (255 * (1 - translateYPercent)).toInt()
         return when {
             alpha > 255 -> 255
@@ -120,7 +117,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     override fun onDraw(canvas: Canvas?) {
         setBackgroundColor(Color.argb(mCanvasBackgroundAlpha, 0, 0, 0))
         canvas?.translate(mCanvasTranslationX, mCanvasTranslationY)
-        canvas?.scale(mCanvasScale, mCanvasScale, mWidth / 2, mHeight / 2)
+        canvas?.scale(mCanvasScale, mCanvasScale, measuredWidth / 2f, measuredHeight / 2f)
         super.onDraw(canvas)
     }
 
@@ -128,12 +125,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mMaxCanvasTranslationY = measuredHeight / 4f
         mMinCanvasScale = mSelectedDragInfo.originWidth / measuredWidth
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        mWidth = w.toFloat()
-        mHeight = h.toFloat()
     }
 
     fun disappear() {
