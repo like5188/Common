@@ -9,7 +9,7 @@ import androidx.viewpager.widget.ViewPager
  * 对多点触控场景时, {@link ViewPager#onInterceptTouchEvent(MotionEvent)}中
  * pointerIndex = -1. 发生IllegalArgumentException: pointerIndex out of range 处理
  */
-class DragViewPager : ViewPager {
+class CustomPhotoViewPager : ViewPager {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

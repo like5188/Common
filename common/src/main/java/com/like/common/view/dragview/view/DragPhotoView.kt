@@ -1,125 +1,42 @@
 package com.like.common.view.dragview.view
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.viewpager.widget.ViewPager
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.github.chrisbanes.photoview.PhotoView
-import com.like.common.util.GlideUtils
 import com.like.common.util.onGlobalLayoutListener
 import com.like.common.view.dragview.entity.DragInfo
 
-class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPosition: Int) : BaseDragView(context, infos[curClickPosition]) {
-    private val TAG = DragPhotoView::class.java.simpleName
-    private val mPagerViews = mutableListOf<PagerView>()
+class DragPhotoView(context: Context, dragInfos: List<DragInfo>, selectedPosition: Int) : BaseDragView(context, dragInfos[selectedPosition]) {
+    private val mPhotoViews = mutableListOf<CustomPhotoView>()
     private var isFirstMove = true
     private var mDownX = 0f
     private var mDownY = 0f
-    private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
 
     init {
-        if (curClickPosition != -1) {
-            infos.forEach {
-                mPagerViews.add(PagerView(context))
-            }
-
-            addView(DragViewPager(context).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-                adapter = MyPagerAdapter(mPagerViews)
-                addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-                    override fun onPageSelected(position: Int) {
-                        curClickPosition = position
-                        setData(infos[curClickPosition])
-                        showImage(curClickPosition)
-                    }
-                })
-                currentItem = curClickPosition
-            })
-
-            onGlobalLayoutListener {
-                setData(infos[curClickPosition])
-                showImage(curClickPosition)
-                enter()
-            }
+        dragInfos.forEach {
+            mPhotoViews.add(CustomPhotoView(context))
         }
-    }
 
-    private fun showImage(index: Int) {
-        val info = infos[index]
-        val pagerView = mPagerViews[index]
-        mGlideUtils.hasCached(info.imageUrl, hasCached = { url, isCached ->
-            if (isCached) {// 如果有原图缓存，就直接显示原图，不显示缩略图了。
-                pagerView.removeProgressBar()
-                pagerView.removeThumbnailImageView()
-                pagerView.addPhotoView()
-                mGlideUtils.display(info.imageUrl, pagerView.photoView)
-                Log.v(TAG, "从缓存中获取了图片：${info.imageUrl}")
-            } else {// 如果没有原图缓存
-                if (info.thumbImageUrl.isNotEmpty()) {
-                    pagerView.addThumbnailImageView()
-                    pagerView.addProgressBar()
-                    mGlideUtils.display(info.thumbImageUrl, pagerView.thumbnailImageView, object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            delay1000Millis {
-                                pagerView.removeProgressBar()
-                                pagerView.removeThumbnailImageView()
-                                Toast.makeText(context, "获取缩略图失败！", Toast.LENGTH_SHORT).show()
-                            }
-                            return false
-                        }
+        fun select(position: Int) {
+            val selectedInfo = dragInfos[position]
+            setData(selectedInfo)
+            mPhotoViews[position].show(selectedInfo.imageUrl, selectedInfo.thumbImageUrl)
+        }
 
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            showOriginImage(info, pagerView)
-                            return false
-                        }
-                    })
-                } else {
-                    pagerView.addProgressBar()
-                    showOriginImage(info, pagerView)
+        addView(CustomPhotoViewPager(context).apply {
+            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+            adapter = CustomPhotoViewPagerAdapter(mPhotoViews)
+            addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+                override fun onPageSelected(position: Int) {
+                    select(position)
                 }
-            }
+            })
+            currentItem = selectedPosition
         })
-    }
 
-    private fun showOriginImage(info: DragInfo, pagerView: PagerView) {
-        if (info.imageUrl.isEmpty()) {
-            delay1000Millis {
-                pagerView.removeProgressBar()
-                Toast.makeText(context, "图片地址为空！", Toast.LENGTH_SHORT).show()
-            }
-            return
-        }
-        delay1000Millis {
-            pagerView.addPhotoView()
-            mGlideUtils.display(info.imageUrl, pagerView.photoView, object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    pagerView.removeProgressBar()
-                    pagerView.removePhotoView()
-                    Toast.makeText(context, "获取图片失败！", Toast.LENGTH_SHORT).show()
-                    return false
-                }
-
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    delay100Millis {
-                        // 防闪烁
-                        pagerView.removeProgressBar()
-                        pagerView.removeThumbnailImageView()
-                    }
-                    Log.v(TAG, "从网络获取了图片：${info.imageUrl}")
-                    return false
-                }
-            })
+        onGlobalLayoutListener {
+            select(selectedPosition)
+            enter()
         }
     }
 
@@ -167,82 +84,7 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
     }
 
     override fun onDestroy() {
-        mPagerViews.clear()
-    }
-
-    class PagerView(context: Context) : RelativeLayout(context) {
-        val thumbnailImageView: ImageView by lazy {
-            ImageView(context).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
-                    addRule(CENTER_IN_PARENT)
-                }
-            }
-        }
-        val progressBar: ProgressBar by lazy {
-            ProgressBar(context, null, android.R.attr.progressBarStyleInverse).apply {
-                layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
-                    addRule(CENTER_IN_PARENT)
-                }
-            }
-        }
-        val photoView: PhotoView by lazy {
-            PhotoView(context).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
-                    addRule(CENTER_IN_PARENT)
-                }
-            }
-        }
-
-        private fun containsThumbnailImageView() = (0 until childCount).any { getChildAt(it) == thumbnailImageView }
-
-        private fun containsProgressBar() = (0 until childCount).any { getChildAt(it) == progressBar }
-
-        private fun containsPhotoView() = (0 until childCount).any { getChildAt(it) == photoView }
-
-        fun addThumbnailImageView() {
-            if (!containsThumbnailImageView()) {
-                addView(thumbnailImageView)
-            }
-        }
-
-        fun addProgressBar() {
-            if (!containsProgressBar()) {
-                addView(progressBar)
-            }
-        }
-
-        fun addPhotoView() {
-            if (!containsPhotoView()) {
-                addView(photoView)
-            }
-        }
-
-        fun removeThumbnailImageView() {
-            removeView(thumbnailImageView)
-        }
-
-        fun removeProgressBar() {
-            removeView(progressBar)
-        }
-
-        fun removePhotoView() {
-            removeView(photoView)
-        }
-    }
-
-    class MyPagerAdapter(private val pagerViews: List<PagerView>) : androidx.viewpager.widget.PagerAdapter() {
-        override fun isViewFromObject(p0: View, p1: Any): Boolean = p0 == p1
-
-        override fun getCount(): Int = pagerViews.size
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            container.addView(pagerViews[position])
-            return pagerViews[position]
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            container.removeView(pagerViews[position])
-        }
+        mPhotoViews.clear()
     }
 
 }

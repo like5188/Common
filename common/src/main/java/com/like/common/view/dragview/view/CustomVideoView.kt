@@ -48,8 +48,8 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
                 start()
                 delay100Millis {
                     // 防闪烁
-                    removeView(mProgressBar)
-                    removeView(mThumbnailImageView)
+                    removeProgressBar()
+                    removeThumbnailImageView()
                 }
             }
             setOnCompletionListener {
@@ -57,8 +57,8 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
             }
             setOnErrorListener { _, _, _ ->
                 delay1000Millis {
-                    removeView(mProgressBar)
-                    removeView(this@apply)
+                    removeProgressBar()
+                    removeVideoView()
                     Toast.makeText(context, "解析视频数据失败！", Toast.LENGTH_SHORT).show()
                 }
                 true
@@ -68,13 +68,13 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
 
     fun play(videoUrl: String, thumbImageUrl: String = "") {
         if (thumbImageUrl.isNotEmpty()) {
-            addView(mThumbnailImageView)
-            addView(mProgressBar)
+            addThumbnailImageView()
+            addProgressBar()
             mGlideUtils.display(thumbImageUrl, mThumbnailImageView, object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                     delay1000Millis {
-                        removeView(mProgressBar)
-                        removeView(mThumbnailImageView)
+                        removeProgressBar()
+                        removeThumbnailImageView()
                         Toast.makeText(context, "获取视频缩略图失败！", Toast.LENGTH_SHORT).show()
                     }
                     return false
@@ -86,7 +86,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
                 }
             })
         } else {
-            addView(mProgressBar)
+            addProgressBar()
             playVideo(videoUrl)
         }
     }
@@ -94,7 +94,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
     private fun playVideo(videoUrl: String) {
         if (videoUrl.isEmpty()) {
             delay1000Millis {
-                removeView(mProgressBar)
+                removeProgressBar()
                 Toast.makeText(context, "视频地址为空！", Toast.LENGTH_SHORT).show()
             }
             return
@@ -107,7 +107,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
             if (file.exists()) {
                 delay1000Millis {
                     mVideoView.setVideoPath(file.path)
-                    addView(mVideoView)
+                    addVideo()
                     Log.v(TAG, "从网络视频的缓存中获取了视频：$file")
                 }
             } else {// 下载视频
@@ -127,13 +127,13 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
                         { filePath ->
                             delay1000Millis {
                                 mVideoView.setVideoPath(filePath)
-                                addView(mVideoView)
+                                addVideo()
                                 Log.d(TAG, "从网络获取了视频：$filePath")
                             }
                         },
                         { throwable ->
                             delay1000Millis {
-                                removeView(mProgressBar)
+                                removeProgressBar()
                                 Toast.makeText(context, "下载网络视频失败！", Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -141,10 +141,46 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
             }
         } catch (e: Exception) {
             delay1000Millis {
-                removeView(mProgressBar)
+                removeProgressBar()
                 Toast.makeText(context, "视频地址无效！", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun containsThumbnailImageView() = (0 until childCount).any { getChildAt(it) == mThumbnailImageView }
+
+    private fun containsProgressBar() = (0 until childCount).any { getChildAt(it) == mProgressBar }
+
+    private fun containsVideoView() = (0 until childCount).any { getChildAt(it) == mVideoView }
+
+    private fun addThumbnailImageView() {
+        if (!containsThumbnailImageView()) {
+            addView(mThumbnailImageView)
+        }
+    }
+
+    private fun addProgressBar() {
+        if (!containsProgressBar()) {
+            addView(mProgressBar)
+        }
+    }
+
+    private fun addVideo() {
+        if (!containsVideoView()) {
+            addView(mVideoView)
+        }
+    }
+
+    private fun removeThumbnailImageView() {
+        removeView(mThumbnailImageView)
+    }
+
+    private fun removeProgressBar() {
+        removeView(mProgressBar)
+    }
+
+    private fun removeVideoView() {
+        removeView(mVideoView)
     }
 
     fun stop() {
