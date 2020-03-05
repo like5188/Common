@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
+import com.like.common.view.dragview.view.DragViewActivity
 
 /**
  * 从缩放状态到退出Activity的动画
@@ -18,7 +19,10 @@ class ExitAnimationManager(private val mDragView: BaseDragView, private val mDra
     }
 
     override fun onEnd() {
-        mDragView.finishActivity()
+        val activity = mDragView.context
+        if (activity is DragViewActivity) {
+            activity.finish()
+        }
     }
 
 }

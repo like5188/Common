@@ -1,6 +1,5 @@
 package com.like.common.view.dragview.view
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -40,15 +39,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
 
     init {
         setBackgroundColor(Color.BLACK)
-    }
-
-    fun finishActivity() {
-        val activity = context
-        if (activity is Activity) {
-            activity.finish()
-            // 去掉默认的切换效果
-            activity.overridePendingTransition(0, 0)
-        }
     }
 
     protected fun setData(dragInfo: DragInfo) {

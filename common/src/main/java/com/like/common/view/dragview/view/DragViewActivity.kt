@@ -15,7 +15,7 @@ class DragViewActivity : AppCompatActivity() {
         const val KEY_DATA_FOR_PREVIEW_VIDEO = "key_data_for_preview_video"
     }
 
-    private var view: BaseDragView? = null
+    private var mDragView: BaseDragView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,24 +30,30 @@ class DragViewActivity : AppCompatActivity() {
                 val infos: List<DragInfo>? = intent.getParcelableArrayListExtra(KEY_DATA_FOR_PREVIEW_IMAGE)
                 infos?.let {
                     val curClickPosition = intent.getIntExtra(KEY_CUR_CLICK_POSITION, 0)
-                    view = DragPhotoView(this, it, curClickPosition)
+                    mDragView = DragPhotoView(this, it, curClickPosition)
                 }
             } else if (intent.hasExtra(KEY_DATA_FOR_PREVIEW_VIDEO)) {
                 val info: DragInfo? = intent.getParcelableExtra(KEY_DATA_FOR_PREVIEW_VIDEO)
                 info?.let {
-                    view = DragVideoView(this, it)
+                    mDragView = DragVideoView(this, it)
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        view?.let {
+        mDragView?.let {
             setContentView(it)
         }
     }
 
+    override fun finish() {
+        super.finish()
+        // 去掉默认的切换效果
+        overridePendingTransition(0, 0)
+    }
+
     override fun onBackPressed() {
-        view?.disappear()
+        mDragView?.disappear()
     }
 }
