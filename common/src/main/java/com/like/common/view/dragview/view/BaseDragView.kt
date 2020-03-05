@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.RelativeLayout
-import com.like.common.util.GlideUtils
 import com.like.common.view.dragview.animation.*
 import com.like.common.view.dragview.entity.DragInfo
 import kotlin.math.abs
@@ -18,8 +17,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         private const val DOUBLE_CLICK_INTERVAL = 300L
     }
 
-    protected var mDownX = 0f
-    protected var mDownY = 0f
     private var firstClickTime = 0L
     private var secondClickTime = 0L
     private var isUp = false
@@ -40,8 +37,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
-
-    protected val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -147,8 +142,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
      * 控制相关动画，由子类调用
      */
     protected fun onActionDown(event: MotionEvent) {
-        mDownX = event.x
-        mDownY = event.y
         isUp = false
         if (firstClickTime == 0L && secondClickTime == 0L) {//第一次点击
             firstClickTime = System.currentTimeMillis()

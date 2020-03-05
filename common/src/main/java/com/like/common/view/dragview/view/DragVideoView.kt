@@ -12,6 +12,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.like.common.util.GlideUtils
 import com.like.common.util.RxJavaUtils
 import com.like.common.util.StorageUtils
 import com.like.common.util.onGlobalLayoutListener
@@ -21,6 +22,9 @@ import java.net.URL
 
 class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
     private val TAG = DragVideoView::class.java.simpleName
+    private var mDownX = 0f
+    private var mDownY = 0f
+    private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     /**
      * 网络视频缓存目录
      */
@@ -171,6 +175,8 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
         if (scaleX == 1f && scaleY == 1f) {
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    mDownX = event.x
+                    mDownY = event.y
                     onActionDown(event)
                 }
                 MotionEvent.ACTION_MOVE -> {

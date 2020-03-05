@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.chrisbanes.photoview.PhotoView
+import com.like.common.util.GlideUtils
 import com.like.common.util.onGlobalLayoutListener
 import com.like.common.view.dragview.entity.DragInfo
 
@@ -23,6 +24,9 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
     private val TAG = DragPhotoView::class.java.simpleName
     private val mPagerViews = mutableListOf<PagerView>()
     private var isFirstMove = true
+    private var mDownX = 0f
+    private var mDownY = 0f
+    private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
 
     init {
         if (curClickPosition != -1) {
@@ -126,8 +130,10 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
         if (scaleX == 1f && scaleY == 1f) {
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    onActionDown(event)
+                    mDownX = event.x
+                    mDownY = event.y
                     isFirstMove = true
+                    onActionDown(event)
                 }
                 MotionEvent.ACTION_MOVE -> {
                     // ViewPager的事件
