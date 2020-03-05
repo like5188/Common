@@ -52,6 +52,7 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
 
     fun setCanvasTranslationX(translationX: Float) {
         mCanvasTranslationX = translationX
+        invalidate()
     }
 
     fun getCanvasTranslationX() = mCanvasTranslationX
@@ -61,24 +62,26 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
 
         val translateYPercent = Math.abs(translationY) / mHeight
         val scale = 1 - translateYPercent
-        setCanvasScale(when {
+        mCanvasScale = when {
             scale < mMinCanvasScale -> mMinCanvasScale
             scale > 1f -> 1f
             else -> scale
-        })
+        }
 
         val alpha = (255 * (1 - translateYPercent)).toInt()
-        setCanvasBackgroundAlpha(when {
+        mCanvasBackgroundAlpha = when {
             alpha > 255 -> 255
             alpha < 0 -> 0
             else -> alpha
-        })
+        }
+        invalidate()
     }
 
     fun getCanvasTranslationY() = mCanvasTranslationY
 
     fun setCanvasScale(scale: Float) {
         mCanvasScale = scale
+        invalidate()
     }
 
     fun getCanvasScale() = mCanvasScale
