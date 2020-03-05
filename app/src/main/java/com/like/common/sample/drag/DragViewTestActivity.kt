@@ -1,12 +1,12 @@
 package com.like.common.sample.drag
 
 import android.content.Context
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityDragphotoviewBinding
 import com.like.common.util.GlideUtils
@@ -29,13 +29,13 @@ class DragViewTestActivity : AppCompatActivity() {
 //    private val videoUrl: String by lazy { "${StorageUtils.InternalStorageHelper.getCacheDir(this)}${File.separator}video_1.mp4" }
 //    private val videoImageUrl: String by lazy { imageUrl0 }
 
-    private val originImageUrl0: String by lazy { "https://mall02.sogoucdn.com/image/2019/06/11/20190611141139_6405.jpg" }
-    private val originImageUrl1: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611143329_6412.jpg" }
-    private val originImageUrl2: String by lazy { "https://mall01.sogoucdn.com/image/2019/06/11/20190611141659_6407.jpg" }
+    private val originImageUrl0: String by lazy { "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583396177164&di=c2c85cf525e433200eaa405729a0c10b&imgtype=0&src=http%3A%2F%2Fi0.bbs.fd.zol-img.com.cn%2Ft_s800x5000%2Fg5%2FM00%2F01%2F00%2FChMkJlZq9zyIRDPOAAg_M7K840gAAGDNQICgmgACD9L380.jpg" }
+    private val originImageUrl1: String by lazy { "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583396177164&di=e0efa52e863d0e061250dac98c54ad6c&imgtype=0&src=http%3A%2F%2Fe.hiphotos.baidu.com%2Fzhidao%2Fpic%2Fitem%2F55e736d12f2eb93817c4ba7ad7628535e4dd6f89.jpg" }
+    private val originImageUrl2: String by lazy { "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583396177164&di=903037f8f0058db4cc56c39bc0b97536&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F20182%2F1%2F201821224538_Li4aU.jpeg" }
     private val imageUrl0: String by lazy { "https://mall02.sogoucdn.com/image/2019/06/11/20190611141139_6405.jpg" }
     private val imageUrl1: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611143329_6412.jpg" }
     private val imageUrl2: String by lazy { "https://mall01.sogoucdn.com/image/2019/06/11/20190611141659_6407.jpg" }
-    private val videoUrl: String by lazy { "http://he.yinyuetai.com/uploads/videos/common/31BA015D2B8D04657E61B4BF0B448B79.mp4" }
+    private val videoUrl: String by lazy { "https://flv2.bn.netease.com/videolib1/1811/26/OqJAZ893T/HD/OqJAZ893T-mobile.mp4" }
     private val videoImageUrl: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611142939_6410.jpg" }
 
     private val mBinding: ActivityDragphotoviewBinding by lazy {
