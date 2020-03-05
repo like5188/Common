@@ -133,7 +133,6 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                     mDownX = event.x
                     mDownY = event.y
                     isFirstMove = true
-                    onActionDown(event)
                 }
                 MotionEvent.ACTION_MOVE -> {
                     // ViewPager的事件
@@ -162,7 +161,6 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                     }
                 }
                 MotionEvent.ACTION_UP -> {
-                    onActionUp(event)
                     isFirstMove = true
                 }
             }

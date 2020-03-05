@@ -128,51 +128,49 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         mExitAnimationManager.start()
     }
 
-    /**
-     * 控制相关动画，由子类调用
-     */
-    protected fun onActionDown(event: MotionEvent) {
-        isUp = false
-        if (firstClickTime == 0L && secondClickTime == 0L) {//第一次点击
-            firstClickTime = System.currentTimeMillis()
-            postDelayed({
-                if (!isUp) {
-                    Log.v("BaseDragView", "长按")
-                } else if (!isDoubleClick) {
-                    Log.v("BaseDragView", "单击")
-                    if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
-                        disappear()
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                isUp = false
+                if (firstClickTime == 0L && secondClickTime == 0L) {//第一次点击
+                    firstClickTime = System.currentTimeMillis()
+                    postDelayed({
+                        if (!isUp) {
+                            Log.v("BaseDragView", "长按")
+                        } else if (!isDoubleClick) {
+                            Log.v("BaseDragView", "单击")
+                            if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
+                                disappear()
+                            }
+                        }
+                        isDoubleClick = false
+                        firstClickTime = 0L
+                        secondClickTime = 0L
+                    }, DOUBLE_CLICK_INTERVAL)
+                } else {
+                    secondClickTime = System.currentTimeMillis()
+                    if (secondClickTime - firstClickTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
+                        Log.v("BaseDragView", "双击")
+                        isDoubleClick = true
+                    }
+                    firstClickTime = 0L
+                    secondClickTime = 0L
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                // 防止下拉的时候双手缩放
+                if (event.pointerCount == 1) {
+                    if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+                        onDestroy()
+                        exit()
+                    } else {
+                        restore()
                     }
                 }
-                isDoubleClick = false
-                firstClickTime = 0L
-                secondClickTime = 0L
-            }, DOUBLE_CLICK_INTERVAL)
-        } else {
-            secondClickTime = System.currentTimeMillis()
-            if (secondClickTime - firstClickTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
-                Log.v("BaseDragView", "双击")
-                isDoubleClick = true
-            }
-            firstClickTime = 0L
-            secondClickTime = 0L
-        }
-    }
-
-    /**
-     * 控制相关动画，由子类调用
-     */
-    protected fun onActionUp(event: MotionEvent) {
-        // 防止下拉的时候双手缩放
-        if (event.pointerCount == 1) {
-            if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                onDestroy()
-                exit()
-            } else {
-                restore()
+                isUp = true
             }
         }
-        isUp = true
+        return super.dispatchTouchEvent(event)
     }
 
     protected fun delay1000Millis(action: () -> Unit) {
