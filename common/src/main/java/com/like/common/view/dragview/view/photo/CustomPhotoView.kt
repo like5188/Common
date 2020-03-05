@@ -64,19 +64,19 @@ class CustomPhotoView(context: Context) : FrameLayout(context) {
                         }
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            showOriginImage(imageUrl)
+                            showNetworkImage(imageUrl)
                             return false
                         }
                     })
                 } else {
                     addProgressBar()
-                    showOriginImage(imageUrl)
+                    showNetworkImage(imageUrl)
                 }
             }
         })
     }
 
-    private fun showOriginImage(imageUrl: String) {
+    private fun showNetworkImage(imageUrl: String) {
         if (imageUrl.isEmpty()) {
             delay1000Millis {
                 removeProgressBar()
