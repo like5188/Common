@@ -74,7 +74,5 @@ object DragViewManager {
      * @param thumbImageUrl     缩略图的url
      * @param url               原图或者视频的url
      */
-    data class DragInfoTemp(val dragView: ImageView,
-                            val thumbImageUrl: String = "",
-                            val url: String = "")
+    data class DragInfoTemp(val dragView: ImageView, val thumbImageUrl: String, val url: String)
 }
