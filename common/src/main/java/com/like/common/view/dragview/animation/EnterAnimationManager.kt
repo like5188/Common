@@ -1,7 +1,7 @@
 package com.like.common.view.dragview.animation
 
 import android.animation.AnimatorSet
-import android.animation.ValueAnimator
+import android.animation.ObjectAnimator
 
 /**
  * 进入Activity的动画
@@ -9,27 +9,10 @@ import android.animation.ValueAnimator
 class EnterAnimationManager(config: AnimationConfig) : BaseAnimationManager(config) {
 
     override fun fillAnimatorSet(animatorSet: AnimatorSet) {
-        animatorSet.play(ValueAnimator.ofFloat(config.originScaleX, 1f).apply {
-            addUpdateListener {
-                config.curCanvasScale = it.animatedValue as Float
-            }
-        })
-                .with(ValueAnimator.ofFloat(config.originTranslationX, 0f).apply {
-                    addUpdateListener {
-                        config.curCanvasTranslationX = it.animatedValue as Float
-                    }
-                })
-                .with(ValueAnimator.ofFloat(config.originTranslationY, 0f).apply {
-                    addUpdateListener {
-                        config.curCanvasTranslationY = it.animatedValue as Float
-                    }
-                })
-                .with(ValueAnimator.ofInt(0, 255).apply {
-                    addUpdateListener {
-                        config.curCanvasBgAlpha = it.animatedValue as Int
-                        config.view.invalidate()
-                    }
-                })
+        animatorSet.play(ObjectAnimator.ofFloat(config.view, "canvasTranslationX", config.originTranslationX, 0f))
+                .with(ObjectAnimator.ofFloat(config.view, "canvasTranslationY", config.originTranslationY, 0f))
+                .with(ObjectAnimator.ofFloat(config.view, "canvasScale", config.originScaleX, 1f))
+                .with(ObjectAnimator.ofInt(config.view, "canvasBackgroundAlpha", 0, 255))
     }
 
 }

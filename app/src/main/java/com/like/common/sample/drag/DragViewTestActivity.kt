@@ -29,9 +29,9 @@ class DragViewTestActivity : AppCompatActivity() {
 //    private val videoUrl: String by lazy { "${StorageUtils.InternalStorageHelper.getCacheDir(this)}${File.separator}video_1.mp4" }
 //    private val videoImageUrl: String by lazy { imageUrl0 }
 
-    private val originImageUrl0: String by lazy { "http://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201601/11/183844md4d33a5d8d134w4.jpg.thumb.jpg" }
-    private val originImageUrl1: String by lazy { "http://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201601/11/183837avftmmzmfi76tkis.jpg.thumb.jpg" }
-    private val originImageUrl2: String by lazy { "http://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201601/11/183832tqu8fyy6qqk8a8f0.jpg.thumb.jpg" }
+    private val originImageUrl0: String by lazy { "https://mall02.sogoucdn.com/image/2019/06/11/20190611141139_6405.jpg" }
+    private val originImageUrl1: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611143329_6412.jpg" }
+    private val originImageUrl2: String by lazy { "https://mall01.sogoucdn.com/image/2019/06/11/20190611141659_6407.jpg" }
     private val imageUrl0: String by lazy { "https://mall02.sogoucdn.com/image/2019/06/11/20190611141139_6405.jpg" }
     private val imageUrl1: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611143329_6412.jpg" }
     private val imageUrl2: String by lazy { "https://mall01.sogoucdn.com/image/2019/06/11/20190611141659_6407.jpg" }

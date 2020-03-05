@@ -131,27 +131,24 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                 }
                 MotionEvent.ACTION_MOVE -> {
                     // ViewPager的事件
-                    if (isFirstMove && event.y - mDownY <= 0 && mConfig.curCanvasTranslationY == 0f && mConfig.curCanvasTranslationX != 0f) {
+                    if (isFirstMove && event.y - mDownY <= 0 && getCanvasTranslationY() == 0f && getCanvasTranslationX() != 0f) {
                         return super.dispatchTouchEvent(event)
                     }
 
                     // 单手指按下
                     if (event.pointerCount == 1) {
+                        setCanvasTranslationX(event.x - mDownX)
                         if (isFirstMove && event.y - mDownY <= 0) {
-                            mConfig.updateCanvasTranslationY(0f)
+                            setCanvasTranslationY(0f)
                         } else {
-                            mConfig.updateCanvasTranslationY(event.y - mDownY)
+                            setCanvasTranslationY(event.y - mDownY)
                             isFirstMove = false
                         }
-                        mConfig.updateCanvasTranslationX(event.x - mDownX)
-                        mConfig.updateCanvasScale()
-                        mConfig.updateCanvasBgAlpha()
-                        invalidate()
                         return true
                     }
 
                     // 防止下拉的时候双手缩放
-                    if (mConfig.curCanvasTranslationY >= 0f && mConfig.curCanvasScale < 0.95f) {
+                    if (getCanvasTranslationY() >= 0f && getCanvasScale() < 0.95f) {
                         return true
                     }
                 }

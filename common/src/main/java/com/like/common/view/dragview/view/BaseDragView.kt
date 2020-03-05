@@ -3,7 +3,6 @@ package com.like.common.view.dragview.view
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.RelativeLayout
@@ -11,13 +10,11 @@ import com.like.common.util.GlideUtils
 import com.like.common.view.dragview.animation.*
 import com.like.common.view.dragview.entity.DragInfo
 
-abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : RelativeLayout(context) {
+abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) : RelativeLayout(context) {
     companion object {
         // 辅助判断单击、双击、长按事件
         private const val DOUBLE_CLICK_INTERVAL = 300L
     }
-
-    private val mPaint: Paint = Paint().apply { color = Color.BLACK }
 
     protected var mDownX = 0f
     protected var mDownY = 0f
@@ -29,7 +26,18 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
     private var mWidth = 0f
     private var mHeight = 0f
 
-    protected val mConfig: AnimationConfig by lazy { AnimationConfig(curClickInfo, this) }
+    /**
+     * 允许y方向滑动的最大值，超过就会退出界面
+     */
+    private var mMaxCanvasTranslationY = 0f
+    private var mMinCanvasScale = 0f
+
+    private var mCanvasBackgroundAlpha = 255
+    private var mCanvasTranslationX = 0f
+    private var mCanvasTranslationY = 0f
+    private var mCanvasScale = 1f
+
+    protected val mConfig: AnimationConfig by lazy { AnimationConfig(mClickInfo, this) }
 
     private val mRestoreAnimationManager: RestoreAnimationManager by lazy { RestoreAnimationManager(mConfig) }
     private val mEnterAnimationManager: EnterAnimationManager by lazy { EnterAnimationManager(mConfig) }
@@ -40,6 +48,65 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
 
     init {
         setBackgroundColor(Color.BLACK)
+    }
+
+    fun setCanvasTranslationX(translationX: Float) {
+        mCanvasTranslationX = translationX
+    }
+
+    fun getCanvasTranslationX() = mCanvasTranslationX
+
+    fun setCanvasTranslationY(translationY: Float) {
+        mCanvasTranslationY = translationY
+
+        val translateYPercent = Math.abs(translationY) / mHeight
+        val scale = 1 - translateYPercent
+        setCanvasScale(when {
+            scale < mMinCanvasScale -> mMinCanvasScale
+            scale > 1f -> 1f
+            else -> scale
+        })
+
+        val alpha = (255 * (1 - translateYPercent)).toInt()
+        setCanvasBackgroundAlpha(when {
+            alpha > 255 -> 255
+            alpha < 0 -> 0
+            else -> alpha
+        })
+    }
+
+    fun getCanvasTranslationY() = mCanvasTranslationY
+
+    fun setCanvasScale(scale: Float) {
+        mCanvasScale = scale
+    }
+
+    fun getCanvasScale() = mCanvasScale
+
+    fun setCanvasBackgroundAlpha(backgroundAlpha: Int) {
+        mCanvasBackgroundAlpha = backgroundAlpha
+        invalidate()
+    }
+
+    fun getCanvasBackgroundAlpha() = mCanvasBackgroundAlpha
+
+    override fun onDraw(canvas: Canvas?) {
+        setBackgroundColor(Color.argb(mCanvasBackgroundAlpha, 0, 0, 0))
+        canvas?.translate(mCanvasTranslationX, mCanvasTranslationY)
+        canvas?.scale(mCanvasScale, mCanvasScale, mWidth / 2, mHeight / 2)
+        super.onDraw(canvas)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        mMaxCanvasTranslationY = measuredHeight / 4f
+        mMinCanvasScale = mClickInfo.originWidth / measuredWidth
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        mWidth = w.toFloat()
+        mHeight = h.toFloat()
     }
 
     fun restore() {
@@ -72,7 +139,7 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
                     Log.v("BaseDragView", "长按")
                 } else if (!isDoubleClick) {
                     Log.v("BaseDragView", "单击")
-                    if (mConfig.curCanvasTranslationX == 0f && mConfig.curCanvasTranslationY == 0f) {
+                    if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
                         disappear()
                     }
                 }
@@ -97,7 +164,7 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
     protected fun onActionUp(event: MotionEvent) {
         // 防止下拉的时候双手缩放
         if (event.pointerCount == 1) {
-            if (mConfig.curCanvasTranslationY > mConfig.mMaxCanvasTranslationY) {
+            if (mCanvasTranslationY > mMaxCanvasTranslationY) {
                 onDestroy()
                 exit()
             } else {
@@ -105,20 +172,6 @@ abstract class BaseDragView(context: Context, curClickInfo: DragInfo) : Relative
             }
         }
         isUp = true
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        mPaint.alpha = mConfig.curCanvasBgAlpha
-        setBackgroundColor(Color.argb(mPaint.alpha, 0, 0, 0))
-        canvas?.translate(mConfig.curCanvasTranslationX, mConfig.curCanvasTranslationY)
-        canvas?.scale(mConfig.curCanvasScale, mConfig.curCanvasScale, mWidth / 2, mHeight / 2)
-        super.onDraw(canvas)
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        mWidth = w.toFloat()
-        mHeight = h.toFloat()
     }
 
     fun delay1000Millis(action: () -> Unit) {

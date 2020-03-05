@@ -176,11 +176,8 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
                 MotionEvent.ACTION_MOVE -> {
                     // 单手指按下，并在Y方向上拖动了一段距离
                     if (event.pointerCount == 1) {
-                        mConfig.updateCanvasTranslationX(event.x - mDownX)
-                        mConfig.updateCanvasTranslationY(event.y - mDownY)
-                        mConfig.updateCanvasScale()
-                        mConfig.updateCanvasBgAlpha()
-                        invalidate()
+                        setCanvasTranslationX(event.x - mDownX)
+                        setCanvasTranslationY(event.y - mDownY)
                     }
                 }
                 MotionEvent.ACTION_UP -> {

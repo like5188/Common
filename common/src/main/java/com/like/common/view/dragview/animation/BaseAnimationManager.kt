@@ -11,9 +11,13 @@ import android.animation.AnimatorSet
  * AnimatorSet：Animator 的子类，用于组合多个 Animator。
  */
 abstract class BaseAnimationManager(val config: AnimationConfig) {
+    companion object {
+        private const val DURATION = 300L
+    }
+
     private var isStart: Boolean = false
     private val animatorSet: AnimatorSet = AnimatorSet().apply {
-        duration = AnimationConfig.DURATION
+        duration = DURATION
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
                 isStart = true
