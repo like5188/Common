@@ -138,12 +138,15 @@ class DragPhotoView(context: Context, val infos: List<DragInfo>, var curClickPos
                     // 单手指按下
                     if (event.pointerCount == 1) {
                         setCanvasTranslationX(event.x - mDownX)
-                        if (isFirstMove && event.y - mDownY <= 0) {
-                            setCanvasTranslationY(0f)
+                        val transitionY = if (isFirstMove && event.y - mDownY <= 0) {
+                            0f
                         } else {
-                            setCanvasTranslationY(event.y - mDownY)
                             isFirstMove = false
+                            event.y - mDownY
                         }
+                        setCanvasTranslationY(transitionY)
+                        setCanvasScale(calcCanvasScaleByCanvasTranslationY(transitionY))
+                        setCanvasBackgroundAlpha(calcCanvasBackgroundAlphaByCanvasTranslationY(transitionY))
                         return true
                     }
 

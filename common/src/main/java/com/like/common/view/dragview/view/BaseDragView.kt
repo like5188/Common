@@ -9,6 +9,7 @@ import android.widget.RelativeLayout
 import com.like.common.util.GlideUtils
 import com.like.common.view.dragview.animation.*
 import com.like.common.view.dragview.entity.DragInfo
+import kotlin.math.abs
 
 abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) : RelativeLayout(context) {
     companion object {
@@ -59,21 +60,6 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
 
     fun setCanvasTranslationY(translationY: Float) {
         mCanvasTranslationY = translationY
-
-        val translateYPercent = Math.abs(translationY) / mHeight
-        val scale = 1 - translateYPercent
-        mCanvasScale = when {
-            scale < mMinCanvasScale -> mMinCanvasScale
-            scale > 1f -> 1f
-            else -> scale
-        }
-
-        val alpha = (255 * (1 - translateYPercent)).toInt()
-        mCanvasBackgroundAlpha = when {
-            alpha > 255 -> 255
-            alpha < 0 -> 0
-            else -> alpha
-        }
         invalidate()
     }
 
@@ -92,6 +78,32 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
     }
 
     fun getCanvasBackgroundAlpha() = mCanvasBackgroundAlpha
+
+    /**
+     * 当手指拖动时，scale是根据translationY来计算的
+     */
+    protected fun calcCanvasScaleByCanvasTranslationY(translationY: Float): Float {
+        val translateYPercent = abs(translationY) / mHeight
+        val scale = 1 - translateYPercent
+        return when {
+            scale < mMinCanvasScale -> mMinCanvasScale
+            scale > 1f -> 1f
+            else -> scale
+        }
+    }
+
+    /**
+     * 当手指拖动时，backgroundAlpha是根据translationY来计算的
+     */
+    protected fun calcCanvasBackgroundAlphaByCanvasTranslationY(translationY: Float): Int {
+        val translateYPercent = abs(translationY) / mHeight
+        val alpha = (255 * (1 - translateYPercent)).toInt()
+        return when {
+            alpha > 255 -> 255
+            alpha < 0 -> 0
+            else -> alpha
+        }
+    }
 
     override fun onDraw(canvas: Canvas?) {
         setBackgroundColor(Color.argb(mCanvasBackgroundAlpha, 0, 0, 0))
@@ -112,10 +124,6 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
         mHeight = h.toFloat()
     }
 
-    fun restore() {
-        mRestoreAnimationManager.start()
-    }
-
     fun disappear() {
         mDisappearAnimationManager.start()
     }
@@ -124,14 +132,18 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
         mEnterAnimationManager.start()
     }
 
-    fun exit() {
+    private fun restore() {
+        mRestoreAnimationManager.start()
+    }
+
+    private fun exit() {
         mExitAnimationManager.start()
     }
 
     /**
      * 控制相关动画，由子类调用
      */
-    fun onActionDown(event: MotionEvent) {
+    protected fun onActionDown(event: MotionEvent) {
         mDownX = event.x
         mDownY = event.y
         isUp = false
@@ -177,11 +189,11 @@ abstract class BaseDragView(context: Context, private val mClickInfo: DragInfo) 
         isUp = true
     }
 
-    fun delay1000Millis(action: () -> Unit) {
+    protected fun delay1000Millis(action: () -> Unit) {
         postDelayed(action, 1000)
     }
 
-    fun delay100Millis(action: () -> Unit) {
+    protected fun delay100Millis(action: () -> Unit) {
         postDelayed(action, 100)
     }
 
