@@ -6,18 +6,21 @@ import android.view.Gravity
 import android.widget.*
 import com.github.chrisbanes.photoview.PhotoView
 
-class ViewHelper(private val mParent: FrameLayout) {
+/**
+ * 提供[com.like.common.view.dragview.view.photo.CustomPhotoView]和[com.like.common.view.dragview.view.video.CustomVideoView]需要的View
+ */
+class ViewFactory(private val mParent: FrameLayout) {
     private val mContext: Context = mParent.context
-    val mThumbnailImageView: ImageView by lazy {
-        ImageView(mContext).apply {
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
+    private val mProgressBar: ProgressBar by lazy {
+        ProgressBar(mContext, null, R.attr.progressBarStyleInverse).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
                 gravity = Gravity.CENTER
             }
         }
     }
-    val mProgressBar: ProgressBar by lazy {
-        ProgressBar(mContext, null, R.attr.progressBarStyleInverse).apply {
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
+    val mThumbnailImageView: ImageView by lazy {
+        ImageView(mContext).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
                 gravity = Gravity.CENTER
             }
         }
@@ -35,27 +38,6 @@ class ViewHelper(private val mParent: FrameLayout) {
                 gravity = Gravity.CENTER
             }
             setZOrderOnTop(true)// 避免闪屏
-
-            setOnPreparedListener {
-                start()
-                delay100Millis {
-                    // 防闪烁
-                    removeProgressBar()
-                    removeThumbnailImageView()
-                }
-            }
-            setOnCompletionListener {
-                resume()
-            }
-            setOnErrorListener { _, _, _ ->
-                delay1000Millis {
-                    removeProgressBar()
-                    removeVideoView()
-                    Toast.makeText(context, "解析视频数据失败！", Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
-            setMediaController(MediaController(context))
         }
     }
 
