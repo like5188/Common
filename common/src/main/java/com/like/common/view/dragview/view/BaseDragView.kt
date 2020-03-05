@@ -173,13 +173,5 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         return super.dispatchTouchEvent(event)
     }
 
-    protected fun delay1000Millis(action: () -> Unit) {
-        postDelayed(action, 1000)
-    }
-
-    protected fun delay100Millis(action: () -> Unit) {
-        postDelayed(action, 100)
-    }
-
     abstract fun onDestroy()
 }
