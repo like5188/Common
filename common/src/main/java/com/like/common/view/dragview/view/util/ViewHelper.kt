@@ -55,6 +55,7 @@ class ViewHelper(private val mParent: FrameLayout) {
                 }
                 true
             }
+            setMediaController(MediaController(context))
         }
     }
 
