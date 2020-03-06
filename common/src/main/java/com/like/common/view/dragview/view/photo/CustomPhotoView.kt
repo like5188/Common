@@ -11,8 +11,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.like.common.util.GlideUtils
 import com.like.common.view.dragview.view.util.ViewFactory
-import com.like.common.view.dragview.view.util.delay1000Millis
-import com.like.common.view.dragview.view.util.delay100Millis
+import com.like.common.view.dragview.view.util.delay
 
 class CustomPhotoView(context: Context) : FrameLayout(context) {
     private val TAG = CustomPhotoView::class.java.simpleName
@@ -35,7 +34,7 @@ class CustomPhotoView(context: Context) : FrameLayout(context) {
                     mViewFactory.addThumbnailImageView()
                     mGlideUtils.display(thumbImageUrl, mViewFactory.mThumbnailImageView, object : RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            delay1000Millis {
+                            delay(1000) {
                                 mViewFactory.removeProgressBar()
                                 mViewFactory.removeThumbnailImageView()
                                 Toast.makeText(context, "获取缩略图失败！", Toast.LENGTH_SHORT).show()
@@ -57,13 +56,13 @@ class CustomPhotoView(context: Context) : FrameLayout(context) {
 
     private fun showNetworkImage(imageUrl: String) {
         if (imageUrl.isEmpty()) {
-            delay1000Millis {
+            delay(1000) {
                 mViewFactory.removeProgressBar()
                 Toast.makeText(context, "图片地址为空！", Toast.LENGTH_SHORT).show()
             }
             return
         }
-        delay1000Millis {
+        delay(1000) {
             mViewFactory.addPhotoView()
             mGlideUtils.display(imageUrl, mViewFactory.mPhotoView, object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -74,7 +73,7 @@ class CustomPhotoView(context: Context) : FrameLayout(context) {
                 }
 
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    delay100Millis {
+                    delay(100) {
                         // 防闪烁
                         mViewFactory.removeProgressBar()
                         mViewFactory.removeThumbnailImageView()
