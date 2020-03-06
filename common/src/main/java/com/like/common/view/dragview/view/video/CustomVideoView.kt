@@ -36,7 +36,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
                 delay1000Millis {
                     removeProgressBar()
                     removeVideoView()
-                    Toast.makeText(context, "解析视频数据失败！", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "播放视频失败！", Toast.LENGTH_SHORT).show()
                 }
                 true
             }
