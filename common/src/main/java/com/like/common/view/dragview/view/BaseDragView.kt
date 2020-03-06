@@ -3,6 +3,7 @@ package com.like.common.view.dragview.view
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.like.common.view.dragview.animation.BaseAnimationManager
@@ -14,20 +15,13 @@ import com.like.common.view.dragview.view.util.postDelayed
 import kotlin.math.abs
 
 abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : FrameLayout(context) {
-    companion object {
-        // 辅助判断单击、双击、长按事件
-        private const val DOUBLE_CLICK_INTERVAL = 300L
-    }
+    // 用于辅助判断单击、双击、长按、拖动事件
+    private var mClickCount = 0// 点击次数
+    private var mIsLongPress = false// 是否长按
+    private var mIsMove = false// 是否移动了
 
-    private var mFirstDownTime = 0L
-    private var isUp = false
-    private var isDoubleClick = false
-
-    /**
-     * 允许y方向滑动的最大值，超过就会退出界面
-     */
-    private var mMaxCanvasTranslationY = 0f
-    private var mMinCanvasScale = 0f
+    private var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
+    private var mMinCanvasScale = 0f// 允许的最小缩放系数
 
     private var mCanvasBackgroundAlpha = 255
     private var mCanvasTranslationX = 0f
@@ -40,57 +34,68 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
 
     init {
         setBackgroundColor(Color.BLACK)
+        isClickable
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        Log.e("tag", "dispatchTouchEvent action=${event?.action}")
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                isUp = false
-                if (mFirstDownTime == 0L) {//第一次点击
-                    mFirstDownTime = System.currentTimeMillis()
-                    postDelayed(DOUBLE_CLICK_INTERVAL) {
-                        if (!isUp) {
-                            onLongPress()
-                        } else if (!isDoubleClick) {
-                            onClick()
+                Log.e("tag", "ACTION_DOWN")
+                mIsMove = false
+                if (mClickCount == 0) {// 第一次点击
+                    postDelayed(400L) {
+                        if (mIsMove) return@postDelayed
+                        when (mClickCount) {
+                            0 -> {
+                                mIsLongPress = true
+                                onLongPress()
+                            }
+                            1 -> {
+                                onClick()
+                            }
+                            2 -> {
+                                onDoubleClick()
+                            }
                         }
-                        isDoubleClick = false
-                        mFirstDownTime = 0L
+                        mClickCount = 0
                     }
-                } else {
-                    if (System.currentTimeMillis() - mFirstDownTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
-                        onDoubleClick()
-                        isDoubleClick = true
-                    }
-                    mFirstDownTime = 0L
                 }
             }
+            MotionEvent.ACTION_MOVE -> {
+                Log.e("tag", "ACTION_MOVE")
+                mIsMove = true
+            }
             MotionEvent.ACTION_UP -> {
-                // 防止下拉的时候双手缩放
-                if (event.pointerCount == 1) {
+                Log.e("tag", "ACTION_UP")
+                mClickCount++
+                if (mIsLongPress) {
+                    mClickCount = 0
+                    mIsLongPress = false
+                } else if (mIsMove) {
+                    mClickCount = 0
                     onDrag()
                 }
-                isUp = true
             }
         }
         return super.dispatchTouchEvent(event)
     }
 
     private fun onClick() {
-        if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
-            exit()
-        }
+        Log.w("tag", "onClick")
+        exit()
     }
 
     private fun onDoubleClick() {
-
+        Log.w("tag", "onDoubleClick")
     }
 
     private fun onLongPress() {
-
+        Log.w("tag", "onLongPress")
     }
 
     private fun onDrag() {
+        Log.w("tag", "onDrag")
         if (mCanvasTranslationY > mMaxCanvasTranslationY) {
             exit()
         } else {
