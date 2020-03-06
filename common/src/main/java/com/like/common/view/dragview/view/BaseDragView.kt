@@ -10,6 +10,7 @@ import com.like.common.view.dragview.animation.EnterAnimationManager
 import com.like.common.view.dragview.animation.ExitAnimationManager
 import com.like.common.view.dragview.animation.RestoreAnimationManager
 import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.util.postDelayed
 import kotlin.math.abs
 
 abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : FrameLayout(context) {
@@ -47,7 +48,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
                 isUp = false
                 if (mFirstDownTime == 0L) {//第一次点击
                     mFirstDownTime = System.currentTimeMillis()
-                    postDelayed({
+                    postDelayed(DOUBLE_CLICK_INTERVAL) {
                         if (!isUp) {
                             onLongPress()
                         } else if (!isDoubleClick) {
@@ -55,7 +56,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
                         }
                         isDoubleClick = false
                         mFirstDownTime = 0L
-                    }, DOUBLE_CLICK_INTERVAL)
+                    }
                 } else {
                     if (System.currentTimeMillis() - mFirstDownTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
                         onDoubleClick()
