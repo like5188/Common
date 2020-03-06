@@ -5,7 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import com.like.common.view.dragview.animation.*
+import com.like.common.view.dragview.animation.BaseAnimationManager
+import com.like.common.view.dragview.animation.EnterAnimationManager
+import com.like.common.view.dragview.animation.ExitAnimationManager
+import com.like.common.view.dragview.animation.RestoreAnimationManager
 import com.like.common.view.dragview.entity.DragInfo
 import kotlin.math.abs
 
@@ -30,7 +33,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     private var mCanvasTranslationY = 0f
     private var mCanvasScale = 1f
 
-    private val mDisappearAnimationManager: BaseAnimationManager by lazy { DisappearAnimationManager(this, mSelectedDragInfo) }
     private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
@@ -73,9 +75,10 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         return super.dispatchTouchEvent(event)
     }
 
-    private fun onClick() {
+    fun onClick() {
         if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
-            disappear()
+            onDestroy()
+            exit()
         }
     }
 
@@ -165,10 +168,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mMaxCanvasTranslationY = measuredHeight / 4f
         mMinCanvasScale = mSelectedDragInfo.originWidth / measuredWidth
-    }
-
-    fun disappear() {
-        mDisappearAnimationManager.start()
     }
 
     fun enter() {

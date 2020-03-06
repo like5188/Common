@@ -9,7 +9,7 @@ import com.like.common.view.dragview.view.BaseDragView
 import com.like.common.view.dragview.view.DragViewActivity
 
 /**
- * 从缩放状态到退出Activity的动画
+ * 退出Activity的动画
  */
 class ExitAnimationManager(
         private val mDragView: BaseDragView,
