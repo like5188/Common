@@ -3,7 +3,6 @@ package com.like.common.view.dragview.view
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.like.common.view.dragview.animation.*
@@ -48,19 +47,16 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
                     mFirstDownTime = System.currentTimeMillis()
                     postDelayed({
                         if (!isUp) {
-                            Log.v("BaseDragView", "长按")
+                            onLongPress()
                         } else if (!isDoubleClick) {
-                            Log.v("BaseDragView", "单击")
-                            if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
-                                disappear()
-                            }
+                            onClick()
                         }
                         isDoubleClick = false
                         mFirstDownTime = 0L
                     }, DOUBLE_CLICK_INTERVAL)
                 } else {
                     if (System.currentTimeMillis() - mFirstDownTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
-                        Log.v("BaseDragView", "双击")
+                        onDoubleClick()
                         isDoubleClick = true
                     }
                     mFirstDownTime = 0L
@@ -69,17 +65,35 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
             MotionEvent.ACTION_UP -> {
                 // 防止下拉的时候双手缩放
                 if (event.pointerCount == 1) {
-                    if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                        onDestroy()
-                        exit()
-                    } else {
-                        restore()
-                    }
+                    onDrag()
                 }
                 isUp = true
             }
         }
         return super.dispatchTouchEvent(event)
+    }
+
+    private fun onClick() {
+        if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
+            disappear()
+        }
+    }
+
+    private fun onDoubleClick() {
+
+    }
+
+    private fun onLongPress() {
+
+    }
+
+    private fun onDrag() {
+        if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+            onDestroy()
+            exit()
+        } else {
+            restore()
+        }
     }
 
     protected fun setData(dragInfo: DragInfo) {
