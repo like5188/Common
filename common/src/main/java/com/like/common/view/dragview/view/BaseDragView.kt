@@ -16,8 +16,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         private const val DOUBLE_CLICK_INTERVAL = 300L
     }
 
-    private var firstClickTime = 0L
-    private var secondClickTime = 0L
+    private var mFirstDownTime = 0L
     private var isUp = false
     private var isDoubleClick = false
 
@@ -39,6 +38,48 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
 
     init {
         setBackgroundColor(Color.BLACK)
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                isUp = false
+                if (mFirstDownTime == 0L) {//第一次点击
+                    mFirstDownTime = System.currentTimeMillis()
+                    postDelayed({
+                        if (!isUp) {
+                            Log.v("BaseDragView", "长按")
+                        } else if (!isDoubleClick) {
+                            Log.v("BaseDragView", "单击")
+                            if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
+                                disappear()
+                            }
+                        }
+                        isDoubleClick = false
+                        mFirstDownTime = 0L
+                    }, DOUBLE_CLICK_INTERVAL)
+                } else {
+                    if (System.currentTimeMillis() - mFirstDownTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
+                        Log.v("BaseDragView", "双击")
+                        isDoubleClick = true
+                    }
+                    mFirstDownTime = 0L
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                // 防止下拉的时候双手缩放
+                if (event.pointerCount == 1) {
+                    if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+                        onDestroy()
+                        exit()
+                    } else {
+                        restore()
+                    }
+                }
+                isUp = true
+            }
+        }
+        return super.dispatchTouchEvent(event)
     }
 
     protected fun setData(dragInfo: DragInfo) {
@@ -126,51 +167,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
 
     private fun exit() {
         mExitAnimationManager.start()
-    }
-
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                isUp = false
-                if (firstClickTime == 0L && secondClickTime == 0L) {//第一次点击
-                    firstClickTime = System.currentTimeMillis()
-                    postDelayed({
-                        if (!isUp) {
-                            Log.v("BaseDragView", "长按")
-                        } else if (!isDoubleClick) {
-                            Log.v("BaseDragView", "单击")
-                            if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
-                                disappear()
-                            }
-                        }
-                        isDoubleClick = false
-                        firstClickTime = 0L
-                        secondClickTime = 0L
-                    }, DOUBLE_CLICK_INTERVAL)
-                } else {
-                    secondClickTime = System.currentTimeMillis()
-                    if (secondClickTime - firstClickTime < DOUBLE_CLICK_INTERVAL) {//两次点击小于DOUBLE_CLICK_INTERVAL
-                        Log.v("BaseDragView", "双击")
-                        isDoubleClick = true
-                    }
-                    firstClickTime = 0L
-                    secondClickTime = 0L
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                // 防止下拉的时候双手缩放
-                if (event.pointerCount == 1) {
-                    if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                        onDestroy()
-                        exit()
-                    } else {
-                        restore()
-                    }
-                }
-                isUp = true
-            }
-        }
-        return super.dispatchTouchEvent(event)
     }
 
     abstract fun onDestroy()

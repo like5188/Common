@@ -5,7 +5,7 @@ import android.animation.ObjectAnimator
 import com.like.common.view.dragview.view.BaseDragView
 
 /**
- * 在Activity中，view从缩放状态还原的动画管理
+ * 在Activity中，view从缩放状态还原的动画
  */
 class RestoreAnimationManager(
         private val mDragView: BaseDragView,
