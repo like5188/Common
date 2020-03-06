@@ -56,6 +56,6 @@ class DragViewActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        mDragView?.onClick()
+        mDragView?.exit()
     }
 }

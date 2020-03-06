@@ -75,9 +75,8 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         return super.dispatchTouchEvent(event)
     }
 
-    fun onClick() {
+    private fun onClick() {
         if (mCanvasTranslationX == 0f && mCanvasTranslationY == 0f) {
-            onDestroy()
             exit()
         }
     }
@@ -92,7 +91,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
 
     private fun onDrag() {
         if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-            onDestroy()
             exit()
         } else {
             restore()
@@ -170,7 +168,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         mMinCanvasScale = mSelectedDragInfo.originWidth / measuredWidth
     }
 
-    fun enter() {
+    protected fun enter() {
         mEnterAnimationManager.start()
     }
 
@@ -178,9 +176,10 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         mRestoreAnimationManager.start()
     }
 
-    private fun exit() {
+    fun exit() {
+        onDestroy()
         mExitAnimationManager.start()
     }
 
-    abstract fun onDestroy()
+    protected abstract fun onDestroy()
 }
