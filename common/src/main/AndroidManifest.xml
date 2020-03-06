@@ -10,7 +10,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <application>
+    <!--application标签中的三个配置是为了解决AndroidVideoCache库在android9.0以上无法缓存的bug-->
+    <!--参考https://blog.csdn.net/qq_25017839/article/details/89948220-->
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:targetSandboxVersion="1"
+        android:usesCleartextTraffic="true">
         <!--authorities 路径 前面为包名，后面为fileprovider固定值，使用包名便于区分-->
         <!--exported="false" 是否支持其它应用调用当前组件 ，要求为flase-->
         <!--@xml/filepaths 在res目录下定义的filepaths.xml文件，名字可以自定义-->

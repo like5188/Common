@@ -14,7 +14,6 @@ import com.like.common.view.dragview.view.util.ViewFactory
 import com.like.common.view.dragview.view.util.delay1000Millis
 import com.like.common.view.dragview.view.util.delay100Millis
 
-
 /**
  * 封装了缩略图、进度条、VideoView
  */
@@ -77,11 +76,16 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
             }
             return
         }
-        val proxy = HttpProxyCacheServerFactory.getProxy(context)
-        proxy?.getProxyUrl(videoUrl)?.let {
-            mViewFactory.mVideoView.setVideoPath(it)
-            mViewFactory.addVideo()
+        val proxyUrl = HttpProxyCacheServerFactory.getProxy(context)?.getProxyUrl(videoUrl)
+        if (proxyUrl.isNullOrEmpty()) {
+            delay1000Millis {
+                mViewFactory.removeProgressBar()
+                Toast.makeText(context, "视频地址无效！", Toast.LENGTH_SHORT).show()
+            }
+            return
         }
+        mViewFactory.mVideoView.setVideoPath(proxyUrl)
+        mViewFactory.addVideo()
     }
 
     fun stop() {
