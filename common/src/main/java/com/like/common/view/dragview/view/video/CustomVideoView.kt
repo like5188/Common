@@ -11,7 +11,7 @@ import com.bumptech.glide.request.target.Target
 import com.like.common.util.GlideUtils
 import com.like.common.view.dragview.view.util.HttpProxyCacheServerFactory
 import com.like.common.view.dragview.view.util.ViewFactory
-import com.like.common.view.dragview.view.util.delay
+import com.like.common.view.dragview.view.util.postDelayed
 
 /**
  * 封装了缩略图、进度条、VideoView
@@ -22,7 +22,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
         ViewFactory(this).apply {
             mVideoView.setOnPreparedListener {
                 mVideoView.start()
-                delay(100) {
+                postDelayed(100) {
                     // 防闪烁
                     removeProgressBar()
                     removeThumbnailImageView()
@@ -32,7 +32,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
                 mVideoView.resume()// 重新播放
             }
             mVideoView.setOnErrorListener { _, _, _ ->
-                delay(1000) {
+                postDelayed(1000) {
                     removeProgressBar()
                     removeVideoView()
                     Toast.makeText(context, "播放视频失败！", Toast.LENGTH_SHORT).show()
@@ -48,7 +48,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
             mViewFactory.addProgressBar()
             mGlideUtils.display(thumbImageUrl, mViewFactory.mThumbnailImageView, object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    delay(1000) {
+                    postDelayed(1000) {
                         mViewFactory.removeProgressBar()
                         mViewFactory.removeThumbnailImageView()
                         Toast.makeText(context, "获取视频缩略图失败！", Toast.LENGTH_SHORT).show()
@@ -69,7 +69,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
 
     private fun playVideo(videoUrl: String) {
         if (videoUrl.isEmpty()) {
-            delay(1000) {
+            postDelayed(1000) {
                 mViewFactory.removeProgressBar()
                 Toast.makeText(context, "视频地址为空！", Toast.LENGTH_SHORT).show()
             }
@@ -77,7 +77,7 @@ class CustomVideoView(context: Context) : FrameLayout(context) {
         }
         val proxyUrl = HttpProxyCacheServerFactory.getProxy(context)?.getProxyUrl(videoUrl)
         if (proxyUrl.isNullOrEmpty()) {
-            delay(1000) {
+            postDelayed(1000) {
                 mViewFactory.removeProgressBar()
                 Toast.makeText(context, "视频地址无效！", Toast.LENGTH_SHORT).show()
             }
