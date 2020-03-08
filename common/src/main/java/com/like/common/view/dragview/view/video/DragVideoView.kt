@@ -19,25 +19,31 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
         }
     }
 
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        // 当scale == 1时才能drag
-        if (scaleX == 1f && scaleY == 1f) {
-            when (event?.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    mDownX = event.x
-                    mDownY = event.y
-                    super.dispatchTouchEvent(event)
-                    return true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    // 单手指按下，并在Y方向上拖动了一段距离
-                    if (event.pointerCount == 1) {
-                        updateProperties(event.x - mDownX, event.y - mDownY)
-                    }
-                }
+    override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
+        var intercepted = false
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                mDownX = event.x
+                mDownY = event.y
+                intercepted = false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                intercepted = event.pointerCount == 1 && scaleX == 1f && scaleY == 1f
+            }
+            MotionEvent.ACTION_UP -> {
+                intercepted = false
             }
         }
-        return super.dispatchTouchEvent(event)
+        return intercepted
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_MOVE -> {
+                updateProperties(event.x - mDownX, event.y - mDownY)
+            }
+        }
+        return true
     }
 
     override fun onDestroy() {

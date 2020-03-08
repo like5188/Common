@@ -6,12 +6,14 @@ import androidx.viewpager.widget.ViewPager
 import com.like.common.util.onGlobalLayoutListener
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
+import kotlin.math.abs
 
 class DragPhotoView(context: Context, dragInfos: List<DragInfo>, selectedPosition: Int) : BaseDragView(context, dragInfos[selectedPosition]) {
-    private val mPhotoViews = mutableListOf<CustomPhotoView>()
-    private var isFirstMove = true
     private var mDownX = 0f
     private var mDownY = 0f
+    private var mLastX = 0f
+    private var mLastY = 0f
+    private val mPhotoViews = mutableListOf<CustomPhotoView>()
 
     init {
         dragInfos.forEach {
@@ -41,48 +43,39 @@ class DragPhotoView(context: Context, dragInfos: List<DragInfo>, selectedPositio
         }
     }
 
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        // 当scale == 1时才能drag
-        if (scaleX == 1f && scaleY == 1f) {
-            when (event?.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    mDownX = event.x
-                    mDownY = event.y
-                    isFirstMove = true
+    override fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
+        var intercepted = false
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                mDownX = event.x
+                mDownY = event.y
+                intercepted = false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dx = event.x - mLastX
+                val dy = event.y - mLastY
+                intercepted = if (abs(dx) > abs(dy)) {
+                    false
+                } else {
+                    event.pointerCount == 1 && scaleX == 1f && scaleY == 1f
                 }
-                MotionEvent.ACTION_MOVE -> {
-                    // ViewPager的事件
-                    if (isFirstMove && event.y - mDownY <= 0 && getCanvasTranslationY() == 0f && getCanvasTranslationX() != 0f) {
-                        return super.dispatchTouchEvent(event)
-                    }
-
-                    // 单手指按下
-                    if (event.pointerCount == 1) {
-                        updateProperties(
-                                event.x - mDownX,
-                                if (isFirstMove && event.y - mDownY <= 0) {
-                                    0f
-                                } else {
-                                    isFirstMove = false
-                                    event.y - mDownY
-                                }
-                        )
-                        super.dispatchTouchEvent(event)
-                        return true
-                    }
-
-                    // 防止下拉的时候双手缩放
-                    if (getCanvasTranslationY() >= 0f && getCanvasScale() < 0.95f) {
-                        super.dispatchTouchEvent(event)
-                        return true
-                    }
-                }
-                MotionEvent.ACTION_UP -> {
-                    isFirstMove = true
-                }
+                mLastX = event.x
+                mLastY = event.y
+            }
+            MotionEvent.ACTION_UP -> {
+                intercepted = false
             }
         }
-        return super.dispatchTouchEvent(event)
+        return intercepted
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_MOVE -> {
+                updateProperties(event.x - mDownX, event.y - mDownY)
+            }
+        }
+        return true
     }
 
     override fun onDestroy() {
