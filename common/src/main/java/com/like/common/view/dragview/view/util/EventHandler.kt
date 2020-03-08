@@ -1,5 +1,6 @@
 package com.like.common.view.dragview.view.util
 
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
@@ -27,12 +28,15 @@ class EventHandler(private val mView: View) {
                             0 -> {
                                 mIsLongPress = true
                                 mOnLongPress?.invoke()
+                                Log.d("EventHandler", "长按")
                             }
                             1 -> {
                                 mOnClick?.invoke()
+                                Log.d("EventHandler", "单击")
                             }
                             2 -> {
                                 mOnDoubleClick?.invoke()
+                                Log.d("EventHandler", "双击")
                             }
                         }
                         mClickCount = 0
@@ -50,6 +54,7 @@ class EventHandler(private val mView: View) {
                 } else if (mIsMove) {
                     mClickCount = 0
                     mOnDrag?.invoke()
+                    Log.d("EventHandler", "拖动")
                 }
             }
         }
