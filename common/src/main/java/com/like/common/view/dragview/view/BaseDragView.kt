@@ -84,9 +84,19 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     fun getCanvasBackgroundAlpha() = mCanvasBackgroundAlpha
 
     /**
+     * 当手指拖动时，更新属性
+     */
+    protected fun updateProperties(translationX: Float, translationY: Float) {
+        setCanvasTranslationX(translationX)
+        setCanvasTranslationY(translationY)
+        setCanvasScale(calcCanvasScaleByCanvasTranslationY(translationY))
+        setCanvasBackgroundAlpha(calcCanvasBackgroundAlphaByCanvasTranslationY(translationY))
+    }
+
+    /**
      * 当手指拖动时，scale是根据translationY来计算的
      */
-    protected fun calcCanvasScaleByCanvasTranslationY(translationY: Float): Float {
+    private fun calcCanvasScaleByCanvasTranslationY(translationY: Float): Float {
         val translateYPercent = abs(translationY) / measuredHeight
         val scale = 1 - translateYPercent
         return when {
@@ -99,7 +109,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     /**
      * 当手指拖动时，backgroundAlpha是根据translationY来计算的
      */
-    protected fun calcCanvasBackgroundAlphaByCanvasTranslationY(translationY: Float): Int {
+    private fun calcCanvasBackgroundAlphaByCanvasTranslationY(translationY: Float): Int {
         val translateYPercent = abs(translationY) / measuredHeight
         val alpha = (255 * (1 - translateYPercent)).toInt()
         return when {

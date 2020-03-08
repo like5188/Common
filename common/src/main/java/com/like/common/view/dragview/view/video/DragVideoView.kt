@@ -32,11 +32,7 @@ class DragVideoView(context: Context, info: DragInfo) : BaseDragView(context, in
                 MotionEvent.ACTION_MOVE -> {
                     // 单手指按下，并在Y方向上拖动了一段距离
                     if (event.pointerCount == 1) {
-                        setCanvasTranslationX(event.x - mDownX)
-                        val transitionY = event.y - mDownY
-                        setCanvasTranslationY(transitionY)
-                        setCanvasScale(calcCanvasScaleByCanvasTranslationY(transitionY))
-                        setCanvasBackgroundAlpha(calcCanvasBackgroundAlphaByCanvasTranslationY(transitionY))
+                        updateProperties(event.x - mDownX, event.y - mDownY)
                     }
                 }
             }
