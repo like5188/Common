@@ -68,11 +68,13 @@ class DragPhotoView(context: Context, dragInfos: List<DragInfo>, selectedPositio
                         setCanvasTranslationY(transitionY)
                         setCanvasScale(calcCanvasScaleByCanvasTranslationY(transitionY))
                         setCanvasBackgroundAlpha(calcCanvasBackgroundAlphaByCanvasTranslationY(transitionY))
+                        super.dispatchTouchEvent(event)
                         return true
                     }
 
                     // 防止下拉的时候双手缩放
                     if (getCanvasTranslationY() >= 0f && getCanvasScale() < 0.95f) {
+                        super.dispatchTouchEvent(event)
                         return true
                     }
                 }
