@@ -47,12 +47,12 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
 
     init {
         onPreDrawListener {
-            enterAnimation()
             play(info.videoUrl, info.thumbImageUrl)
+            enterAnimation()
         }
     }
 
-    fun play(videoUrl: String, thumbImageUrl: String = "") {
+    private fun play(videoUrl: String, thumbImageUrl: String = "") {
         if (thumbImageUrl.isNotEmpty()) {
             mViewFactory.addThumbnailImageView()
             mViewFactory.addProgressBar()

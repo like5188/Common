@@ -29,12 +29,6 @@ class DragPhotoViewActivity : BaseDragViewActivity() {
                     layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
                 }
                 vp.adapter = CustomPhotoViewPagerAdapter(mPhotoViews)
-//                        addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-//                            override fun onPageSelected(position: Int) {
-//                                val selectedInfo = it[position]
-//                                mPhotoViews[position].show(selectedInfo.imageUrl, selectedInfo.thumbImageUrl)
-//                            }
-//                        })
                 vp.currentItem = mSelectedPosition
                 setContentView(vp)
             }

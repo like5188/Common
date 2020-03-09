@@ -34,7 +34,7 @@ class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, 
         }
     }
 
-    fun show(imageUrl: String, thumbImageUrl: String = "") {
+    private fun show(imageUrl: String, thumbImageUrl: String = "") {
         mGlideUtils.hasCached(imageUrl, hasCached = { url, isCached ->
             if (isCached) {// 如果有原图缓存，就直接显示原图，不显示缩略图了。
                 mViewFactory.removeProgressBar()
