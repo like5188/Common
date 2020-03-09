@@ -17,7 +17,7 @@ import com.like.common.view.dragview.view.util.ViewFactory
 import com.like.common.view.dragview.view.util.postDelayed
 
 /**
- * 封装了缩略图、进度条、VideoView、拖动操作
+ * 封装了缩略图、进度条、VideoView
  */
 class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
     private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
