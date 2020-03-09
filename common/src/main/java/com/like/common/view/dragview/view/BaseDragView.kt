@@ -3,6 +3,7 @@ package com.like.common.view.dragview.view
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.like.common.view.dragview.animation.BaseAnimationManager
@@ -10,7 +11,6 @@ import com.like.common.view.dragview.animation.EnterAnimationManager
 import com.like.common.view.dragview.animation.ExitAnimationManager
 import com.like.common.view.dragview.animation.RestoreAnimationManager
 import com.like.common.view.dragview.entity.DragInfo
-import com.like.common.view.dragview.view.util.EventHandler
 import kotlin.math.abs
 
 /**
@@ -20,20 +20,27 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
     private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
+    private val mGestureDetector: GestureDetector by lazy {
+        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(e: MotionEvent): Boolean {
+                return true// 必须返回true，才能触发其它事件。
+            }
 
-    private val mEventHandler: EventHandler by lazy {
-        EventHandler(this).apply {
-            mOnClick = {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                // 单击
                 exitAnimation()
+                return super.onSingleTapConfirmed(e)
             }
-            mOnDrag = {
-                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                    exitAnimation()
-                } else {
-                    restoreAnimation()
-                }
+
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                // 双击
+                return super.onDoubleTap(e)
             }
-        }
+
+            override fun onLongPress(e: MotionEvent) {
+                // 长按
+            }
+        })
     }
 
     private var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
@@ -50,7 +57,8 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
 
     init {
         setBackgroundColor(Color.BLACK)
-        isClickable
+        isClickable = true
+        isLongClickable = true
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -68,7 +76,7 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         }
         mLastX = event.x
         mLastY = event.y
-        mEventHandler.handle(event)
+        mGestureDetector.onTouchEvent(event)
         return super.dispatchTouchEvent(event)
     }
 
@@ -92,6 +100,14 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {
                 updateProperties(event.x - mDownX, event.y - mDownY)
+            }
+            MotionEvent.ACTION_UP -> {
+                // 拖动
+                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+                    exitAnimation()
+                } else {
+                    restoreAnimation()
+                }
             }
         }
         return true
