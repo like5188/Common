@@ -3,52 +3,30 @@ package com.like.common.view.dragview.view
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.like.common.view.dragview.animation.BaseAnimationManager
 import com.like.common.view.dragview.animation.EnterAnimationManager
 import com.like.common.view.dragview.animation.ExitAnimationManager
 import com.like.common.view.dragview.animation.RestoreAnimationManager
 import com.like.common.view.dragview.entity.DragInfo
-import com.like.common.view.dragview.view.util.EventHandler
 import kotlin.math.abs
 
 abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : FrameLayout(context) {
-    private var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
+    var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
     private var mMinCanvasScale = 0f// 允许的最小缩放系数
 
     private var mCanvasBackgroundAlpha = 255
     private var mCanvasTranslationX = 0f
-    private var mCanvasTranslationY = 0f
+    var mCanvasTranslationY = 0f
     private var mCanvasScale = 1f
 
     private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
 
-    private val mEventHandler: EventHandler by lazy {
-        EventHandler(this).apply {
-            mOnClick = {
-                exit()
-            }
-            mOnDrag = {
-                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                    exit()
-                } else {
-                    restore()
-                }
-            }
-        }
-    }
-
     init {
         setBackgroundColor(Color.BLACK)
         isClickable
-    }
-
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        mEventHandler.handle(event)
-        return super.dispatchTouchEvent(event)
     }
 
     protected fun setData(dragInfo: DragInfo) {
@@ -136,7 +114,7 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         mEnterAnimationManager.start()
     }
 
-    private fun restore() {
+    protected fun restore() {
         mRestoreAnimationManager.start()
     }
 

@@ -4,7 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.widget.ImageView
 import com.like.common.view.dragview.entity.DragInfo
-import com.like.common.view.dragview.view.DragViewActivity
+import com.like.common.view.dragview.view.DragPhotoViewActivity
+import com.like.common.view.dragview.view.DragVideoViewActivity
 import java.util.*
 
 /**
@@ -39,9 +40,9 @@ object DragViewManager {
             )
         }
 
-        val intent = Intent(activity, DragViewActivity::class.java)
-        intent.putExtra(DragViewActivity.KEY_CUR_CLICK_POSITION, curClickPosition)
-        intent.putParcelableArrayListExtra(DragViewActivity.KEY_DATA_FOR_PREVIEW_IMAGE, list)
+        val intent = Intent(activity, DragPhotoViewActivity::class.java)
+        intent.putExtra(DragPhotoViewActivity.KEY_CUR_CLICK_POSITION, curClickPosition)
+        intent.putParcelableArrayListExtra(DragPhotoViewActivity.KEY_DATA_FOR_PREVIEW_IMAGE, list)
         activity.startActivity(intent)
         // 去掉默认的切换效果
         activity.overridePendingTransition(0, 0)
@@ -56,8 +57,8 @@ object DragViewManager {
     fun previewVideo(activity: Activity, data: DragInfoTemp) {
         val location = IntArray(2)
         data.dragView.getLocationOnScreen(location)
-        val intent = Intent(activity, DragViewActivity::class.java)
-        intent.putExtra(DragViewActivity.KEY_DATA_FOR_PREVIEW_VIDEO,
+        val intent = Intent(activity, DragVideoViewActivity::class.java)
+        intent.putExtra(DragVideoViewActivity.KEY_DATA_FOR_PREVIEW_VIDEO,
                 DragInfo(originLeft = location[0].toFloat(),
                         originTop = location[1].toFloat(),
                         originWidth = data.dragView.width.toFloat(),

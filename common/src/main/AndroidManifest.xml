@@ -31,7 +31,11 @@
         </provider>
 
         <activity
-            android:name=".view.dragview.view.DragViewActivity"
+            android:name=".view.dragview.view.DragPhotoViewActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/translucent" />
+        <activity
+            android:name=".view.dragview.view.DragVideoViewActivity"
             android:launchMode="singleTask"
             android:theme="@style/translucent" />
 

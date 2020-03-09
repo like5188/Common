@@ -3,21 +3,100 @@ package com.like.common.view.dragview.view.photo
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
-import android.widget.FrameLayout
+import android.view.MotionEvent
 import android.widget.Toast
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.like.common.util.GlideUtils
+import com.like.common.util.onGlobalLayoutListener
+import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.BaseDragView
+import com.like.common.view.dragview.view.util.EventHandler
 import com.like.common.view.dragview.view.util.ViewFactory
 import com.like.common.view.dragview.view.util.postDelayed
+import kotlin.math.abs
 
-class CustomPhotoView(context: Context) : FrameLayout(context) {
+
+class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
     private val TAG = CustomPhotoView::class.java.simpleName
+    private var mDownX = 0f
+    private var mDownY = 0f
+    private var mLastX = 0f
+    private var mLastY = 0f
     private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     private val mViewFactory: ViewFactory by lazy {
         ViewFactory(this)
+    }
+
+    private val mEventHandler: EventHandler by lazy {
+        EventHandler(this).apply {
+            mOnClick = {
+                exit()
+            }
+            mOnDrag = {
+                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+                    exit()
+                } else {
+                    restore()
+                }
+            }
+        }
+    }
+
+    init {
+        onGlobalLayoutListener {
+            setData(info)
+            show(info.imageUrl, info.thumbImageUrl)
+            enter()
+        }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                mDownX = event.x
+                mDownY = event.y
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dx = event.x - mLastX
+                val dy = event.y - mLastY
+                if (abs(dx) > abs(dy)) {// ViewPager自己处理
+                    parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+        }
+        mLastX = event.x
+        mLastY = event.y
+        mEventHandler.handle(event)
+        return super.dispatchTouchEvent(event)
+    }
+
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+        var intercepted = false
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                intercepted = false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                intercepted = event.pointerCount == 1 && scaleX == 1f && scaleY == 1f
+            }
+            MotionEvent.ACTION_UP -> {
+                intercepted = false
+            }
+        }
+        return intercepted
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
+                updateProperties(event.x - mDownX, event.y - mDownY)
+            }
+        }
+        return true
     }
 
     fun show(imageUrl: String, thumbImageUrl: String = "") {
@@ -83,6 +162,9 @@ class CustomPhotoView(context: Context) : FrameLayout(context) {
                 }
             })
         }
+    }
+
+    override fun onDestroy() {
     }
 
 }

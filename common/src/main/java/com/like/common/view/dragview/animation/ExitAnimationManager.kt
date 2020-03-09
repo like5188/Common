@@ -6,7 +6,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
-import com.like.common.view.dragview.view.DragViewActivity
+import com.like.common.view.dragview.view.BaseDragViewActivity
 
 /**
  * 退出Activity的动画
@@ -26,7 +26,7 @@ class ExitAnimationManager(
         animatorSet.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 val activity = mDragView.context
-                if (activity is DragViewActivity) {
+                if (activity is BaseDragViewActivity) {
                     activity.finish()
                 }
             }
