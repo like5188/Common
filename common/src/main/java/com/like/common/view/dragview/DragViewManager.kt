@@ -9,7 +9,7 @@ import com.like.common.view.dragview.activity.DragVideoViewActivity
 import java.util.*
 
 /**
- * 预览图片、视频，并可以拖动
+ * 预览图片、视频，并可以拖动。仿微信朋友圈效果
  *
  * view.getLocationInWindow(location);// 获取在当前窗口内的绝对坐标
  * view.getLocationOnScreen(location);// 获取在整个屏幕内的绝对坐标(包括了通知栏)
