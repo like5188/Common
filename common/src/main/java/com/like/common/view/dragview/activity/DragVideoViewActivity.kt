@@ -1,7 +1,8 @@
-package com.like.common.view.dragview.view
+package com.like.common.view.dragview.activity
 
 import android.os.Bundle
 import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.BaseDragView
 import com.like.common.view.dragview.view.video.CustomVideoView
 
 class DragVideoViewActivity : BaseDragViewActivity() {

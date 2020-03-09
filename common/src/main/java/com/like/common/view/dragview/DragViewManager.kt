@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.widget.ImageView
 import com.like.common.view.dragview.entity.DragInfo
-import com.like.common.view.dragview.view.DragPhotoViewActivity
-import com.like.common.view.dragview.view.DragVideoViewActivity
+import com.like.common.view.dragview.activity.DragPhotoViewActivity
+import com.like.common.view.dragview.activity.DragVideoViewActivity
 import java.util.*
 
 /**

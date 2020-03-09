@@ -31,11 +31,11 @@
         </provider>
 
         <activity
-            android:name=".view.dragview.view.DragPhotoViewActivity"
+            android:name=".view.dragview.activity.DragPhotoViewActivity"
             android:launchMode="singleTask"
             android:theme="@style/translucent" />
         <activity
-            android:name=".view.dragview.view.DragVideoViewActivity"
+            android:name=".view.dragview.activity.DragVideoViewActivity"
             android:launchMode="singleTask"
             android:theme="@style/translucent" />
 

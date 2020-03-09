@@ -6,7 +6,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
-import com.like.common.view.dragview.view.BaseDragViewActivity
+import com.like.common.view.dragview.activity.BaseDragViewActivity
 
 /**
  * 退出Activity的动画

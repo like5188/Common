@@ -1,4 +1,4 @@
-package com.like.common.view.dragview.view
+package com.like.common.view.dragview.activity
 
 import android.os.Build
 import android.os.Bundle
