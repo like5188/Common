@@ -12,7 +12,6 @@ import com.like.common.util.GlideUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
-import com.like.common.view.dragview.view.util.EventHandler
 import com.like.common.view.dragview.view.util.HttpProxyCacheServerFactory
 import com.like.common.view.dragview.view.util.ViewFactory
 import com.like.common.view.dragview.view.util.postDelayed
@@ -21,8 +20,6 @@ import com.like.common.view.dragview.view.util.postDelayed
  * 封装了缩略图、进度条、VideoView、拖动操作
  */
 class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
-    private var mDownX = 0f
-    private var mDownY = 0f
     private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     private val mViewFactory: ViewFactory by lazy {
         ViewFactory(this).apply {
@@ -48,66 +45,11 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
         }
     }
 
-    private val mEventHandler: EventHandler by lazy {
-        EventHandler(this).apply {
-            mOnClick = {
-                exit()
-            }
-            mOnDrag = {
-                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                    exit()
-                } else {
-                    restore()
-                }
-            }
-        }
-    }
-
     init {
         onPreDrawListener {
             enter()
             play(info.videoUrl, info.thumbImageUrl)
         }
-    }
-
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {
-                mDownX = event.x
-                mDownY = event.y
-                parent.requestDisallowInterceptTouchEvent(true)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                parent.requestDisallowInterceptTouchEvent(false)
-            }
-        }
-        mEventHandler.handle(event)
-        return super.dispatchTouchEvent(event)
-    }
-
-    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        var intercepted = false
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                intercepted = false
-            }
-            MotionEvent.ACTION_MOVE -> {
-                intercepted = event.pointerCount == 1 && scaleX == 1f && scaleY == 1f
-            }
-            MotionEvent.ACTION_UP -> {
-                intercepted = false
-            }
-        }
-        return intercepted
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        when (event?.action) {
-            MotionEvent.ACTION_MOVE -> {
-                updateProperties(event.x - mDownX, event.y - mDownY)
-            }
-        }
-        return true
     }
 
     fun play(videoUrl: String, thumbImageUrl: String = "") {
@@ -153,6 +95,10 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
         }
         mViewFactory.mVideoView.setVideoPath(proxyUrl)
         mViewFactory.addVideo()
+    }
+
+    override fun handleMoveEvent(event: MotionEvent, dx: Float, dy: Float): Boolean {
+        return true
     }
 
     override fun onDestroy() {

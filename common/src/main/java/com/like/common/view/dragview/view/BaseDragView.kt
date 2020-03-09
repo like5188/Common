@@ -3,14 +3,19 @@ package com.like.common.view.dragview.view
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.view.MotionEvent
 import android.widget.FrameLayout
 import com.like.common.view.dragview.animation.BaseAnimationManager
 import com.like.common.view.dragview.animation.EnterAnimationManager
 import com.like.common.view.dragview.animation.ExitAnimationManager
 import com.like.common.view.dragview.animation.RestoreAnimationManager
 import com.like.common.view.dragview.entity.DragInfo
+import com.like.common.view.dragview.view.util.EventHandler
 import kotlin.math.abs
 
+/**
+ * 自定义的支持拖动、动画的View。
+ */
 abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : FrameLayout(context) {
     var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
     private var mMinCanvasScale = 0f// 允许的最小缩放系数
@@ -24,9 +29,72 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
 
+    private val mEventHandler: EventHandler by lazy {
+        EventHandler(this).apply {
+            mOnClick = {
+                exit()
+            }
+            mOnDrag = {
+                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+                    exit()
+                } else {
+                    restore()
+                }
+            }
+        }
+    }
+    private var mDownX = 0f
+    private var mDownY = 0f
+    private var mLastX = 0f
+    private var mLastY = 0f
+
     init {
         setBackgroundColor(Color.BLACK)
         isClickable
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                mDownX = event.x
+                mDownY = event.y
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dx = event.x - mLastX
+                val dy = event.y - mLastY
+                parent.requestDisallowInterceptTouchEvent(handleMoveEvent(event, dx, dy))
+            }
+        }
+        mLastX = event.x
+        mLastY = event.y
+        mEventHandler.handle(event)
+        return super.dispatchTouchEvent(event)
+    }
+
+    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+        var intercepted = false
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                intercepted = false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                intercepted = event.pointerCount == 1 && scaleX == 1f && scaleY == 1f
+            }
+            MotionEvent.ACTION_UP -> {
+                intercepted = false
+            }
+        }
+        return intercepted
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
+                updateProperties(event.x - mDownX, event.y - mDownY)
+            }
+        }
+        return true
     }
 
     protected fun setData(dragInfo: DragInfo) {
@@ -122,6 +190,8 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
         onDestroy()
         mExitAnimationManager.start()
     }
+
+    protected abstract fun handleMoveEvent(event: MotionEvent, dx: Float, dy: Float): Boolean
 
     protected abstract fun onDestroy()
 }
