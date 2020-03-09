@@ -20,7 +20,7 @@ import kotlin.math.abs
 /**
  * 封装了缩略图、进度条、PhotoView
  */
-class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
+class CustomPhotoView(context: Context, info: DragInfo, enterAnimation: Boolean = true) : BaseDragView(context, info) {
     private val TAG = CustomPhotoView::class.java.simpleName
     private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     private val mViewFactory: ViewFactory by lazy {
@@ -30,7 +30,9 @@ class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, 
     init {
         onPreDrawListener {
             show(info.imageUrl, info.thumbImageUrl)
-            enterAnimation()
+            if (enterAnimation) {
+                enterAnimation()
+            }
         }
     }
 

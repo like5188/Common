@@ -22,8 +22,8 @@ class DragPhotoViewActivity : BaseDragViewActivity() {
             val infos: List<DragInfo>? = intent.getParcelableArrayListExtra(KEY_DATA_FOR_PREVIEW_IMAGE)
             infos?.let {
                 mSelectedPosition = intent.getIntExtra(KEY_CUR_CLICK_POSITION, 0)
-                it.forEach {
-                    mPhotoViews.add(CustomPhotoView(this, it))
+                it.forEachIndexed { index, dragInfo ->
+                    mPhotoViews.add(CustomPhotoView(this, dragInfo, index == mSelectedPosition))
                 }
                 val vp = CustomPhotoViewPager(this).apply {
                     layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
