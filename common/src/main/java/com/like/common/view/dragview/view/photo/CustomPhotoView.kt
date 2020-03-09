@@ -30,7 +30,7 @@ class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, 
     init {
         onGlobalLayoutListener {
             show(info.imageUrl, info.thumbImageUrl)
-            enter()
+            enterAnimation()
         }
     }
 

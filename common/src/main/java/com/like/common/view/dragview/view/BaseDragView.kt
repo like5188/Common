@@ -24,13 +24,13 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
     private val mEventHandler: EventHandler by lazy {
         EventHandler(this).apply {
             mOnClick = {
-                exit()
+                exitAnimation()
             }
             mOnDrag = {
                 if (mCanvasTranslationY > mMaxCanvasTranslationY) {
-                    exit()
+                    exitAnimation()
                 } else {
-                    restore()
+                    restoreAnimation()
                 }
             }
         }
@@ -128,7 +128,7 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
     /**
      * 当手指拖动时，更新属性
      */
-    protected fun updateProperties(translationX: Float, translationY: Float) {
+    private fun updateProperties(translationX: Float, translationY: Float) {
         setCanvasTranslationX(translationX)
         setCanvasTranslationY(translationY)
         setCanvasScale(calcCanvasScaleByCanvasTranslationY(translationY))
@@ -174,15 +174,15 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         mMinCanvasScale = mSelectedDragInfo.originWidth / measuredWidth
     }
 
-    protected fun enter() {
+    protected fun enterAnimation() {
         mEnterAnimationManager.start()
     }
 
-    protected fun restore() {
+    private fun restoreAnimation() {
         mRestoreAnimationManager.start()
     }
 
-    fun exit() {
+    fun exitAnimation() {
         onDestroy()
         mExitAnimationManager.start()
     }

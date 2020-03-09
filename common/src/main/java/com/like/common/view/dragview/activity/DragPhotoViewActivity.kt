@@ -43,6 +43,6 @@ class DragPhotoViewActivity : BaseDragViewActivity() {
     }
 
     override fun onBackPressed() {
-        mPhotoViews[mSelectedPosition].exit()
+        mPhotoViews[mSelectedPosition].exitAnimation()
     }
 }

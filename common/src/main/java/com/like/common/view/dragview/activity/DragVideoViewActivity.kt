@@ -26,6 +26,6 @@ class DragVideoViewActivity : BaseDragViewActivity() {
     }
 
     override fun onBackPressed() {
-        mBaseDragView?.exit()
+        mBaseDragView?.exitAnimation()
     }
 }
