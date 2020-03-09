@@ -10,7 +10,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.like.common.util.GlideUtils
-import com.like.common.util.onGlobalLayoutListener
+import com.like.common.util.onPreDrawListener
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
 import com.like.common.view.dragview.view.util.ViewFactory
@@ -28,7 +28,7 @@ class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, 
     }
 
     init {
-        onGlobalLayoutListener {
+        onPreDrawListener {
             show(info.imageUrl, info.thumbImageUrl)
             enterAnimation()
         }
