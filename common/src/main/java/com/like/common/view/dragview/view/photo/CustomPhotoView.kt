@@ -27,7 +27,6 @@ class CustomPhotoView(context: Context, info: DragInfo) : BaseDragView(context, 
 
     init {
         onGlobalLayoutListener {
-            setData(info)
             show(info.imageUrl, info.thumbImageUrl)
             enter()
         }

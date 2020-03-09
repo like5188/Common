@@ -16,15 +16,7 @@ import kotlin.math.abs
 /**
  * 自定义的支持拖动、动画的View。
  */
-abstract class BaseDragView(context: Context, private var mSelectedDragInfo: DragInfo) : FrameLayout(context) {
-    var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
-    private var mMinCanvasScale = 0f// 允许的最小缩放系数
-
-    private var mCanvasBackgroundAlpha = 255
-    private var mCanvasTranslationX = 0f
-    var mCanvasTranslationY = 0f
-    private var mCanvasScale = 1f
-
+abstract class BaseDragView(context: Context, private val mSelectedDragInfo: DragInfo) : FrameLayout(context) {
     private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
@@ -43,6 +35,14 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
             }
         }
     }
+
+    private var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
+    private var mMinCanvasScale = 0f// 允许的最小缩放系数
+
+    private var mCanvasBackgroundAlpha = 255
+    private var mCanvasTranslationX = 0f
+    private var mCanvasTranslationY = 0f
+    private var mCanvasScale = 1f
     private var mDownX = 0f
     private var mDownY = 0f
     private var mLastX = 0f
@@ -95,10 +95,6 @@ abstract class BaseDragView(context: Context, private var mSelectedDragInfo: Dra
             }
         }
         return true
-    }
-
-    protected fun setData(dragInfo: DragInfo) {
-        mSelectedDragInfo = dragInfo
     }
 
     fun setCanvasTranslationX(translationX: Float) {
