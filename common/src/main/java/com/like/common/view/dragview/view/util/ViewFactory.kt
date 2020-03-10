@@ -3,7 +3,10 @@ package com.like.common.view.dragview.view.util
 import android.R
 import android.content.Context
 import android.view.Gravity
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.VideoView
 import com.github.chrisbanes.photoview.PhotoView
 
 /**
@@ -20,21 +23,17 @@ class ViewFactory(private val mParent: FrameLayout) {
     }
     val mThumbnailImageView: ImageView by lazy {
         ImageView(mContext).apply {
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
-                gravity = Gravity.CENTER
-            }
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         }
     }
     val mPhotoView: PhotoView by lazy {
         PhotoView(mContext).apply {
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
-                gravity = Gravity.CENTER
-            }
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         }
     }
     val mVideoView: VideoView by lazy {
         VideoView(mContext).apply {
-            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
+            layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT).apply {
                 gravity = Gravity.CENTER
             }
             setZOrderOnTop(true)// 避免闪屏
