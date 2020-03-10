@@ -9,7 +9,7 @@ import android.view.View
  * @param originTop         原始imageview的top
  * @param originWidth       原始imageview的width
  * @param originHeight      原始imageview的height
- * @param thumbImageUrl     缩略图的url
+ * @param thumbnailUrl      缩略图的url
  * @param imageUrl          原图url
  * @param videoUrl          视频url
  */
@@ -17,7 +17,7 @@ class DragInfo(val originLeft: Float,
                val originTop: Float,
                val originWidth: Float,
                val originHeight: Float,
-               val thumbImageUrl: String = "",
+               val thumbnailUrl: String = "",
                val imageUrl: String = "",
                val videoUrl: String = "") : Parcelable {
 
@@ -49,7 +49,7 @@ class DragInfo(val originLeft: Float,
         parcel.writeFloat(originTop)
         parcel.writeFloat(originWidth)
         parcel.writeFloat(originHeight)
-        parcel.writeString(thumbImageUrl)
+        parcel.writeString(thumbnailUrl)
         parcel.writeString(imageUrl)
         parcel.writeString(videoUrl)
     }

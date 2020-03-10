@@ -3,9 +3,9 @@ package com.like.common.view.dragview
 import android.app.Activity
 import android.content.Intent
 import android.widget.ImageView
-import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.activity.DragPhotoViewActivity
 import com.like.common.view.dragview.activity.DragVideoViewActivity
+import com.like.common.view.dragview.entity.DragInfo
 import java.util.*
 
 /**
@@ -29,13 +29,13 @@ object DragViewManager {
 
         data.forEach {
             val location = IntArray(2)
-            it.dragView.getLocationOnScreen(location)
+            it.originImageView.getLocationOnScreen(location)
             list.add(
                     DragInfo(location[0].toFloat(),
                             location[1].toFloat(),
-                            it.dragView.width.toFloat(),
-                            it.dragView.height.toFloat(),
-                            thumbImageUrl = it.thumbImageUrl,
+                            it.originImageView.width.toFloat(),
+                            it.originImageView.height.toFloat(),
+                            thumbnailUrl = it.thumbnailUrl,
                             imageUrl = it.url)
             )
         }
@@ -56,14 +56,14 @@ object DragViewManager {
      */
     fun previewVideo(activity: Activity, data: DragInfoTemp) {
         val location = IntArray(2)
-        data.dragView.getLocationOnScreen(location)
+        data.originImageView.getLocationOnScreen(location)
         val intent = Intent(activity, DragVideoViewActivity::class.java)
         intent.putExtra(DragVideoViewActivity.KEY_DATA_FOR_PREVIEW_VIDEO,
                 DragInfo(originLeft = location[0].toFloat(),
                         originTop = location[1].toFloat(),
-                        originWidth = data.dragView.width.toFloat(),
-                        originHeight = data.dragView.height.toFloat(),
-                        thumbImageUrl = data.thumbImageUrl,
+                        originWidth = data.originImageView.width.toFloat(),
+                        originHeight = data.originImageView.height.toFloat(),
+                        thumbnailUrl = data.thumbnailUrl,
                         videoUrl = data.url)
         )
         activity.startActivity(intent)
@@ -71,9 +71,9 @@ object DragViewManager {
     }
 
     /**
-     * @param dragView          原始的显示缩略图的ImageView
-     * @param thumbImageUrl     缩略图的url
+     * @param originImageView   原始的显示缩略图的ImageView
+     * @param thumbnailUrl      缩略图的url
      * @param url               原图或者视频的url
      */
-    data class DragInfoTemp(val dragView: ImageView, val thumbImageUrl: String, val url: String)
+    data class DragInfoTemp(val originImageView: ImageView, val thumbnailUrl: String, val url: String)
 }

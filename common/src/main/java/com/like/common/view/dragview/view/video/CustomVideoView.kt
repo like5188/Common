@@ -1,7 +1,6 @@
 package com.like.common.view.dragview.view.video
 
 import android.content.Context
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import com.danikula.videocache.HttpProxyCacheServer
@@ -17,7 +16,6 @@ import com.like.common.view.dragview.view.util.postDelayed
  * 封装了缩略图、进度条、VideoView
  */
 class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
-    private val TAG = CustomVideoView::class.java.simpleName
     private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     private val mViewFactory: ViewFactory by lazy {
         ViewFactory(this).apply {
@@ -46,28 +44,31 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
 
     init {
         onPreDrawListener {
-            if (mHttpProxyCacheServer.isCached(info.videoUrl)) {
-                // 如果已经缓存，就不显示缩略图了，直接播放
-                play(info.videoUrl)
-            } else {
-                showThumbnail(info.thumbImageUrl)
-                play(info.videoUrl)
-            }
+            play(info.videoUrl, info.thumbnailUrl)
             enterAnimation()
         }
     }
 
-    fun showThumbnail(url: String) {
+    private fun play(videoUrl: String, thumbnailUtl: String) {
+        if (mHttpProxyCacheServer.isCached(videoUrl)) {
+            // 如果已经缓存，就不显示缩略图了，直接播放
+            playVideo(videoUrl)
+        } else {
+            showThumbnail(thumbnailUtl)
+            playVideo(videoUrl)
+        }
+    }
+
+    private fun showThumbnail(url: String) {
         if (url.isEmpty()) {
             return
         }
-        Log.d(TAG, "showThumbnail")
         mViewFactory.addThumbnailImageView()
         mViewFactory.addProgressBar()
         mGlideUtils.display(url, mViewFactory.mThumbnailImageView)
     }
 
-    fun play(url: String) {
+    private fun playVideo(url: String) {
         if (url.isEmpty()) {
             mViewFactory.removeProgressBar()
             Toast.makeText(context, "视频地址为空！", Toast.LENGTH_SHORT).show()
@@ -79,13 +80,12 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
             Toast.makeText(context, "视频地址无效！", Toast.LENGTH_SHORT).show()
             return
         }
-        Log.d(TAG, "play")
         mViewFactory.addProgressBar()
         mViewFactory.mVideoView.setVideoPath(proxyUrl)
         mViewFactory.addVideo()
     }
 
-    fun stop() {
+    private fun stop() {
         mViewFactory.mVideoView.stopPlayback()
     }
 
