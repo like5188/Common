@@ -29,76 +29,55 @@ class CustomPhotoView(context: Context, info: DragInfo, enterAnimation: Boolean 
 
     init {
         onPreDrawListener {
-            show(info.imageUrl, info.thumbImageUrl)
+            mGlideUtils.hasCached(info.imageUrl, hasCached = { url, isCached ->
+                if (isCached) {// 如果已经缓存，就不显示缩略图了，直接显示原图
+                    show(info.imageUrl)
+                } else {
+                    showThumbnail(info.thumbImageUrl)
+                    show(info.imageUrl)
+                }
+            })
             if (enterAnimation) {
                 enterAnimation()
             }
         }
     }
 
-    private fun show(imageUrl: String, thumbImageUrl: String = "") {
-        mGlideUtils.hasCached(imageUrl, hasCached = { url, isCached ->
-            if (isCached) {// 如果有原图缓存，就直接显示原图，不显示缩略图了。
-                mViewFactory.removeProgressBar()
-                mViewFactory.removeThumbnailImageView()
-                mViewFactory.addPhotoView()
-                mGlideUtils.display(imageUrl, mViewFactory.mPhotoView)
-                Log.v(TAG, "从缓存中获取了图片：${imageUrl}")
-            } else {// 如果没有原图缓存
-                mViewFactory.addProgressBar()
-                if (thumbImageUrl.isNotEmpty()) {// 如果有缩略图
-                    mViewFactory.addThumbnailImageView()
-                    mGlideUtils.display(thumbImageUrl, mViewFactory.mThumbnailImageView, object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            postDelayed(1000) {
-                                mViewFactory.removeProgressBar()
-                                mViewFactory.removeThumbnailImageView()
-                                Toast.makeText(context, "获取缩略图失败！", Toast.LENGTH_SHORT).show()
-                            }
-                            return false
-                        }
-
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            showNetworkImage(imageUrl)
-                            return false
-                        }
-                    })
-                } else {// 如果没有缩略图
-                    showNetworkImage(imageUrl)
-                }
-            }
-        })
-    }
-
-    private fun showNetworkImage(imageUrl: String) {
-        if (imageUrl.isEmpty()) {
-            postDelayed(1000) {
-                mViewFactory.removeProgressBar()
-                Toast.makeText(context, "图片地址为空！", Toast.LENGTH_SHORT).show()
-            }
+    fun showThumbnail(url: String) {
+        if (url.isEmpty()) {
             return
         }
-        postDelayed(1000) {
-            mViewFactory.addPhotoView()
-            mGlideUtils.display(imageUrl, mViewFactory.mPhotoView, object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    mViewFactory.removeProgressBar()
-                    mViewFactory.removePhotoView()
-                    Toast.makeText(context, "获取图片失败！", Toast.LENGTH_SHORT).show()
-                    return false
-                }
+        Log.d(TAG, "showThumbnail")
+        mViewFactory.addThumbnailImageView()
+        mViewFactory.addProgressBar()
+        mGlideUtils.display(url, mViewFactory.mThumbnailImageView)
+    }
 
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    postDelayed(100) {
-                        // 防闪烁
-                        mViewFactory.removeProgressBar()
-                        mViewFactory.removeThumbnailImageView()
-                    }
-                    Log.v(TAG, "从网络获取了图片：${imageUrl}")
-                    return false
-                }
-            })
+    fun show(url: String) {
+        if (url.isEmpty()) {
+            mViewFactory.removeProgressBar()
+            Toast.makeText(context, "图片地址为空！", Toast.LENGTH_SHORT).show()
+            return
         }
+        Log.d(TAG, "show")
+        mViewFactory.addPhotoView()
+        mGlideUtils.display(url, mViewFactory.mPhotoView, object : RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                mViewFactory.removeProgressBar()
+                mViewFactory.removePhotoView()
+                Toast.makeText(context, "获取图片失败！", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                postDelayed(100) {
+                    // 防闪烁
+                    mViewFactory.removeProgressBar()
+                    mViewFactory.removeThumbnailImageView()
+                }
+                return false
+            }
+        })
     }
 
     override fun handleMoveEvent(event: MotionEvent, dx: Float, dy: Float): Boolean {

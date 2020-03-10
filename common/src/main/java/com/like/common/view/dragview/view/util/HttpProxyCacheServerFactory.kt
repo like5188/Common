@@ -11,14 +11,18 @@ object HttpProxyCacheServerFactory {
     //全局初始化一个本地代理服务器
     private var proxy: HttpProxyCacheServer? = null
 
-    fun getProxy(context: Context): HttpProxyCacheServer? {
-        if (proxy == null) {
-            proxy = HttpProxyCacheServer.Builder(context)
-                    .maxCacheFilesCount(20)
-                    .cacheDirectory(StorageUtils.InternalStorageHelper.getCacheDir(context))
-                    .build()
+    fun getProxy(context: Context): HttpProxyCacheServer {
+        val p = proxy
+        if (p != null) {
+            return p
         }
-        return proxy
+
+        val created = HttpProxyCacheServer.Builder(context)
+                .maxCacheFilesCount(20)
+                .cacheDirectory(StorageUtils.InternalStorageHelper.getCacheDir(context))
+                .build()
+        proxy = created
+        return created
     }
 
 }

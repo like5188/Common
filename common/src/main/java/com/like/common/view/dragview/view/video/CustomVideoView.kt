@@ -1,13 +1,10 @@
 package com.like.common.view.dragview.view.video
 
 import android.content.Context
-import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import com.danikula.videocache.HttpProxyCacheServer
 import com.like.common.util.GlideUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.dragview.entity.DragInfo
@@ -20,6 +17,7 @@ import com.like.common.view.dragview.view.util.postDelayed
  * 封装了缩略图、进度条、VideoView
  */
 class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
+    private val TAG = CustomVideoView::class.java.simpleName
     private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     private val mViewFactory: ViewFactory by lazy {
         ViewFactory(this).apply {
@@ -35,66 +33,60 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
                 mVideoView.resume()// 重新播放
             }
             mVideoView.setOnErrorListener { _, _, _ ->
-                postDelayed(1000) {
-                    removeProgressBar()
-                    removeVideoView()
-                    Toast.makeText(context, "播放视频失败！", Toast.LENGTH_SHORT).show()
-                }
+                removeProgressBar()
+                removeVideoView()
+                Toast.makeText(context, "播放视频失败！", Toast.LENGTH_SHORT).show()
                 true
             }
         }
     }
+    private val mHttpProxyCacheServer: HttpProxyCacheServer by lazy {
+        HttpProxyCacheServerFactory.getProxy(context)
+    }
 
     init {
         onPreDrawListener {
-            play(info.videoUrl, info.thumbImageUrl)
+            if (mHttpProxyCacheServer.isCached(info.videoUrl)) {
+                // 如果已经缓存，就不显示缩略图了，直接播放
+                play(info.videoUrl)
+            } else {
+                showThumbnail(info.thumbImageUrl)
+                play(info.videoUrl)
+            }
             enterAnimation()
         }
     }
 
-    private fun play(videoUrl: String, thumbImageUrl: String = "") {
-        if (thumbImageUrl.isNotEmpty()) {
-            mViewFactory.addThumbnailImageView()
-            mViewFactory.addProgressBar()
-            mGlideUtils.display(thumbImageUrl, mViewFactory.mThumbnailImageView, object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    postDelayed(1000) {
-                        mViewFactory.removeProgressBar()
-                        mViewFactory.removeThumbnailImageView()
-                        Toast.makeText(context, "获取视频缩略图失败！", Toast.LENGTH_SHORT).show()
-                    }
-                    return false
-                }
-
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    playVideo(videoUrl)
-                    return false
-                }
-            })
-        } else {
-            mViewFactory.addProgressBar()
-            playVideo(videoUrl)
+    fun showThumbnail(url: String) {
+        if (url.isEmpty()) {
+            return
         }
+        Log.d(TAG, "showThumbnail")
+        mViewFactory.addThumbnailImageView()
+        mViewFactory.addProgressBar()
+        mGlideUtils.display(url, mViewFactory.mThumbnailImageView)
     }
 
-    private fun playVideo(videoUrl: String) {
-        if (videoUrl.isEmpty()) {
-            postDelayed(1000) {
-                mViewFactory.removeProgressBar()
-                Toast.makeText(context, "视频地址为空！", Toast.LENGTH_SHORT).show()
-            }
+    fun play(url: String) {
+        if (url.isEmpty()) {
+            mViewFactory.removeProgressBar()
+            Toast.makeText(context, "视频地址为空！", Toast.LENGTH_SHORT).show()
             return
         }
-        val proxyUrl = HttpProxyCacheServerFactory.getProxy(context)?.getProxyUrl(videoUrl)
+        val proxyUrl = mHttpProxyCacheServer.getProxyUrl(url)
         if (proxyUrl.isNullOrEmpty()) {
-            postDelayed(1000) {
-                mViewFactory.removeProgressBar()
-                Toast.makeText(context, "视频地址无效！", Toast.LENGTH_SHORT).show()
-            }
+            mViewFactory.removeProgressBar()
+            Toast.makeText(context, "视频地址无效！", Toast.LENGTH_SHORT).show()
             return
         }
+        Log.d(TAG, "play")
+        mViewFactory.addProgressBar()
         mViewFactory.mVideoView.setVideoPath(proxyUrl)
         mViewFactory.addVideo()
+    }
+
+    fun stop() {
+        mViewFactory.mVideoView.stopPlayback()
     }
 
     override fun handleMoveEvent(event: MotionEvent, dx: Float, dy: Float): Boolean {
@@ -102,7 +94,7 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
     }
 
     override fun onDestroy() {
-        mViewFactory.mVideoView.stopPlayback()
+        stop()
     }
 
 }
