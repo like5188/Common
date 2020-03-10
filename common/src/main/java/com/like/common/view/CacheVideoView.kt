@@ -3,6 +3,7 @@ package com.like.common.view
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
 import com.danikula.videocache.HttpProxyCacheServer
@@ -32,9 +33,7 @@ class CacheVideoView(context: Context, attrs: AttributeSet? = null) : FrameLayou
                 Toast.makeText(context, "播放视频失败！", Toast.LENGTH_SHORT).show()
                 true
             }
-            mVideoView.setOnCompletionListener {
-                mVideoView.resume()// 重新播放
-            }
+            mVideoView.setMediaController(MediaController(context))
         }
     }
     private val mHttpProxyCacheServer: HttpProxyCacheServer by lazy {
