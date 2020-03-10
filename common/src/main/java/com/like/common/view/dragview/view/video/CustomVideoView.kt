@@ -27,14 +27,14 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
                     removeThumbnailImageView()
                 }
             }
-            mVideoView.setOnCompletionListener {
-                mVideoView.resume()// 重新播放
-            }
             mVideoView.setOnErrorListener { _, _, _ ->
                 removeProgressBar()
                 removeVideoView()
                 Toast.makeText(context, "播放视频失败！", Toast.LENGTH_SHORT).show()
                 true
+            }
+            mVideoView.setOnCompletionListener {
+                mVideoView.resume()// 重新播放
             }
         }
     }
