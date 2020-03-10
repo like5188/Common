@@ -14,6 +14,7 @@ import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.sample.activitytest.TestActivity
+import com.like.common.sample.cachevideoview.CacheVideoViewActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
@@ -28,7 +29,10 @@ import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.zxing.ZXingActivity
-import com.like.common.util.*
+import com.like.common.util.SPUtils
+import com.like.common.util.setSelectorBackgroundResource
+import com.like.common.util.setSelectorSrcResource
+import com.like.common.util.shortToastCenter
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -268,6 +272,10 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, TestActivity::class.java)
         intent.putExtra("name", "从 MainActivity 跳转过来")
         startActivity(intent)
+    }
+
+    fun gotoCacheVideoViewActivity(view: View) {
+        startActivity(Intent(this, CacheVideoViewActivity::class.java))
     }
 
 }

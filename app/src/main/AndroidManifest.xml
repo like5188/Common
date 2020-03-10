@@ -43,6 +43,7 @@
             android:name=".activitytest.TestActivity3"
             android:theme="@style/translucent" />
         <activity android:name=".zxing.ZXingActivity" />
+        <activity android:name=".cachevideoview.CacheVideoViewActivity" />
     </application>
 
 </manifest>
