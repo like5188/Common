@@ -42,7 +42,9 @@ android {
 
         // 用于配置该BuildType是否启用自动拆分多个Dex的功能。一般用程序中代码太多，超过了65535个方法的时候。
         // 配置了 multiDexEnabled true 后，会自动添加引用：androidx.multidex:multidex:2.0.0 和 androidx.multidex:multidex-instrumentation:2.0.0
-        multiDexEnabled true// api 21及以上，可以只添加此配置，不需要再引用com.android.support:multidex:1.0.3
+        // api 21以下，还需要在 Application 的 attachBaseContext 方法中添加初始化代码：MultiDex.install(this)，或者直接继承 MultiDexApplication。否则会报错：Unable to get provider androidx.lifecycle.ProcessLifecycleOwnerInitializr
+        multiDexEnabled true
+
     }
 
     lintOptions {
