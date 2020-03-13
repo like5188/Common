@@ -1,7 +1,7 @@
 package com.like.common.sample
 
-import com.like.common.base.BaseApplication
+import androidx.multidex.MultiDexApplication
 
-class MyApplication : BaseApplication() {
-
+// 这里必须用 MultiDexApplication，因为 Android 19 时会报错：Unable to get provider androidx.lifecycle.ProcessLifecycleOwnerInitializr
+class MyApplication : MultiDexApplication() {
 }
