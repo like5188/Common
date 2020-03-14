@@ -16,10 +16,10 @@ class EnterAnimationManager(
 
     override fun fillAnimatorSet(animatorSet: AnimatorSet) {
         animatorSet.duration = mDuration
-        animatorSet.play(ObjectAnimator.ofFloat(mDragView, "canvasTranslationX", mDragInfo.getInitTranslationX(mDragView), 0f))
-                .with(ObjectAnimator.ofFloat(mDragView, "canvasTranslationY", mDragInfo.getInitTranslationY(mDragView), 0f))
-                .with(ObjectAnimator.ofFloat(mDragView, "canvasScale", mDragInfo.getInitScaleX(mDragView), 1f))
-                .with(ObjectAnimator.ofInt(mDragView, "canvasBackgroundAlpha", 0, 255))
+        animatorSet.play(ObjectAnimator.ofFloat(mDragView, "childrenTranslationX", mDragInfo.getInitTranslationX(mDragView), 0f))
+                .with(ObjectAnimator.ofFloat(mDragView, "childrenTranslationY", mDragInfo.getInitTranslationY(mDragView), 0f))
+                .with(ObjectAnimator.ofFloat(mDragView, "childrenScale", mDragInfo.getInitScaleX(mDragView), 1f))
+                .with(ObjectAnimator.ofInt(mDragView, "backgroundAlpha", 0, 255))
     }
 
 }

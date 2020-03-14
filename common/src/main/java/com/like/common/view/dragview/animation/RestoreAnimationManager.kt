@@ -14,10 +14,10 @@ class RestoreAnimationManager(
 
     override fun fillAnimatorSet(animatorSet: AnimatorSet) {
         animatorSet.duration = mDuration
-        animatorSet.play(ObjectAnimator.ofFloat(mDragView, "canvasTranslationX", mDragView.getCanvasTranslationX(), 0f))
-                .with(ObjectAnimator.ofFloat(mDragView, "canvasTranslationY", mDragView.getCanvasTranslationY(), 0f))
-                .with(ObjectAnimator.ofFloat(mDragView, "canvasScale", mDragView.getCanvasScale(), 1f))
-                .with(ObjectAnimator.ofInt(mDragView, "canvasBackgroundAlpha", mDragView.getCanvasBackgroundAlpha(), 255))
+        animatorSet.play(ObjectAnimator.ofFloat(mDragView, "childrenTranslationX", mDragView.getChildrenTranslationX(), 0f))
+                .with(ObjectAnimator.ofFloat(mDragView, "childrenTranslationY", mDragView.getChildrenTranslationY(), 0f))
+                .with(ObjectAnimator.ofFloat(mDragView, "childrenScale", mDragView.getChildrenScale(), 1f))
+                .with(ObjectAnimator.ofInt(mDragView, "backgroundAlpha", mDragView.getBackgroundAlpha(), 255))
     }
 
 }

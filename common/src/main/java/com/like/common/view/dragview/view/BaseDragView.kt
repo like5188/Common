@@ -1,7 +1,6 @@
 package com.like.common.view.dragview.view
 
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -14,12 +13,14 @@ import com.like.common.view.dragview.entity.DragInfo
 import kotlin.math.abs
 
 /**
- * 自定义的支持拖动、动画的View。
+ * 自定义的ViewGroup。仿微信朋友圈图片视频预览效果。
+ * 支持对它的所有孩子进行拖动、缩放操作；支持它的背景透明度随着拖动变化；支持进入动画、退出动画、拖动后的还原动画。
  */
 abstract class BaseDragView(context: Context, private val mSelectedDragInfo: DragInfo) : FrameLayout(context) {
     private val mEnterAnimationManager: BaseAnimationManager by lazy { EnterAnimationManager(this, mSelectedDragInfo) }
     private val mExitAnimationManager: BaseAnimationManager by lazy { ExitAnimationManager(this, mSelectedDragInfo) }
     private val mRestoreAnimationManager: BaseAnimationManager by lazy { RestoreAnimationManager(this) }
+
     private val mGestureDetector: GestureDetector by lazy {
         GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDown(e: MotionEvent): Boolean {
@@ -43,17 +44,17 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         })
     }
 
-    private var mMaxCanvasTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
-    private var mMinCanvasScale = 0f// 允许的最小缩放系数
+    private var mMaxTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
+    private var mMinScale = 0f// 允许的最小缩放系数
 
-    private var mCanvasBackgroundAlpha = 255
-    private var mCanvasTranslationX = 0f
-    private var mCanvasTranslationY = 0f
-    private var mCanvasScale = 1f
-    private var mDownX = 0f
-    private var mDownY = 0f
-    private var mLastX = 0f
-    private var mLastY = 0f
+    private var mBackgroundAlpha = 255// 背景透明度
+    private var mChildrenTranslationX = 0f// 所有孩子的 TranslationX
+    private var mChildrenTranslationY = 0f// 所有孩子的 TranslationY
+    private var mChildrenScale = 1f// 所有孩子的 scale
+    private var mDownX = 0f// 按下时的x，用于计算 TranslationX
+    private var mDownY = 0f// 按下时的y，用于计算 TranslationY
+    private var mLastX = 0f// 上次的x，用于计算 dx
+    private var mLastY = 0f// 上次的y，用于计算 dy
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -99,11 +100,15 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {
-                updateProperties(event.x - mDownX, event.y - mDownY)
+                mChildrenTranslationX = event.x - mDownX
+                mChildrenTranslationY = event.y - mDownY
+                mChildrenScale = calcCanvasScaleByCanvasTranslationY(mChildrenTranslationY)
+                mBackgroundAlpha = calcCanvasBackgroundAlphaByCanvasTranslationY(mChildrenTranslationY)
+                update(mChildrenTranslationX, mChildrenTranslationY, mChildrenScale, mBackgroundAlpha)
             }
             MotionEvent.ACTION_UP -> {
                 // 拖动
-                if (mCanvasTranslationY > mMaxCanvasTranslationY) {
+                if (mChildrenTranslationY > mMaxTranslationY) {
                     exitAnimation()
                 } else {
                     restoreAnimation()
@@ -113,42 +118,44 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         return true
     }
 
-    fun setCanvasTranslationX(translationX: Float) {
-        mCanvasTranslationX = translationX
-        invalidate()
+    fun setChildrenTranslationX(translationX: Float) {
+        mChildrenTranslationX = translationX
     }
 
-    fun getCanvasTranslationX() = mCanvasTranslationX
+    fun getChildrenTranslationX() = mChildrenTranslationX
 
-    fun setCanvasTranslationY(translationY: Float) {
-        mCanvasTranslationY = translationY
-        invalidate()
+    fun setChildrenTranslationY(translationY: Float) {
+        mChildrenTranslationY = translationY
     }
 
-    fun getCanvasTranslationY() = mCanvasTranslationY
+    fun getChildrenTranslationY() = mChildrenTranslationY
 
-    fun setCanvasScale(scale: Float) {
-        mCanvasScale = scale
-        invalidate()
+    fun setChildrenScale(scale: Float) {
+        mChildrenScale = scale
     }
 
-    fun getCanvasScale() = mCanvasScale
+    fun getChildrenScale() = mChildrenScale
 
-    fun setCanvasBackgroundAlpha(backgroundAlpha: Int) {
-        mCanvasBackgroundAlpha = backgroundAlpha
-        invalidate()
+    fun setBackgroundAlpha(backgroundAlpha: Int) {
+        mBackgroundAlpha = backgroundAlpha
+        // 因为动画播放是把这个属性放在最后，所以我们也在这里更新界面
+        update(mChildrenTranslationX, mChildrenTranslationY, mChildrenScale, mBackgroundAlpha)
     }
 
-    fun getCanvasBackgroundAlpha() = mCanvasBackgroundAlpha
+    fun getBackgroundAlpha() = mBackgroundAlpha
 
     /**
-     * 当手指拖动时，更新属性
+     * 当手指拖动时，更新界面
      */
-    private fun updateProperties(translationX: Float, translationY: Float) {
-        setCanvasTranslationX(translationX)
-        setCanvasTranslationY(translationY)
-        setCanvasScale(calcCanvasScaleByCanvasTranslationY(translationY))
-        setCanvasBackgroundAlpha(calcCanvasBackgroundAlphaByCanvasTranslationY(translationY))
+    private fun update(translationX: Float, translationY: Float, scale: Float, alpha: Int) {
+        (0 until childCount).forEach {
+            val child = getChildAt(it)
+            child.translationX = translationX
+            child.translationY = translationY
+            child.scaleX = scale
+            child.scaleY = scale
+        }
+        setBackgroundColor(Color.argb(alpha, 0, 0, 0))
     }
 
     /**
@@ -158,7 +165,7 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         val translateYPercent = abs(translationY) / measuredHeight
         val scale = 1 - translateYPercent
         return when {
-            scale < mMinCanvasScale -> mMinCanvasScale
+            scale < mMinScale -> mMinScale
             scale > 1f -> 1f
             else -> scale
         }
@@ -177,17 +184,10 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        setBackgroundColor(Color.argb(mCanvasBackgroundAlpha, 0, 0, 0))
-        canvas?.translate(mCanvasTranslationX, mCanvasTranslationY)
-        canvas?.scale(mCanvasScale, mCanvasScale, measuredWidth / 2f, measuredHeight / 2f)
-        super.onDraw(canvas)
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        mMaxCanvasTranslationY = measuredHeight / 4f
-        mMinCanvasScale = mSelectedDragInfo.originWidth / measuredWidth
+        mMaxTranslationY = measuredHeight / 4f
+        mMinScale = mSelectedDragInfo.originWidth / measuredWidth
     }
 
     protected fun enterAnimation() {
