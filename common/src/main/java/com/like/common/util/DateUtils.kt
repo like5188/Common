@@ -1,7 +1,6 @@
 package com.like.common.util
 
 import android.annotation.SuppressLint
-import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -12,146 +11,180 @@ import java.util.*
 object DateUtils {
 
     /**
-     * 获取当前日期时间星期
+     * 获取指定时间的年
      *
-     * @return "yyyy-MM-dd HH:mm:ss 星期几"
+     * @param time  小于等于0表示当前时间
      */
-    val currentDateTimeWeek: String
-        get() {
-            val sb = StringBuilder()
-            val date = Date()
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            sb.append(sdf.format(date))
-            val c = Calendar.getInstance()
-            c.timeZone = TimeZone.getTimeZone("GMT+8:00")
-            val week = c.get(Calendar.DAY_OF_WEEK).toString()
-            when (week) {
-                "1" -> sb.append(" 星期日")
-                "2" -> sb.append(" 星期一")
-                "3" -> sb.append(" 星期二")
-                "4" -> sb.append(" 星期三")
-                "5" -> sb.append(" 星期四")
-                "6" -> sb.append(" 星期五")
-                "7" -> sb.append(" 星期六")
-            }
-            return sb.toString()
+    fun getYear(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
         }
+        return cal.get(Calendar.YEAR)
+    }
 
     /**
-     * 获取当前日期
+     * 获取指定时间的月
      *
-     * @return
+     * @param time  小于等于0表示当前时间
      */
-    val currentDate: Date = Date()
-
-    /**
-     * 获取当前时间
-     *
-     * @return
-     */
-    val currentTime: Time = Time(System.currentTimeMillis())
-
-    /**
-     * 获取当前年份
-     *
-     * @return
-     */
-    val curYear: Int = Calendar.getInstance().get(Calendar.YEAR)
-
-    /**
-     * 获取当前月份
-     *
-     * @return
-     */
-    val curMonth: Int = Calendar.getInstance().get(Calendar.MONTH) + 1
-
-    /**
-     * 获取当前天
-     *
-     * @return
-     */
-    val curDay: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-
-    /**
-     * 获取当月的天数
-     */
-    val daysOfCurrentMonth: Int = getDaysByYearMonth(curYear, curMonth)
-
-    /**
-     * 获取指定格式的日期字符串。
-     *
-     * @param date "2018-09-09"
-     * @param srcFormat 传入date的格式
-     * @param desFormat 返回的格式
-     */
-    fun format(date: String, srcFormat: String, desFormat: String): String =
-            try {
-                format(SimpleDateFormat(srcFormat).parse(date), desFormat)
-            } catch (e: Exception) {
-                ""
-            }
-
-    /**
-     * 获取指定格式的日期字符串。
-     *
-     * @param time
-     * @param format 返回的格式
-     */
-    fun format(time: Long, format: String): String = format(Date(time), format)
-
-    /**
-     * 获取指定格式的日期字符串。
-     *
-     * @param date
-     * @param format 返回的格式
-     */
-    fun format(date: Date, format: String): String = SimpleDateFormat(format).format(date)
-
-    /**
-     * 获取星期几
-     *
-     * @param time
-     * @return
-     */
-    fun getWeek(time: Long): String =
-            Calendar.getInstance().let {
-                it.timeInMillis = time
-                when (it.get(Calendar.DAY_OF_WEEK)) {
-                    Calendar.SUNDAY -> "周日"
-                    Calendar.MONDAY -> "周一"
-                    Calendar.TUESDAY -> "周二"
-                    Calendar.WEDNESDAY -> "周三"
-                    Calendar.THURSDAY -> "周四"
-                    Calendar.FRIDAY -> "周五"
-                    Calendar.SATURDAY -> "周六"
-                    else -> ""
-                }
-            }
-
-    /**
-     * 把时间转换成今天、昨天、前天、指定格式
-     *
-     * @param time
-     * @return
-     */
-    fun parseDate2Custom(time: Long, format: String): String {
-        var result = ""
-        try {
-            val now = Calendar.getInstance()
-            val oneDayMillis = (24 * 60 * 60 * 1000).toLong()
-            val todayPassMillis = (1000 * (now.get(Calendar.HOUR_OF_DAY) * 3600 + now.get(Calendar.MINUTE) * 60 + now.get(Calendar.SECOND))).toLong()//毫秒数
-            val nowMillis = now.timeInMillis
-            result = when {
-                nowMillis - time < todayPassMillis -> "今天"
-                nowMillis - time < todayPassMillis + oneDayMillis -> "昨天"
-                nowMillis - time < todayPassMillis + oneDayMillis * 2 -> "前天"
-                else -> SimpleDateFormat(format).format(time)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    fun getMonth(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
         }
+        return cal.get(Calendar.MONTH) + 1
+    }
 
-        return result
+    /**
+     * 获取指定时间的日
+     *
+     * @param time  小于等于0表示当前时间
+     */
+    fun getDay(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
+        }
+        return cal.get(Calendar.DAY_OF_MONTH)
+    }
+
+    /**
+     * 获取指定时间的小时(24小时制)
+     *
+     * @param time  小于等于0表示当前时间
+     */
+    fun getHour(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
+        }
+        return cal.get(Calendar.HOUR_OF_DAY)
+    }
+
+    /**
+     * 获取指定时间的分钟
+     *
+     * @param time  小于等于0表示当前时间
+     */
+    fun getMinute(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
+        }
+        return cal.get(Calendar.MINUTE)
+    }
+
+    /**
+     * 获取指定时间的秒
+     *
+     * @param time  小于等于0表示当前时间
+     */
+    fun getSecond(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
+        }
+        return cal.get(Calendar.SECOND)
+    }
+
+    /**
+     * 获取指定时间的毫秒
+     *
+     * @param time  小于等于0表示当前时间
+     */
+    fun getMilliSecond(time: Long = 0): Int {
+        val cal = Calendar.getInstance()
+        if (time > 0) {
+            cal.timeInMillis = time
+        }
+        return cal.get(Calendar.MILLISECOND)
+    }
+
+    /**
+     * 获取星期几的中文字符
+     *
+     * @param time  小于等于0表示当前时间
+     * @return
+     */
+    fun getWeekChinese(time: Long = 0): String = with(Calendar.getInstance()) {
+        if (time > 0) {
+            timeInMillis = time
+        }
+        when (get(Calendar.DAY_OF_WEEK)) {
+            Calendar.SUNDAY -> "星期日"
+            Calendar.MONDAY -> "星期一"
+            Calendar.TUESDAY -> "星期二"
+            Calendar.WEDNESDAY -> "星期三"
+            Calendar.THURSDAY -> "星期四"
+            Calendar.FRIDAY -> "星期五"
+            Calendar.SATURDAY -> "星期六"
+            else -> ""
+        }
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的年数
+     */
+    fun getDiffYears(time: Long): Int {
+        val cal = Calendar.getInstance()
+        val curYear = cal.get(Calendar.YEAR)
+        cal.timeInMillis = time
+        val year = cal.get(Calendar.YEAR)
+        return year - curYear
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的月数
+     */
+    fun getDiffMonths(time: Long): Int {
+        val cal = Calendar.getInstance()
+        val curYear = cal.get(Calendar.YEAR)
+        val curMonth = cal.get(Calendar.MONTH)
+        cal.timeInMillis = time
+        val year = cal.get(Calendar.YEAR)
+        val month = cal.get(Calendar.MONTH)
+        return (year - curYear) * 12 + (month - curMonth)
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的天数
+     */
+    fun getDiffDays(time: Long): Long {
+        val diff = System.currentTimeMillis() - time
+        return diff / (1000L * 60 * 60 * 24)
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的小时数
+     */
+    fun getDiffHours(time: Long): Long {
+        val diff = System.currentTimeMillis() - time
+        return diff / (1000L * 60 * 60)
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的分钟数
+     */
+    fun getDiffMinutes(time: Long): Long {
+        val diff = System.currentTimeMillis() - time
+        return diff / (1000L * 60)
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的分钟数
+     */
+    fun getDiffSeconds(time: Long): Long {
+        val diff = System.currentTimeMillis() - time
+        return diff / 1000L
+    }
+
+    /**
+     * 获取指定日期和当前日期相差的分钟数
+     */
+    fun getDiffMilliSeconds(time: Long): Long {
+        val diff = System.currentTimeMillis() - time
+        return diff
     }
 
     /**
@@ -160,7 +193,7 @@ object DateUtils {
      * @param date1
      * @param date2
      * @param format
-     * @return
+     * @return:0：date1==date2或者出错；1：date1>date2；-1：date1<date2；
      */
     fun compareDate(date1: String, date2: String, format: String): Int {
         val df = SimpleDateFormat(format)
@@ -177,43 +210,6 @@ object DateUtils {
         }
         return 0
     }
-
-    /**
-     * 是否今天
-     *
-     * @param date
-     * @return
-     */
-    fun isToday(date: Date): Boolean =
-            Calendar.getInstance().let {
-                it.time = date
-                it.get(Calendar.MONTH) == Calendar.getInstance().get(Calendar.MONTH) &&
-                        it.get(Calendar.DAY_OF_MONTH) == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-            }
-
-    /**
-     * 是否今年
-     *
-     * @param date
-     * @return
-     */
-    fun isThisYear(date: Date): Boolean =
-            Calendar.getInstance().let {
-                it.time = date
-                it.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR)
-            }
-
-    /**
-     * 一年前就返回相隔的年数
-     *
-     * @param date
-     * @return
-     */
-    fun isPreYear(date: Date): Int =
-            Calendar.getInstance().let {
-                it.time = date
-                Calendar.getInstance().get(Calendar.YEAR) - it.get(Calendar.YEAR)
-            }
 
     /**
      * 判断是否为闰年
@@ -246,24 +242,43 @@ object DateUtils {
             }
 
     /**
-     * 获取某一天属于某个月的第几个星期的第几天
-     *
-     * @return 1代表星期天...7代表星期六
+     * 获取指定年、月的天数
      */
-    fun getDayOfMonth(year: Int, mouth: Int, date: Int): Int =
-            Calendar.getInstance().let {
-                it.set(year, mouth - 1, date)
-                it.get(Calendar.DAY_OF_WEEK)
-            }
-
-    /**
-     * 获取指定年、月的某月份的天数
-     */
-    fun getDaysByYearMonth(year: Int, month: Int): Int =
+    fun getDaysOfMonth(year: Int, month: Int): Int =
             Calendar.getInstance().let {
                 it.set(Calendar.YEAR, year)
                 it.set(Calendar.MONTH, month - 1)
                 it.getActualMaximum(Calendar.DAY_OF_MONTH)
             }
+
+    /**
+     * 获取指定格式的日期字符串。
+     *
+     * @param date "2018-09-09"
+     * @param srcFormat 传入date的格式
+     * @param desFormat 返回的格式
+     */
+    fun format(date: String, srcFormat: String, desFormat: String): String =
+            try {
+                format(SimpleDateFormat(srcFormat).parse(date), desFormat)
+            } catch (e: Exception) {
+                ""
+            }
+
+    /**
+     * 获取指定格式的日期字符串。
+     *
+     * @param time
+     * @param format 返回的格式
+     */
+    fun format(time: Long, format: String): String = format(Date(time), format)
+
+    /**
+     * 获取指定格式的日期字符串。
+     *
+     * @param date
+     * @param format 返回的格式
+     */
+    fun format(date: Date, format: String): String = SimpleDateFormat(format).format(date)
 
 }
