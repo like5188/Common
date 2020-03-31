@@ -1,12 +1,12 @@
 package com.like.common.sample.notification
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
@@ -32,28 +32,29 @@ class NotificationActivity : AppCompatActivity() {
         mBinding
     }
 
-    @SuppressLint("NewApi")
     fun createNotificationChannel(view: View) {
-        val group = NotificationChannelGroup("group1", "分组1")
-        createNotificationChannelGroups(listOf(group))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val group = NotificationChannelGroup("group1", "分组1")
+            createNotificationChannelGroups(listOf(group))
 
-        val channel1 = NotificationChannel("channel1", "渠道1", NotificationManager.IMPORTANCE_LOW)
-        channel1.group = "group1"
-        // 开启指示灯，如果设备有的话
-        channel1.enableLights(true)
-        // 设置指示灯颜色
-        channel1.lightColor = ContextCompat.getColor(this, R.color.colorPrimary)
-        // 是否在久按桌面图标时显示此渠道的通知
-        channel1.setShowBadge(true)
-        // 设置是否应在锁定屏幕上显示此频道的通知
-        channel1.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
-        // 设置绕过免打扰模式
-        channel1.setBypassDnd(true)
-        createNotificationChannel(channel1)
+            val channel1 = NotificationChannel("channel1", "渠道1", NotificationManager.IMPORTANCE_LOW)
+            channel1.group = "group1"
+            // 开启指示灯，如果设备有的话
+            channel1.enableLights(true)
+            // 设置指示灯颜色
+            channel1.lightColor = ContextCompat.getColor(this, R.color.colorPrimary)
+            // 是否在久按桌面图标时显示此渠道的通知
+            channel1.setShowBadge(true)
+            // 设置是否应在锁定屏幕上显示此频道的通知
+            channel1.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
+            // 设置绕过免打扰模式
+            channel1.setBypassDnd(true)
+            createNotificationChannel(channel1)
 
-        val channel2 = NotificationChannel("channel2", "渠道2", NotificationManager.IMPORTANCE_LOW)
-        channel2.group = "group1"
-        createNotificationChannel(channel2)
+            val channel2 = NotificationChannel("channel2", "渠道2", NotificationManager.IMPORTANCE_LOW)
+            channel2.group = "group1"
+            createNotificationChannel(channel2)
+        }
     }
 
     fun notifyNotification(view: View) {
