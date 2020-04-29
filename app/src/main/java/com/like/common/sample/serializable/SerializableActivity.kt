@@ -31,16 +31,18 @@ class SerializableActivity : AppCompatActivity() {
     }
 
     fun get(view: View) {
-        Log.d(TAG, "KEY_SP_USER1：${SerializableUtils.getInstance().get<User>(KEY_SP_USER1, null)}")
-        Log.d(TAG, "KEY_SP_USER2：${SerializableUtils.getInstance().get<User>(KEY_SP_USER2, null)}")
-        Log.d(TAG, "KEY_SP_STRING1：${SPUtils.getInstance().get(KEY_SP_STRING1, null)}")
-        Log.d(TAG, "KEY_SP_STRING2：${SPUtils.getInstance().get(KEY_SP_STRING2, "")}")
+        Log.d(TAG, "KEY_SP_USER1：${SerializableUtils.getInstance().get(KEY_SP_USER1, User("like1"))}")
+        Log.d(TAG, "KEY_SP_USER2：${SerializableUtils.getInstance().get<User?>(KEY_SP_USER2, null)}")
+        Log.d(TAG, "KEY_SP_STRING1：${SPUtils.getInstance().get(KEY_SP_STRING1, "string1")}")
+        Log.d(TAG, "KEY_SP_STRING2：${SPUtils.getInstance().get<String?>(KEY_SP_STRING2, null)}")
     }
 
     fun put(view: View) {
         SerializableUtils.getInstance().put(KEY_SP_USER1, null)
         SerializableUtils.getInstance().put(KEY_SP_USER2, User("like2"))
         SPUtils.getInstance().put(KEY_SP_STRING1, null)
+        SPUtils.getInstance().put(KEY_SP_STRING1, "1111")
+        SPUtils.getInstance().put(KEY_SP_STRING1, 2222)
         SPUtils.getInstance().put(KEY_SP_STRING2, "string2")
     }
 

@@ -33,17 +33,17 @@ class SerializableUtils private constructor() {
     }
 
     /**
-     * 如果[key]存在，则返回对应类型的数据，如果转换数据类型失败，则返回null。
+     * 如果[key]存在，则返回对应类型的数据，如果转换数据类型失败，则返回[default]。
      * 如果[key]不存在，则返回[default]；
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalArgumentException::class)
-    fun <T> get(key: String, default: T? = null): T? {
+    fun <T> get(key: String, default: T): T {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         return try {
             ObjectInputStream(FileInputStream(getSerializeFileName(key))).use {
-                it.readObject() as? T
+                it.readObject() as T
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -52,6 +52,7 @@ class SerializableUtils private constructor() {
     }
 
     /**
+     * 如果[key]已经存在，则会覆盖数据
      * @param value     如果为 null，则会移除对应的序列化文件。
      */
     @Throws(IllegalArgumentException::class)
@@ -180,17 +181,17 @@ class SerializableUtils private constructor() {
 class SerializableDelegate<T>(
         private val context: Context,
         private val key: String,
-        private val default: T?
-) : ReadWriteProperty<Any?, T?> {
+        private val default: T
+) : ReadWriteProperty<Any?, T> {
     init {
         SerializableUtils.getInstance().init(context)
     }
 
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return SerializableUtils.getInstance().get(key, default)
     }
 
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         SerializableUtils.getInstance().put(key, value)
     }
 

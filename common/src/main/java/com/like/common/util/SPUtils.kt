@@ -37,23 +37,28 @@ class SPUtils private constructor() {
     }
 
     /**
-     * 如果[key]存在，则返回对应类型的数据，如果转换数据类型失败，则返回null。
+     * 如果[key]存在，则返回对应类型的数据，如果转换数据类型失败，则返回[default]。
      * 如果[key]不存在，则返回[default]；
      */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalArgumentException::class)
-    fun <T> get(key: String, default: T? = null): T? {
+    fun <T> get(key: String, default: T): T {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         getAll()?.forEach {
             if (it.key == key) {
-                return it.value as? T
+                return try {
+                    it.value as T
+                } catch (e: Exception) {
+                    default
+                }
             }
         }
         return default
     }
 
     /**
+     * 如果[key]已经存在，则会覆盖数据
      * @param value     如果为 null，则会移除对应的数据。
      */
     @Throws(IllegalArgumentException::class)
@@ -157,17 +162,17 @@ class SharedPreferencesDelegate<T>(
         private val context: Context,
         private val sharedPreferencesFileName: String,
         private val key: String,
-        private val default: T?
-) : ReadWriteProperty<Any?, T?> {
+        private val default: T
+) : ReadWriteProperty<Any?, T> {
     init {
         SPUtils.getInstance().init(context, sharedPreferencesFileName)
     }
 
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return SPUtils.getInstance().get(key, default)
     }
 
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         SPUtils.getInstance().put(key, value)
     }
 
