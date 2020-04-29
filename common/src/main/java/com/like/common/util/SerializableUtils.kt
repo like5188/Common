@@ -46,7 +46,7 @@ class SerializableUtils private constructor() {
     }
 
     @Throws(IllegalArgumentException::class)
-    fun <T> put(key: String, value: T?) {
+    fun put(key: String, value: Any?) {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         try {
             val dir = File(serializeDir)
