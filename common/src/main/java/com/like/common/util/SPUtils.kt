@@ -39,7 +39,7 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun <T> get(key: String, default: T): T {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        default ?: throw IllegalArgumentException("default can not be null")
+        require(default != null) { "default can not be null" }
         return with(prefs) {
             when (default) {
                 is String -> getString(key, default) as T
@@ -55,7 +55,7 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun <T> put(key: String, value: T) {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        value ?: throw IllegalArgumentException("value can not be null")
+        require(value != null) { "value can not be null" }
         with(prefs.edit()) {
             when (value) {
                 is String -> putString(key, value)

@@ -34,7 +34,7 @@ class SerializableUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String, default: T?): T? {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         try {
             ObjectInputStream(FileInputStream(getSerializeFileName(key))).use {
                 return it.readObject() as? T
@@ -47,7 +47,7 @@ class SerializableUtils private constructor() {
 
     @Throws(IllegalArgumentException::class)
     fun <T> put(key: String, value: T?) {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         try {
             val dir = File(serializeDir)
             if (!dir.exists()) {
@@ -65,7 +65,7 @@ class SerializableUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun remove(key: String) {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         try {
             File(getSerializeFileName(key)).delete()
         } catch (e: Exception) {
@@ -78,7 +78,7 @@ class SerializableUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun clear() {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         try {
             File(serializeDir).deleteRecursively()
         } catch (e: Exception) {
@@ -93,7 +93,7 @@ class SerializableUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun contains(key: String): Boolean {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         return try {
             val dir = File(serializeDir)
             val serializeFile = File(getSerializeFileName(key))
@@ -110,7 +110,7 @@ class SerializableUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun getAll(): Map<String, Any?> {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         val result = mutableMapOf<String, Any?>()
         try {
             File(serializeDir).walkTopDown().forEachIndexed { index, file ->
@@ -131,7 +131,7 @@ class SerializableUtils private constructor() {
      */
     @Throws(IllegalArgumentException::class)
     fun getKeys(): List<String> {
-        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         val result = mutableListOf<String>()
         try {
             File(serializeDir).walkTopDown().forEachIndexed { index, file ->
