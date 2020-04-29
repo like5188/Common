@@ -2,7 +2,6 @@ package com.like.common.util
 
 import android.content.Context
 import java.io.*
-import java.lang.IllegalArgumentException
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -13,7 +12,7 @@ class SerializableUtils private constructor() {
     private lateinit var serializeDir: String
 
     companion object {
-        private const val NOT_INIT_EXCEPTION = "you must addNotificationChannel SPUtils by addNotificationChannel() first"
+        private const val NOT_INIT_EXCEPTION = "you must init SerializableUtils by init() first"
         private const val SERIALIZE_FILE_SUFFIX = ".serialize"
 
         @JvmStatic
@@ -126,6 +125,25 @@ class SerializableUtils private constructor() {
         return result
     }
 
+    /**
+     * 返回所有的键
+     * @return
+     */
+    @Throws(IllegalArgumentException::class)
+    fun getKeys(): List<String> {
+        if (!::serializeDir.isInitialized) throw IllegalArgumentException(NOT_INIT_EXCEPTION)
+        val result = mutableListOf<String>()
+        try {
+            File(serializeDir).walkTopDown().forEachIndexed { index, file ->
+                if (index > 0) {// 除开目录
+                    result.add(file.nameWithoutExtension)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return result
+    }
 
     private fun getSerializeFileName(key: String) = "$serializeDir/$key$SERIALIZE_FILE_SUFFIX"
 
