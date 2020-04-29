@@ -32,8 +32,12 @@ class SerializableUtils private constructor() {
         }
     }
 
-    @Throws(IllegalArgumentException::class)
+    /**
+     * 如果[key]存在，则返回对应类型的数据，如果转换数据类型失败，则返回null。
+     * 如果[key]不存在，则返回[default]；
+     */
     @Suppress("UNCHECKED_CAST")
+    @Throws(IllegalArgumentException::class)
     fun <T> get(key: String, default: T? = null): T? {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }

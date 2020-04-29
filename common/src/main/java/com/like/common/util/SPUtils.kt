@@ -36,6 +36,10 @@ class SPUtils private constructor() {
         }
     }
 
+    /**
+     * 如果[key]存在，则返回对应类型的数据，如果转换数据类型失败，则返回null。
+     * 如果[key]不存在，则返回[default]；
+     */
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalArgumentException::class)
     fun <T> get(key: String, default: T? = null): T? {

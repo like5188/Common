@@ -1,10 +1,10 @@
 package com.like.common.sample.serializable
 
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivitySerializableBinding
 import com.like.common.util.SPUtils
@@ -45,10 +45,10 @@ class SerializableActivity : AppCompatActivity() {
     }
 
     fun getAll(view: View) {
-        SerializableUtils.getInstance().getAll().forEach {
+        SerializableUtils.getInstance().getAll()?.forEach {
             Log.d(TAG, "key=${it.key} value=${it.value as? User}")
         }
-        SPUtils.getInstance().getAll().forEach {
+        SPUtils.getInstance().getAll()?.forEach {
             Log.d(TAG, "key=${it.key} value=${it.value}")
         }
     }
