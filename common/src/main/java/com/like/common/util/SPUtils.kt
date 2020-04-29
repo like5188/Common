@@ -37,34 +37,48 @@ class SPUtils private constructor() {
 
     @Suppress("UNCHECKED_CAST")
     @Throws(IllegalArgumentException::class)
-    fun <T> get(key: String, default: T): T {
+    fun <T> get(key: String, default: T? = null): T? {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        require(default != null) { "default can not be null" }
-        return with(prefs) {
-            when (default) {
-                is String -> getString(key, default) as T
-                is Boolean -> getBoolean(key, default) as T
-                is Int -> getInt(key, default) as T
-                is Long -> getLong(key, default) as T
-                is Float -> getFloat(key, default) as T
-                else -> default
+        return try {
+            with(prefs) {
+                when (default) {
+                    is String -> getString(key, default) as T
+                    is Boolean -> getBoolean(key, default) as T
+                    is Int -> getInt(key, default) as T
+                    is Long -> getLong(key, default) as T
+                    is Float -> getFloat(key, default) as T
+                    else -> default
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            default
         }
     }
 
+    /**
+     * @param value     如果为 null，则会移除对应的数据。
+     */
     @Throws(IllegalArgumentException::class)
-    fun <T> put(key: String, value: T) {
+    fun put(key: String, value: Any?) {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        require(value != null) { "value can not be null" }
-        with(prefs.edit()) {
-            when (value) {
-                is String -> putString(key, value)
-                is Boolean -> putBoolean(key, value)
-                is Int -> putInt(key, value)
-                is Long -> putLong(key, value)
-                is Float -> putFloat(key, value)
-                else -> null
-            }?.apply()
+        if (value == null) {
+            remove(key)
+        } else {
+            try {
+                with(prefs.edit()) {
+                    when (value) {
+                        is String -> putString(key, value)
+                        is Boolean -> putBoolean(key, value)
+                        is Int -> putInt(key, value)
+                        is Long -> putLong(key, value)
+                        is Float -> putFloat(key, value)
+                        else -> null
+                    }?.apply()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -75,7 +89,11 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun remove(key: String) {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        prefs.edit().remove(key).apply()
+        try {
+            prefs.edit().remove(key).apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -84,7 +102,11 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun clear() {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        prefs.edit().clear().apply()
+        try {
+            prefs.edit().clear().apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     /**
@@ -95,7 +117,12 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun contains(key: String): Boolean {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        return prefs.contains(key)
+        return try {
+            prefs.contains(key)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
     /**
@@ -103,9 +130,14 @@ class SPUtils private constructor() {
      * @return
      */
     @Throws(IllegalArgumentException::class)
-    fun getAll(): Map<String, Any?> {
+    fun getAll(): Map<String, Any?>? {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        return prefs.all
+        return try {
+            prefs.all
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
 }
@@ -125,17 +157,17 @@ class SharedPreferencesDelegate<T>(
         private val context: Context,
         private val sharedPreferencesFileName: String,
         private val key: String,
-        private val default: T
-) : ReadWriteProperty<Any?, T> {
+        private val default: T?
+) : ReadWriteProperty<Any?, T?> {
     init {
         SPUtils.getInstance().init(context, sharedPreferencesFileName)
     }
 
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return SPUtils.getInstance().get(key, default)!!
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+        return SPUtils.getInstance().get(key, default)
     }
 
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
         SPUtils.getInstance().put(key, value)
     }
 

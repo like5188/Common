@@ -156,32 +156,33 @@ class SerializableUtils private constructor() {
 
     private fun getSerializeFileName(key: String) = "$serializeDir/$key$SERIALIZE_FILE_SUFFIX"
 
-    /**
-     * Serializable属性委托
-     * 支持实现了Serializable接口的数据类
-     *
-     * 示例：var xxx by Delegate()
-     *
-     * @property context
-     * @property key                        存储的key
-     * @property default                    获取失败时，返回的默认值
-     */
-    class SerializableDelegate<T>(
-            private val context: Context,
-            private val key: String,
-            private val default: T?
-    ) : ReadWriteProperty<Any?, T?> {
-        init {
-            getInstance().init(context)
-        }
+}
 
-        override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
-            return getInstance().get(key, default)
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-            getInstance().put(key, value)
-        }
-
+/**
+ * Serializable属性委托
+ * 支持实现了Serializable接口的数据类
+ *
+ * 示例：var xxx by Delegate()
+ *
+ * @property context
+ * @property key                        存储的key
+ * @property default                    获取失败时，返回的默认值
+ */
+class SerializableDelegate<T>(
+        private val context: Context,
+        private val key: String,
+        private val default: T?
+) : ReadWriteProperty<Any?, T?> {
+    init {
+        SerializableUtils.getInstance().init(context)
     }
+
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+        return SerializableUtils.getInstance().get(key, default)
+    }
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+        SerializableUtils.getInstance().put(key, value)
+    }
+
 }
