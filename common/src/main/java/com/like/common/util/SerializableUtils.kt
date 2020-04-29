@@ -13,6 +13,7 @@ class SerializableUtils private constructor() {
 
     companion object {
         private const val NOT_INIT_EXCEPTION = "you must init SerializableUtils by init() first"
+        private const val KEY_IS_EMPTY_EXCEPTION = "key is empty"
         private const val SERIALIZE_FILE_SUFFIX = ".serialize"
 
         @JvmStatic
@@ -35,6 +36,7 @@ class SerializableUtils private constructor() {
     @Suppress("UNCHECKED_CAST")
     fun <T> get(key: String, default: T? = null): T? {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         return try {
             ObjectInputStream(FileInputStream(getSerializeFileName(key))).use {
                 it.readObject() as? T
@@ -51,6 +53,7 @@ class SerializableUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun put(key: String, value: Any?) {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         if (value == null) {
             remove(key)
         } else {
@@ -73,6 +76,7 @@ class SerializableUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun remove(key: String) {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         try {
             File(getSerializeFileName(key)).delete()
         } catch (e: Exception) {
@@ -101,6 +105,7 @@ class SerializableUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun contains(key: String): Boolean {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         return try {
             val dir = File(serializeDir)
             val serializeFile = File(getSerializeFileName(key))

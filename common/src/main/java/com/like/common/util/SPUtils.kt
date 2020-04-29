@@ -13,6 +13,7 @@ class SPUtils private constructor() {
 
     companion object {
         private const val NOT_INIT_EXCEPTION = "you must init SPUtils by init() first"
+        private const val KEY_IS_EMPTY_EXCEPTION = "key is empty"
         private const val SHARED_PREFERENCES_FILE_SUFFIX = ".sharedPreferences"
 
         @JvmStatic
@@ -39,21 +40,13 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun <T> get(key: String, default: T? = null): T? {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
-        return try {
-            with(prefs) {
-                when (default) {
-                    is String -> getString(key, default) as T
-                    is Boolean -> getBoolean(key, default) as T
-                    is Int -> getInt(key, default) as T
-                    is Long -> getLong(key, default) as T
-                    is Float -> getFloat(key, default) as T
-                    else -> default
-                }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
+        getAll()?.forEach {
+            if (it.key == key) {
+                return it.value as? T
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            default
         }
+        return default
     }
 
     /**
@@ -62,6 +55,7 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun put(key: String, value: Any?) {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         if (value == null) {
             remove(key)
         } else {
@@ -89,6 +83,7 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun remove(key: String) {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         try {
             prefs.edit().remove(key).apply()
         } catch (e: Exception) {
@@ -117,6 +112,7 @@ class SPUtils private constructor() {
     @Throws(IllegalArgumentException::class)
     fun contains(key: String): Boolean {
         require(::prefs.isInitialized) { NOT_INIT_EXCEPTION }
+        require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         return try {
             prefs.contains(key)
         } catch (e: Exception) {
