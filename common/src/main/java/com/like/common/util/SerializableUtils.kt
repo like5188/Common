@@ -156,26 +156,24 @@ class SerializableUtils private constructor() {
      * 示例：var xxx by Delegate()
      *
      * @property context
-     * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
      * @property key                        存储的key
      * @property default                    获取失败时，返回的默认值
      */
-    class Delegate<T>(
+    class SerializableDelegate<T>(
             private val context: Context,
-            private val sharedPreferencesFileName: String,
             private val key: String,
             private val default: T?
     ) : ReadWriteProperty<Any?, T?> {
         init {
-            SPUtils.getInstance().init(context, sharedPreferencesFileName)
+            getInstance().init(context)
         }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
-            return SPUtils.getInstance().get(key, default)
+            return getInstance().get(key, default)
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-            SPUtils.getInstance().put(key, value)
+            getInstance().put(key, value)
         }
 
     }
