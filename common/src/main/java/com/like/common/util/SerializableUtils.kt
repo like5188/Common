@@ -45,17 +45,24 @@ class SerializableUtils private constructor() {
         }
     }
 
+    /**
+     * @param value     如果为 null，则会移除对应的序列化文件。
+     */
     @Throws(IllegalArgumentException::class)
     fun put(key: String, value: Any?) {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
-        try {
-            val dir = File(serializeDir)
-            if (!dir.exists()) {
-                dir.mkdirs()
+        if (value == null) {
+            remove(key)
+        } else {
+            try {
+                val dir = File(serializeDir)
+                if (!dir.exists()) {
+                    dir.mkdirs()
+                }
+                ObjectOutputStream(FileOutputStream(getSerializeFileName(key))).use { it.writeObject(value) }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            ObjectOutputStream(FileOutputStream(getSerializeFileName(key))).use { it.writeObject(value) }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
