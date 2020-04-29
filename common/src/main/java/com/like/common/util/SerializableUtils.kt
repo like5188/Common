@@ -33,16 +33,16 @@ class SerializableUtils private constructor() {
 
     @Throws(IllegalArgumentException::class)
     @Suppress("UNCHECKED_CAST")
-    fun <T> get(key: String, default: T?): T? {
+    fun <T> get(key: String, default: T? = null): T? {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
-        try {
+        return try {
             ObjectInputStream(FileInputStream(getSerializeFileName(key))).use {
-                return it.readObject() as? T
+                it.readObject() as? T
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            default
         }
-        return default
     }
 
     @Throws(IllegalArgumentException::class)
@@ -109,20 +109,21 @@ class SerializableUtils private constructor() {
      * @return
      */
     @Throws(IllegalArgumentException::class)
-    fun getAll(): Map<String, Any?> {
+    fun getAll(): Map<String, Any?>? {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
-        val result = mutableMapOf<String, Any?>()
-        try {
+        return try {
+            val result = mutableMapOf<String, Any?>()
             File(serializeDir).walkTopDown().forEachIndexed { index, file ->
                 if (index > 0) {// 除开目录
                     val key = file.nameWithoutExtension
                     result[key] = get(key, null)
                 }
             }
+            result
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return result
     }
 
     /**
@@ -130,19 +131,20 @@ class SerializableUtils private constructor() {
      * @return
      */
     @Throws(IllegalArgumentException::class)
-    fun getKeys(): List<String> {
+    fun getKeys(): List<String>? {
         require(::serializeDir.isInitialized) { NOT_INIT_EXCEPTION }
-        val result = mutableListOf<String>()
-        try {
+        return try {
+            val result = mutableListOf<String>()
             File(serializeDir).walkTopDown().forEachIndexed { index, file ->
                 if (index > 0) {// 除开目录
                     result.add(file.nameWithoutExtension)
                 }
             }
+            result
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
-        return result
     }
 
     private fun getSerializeFileName(key: String) = "$serializeDir/$key$SERIALIZE_FILE_SUFFIX"
