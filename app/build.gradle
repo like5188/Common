@@ -144,7 +144,7 @@ dependencies {
     implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'// 身份证识别
     implementation 'com.shouzhong:ScannerZBarLib:1.0.0'// zbar
 
-    implementation 'com.github.like5188:LiveDataRecyclerView:2.2.2'
+    implementation 'com.github.like5188:LiveDataRecyclerView:2.2.3'
 
     implementation project(':common')
 }
