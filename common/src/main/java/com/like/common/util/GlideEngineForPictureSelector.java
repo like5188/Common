@@ -17,7 +17,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.like.common.R;
 import com.luck.picture.lib.engine.ImageEngine;
-import com.luck.picture.lib.listener.ImageCompleteCallback;
+import com.luck.picture.lib.listener.OnImageCompleteCallback;
 import com.luck.picture.lib.tools.MediaUtils;
 import com.luck.picture.lib.widget.longimage.ImageSource;
 import com.luck.picture.lib.widget.longimage.ImageViewState;
@@ -55,9 +55,7 @@ public class GlideEngineForPictureSelector implements ImageEngine {
      * @param callback      网络图片加载回调监听
      */
     @Override
-    public void loadImage(@NonNull Context context, @NonNull String url,
-                          @NonNull ImageView imageView,
-                          SubsamplingScaleImageView longImageView, ImageCompleteCallback callback) {
+    public void loadImage(@NonNull Context context, @NonNull String url, @NonNull ImageView imageView, SubsamplingScaleImageView longImageView, OnImageCompleteCallback callback) {
         GlideApp.with(context)
                 .asBitmap()
                 .load(url)
@@ -188,8 +186,7 @@ public class GlideEngineForPictureSelector implements ImageEngine {
      * @param imageView 承载图片ImageView
      */
     @Override
-    public void loadAsGifImage(@NonNull Context context, @NonNull String url,
-                               @NonNull ImageView imageView) {
+    public void loadAsGifImage(@NonNull Context context, @NonNull String url, @NonNull ImageView imageView) {
         GlideApp.with(context)
                 .asGif()
                 .load(url)
