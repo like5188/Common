@@ -3,12 +3,13 @@
 package com.like.common.util
 
 import android.graphics.Paint
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 inline fun TextView.setDelLine() {
     this.paint.flags = Paint.STRIKE_THRU_TEXT_FLAG
@@ -48,4 +49,32 @@ inline fun TextView.setSpan(content: String, positions: IntArray, @ColorRes colo
         string.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, color)), it, it + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
     this.text = string
+}
+
+/**
+ * @param drawableOrientation   在[TextView]上调用 drawableStart、drawableTop、drawableEnd、drawableBottom 的标记。
+ * 分别对应：1、2、3、4
+ * @param width                 图片宽度，dp
+ * @param height                图片高度，dp
+ */
+fun TextView.setDrawable(drawableOrientation: Int, @DrawableRes resId: Int, width: Float, height: Float) {
+    val drawable = this.resources.getDrawable(resId)
+    drawable.setBounds(0, 0,
+            DimensionUtils.dp2px(this.context, width),
+            DimensionUtils.dp2px(this.context, height)
+    )// 这里使用了setCompoundDrawables()方法，必须设置图片大小
+    when (drawableOrientation) {
+        1 -> {
+            this.setCompoundDrawables(drawable, null, null, null)
+        }
+        2 -> {
+            this.setCompoundDrawables(null, drawable, null, null)
+        }
+        3 -> {
+            this.setCompoundDrawables(null, null, drawable, null)
+        }
+        4 -> {
+            this.setCompoundDrawables(null, null, null, drawable)
+        }
+    }
 }
