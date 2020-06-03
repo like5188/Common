@@ -46,21 +46,21 @@ abstract class BaseDialogFragment : DialogFragment() {
     fun show(fragmentManager: FragmentManager) {
         val tag = this::class.java.simpleName
         val fragment = fragmentManager.findFragmentByTag(tag)
-        if (fragment == null || !fragment.isAdded || fragment.isHidden) {
+        if (fragment == null && !this.isAdded) {
             try {
+                // 在每个add事务前增加一个remove事务，防止连续的add。造成java.lang.IllegalStateException: Fragment already added
+                fragmentManager.beginTransaction().remove(this).commit()
                 this.show(fragmentManager, tag)
             } catch (e: Exception) {// 相当于重写了 show() 方法，至于其中的 mDismissed、mShownByMe 这两个变量的值，在 try 中已经设置好了。
-                val ft = fragmentManager.beginTransaction()
-                ft.add(this, tag)
-                ft.commitAllowingStateLoss()
+                fragmentManager.beginTransaction().add(this, tag).commitAllowingStateLoss()
             }
         }
     }
 
     override fun dismiss() {
-        //防止横竖屏切换时 getFragmentManager置空引起的问题：
-        //Attempt to invoke virtual method 'android.app.FragmentTransaction
-        //android.app.FragmentManager.beginTransaction()' on a null object reference
+        // 防止横竖屏切换时 getFragmentManager置空引起的问题：
+        // Attempt to invoke virtual method 'android.app.FragmentTransaction
+        // android.app.FragmentManager.beginTransaction()' on a null object reference
         fragmentManager ?: return
         try {
             super.dismiss()
