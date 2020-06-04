@@ -101,6 +101,7 @@ dependencies {
 
     // 扫描器
     api 'com.shouzhong:Scanner:1.1.2-beta1'
+    api 'com.shouzhong:ScannerZBarLib:1.0.0'// zbar
 
     // rxbinding
     api 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
@@ -131,6 +132,12 @@ dependencies {
 
     // VideoView视频边播放边缓存
     api 'com.danikula:videocache:2.7.1'
+
+    // pdf浏览器
+    api 'es.voghdev.pdfviewpager:library:1.1.0'
+
+    // websocket
+    api 'org.java-websocket:Java-WebSocket:1.4.1'
 
     // 使用 Glide 时需要
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
