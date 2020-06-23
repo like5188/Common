@@ -97,8 +97,11 @@ fun TextView.showStringOptionsPickerView(list: List<String>?, onPick: ((Int) -> 
     if (list.isNullOrEmpty()) return
     val selectedPosition = list.indexOf(this.text)
     this.context.showStringOptionsPickerView(list, selectedPosition) { position ->
-        this.text = list[position]
-        onPick?.invoke(position)
+        val selectedText = list[position]
+        if (this.text != selectedText) {
+            this.text = selectedText
+            onPick?.invoke(position)
+        }
     }
 }
 
@@ -123,8 +126,10 @@ fun TextView.setOnClickShowStringOptionsPickerView(getList: () -> List<String>?,
 
 fun TextView.showTimePickerViewYear(onPick: ((String) -> Unit)? = null) {
     this.context.showTimePickerViewYear(this.text.toString()) { year ->
-        this.text = year
-        onPick?.invoke(year)
+        if (this.text != year) {
+            this.text = year
+            onPick?.invoke(year)
+        }
     }
 }
 
@@ -136,8 +141,10 @@ fun TextView.setOnClickShowTimePickerViewYear(onPick: ((String) -> Unit)? = null
 
 fun TextView.showTimePickerViewYearMonthDay(format: String = "yyyy-MM-dd", onPick: ((String) -> Unit)? = null) {
     this.context.showTimePickerViewYearMonthDay(this.text.toString(), format) { date ->
-        this.text = date
-        onPick?.invoke(date)
+        if (this.text != date) {
+            this.text = date
+            onPick?.invoke(date)
+        }
     }
 }
 
