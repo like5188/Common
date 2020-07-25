@@ -12,9 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
-import com.like.common.databinding.TitlebarCustomViewBinding
 import com.like.common.sample.activitytest.TestActivity
-import com.like.common.sample.cachevideoview.CacheVideoViewActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
@@ -45,10 +43,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        initDefaultTitlebar()
-//        initCustomTitlebar()
-        initOriginToolBar()
-//        initCustomToolbar()
+//        initDefaultTitlebar()
+        initCustomTitlebar()
+//        initOriginToolBar()
+        initCustomToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {
@@ -77,9 +75,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCustomTitlebar() {
         mBinding.titlebar.Custom().apply {
-            val leftBinding = setLeftView(R.layout.titlebar_custom_view) as TitlebarCustomViewBinding
-            val customViewManager = CustomViewManager(this@MainActivity, leftBinding)
+            val customViewManager = CustomViewManager(this@MainActivity)
             customViewManager.setTitle("哈哈哈哈啊哈")
+            setLeftView(customViewManager.getView())
 
             val centerBinding = setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
             centerBinding.tv1.text = "111111111111111"
@@ -161,7 +159,8 @@ class MainActivity : AppCompatActivity() {
         mBinding.tvTitle.setTextColor(Color.BLACK)
         (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.START
 
-        val customNavigationView = CustomViewManager(this, mBinding.navigationView)
+        val customNavigationView = CustomViewManager(this)
+        mBinding.toolbar.addView(customNavigationView.getView(), 0)
         customNavigationView.setIcon(R.drawable.icon_back)
         customNavigationView.setTitle("返回")
         customNavigationView.setOnClickListener(View.OnClickListener { shortToastCenter("返回") })
@@ -272,10 +271,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, TestActivity::class.java)
         intent.putExtra("name", "从 MainActivity 跳转过来")
         startActivity(intent)
-    }
-
-    fun gotoCacheVideoViewActivity(view: View) {
-        startActivity(Intent(this, CacheVideoViewActivity::class.java))
     }
 
 }

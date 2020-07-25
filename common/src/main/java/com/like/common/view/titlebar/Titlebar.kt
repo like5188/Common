@@ -177,6 +177,17 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         }
 
         /**
+         * 设置自定义的左边布局，它的父布局为[FrameLayout]。默认为null，会移除左边布局
+         */
+        fun setLeftView(view: View? = null) {
+            mBinding.leftContainer.removeAllViews()
+            if (view == null) {
+                return
+            }
+            mBinding.leftContainer.addView(view)
+        }
+
+        /**
          * 设置自定义的中间布局，它的父布局为[FrameLayout]。默认为null，会移除中间布局
          */
         fun setCenterView(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
@@ -185,6 +196,17 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 return null
             }
             return DataBindingUtil.inflate(mLayoutInflater, layoutId, mBinding.centerContainer, true)
+        }
+
+        /**
+         * 设置自定义的中间布局，它的父布局为[FrameLayout]。默认为null，会移除中间布局
+         */
+        fun setCenterView(view: View? = null) {
+            mBinding.centerContainer.removeAllViews()
+            if (view == null) {
+                return
+            }
+            mBinding.centerContainer.addView(view)
         }
 
         /**
@@ -199,6 +221,17 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         }
 
         /**
+         * 设置自定义的右边布局，它的父布局为[FrameLayout]。默认为null，会移除右边布局
+         */
+        fun setRightView(view: View? = null) {
+            mBinding.rightContainer.removeAllViews()
+            if (view == null) {
+                return
+            }
+            mBinding.rightContainer.addView(view)
+        }
+
+        /**
          * 设置自定义的分割线，它的父布局为[LinearLayout]。默认为null，会移除分割线
          */
         fun setDivider(@LayoutRes layoutId: Int? = null): ViewDataBinding? {
@@ -207,6 +240,17 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 return null
             }
             return DataBindingUtil.inflate(mLayoutInflater, layoutId, this@Titlebar, true)
+        }
+
+        /**
+         * 设置自定义的分割线，它的父布局为[LinearLayout]。默认为null，会移除分割线
+         */
+        fun setDivider(view: View? = null) {
+            removeView(mBinding.divider)
+            if (view == null) {
+                return
+            }
+            addView(view)
         }
 
         fun setBackgroundColor(@ColorInt color: Int) {

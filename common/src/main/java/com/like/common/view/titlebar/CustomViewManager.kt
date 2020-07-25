@@ -22,13 +22,12 @@ import com.like.common.view.badgeview.BadgeViewManager
  * 用于标题栏中的自定义按钮管理类。
  * 此按钮视图包括图标、文本、消息数三个元素。
  */
-class CustomViewManager(context: Context, binding: TitlebarCustomViewBinding? = null) {
-    private val mBinding: TitlebarCustomViewBinding by lazy {
-        binding ?: DataBindingUtil.inflate<TitlebarCustomViewBinding>(
+class CustomViewManager(context: Context) {
+    private val mBinding by lazy {
+        DataBindingUtil.inflate<TitlebarCustomViewBinding>(
                 LayoutInflater.from(context),
                 R.layout.titlebar_custom_view,
-                null, false
-        )
+                null, false)
     }
     private val mBadgeViewHelper: BadgeViewManager by lazy {
         BadgeViewManager(context, mBinding.cl)

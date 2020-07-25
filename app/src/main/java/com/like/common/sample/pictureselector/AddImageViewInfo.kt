@@ -6,7 +6,6 @@ import com.luck.picture.lib.entity.LocalMedia
 
 class AddImageViewInfo(val localMedia: LocalMedia, val des: String) : IItem {
     override var layoutId: Int = R.layout.view_image
-    override var variableId: Int = -1
     val imagePath: String = localMedia.path
     val compressImagePath: String = localMedia.compressPath
 
