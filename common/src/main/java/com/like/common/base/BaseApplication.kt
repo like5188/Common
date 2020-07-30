@@ -67,14 +67,14 @@ open class BaseApplication : Application() {
     /**
      * 关闭所有Activity，除了指定的Activity。
      */
-    fun <T : Activity> finishAllActivitiesExclude(vararg classes: Class<T>) {
+    fun <T : Activity> finishAllActivitiesExclude(vararg classes: Class<out T>) {
         activities.filter { !classes.contains(it::class.java) }.forEach { it.finish() }
     }
 
     /**
      * 关闭指定的所有Activity
      */
-    fun <T : Activity> finishAllActivitiesInclude(vararg classes: Class<T>) {
+    fun <T : Activity> finishAllActivitiesInclude(vararg classes: Class<out T>) {
         activities.filter { classes.contains(it::class.java) }.forEach { it.finish() }
     }
 
