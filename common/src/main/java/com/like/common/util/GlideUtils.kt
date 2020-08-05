@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
@@ -16,10 +15,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.BlurTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -128,71 +123,15 @@ class GlideUtils {
                 .submit(width, height)
     }
 
-    /**
-     * 下载图片
-     *
-     * @param url
-     * @param onSuccess 回调，UI线程
-     */
-    @SuppressLint("CheckResult")
-    fun downloadImage(url: String, onSuccess: (Bitmap) -> Unit, onFailure: ((Throwable) -> Unit)? = null) {
-        getDownloadImageObservable(url).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    onSuccess(it)
-                }, {
-                    onFailure?.invoke(it)
-                })
+    fun downloadImage(url: String): Bitmap {
+        val futureTarget = glideRequests
+                .asBitmap()
+                .load(url)
+                .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+        val bitmap = futureTarget.get()
+        glideRequests.clear(futureTarget)
+        return bitmap
     }
-
-    /**
-     * 批量下载图片
-     *
-     * @param urlList
-     * @param onSuccess 回调，UI线程
-     */
-    @SuppressLint("CheckResult")
-    fun downloadImages(urlList: List<String>, onSuccess: (Map<String, Bitmap>) -> Unit, onFailure: ((Throwable) -> Unit)? = null) {
-        getDownloadImagesObservable(urlList).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .collect({
-                    mutableMapOf<String, Bitmap>()
-                }, { map, pair ->
-                    map[pair.first] = pair.second
-                })
-                .subscribe({
-                    onSuccess(it)
-                }, {
-                    onFailure?.invoke(it)
-                })
-    }
-
-    private fun getDownloadImagesObservable(urlList: List<String>): Observable<Pair<String, Bitmap>> =
-            Observable.fromIterable(urlList)
-                    .flatMap<Pair<String, Bitmap>> { s ->
-                        val urlObservable = Observable.just(s)
-                        val bitmapObservable = getDownloadImageObservable(s)
-                        Observable.zip<String, Bitmap, Pair<String, Bitmap>>(
-                                urlObservable,
-                                bitmapObservable,
-                                BiFunction { t1, t2 -> Pair(t1, t2) }
-                        )
-                    }
-
-    private fun getDownloadImageObservable(url: String): Observable<Bitmap> =
-            Observable.create<Bitmap> { observableEmitter ->
-                try {
-                    val futureTarget = glideRequests
-                            .asBitmap()
-                            .load(url)
-                            .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                    val bitmap = futureTarget.get()
-                    glideRequests.clear(futureTarget)
-                    observableEmitter.onNext(bitmap)
-                    observableEmitter.onComplete()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    observableEmitter.onError(e)
-                }
-            }
 
 }
 

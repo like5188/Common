@@ -53,24 +53,4 @@ object ClickUtils {
         })
     }
 
-    /**
-     * 防抖动按钮点击（500毫秒内只触发一次点击事件）
-     *
-     * @param view
-     * @param clickListener
-     */
-    fun addOnClickListener(view: View, clickListener: View.OnClickListener) {
-        RxJavaUtils.addOnClickListener(500, view, clickListener)
-    }
-
-    /**
-     * 防抖动按钮点击（指定时间间隔内只触发一次点击事件）
-     *
-     * @param interval      时间间隔(毫秒)
-     * @param view
-     * @param clickListener
-     */
-    fun addOnClickListener(interval: Long, view: View, clickListener: View.OnClickListener) {
-        RxJavaUtils.addOnClickListener(interval, view, clickListener)
-    }
 }
