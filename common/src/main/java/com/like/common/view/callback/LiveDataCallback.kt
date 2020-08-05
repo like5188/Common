@@ -3,36 +3,24 @@ package com.like.common.view.callback
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.like.common.util.Logger
 
-class LiveDataCallback {
-    companion object {
-        private val TAG = LiveDataCallback::class.java.simpleName
-    }
-
+internal class LiveDataCallback {
     private val mFragment: LiveDataCallbackFragment
 
     constructor(fragment: Fragment) {
-        mFragment = getFragment(fragment.childFragmentManager)
+        mFragment = LiveDataCallbackFragment.getOrCreateIfAbsent(fragment.childFragmentManager)
     }
 
     constructor(fragmentActivity: FragmentActivity) {
-        mFragment = getFragment(fragmentActivity.supportFragmentManager)
-    }
-
-    private fun getFragment(fm: FragmentManager): LiveDataCallbackFragment {
-        var fragment = fm.findFragmentByTag(TAG) as? LiveDataCallbackFragment
-        if (fragment == null) {
-            fragment = LiveDataCallbackFragment()
-            fm.beginTransaction().add(fragment, TAG).commitNow()
-        }
-        return fragment
+        mFragment = LiveDataCallbackFragment.getOrCreateIfAbsent(fragmentActivity.supportFragmentManager)
     }
 
     fun startActivityForResult(intent: Intent): LiveData<Callback> =
             MutableLiveData<Callback>().apply {
+                Logger.w(mFragment)
                 mFragment.startActivityForResult(this, intent)
             }
 

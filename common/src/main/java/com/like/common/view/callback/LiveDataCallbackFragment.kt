@@ -2,11 +2,22 @@ package com.like.common.view.callback
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 
 internal class LiveDataCallbackFragment : androidx.fragment.app.Fragment() {
     companion object {
+        const val TAG = "LiveDataCallbackFragment"
         private const val REQUEST_CODE = 88
+
+        fun getOrCreateIfAbsent(fm: FragmentManager): LiveDataCallbackFragment {
+            var fragment = fm.findFragmentByTag(TAG) as? LiveDataCallbackFragment
+            if (fragment == null) {
+                fragment = LiveDataCallbackFragment()
+                fm.beginTransaction().add(fragment, TAG).commitNow()
+            }
+            return fragment
+        }
     }
 
     private var mLiveData: MutableLiveData<Callback>? = null
