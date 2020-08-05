@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.like.common.util.Logger
 
 internal class LiveDataCallback {
     private val mFragment: LiveDataCallbackFragment
@@ -20,7 +19,6 @@ internal class LiveDataCallback {
 
     fun startActivityForResult(intent: Intent): LiveData<Callback> =
             MutableLiveData<Callback>().apply {
-                Logger.w(mFragment)
                 mFragment.startActivityForResult(this, intent)
             }
 

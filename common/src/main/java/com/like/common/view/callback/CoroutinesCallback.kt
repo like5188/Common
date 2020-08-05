@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.like.common.util.Logger
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -35,7 +34,6 @@ internal class CoroutinesCallback {
             con.resume(it)
         })
 
-        Logger.e(mFragment)
         mFragment.startActivityForResult(liveData, intent)
     }
 
