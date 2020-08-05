@@ -46,6 +46,10 @@ dependencies {
     // 调色板
     api 'androidx.palette:palette:1.0.0'
 
+    // koin
+    api "org.koin:koin-androidx-viewmodel:2.1.6"
+
+    // rxpermissions
     api 'com.github.tbruyelle:rxpermissions:0.10.2'
 
     // arouter
@@ -59,7 +63,6 @@ dependencies {
 
     // room
     api 'androidx.room:room-runtime:2.2.5'
-    api 'androidx.room:room-rxjava2:2.2.5'
     api 'androidx.room:room-ktx:2.2.5'// room 对协程的支持：suspend
 
     // coroutines

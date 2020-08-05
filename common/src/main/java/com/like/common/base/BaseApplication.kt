@@ -3,8 +3,13 @@ package com.like.common.base
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import java.util.*
 
+/**
+ * 集成了 [koin]，对 [Activity] 进行了管理
+ */
 open class BaseApplication : Application() {
     companion object {
         lateinit var sInstance: BaseApplication
@@ -39,6 +44,11 @@ open class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // start Koin!
+        startKoin {
+            // Android context
+            androidContext(this@BaseApplication)
+        }
         sInstance = this
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
     }
