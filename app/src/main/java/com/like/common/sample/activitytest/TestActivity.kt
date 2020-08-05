@@ -8,10 +8,11 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
-import com.like.common.view.callback.LiveDataCallback
+import com.like.common.view.callback.CoroutinesCallback
+import kotlinx.coroutines.launch
 
 /**
  * Activity 相关的测试
@@ -131,10 +132,16 @@ class TestActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
     fun click4(view: View) {
-        LiveDataCallback(this).startActivityForResult(Intent(this, TestActivity1::class.java))
-                .observe(this, Observer {
-                    Log.d(TAG, "$it [${it.data?.getStringExtra("name")}]")
-                })
+        val intent = Intent(this, TestActivity1::class.java)
+//        LiveDataCallback(this).startActivityForResult(intent)
+//                .observe(this, Observer {
+//                    Log.d(TAG, "$it [${it.data?.getStringExtra("name")}]")
+//                })
+
+        lifecycleScope.launch {
+            val callback = CoroutinesCallback(this@TestActivity).startActivityForResult(intent)
+            Log.d(TAG, "$callback [${callback.data?.getStringExtra("name")}]")
+        }
     }
 
 }
