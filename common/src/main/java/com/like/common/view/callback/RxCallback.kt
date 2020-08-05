@@ -23,7 +23,7 @@ class RxCallback {
     }
 
     private fun getRxCallbackFragment(fm: FragmentManager): RxCallbackFragment {
-        var rxCallbackFragment = findRxCallbackFragment(fm)
+        var rxCallbackFragment = fm.findFragmentByTag(TAG) as? RxCallbackFragment
         if (rxCallbackFragment == null) {
             rxCallbackFragment = RxCallbackFragment()
             fm.beginTransaction().add(rxCallbackFragment, TAG).commitNow()
@@ -31,14 +31,9 @@ class RxCallback {
         return rxCallbackFragment
     }
 
-    private fun findRxCallbackFragment(fm: FragmentManager): RxCallbackFragment? {
-        return fm.findFragmentByTag(TAG) as RxCallbackFragment?
-    }
-
-    fun startActivityForResult(intent: Intent): Observable<Callback> {
-        val subject = PublishSubject.create<Callback>()
-        mFragment.startActivityForResult(subject, intent)
-        return subject
-    }
+    fun startActivityForResult(intent: Intent): Observable<Callback> =
+            PublishSubject.create<Callback>().apply {
+                mFragment.startActivityForResult(this, intent)
+            }
 
 }
