@@ -8,9 +8,10 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
-import com.like.common.view.callback.RxCallback
+import com.like.common.view.callback.LiveDataCallback
 
 /**
  * Activity 相关的测试
@@ -130,10 +131,10 @@ class TestActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
     fun click4(view: View) {
-        RxCallback(this).startActivityForResult(Intent(this, TestActivity1::class.java))
-                .subscribe {
-                    Log.d(TAG, "$it")
-                }
+        LiveDataCallback(this).startActivityForResult(Intent(this, TestActivity1::class.java))
+                .observe(this, Observer {
+                    Log.d(TAG, "$it [${it.data?.getStringExtra("name")}]")
+                })
     }
 
 }
