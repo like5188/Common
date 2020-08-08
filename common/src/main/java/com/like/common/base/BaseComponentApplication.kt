@@ -9,6 +9,12 @@ import com.alibaba.android.arouter.launcher.ARouter
 
 /**
  * 组件化架构时主程序使用，通过 [ModuleApplicationDelegate] 代理来管理组件 [IModuleApplication] 的生命周期。
+ * 注意：
+ * 1、[IModuleApplication]，是组件的 application 类必须实现的接口。组件的 application 类并没有真正继承 Application 类。
+ * 只是功能类似而已，都用于一些功能的初始化。实际上此类只是实现 IModuleApplication 接口，然后 BaseComponentApplication
+ * 类通过代理的方式来管理这些类的生命周期。
+ * 2、组件实现了此接口后，还必须要有一个 public 的无参构造函数，用于反射构造组件 Application 的实例。
+ * 3、必须在组件的 AndroidManifest.xml 文件中进行如下配置：<meta-data android:name="实现类的全限定类名" android:value="IModuleApplication" />
  *
  * 集成了 ARouter
  */
