@@ -35,6 +35,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -53,6 +57,9 @@ dependencies {
 
     // coil图片加载库
     api 'io.coil-kt:coil:0.12.0'
+    api 'io.coil-kt:coil-gif:0.12.0'
+    api 'io.coil-kt:coil-svg:0.12.0'
+    api 'io.coil-kt:coil-video:0.12.0'
 
     // room
     api 'androidx.room:room-runtime:2.2.5'
@@ -76,7 +83,7 @@ dependencies {
     api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // 图片选择器
-    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.3'
+    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.8'
 
     // 日期时间格式化工具
     api 'net.danlew:android.joda:2.10.1.2'
@@ -114,12 +121,6 @@ dependencies {
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0'
 //    // alternately - if using Java8, use the following instead of lifecycle-compiler
 //    api 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
-
-    // glide
-    api "com.github.bumptech.glide:glide:4.8.0"
-    api "com.github.bumptech.glide:okhttp3-integration:4.8.0"
-    api 'jp.wasabeef:glide-transformations:4.0.1'// glide对应的图片处理库，可以转换图片为圆形、圆角矩形、高斯模糊等等效果
-    kapt 'com.github.bumptech.glide:compiler:4.8.0'
 }
 
 // 引用脚本插件，其实这不能算一个插件，它只是一个脚本。应用脚本插件，其实就是把这个脚本加载进来，和二进制插件不同的是它使用的是from关键字.后面紧跟的坫一个脚本文件，可以是本地的，也可以是网络存在的

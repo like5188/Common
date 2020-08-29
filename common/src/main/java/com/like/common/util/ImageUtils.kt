@@ -28,18 +28,6 @@ import java.io.IOException
 object ImageUtils {
     private val TAG = ImageUtils::class.java.simpleName
 
-    // 获取圆角矩形需要的参数
-    const val CORNER_NONE = 0
-    const val CORNER_TOP_LEFT = 1
-    const val CORNER_TOP_RIGHT = 1 shl 1
-    const val CORNER_BOTTOM_LEFT = 1 shl 2
-    const val CORNER_BOTTOM_RIGHT = 1 shl 3
-    const val CORNER_ALL = CORNER_TOP_LEFT or CORNER_TOP_RIGHT or CORNER_BOTTOM_LEFT or CORNER_BOTTOM_RIGHT
-    const val CORNER_TOP = CORNER_TOP_LEFT or CORNER_TOP_RIGHT
-    const val CORNER_BOTTOM = CORNER_BOTTOM_LEFT or CORNER_BOTTOM_RIGHT
-    const val CORNER_LEFT = CORNER_TOP_LEFT or CORNER_BOTTOM_LEFT
-    const val CORNER_RIGHT = CORNER_TOP_RIGHT or CORNER_BOTTOM_RIGHT
-
     /**
      * 从 Drawable 中提取颜色
      */
@@ -134,80 +122,6 @@ object ImageUtils {
             bitmap
         }
         else -> null
-    }
-
-    /**
-     * 转换成圆角图片
-     *
-     * @param bitmap
-     * @param roundPx   圆角半径，单位px
-     * @param corners   [CORNER_ALL]等等
-     */
-    @JvmStatic
-    fun getRoundedCornersBitmap(bitmap: Bitmap, roundPx: Int, corners: Int): Bitmap {
-        try {
-            // 其原理就是：先建立一个与图片大小相同的透明的Bitmap画板
-            // 然后在画板上画出一个想要的形状的区域。
-            // 最后把源图片帖上。
-            val width = bitmap.width
-            val height = bitmap.height
-
-            val result = createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(result)
-            canvas.drawARGB(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
-
-            val paint = Paint()
-            paint.isAntiAlias = true
-            paint.color = Color.BLACK
-
-            //画出4个圆角
-            val rectF = RectF(0f, 0f, width.toFloat(), height.toFloat())
-            canvas.drawRoundRect(rectF, roundPx.toFloat(), roundPx.toFloat(), paint)
-
-            //把不需要的圆角去掉
-            val notRoundedCorners = corners xor CORNER_ALL
-            if (notRoundedCorners and CORNER_TOP_LEFT != 0) {
-                clipTopLeft(canvas, paint, roundPx, width, height)
-            }
-            if (notRoundedCorners and CORNER_TOP_RIGHT != 0) {
-                clipTopRight(canvas, paint, roundPx, width, height)
-            }
-            if (notRoundedCorners and CORNER_BOTTOM_LEFT != 0) {
-                clipBottomLeft(canvas, paint, roundPx, width, height)
-            }
-            if (notRoundedCorners and CORNER_BOTTOM_RIGHT != 0) {
-                clipBottomRight(canvas, paint, roundPx, width, height)
-            }
-            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-
-            //帖子图
-            val src = Rect(0, 0, width, height)
-            canvas.drawBitmap(bitmap, src, src, paint)
-            return result
-        } catch (exp: Exception) {
-            return bitmap
-        }
-
-    }
-
-    private fun clipTopLeft(canvas: Canvas, paint: Paint, offset: Int, width: Int, height: Int) {
-        val block = Rect(0, 0, offset, offset)
-        canvas.drawRect(block, paint)
-    }
-
-    private fun clipTopRight(canvas: Canvas, paint: Paint, offset: Int, width: Int, height: Int) {
-        val block = Rect(width - offset, 0, width, offset)
-        canvas.drawRect(block, paint)
-    }
-
-    private fun clipBottomLeft(canvas: Canvas, paint: Paint, offset: Int, width: Int, height: Int) {
-        val block = Rect(0, height - offset, offset, height)
-        canvas.drawRect(block, paint)
-    }
-
-    private fun clipBottomRight(canvas: Canvas, paint: Paint, offset: Int, width: Int, height: Int) {
-        val block = Rect(width - offset, height - offset, width, height)
-        canvas.drawRect(block, paint)
     }
 
     /**
@@ -367,7 +281,7 @@ object ImageUtils {
      * 由于是在原bitmap的基础之上生成的,占内存,效率低
      *
      * @param bitmap
-     * @param maxSize 限制的最大大小。KB
+     * @param maxSize 所占内存的最大值。KB
      */
     @JvmStatic
     fun scaleByMatrix(context: Context, bitmap: Bitmap?, maxSize: Int): Bitmap? {

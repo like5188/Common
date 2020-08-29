@@ -7,11 +7,11 @@ import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableBoolean
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ViewAddImageBinding
 import com.like.common.sample.databinding.ViewImageBinding
-import com.like.common.util.GlideEngineForPictureSelector
-import com.like.common.util.GlideUtils
+import com.like.common.util.CoilEngine
 import com.like.common.util.VibrateUtils
 import com.like.livedatarecyclerview.adapter.BaseAddImageViewAdapter
 import com.like.livedatarecyclerview.model.IRecyclerViewItem
@@ -25,7 +25,6 @@ import com.luck.picture.lib.listener.OnResultCallbackListener
 class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView: RecyclerView, @DrawableRes addImageResId: Int)
     : BaseAddImageViewAdapter(recyclerView, AddInfo(addImageResId), 9) {
     private val deleteButtonShown: ObservableBoolean = ObservableBoolean()
-    private val mGlideUtils = GlideUtils(activity)
 
     fun add(localMedias: List<LocalMedia>) {
         // 去掉已经添加过的
@@ -51,15 +50,15 @@ class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView
                             PictureSelector.create(activity)
                                     .openGallery(PictureMimeType.ofImage())
                                     .maxSelectNum(9)
-                                    .loadImageEngine(GlideEngineForPictureSelector.createGlideEngine())
-                                    .selectionMedia(getLocalMedias())
+                                    .imageEngine(CoilEngine.create())
+                                    .selectionData(getLocalMedias())
                                     .imageSpanCount(3)// 每行显示个数 int
                                     .selectionMode(PictureConfig.MULTIPLE)// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
-                                    .previewImage(true)// 是否可预览图片 true or false
+                                    .isPreviewImage(true)// 是否可预览图片 true or false
                                     .isCamera(true)// 是否显示拍照按钮 true or false
                                     .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                                    .compress(true)// 是否压缩 true or false
-                                    .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
+                                    .isCompress(true)// 是否压缩 true or false
+                                    .isPreviewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
                                     .minimumCompressSize(100)// 小于100kb的图片不压缩
                                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                                         override fun onResult(result: MutableList<LocalMedia>?) {
@@ -95,7 +94,7 @@ class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView
             }
             is AddImageViewInfo -> {// 添加的图片
                 val binding = holder.binding as ViewImageBinding
-                mGlideUtils.display(item.compressImagePath, binding.iv)
+                binding.iv.load(item.compressImagePath)
                 binding.tv.text = item.des
                 binding.root.setOnLongClickListener {
                     // 显示删除按钮
@@ -111,7 +110,7 @@ class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView
                     PictureSelector.create(activity)
                             .themeStyle(R.style.picture_default_style)
                             .isNotPreviewDownload(true)
-                            .loadImageEngine(GlideEngineForPictureSelector.createGlideEngine()) // 请参考Demo GlideEngine.java
+                            .imageEngine(CoilEngine.create()) // 请参考Demo GlideEngine.java
                             .openExternalPreview(position, getLocalMedias())
                 }
                 binding.ivDelete.setOnClickListener {

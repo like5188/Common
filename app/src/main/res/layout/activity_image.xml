@@ -60,32 +60,6 @@
                 android:scaleType="fitCenter" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/iv_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
-
-            <Space
-                android:layout_width="5dp"
-                android:layout_height="wrap_content" />
-
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/iv_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
-        </LinearLayout>
-
     </LinearLayout>
 
 </layout>

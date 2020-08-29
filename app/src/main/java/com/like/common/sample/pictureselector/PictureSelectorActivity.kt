@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityPictureSelectorBinding
-import com.like.common.util.GlideEngineForPictureSelector
+import com.like.common.util.CoilEngine
 import com.like.livedatarecyclerview.layoutmanager.WrapGridLayoutManager
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureMimeType
@@ -39,8 +39,8 @@ class PictureSelectorActivity : AppCompatActivity() {
         // 快捷调用，单独启动拍照或视频 根据PictureMimeType自动识别
         PictureSelector.create(this)
                 .openCamera(PictureMimeType.ofImage())
-                .loadImageEngine(GlideEngineForPictureSelector.createGlideEngine()) // 请参考Demo GlideEngine.java
-                .compress(true)// 是否压缩
+                .imageEngine(CoilEngine.create())
+                .isCompress(true)// 是否压缩
                 .compressQuality(60)// 图片压缩后输出质量
                 .forResult(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: MutableList<LocalMedia>?) {

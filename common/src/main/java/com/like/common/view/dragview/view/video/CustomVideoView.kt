@@ -3,8 +3,8 @@ package com.like.common.view.dragview.view.video
 import android.content.Context
 import android.view.MotionEvent
 import android.widget.Toast
+import coil.load
 import com.danikula.videocache.HttpProxyCacheServer
-import com.like.common.util.GlideUtils
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
@@ -16,7 +16,6 @@ import com.like.common.view.dragview.view.util.postDelayed
  * 封装了缩略图、进度条、VideoView
  */
 class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, info) {
-    private val mGlideUtils: GlideUtils by lazy { GlideUtils(context) }
     private val mViewFactory: ViewFactory by lazy {
         ViewFactory(this).apply {
             mVideoView.setOnPreparedListener {
@@ -65,7 +64,7 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
         }
         mViewFactory.addThumbnailImageView()
         mViewFactory.addProgressBar()
-        mGlideUtils.display(url, mViewFactory.mThumbnailImageView)
+        mViewFactory.mThumbnailImageView.load(url)
     }
 
     private fun playVideo(url: String) {

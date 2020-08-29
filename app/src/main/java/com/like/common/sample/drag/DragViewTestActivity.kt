@@ -7,9 +7,9 @@ import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import coil.load
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityDragphotoviewBinding
-import com.like.common.util.GlideUtils
 import com.like.common.util.ioThread
 import com.like.common.view.dragview.DragViewManager
 import java.io.File
@@ -44,8 +44,6 @@ class DragViewTestActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityDragphotoviewBinding>(this, R.layout.activity_dragphotoview)
     }
 
-    private val glideUtils: GlideUtils by lazy { GlideUtils(this) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -58,10 +56,10 @@ class DragViewTestActivity : AppCompatActivity() {
 //        copyAssets2Sd(this, "image_1.jpg", imageUrl1)
 //        copyAssets2Sd(this, "image_2.jpg", imageUrl2)
 
-        glideUtils.display(imageUrl0, mBinding.iv0)
-        glideUtils.display(imageUrl1, mBinding.iv1)
-        glideUtils.display(imageUrl2, mBinding.iv2)
-        glideUtils.display(videoImageUrl, mBinding.iv3)
+        mBinding.iv0.load(imageUrl0)
+        mBinding.iv1.load(imageUrl1)
+        mBinding.iv2.load(imageUrl2)
+        mBinding.iv3.load(videoImageUrl)
     }
 
     private fun copyAssets2Sd(context: Context, assetFileName: String, sdFilePath: String) {

@@ -126,6 +126,10 @@ android {
         exclude 'META-INF/proguard/coroutines.pro'
         exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 // 定义了当前项目需要依赖的其他库。
