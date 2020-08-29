@@ -72,7 +72,6 @@
     MD5Utils
     NetWorkEx.kt
     NotificationEx.kt
-    PermissionUtils
     PhoneUtils
     PickerViewEx.kt
     PopupWindowEx.kt
@@ -105,7 +104,6 @@
 4、自定义View
 ```java
     badgeview
-    callback
     dragview
     pwdedittext
     titlebar

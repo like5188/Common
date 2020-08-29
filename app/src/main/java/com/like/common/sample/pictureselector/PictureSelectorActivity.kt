@@ -1,14 +1,15 @@
 package com.like.common.sample.pictureselector
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityPictureSelectorBinding
 import com.like.common.util.GlideEngineForPictureSelector
-import com.like.common.util.PermissionUtils
 import com.like.livedatarecyclerview.layoutmanager.WrapGridLayoutManager
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureMimeType
@@ -21,15 +22,11 @@ class PictureSelectorActivity : AppCompatActivity() {
         const val TAG = "PictureSelectorActivity"
     }
 
-    private val mBinding: ActivityPictureSelectorBinding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityPictureSelectorBinding>(this, R.layout.activity_picture_selector)
     }
-    private val mAddImageViewAdapter: MyAddImageViewAdapter by lazy {
+    private val mAddImageViewAdapter by lazy {
         MyAddImageViewAdapter(this, mBinding.rv, R.drawable.icon_take_photo)
-    }
-
-    private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +42,9 @@ class PictureSelectorActivity : AppCompatActivity() {
                 .loadImageEngine(GlideEngineForPictureSelector.createGlideEngine()) // 请参考Demo GlideEngine.java
                 .compress(true)// 是否压缩
                 .compressQuality(60)// 图片压缩后输出质量
-                .forResult(object :OnResultCallbackListener<LocalMedia>{
+                .forResult(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: MutableList<LocalMedia>?) {
-                        if(result.isNullOrEmpty()) return
+                        if (result.isNullOrEmpty()) return
                         // 例如 LocalMedia 里面返回五种path
                         // 1.media.getPath(); 为原图path
                         // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
@@ -75,12 +72,14 @@ class PictureSelectorActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mPermissionUtils.checkStoragePermissionGroup {
-            //包括裁剪和压缩后的缓存，要在上传成功后调用，type 指的是图片or视频缓存取决于你设置的ofImage或ofVideo 注意：需要系统sd卡权限
-            PictureFileUtils.deleteCacheDirFile(this, PictureMimeType.ofImage())
-            // 清除所有缓存 例如：压缩、裁剪、视频、音频所生成的临时文件
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                //包括裁剪和压缩后的缓存，要在上传成功后调用，type 指的是图片or视频缓存取决于你设置的ofImage或ofVideo 注意：需要系统sd卡权限
+                PictureFileUtils.deleteCacheDirFile(this, PictureMimeType.ofImage())
+                // 清除所有缓存 例如：压缩、裁剪、视频、音频所生成的临时文件
 //            PictureFileUtils.deleteAllCacheDirFile(this)
-        }
+            }
+        }.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
 }

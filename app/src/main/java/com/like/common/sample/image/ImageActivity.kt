@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityImageBinding
 import com.like.common.util.ImageUtils
-import com.like.common.util.PermissionUtils
 import com.like.common.util.StorageUtils
-import com.like.common.util.ioThread
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
@@ -27,14 +27,11 @@ class ImageActivity : AppCompatActivity() {
     private val bitmap: Bitmap by lazy {
         BitmapFactory.decodeFile(file.absolutePath)
     }
-    private val mPermissionUtils: PermissionUtils by lazy {
-        PermissionUtils(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        ioThread {
+        lifecycleScope.launch {
             if (!file.exists()) {
                 file.createNewFile()
             }
@@ -43,43 +40,35 @@ class ImageActivity : AppCompatActivity() {
     }
 
     fun matrix1(view: View) {
-        mPermissionUtils.checkStoragePermissionGroup {
-            ioThread {
-                showOriginBitmap(bitmap)
-                val compressBitmap = ImageUtils.scaleByMatrix(bitmap, 1000)
-                showCompressBitmap(compressBitmap)
-            }
+        lifecycleScope.launch {
+            showOriginBitmap(bitmap)
+            val compressBitmap = ImageUtils.scaleByMatrix(this@ImageActivity, bitmap, 1000)
+            showCompressBitmap(compressBitmap)
         }
     }
 
     fun matrix2(view: View) {
-        mPermissionUtils.checkStoragePermissionGroup {
-            ioThread {
-                showOriginBitmap(bitmap)
-                val compressBitmap = ImageUtils.scaleByMatrix(bitmap, 480, 800)
-                showCompressBitmap(compressBitmap)
-            }
+        lifecycleScope.launch {
+            showOriginBitmap(bitmap)
+            val compressBitmap = ImageUtils.scaleByMatrix(this@ImageActivity, bitmap, 480, 800)
+            showCompressBitmap(compressBitmap)
         }
     }
 
     fun options(view: View) {
-        mPermissionUtils.checkStoragePermissionGroup {
-            ioThread {
-                showOriginBitmap(bitmap)
-                val compressBitmap = ImageUtils.scaleByOptions(file.absolutePath, 480, 800)
-                showCompressBitmap(compressBitmap)
-            }
+        lifecycleScope.launch {
+            showOriginBitmap(bitmap)
+            val compressBitmap = ImageUtils.scaleByOptions(this@ImageActivity, file.absolutePath, 480, 800)
+            showCompressBitmap(compressBitmap)
         }
     }
 
     fun quality(view: View) {
-        mPermissionUtils.checkStoragePermissionGroup {
-            ioThread {
-                showOriginBitmap(bitmap)
-                val compressFile = File(StorageUtils.InternalStorageHelper.getCacheDir(this), "cache2.jpg")
-                ImageUtils.compressByQualityAndStore(bitmap, 1000, compressFile)
-                showCompressBitmap(BitmapFactory.decodeFile(compressFile.absolutePath))
-            }
+        lifecycleScope.launch {
+            showOriginBitmap(bitmap)
+            val compressFile = File(StorageUtils.InternalStorageHelper.getCacheDir(this@ImageActivity), "cache2.jpg")
+            ImageUtils.compressByQualityAndStore(this@ImageActivity, bitmap, 1000, compressFile)
+            showCompressBitmap(BitmapFactory.decodeFile(compressFile.absolutePath))
         }
     }
 

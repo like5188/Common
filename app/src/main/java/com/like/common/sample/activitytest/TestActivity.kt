@@ -6,15 +6,12 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
-import com.like.common.view.callback.startActivityForLiveDataResult
-import com.like.common.view.callback.startActivityForResult
-import kotlinx.coroutines.launch
+import com.like.common.util.Logger
 
 /**
  * Activity 相关的测试
@@ -121,10 +118,6 @@ class TestActivity : AppCompatActivity() {
     }
 
     fun click1(view: View) {
-        this.startActivityForLiveDataResult(Intent(this, TestActivity1::class.java))
-                .observe(this, Observer {
-                    Log.v(TAG, "$it [${it.data?.getStringExtra("name")}]")
-                })
     }
 
     fun click2(view: View) {
@@ -137,10 +130,9 @@ class TestActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
     fun click4(view: View) {
-        lifecycleScope.launch {
-            val callback = this@TestActivity.startActivityForResult(Intent(this@TestActivity, TestActivity1::class.java))
-            Log.d(TAG, "$callback [${callback.data?.getStringExtra("name")}]")
-        }
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            Logger.e(it)
+        }.launch(Intent(this@TestActivity, TestActivity1::class.java))
     }
 
 }
