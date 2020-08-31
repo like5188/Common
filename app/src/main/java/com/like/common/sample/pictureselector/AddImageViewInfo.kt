@@ -1,7 +1,7 @@
 package com.like.common.sample.pictureselector
 
 import com.like.common.sample.R
-import com.like.livedatarecyclerview.model.IItem
+import com.like.recyclerview.model.IItem
 import com.luck.picture.lib.entity.LocalMedia
 
 class AddImageViewInfo(val localMedia: LocalMedia, val des: String) : IItem {

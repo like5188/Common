@@ -2,7 +2,7 @@ package com.like.common.sample.pictureselector
 
 import androidx.annotation.DrawableRes
 import com.like.common.sample.R
-import com.like.livedatarecyclerview.model.IItem
+import com.like.recyclerview.model.IItem
 
 /**
  * +号视图需要的数据

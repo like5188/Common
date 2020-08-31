@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityPictureSelectorBinding
 import com.like.common.util.CoilEngine
-import com.like.livedatarecyclerview.layoutmanager.WrapGridLayoutManager
+import com.like.recyclerview.layoutmanager.WrapGridLayoutManager
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia

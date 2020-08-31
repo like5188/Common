@@ -13,9 +13,9 @@ import com.like.common.sample.databinding.ViewAddImageBinding
 import com.like.common.sample.databinding.ViewImageBinding
 import com.like.common.util.CoilEngine
 import com.like.common.util.VibrateUtils
-import com.like.livedatarecyclerview.adapter.BaseAddImageViewAdapter
-import com.like.livedatarecyclerview.model.IRecyclerViewItem
-import com.like.livedatarecyclerview.viewholder.CommonViewHolder
+import com.like.recyclerview.ext.adapter.BaseAddImageViewAdapter
+import com.like.recyclerview.model.IRecyclerViewItem
+import com.like.recyclerview.viewholder.CommonViewHolder
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
