@@ -2,6 +2,7 @@ package com.like.common.base
 
 import android.app.Activity
 import android.app.Application
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -99,4 +100,11 @@ open class BaseApplication : Application() {
     }
 
     fun getAllActivities(): List<Activity> = activities
+
+    /**
+     * 这里参考https://www.cnblogs.com/zhujiabin/p/6874508.html
+     */
+    fun isDebug(): Boolean {
+        return applicationInfo != null && (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+    }
 }

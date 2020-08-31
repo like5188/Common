@@ -2,10 +2,8 @@ package com.like.common.base
 
 import android.app.Application
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.util.Log
-import com.alibaba.android.arouter.launcher.ARouter
 
 /**
  * 组件化架构时主程序使用，通过 [ModuleApplicationDelegate] 代理来管理组件 [IModuleApplication] 的生命周期。
@@ -15,8 +13,6 @@ import com.alibaba.android.arouter.launcher.ARouter
  * 类通过代理的方式来管理这些类的生命周期。
  * 2、组件实现了此接口后，还必须要有一个 public 的无参构造函数，用于反射构造组件 Application 的实例。
  * 3、必须在组件的 AndroidManifest.xml 文件中进行如下配置：<meta-data android:name="实现类的全限定类名" android:value="IModuleApplication" />
- *
- * 集成了 ARouter
  */
 open class BaseComponentApplication : BaseApplication() {
     /**
@@ -31,19 +27,12 @@ open class BaseComponentApplication : BaseApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        // ARouter
-        if (isDebug(this)) {  // 这两行必须写在init之前，否则这些配置在init过程中将无效
-            ARouter.openLog()     // 打印日志
-            ARouter.openDebug()   // 开启调试模式(如果在InstantRun模式下运行，必须开启调试模式！线上版本需要关闭,否则有安全风险)
-        }
-        ARouter.init(this) // 尽可能早，推荐在Application中初始化
         // 初始化组件的Application
         mModuleApplicationDelegate.onCreate(this)
     }
 
     override fun onTerminate() {
         super.onTerminate()
-        ARouter.getInstance().destroy()
         mModuleApplicationDelegate.onTerminate(this)
     }
 
@@ -51,14 +40,8 @@ open class BaseComponentApplication : BaseApplication() {
      * 获取组件Application的实例
      */
     fun getModuleApplication(clazz: Class<out IModuleApplication>) =
-        mModuleApplicationDelegate.getModuleApplication(clazz.name)
+            mModuleApplicationDelegate.getModuleApplication(clazz.name)
 
-    /**
-     * 这里参考https://www.cnblogs.com/zhujiabin/p/6874508.html
-     */
-    private fun isDebug(context: Context): Boolean {
-        return context.applicationInfo != null && (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-    }
 }
 
 /**
