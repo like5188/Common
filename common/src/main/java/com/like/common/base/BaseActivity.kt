@@ -6,9 +6,6 @@ import android.widget.Toast
 
 /**
  * 封装了双击返回键退出程序功能
- *
- * 要使用 ARouter 来接收参数，请在 onCreate 方法中加上：ARouter.getInstance().inject(this)。
- * 然后在需要为每一个参数声明一个字段，并使用 @Autowired 标注，这样 ARouter 会自动对字段进行赋值，无需主动获取
  */
 abstract class BaseActivity : AppCompatActivity() {
     companion object {

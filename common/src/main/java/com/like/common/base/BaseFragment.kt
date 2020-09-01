@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment
  * transaction.hide(aFragment);</br>
  * transaction.show(aFragment);</br>
  *
- * 要使用 ARouter 来接收参数，请在[onCreate]方法中加上：ARouter.getInstance().inject(this)。
- * 然后对通过 ARouter 传递过来的参数声明一个字段，并使用 @Autowired 标注，这样 ARouter 会自动对字段进行赋值，无需主动获取
  * eg:</br>
  * @Autowired
  * @JvmField
