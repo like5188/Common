@@ -7,6 +7,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 
+/*
+ * 启动Activity，传递参数的注入等
+ */
+
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
     startActivity(createIntent<T>(*params))
 }
@@ -35,7 +39,10 @@ inline fun <reified T : Activity> Fragment.startActivityForResult(vararg params:
  * 注意：字段名必须与传递参数的key一致
  */
 fun Activity.injectForIntentExtras() {
-    val extras = intent.extras ?: return
+    val extras = intent.extras
+    if (extras == null || extras.isEmpty) {
+        return
+    }
     try {
         javaClass.declaredFields.forEach { field ->
             if (field.isAnnotationPresent(AutoWired::class.java)) {
