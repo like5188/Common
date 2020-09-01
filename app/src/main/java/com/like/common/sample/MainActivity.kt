@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.activitytest.TestActivity
+import com.like.common.sample.autowired.AutoWiredActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
@@ -27,10 +28,7 @@ import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.zxing.ZXingActivity
-import com.like.common.util.SPUtils
-import com.like.common.util.setSelectorBackgroundResource
-import com.like.common.util.setSelectorSrcResource
-import com.like.common.util.shortToastCenter
+import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -208,6 +206,16 @@ class MainActivity : AppCompatActivity() {
         }
         view_flipper.flipInterval = 3000
         view_flipper.startFlipping()
+    }
+
+    fun gotoAutoWiredActivity(view: View) {
+        startActivity<AutoWiredActivity>(
+                "param1" to 1,
+                "param2" to null,
+                "param" to "3",
+                "param4" to 4.0,
+                "param5" to listOf(AutoWiredActivity.P("5"), AutoWiredActivity.P("6"))
+        )
     }
 
     fun gotoZXingActivity(view: View) {

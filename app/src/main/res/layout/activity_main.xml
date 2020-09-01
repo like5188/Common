@@ -98,6 +98,13 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:onClick="gotoAutoWiredActivity"
+                    android:text="AutoWired测试"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:onClick="gotoZXingActivity"
                     android:text="ZXing测试"
                     android:textAllCaps="false" />

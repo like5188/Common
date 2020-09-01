@@ -2,13 +2,16 @@ package com.like.common.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
 
 /*
- * 启动Activity，传递参数的注入等
+ * startActivity
+ * startActivityForResult
+ * 权限请求
+ * Intent传递的参数的注入等
  */
 
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
@@ -21,41 +24,77 @@ inline fun <reified T : Activity> ComponentActivity.startActivityForResult(varar
     }.launch(createIntent<T>(*params))
 }
 
-inline fun <reified T : Activity> Fragment.startActivity(vararg params: Pair<String, Any?>) {
-    val act = activity ?: return
-    startActivity(act.createIntent<T>(*params))
+inline fun <reified T : Activity> ComponentActivity.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            callback(it.data)
+        }
+    }.launch(createIntent<T>(*params))
 }
 
-inline fun <reified T : Activity> Fragment.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (ActivityResult) -> Unit) {
-    val act = activity ?: return
-    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+inline fun ComponentActivity.requestPermission(permission: String, crossinline callback: (Boolean) -> Unit) {
+    registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         callback(it)
-    }.launch(act.createIntent<T>(*params))
+    }.launch(permission)
+}
+
+inline fun ComponentActivity.requestPermissionTrue(permission: String, crossinline callback: () -> Unit) {
+    registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        if (it) {
+            callback()
+        }
+    }.launch(permission)
+}
+
+inline fun ComponentActivity.requestPermissions(vararg permissions: String, crossinline callback: (Map<String, Boolean>) -> Unit) {
+    registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        callback(it)
+    }.launch(permissions)
+}
+
+inline fun ComponentActivity.requestPermissionsTrue(vararg permissions: String, crossinline callback: () -> Unit) {
+    registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        if (it.values.all { it }) {
+            callback()
+        }
+    }.launch(permissions)
 }
 
 /**
  * 通过反射从[android.content.Intent]中获取参数值，并赋值给被[AutoWired]注解的字段。
+ * 例子：
+ * @AutoWired
+ * private var param4: Int? = null
+ * @AutoWired
+ * private var param5: List<P>? = null
  *
- * 注意：字段名必须与传递参数的key一致
+ * 注意：
+ * 1、[android.content.Intent]中传递的参数的key必须和字段名一致。
+ * 如果不一致，则会警告：@AutoWired field com.like.common.sample.autowired.AutoWiredActivity.param3 not found
+ * 2、数据类型必须一致。
+ * 如果不一致，则会抛异常：[java.lang.IllegalArgumentException]
  */
+@Throws(java.lang.IllegalArgumentException::class)
 fun Activity.injectForIntentExtras() {
-    val extras = intent.extras
-    if (extras == null || extras.isEmpty) {
+    val declaredFields = try {
+        javaClass.declaredFields
+    } catch (e: Exception) {
+        null
+    }
+    if (declaredFields.isNullOrEmpty()) {
         return
     }
-    try {
-        javaClass.declaredFields.forEach { field ->
-            if (field.isAnnotationPresent(AutoWired::class.java)) {
-                val key = field.name
-                if (!extras.containsKey(key)) {
-                    Logger.w("Field $key Annotated by @AutoWired not found in ${javaClass.simpleName}")
-                    return
-                }
+
+    val extras = intent.extras
+    for (field in declaredFields) {
+        if (field.isAnnotationPresent(AutoWired::class.java)) {
+            val key = field.name
+            if (extras?.containsKey(key) == true) {
                 field.isAccessible = true
                 field.set(this, extras[key])
+                continue
             }
+            Logger.w("@AutoWired field ${javaClass.name}.$key not found")
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
     }
 }
