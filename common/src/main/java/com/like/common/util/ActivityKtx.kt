@@ -5,15 +5,29 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
+import androidx.fragment.app.Fragment
+import com.like.common.base.BaseApplication
 
 /*
- * startActivity
- * startActivityForResult
- * Intent传递的参数的注入等
+ * 启动Activity
+ * 启动Activity时，通过Intent传递的参数的注入
  */
+
+inline fun <reified T : Activity> startActivityByApplication(vararg params: Pair<String, Any?>) {
+    BaseApplication.sInstance.apply {
+        val intent = createIntent<T>(*params).newTask()
+        startActivity(intent)
+    }
+}
 
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
     val intent = createIntent<T>(*params)
+    startActivity(intent)
+}
+
+inline fun <reified T : Activity> Fragment.startActivity(vararg params: Pair<String, Any?>) {
+    val act = activity ?: throw IllegalStateException("Fragment $this not attached to Activity")
+    val intent = act.createIntent<T>(*params)
     startActivity(intent)
 }
 
@@ -22,8 +36,20 @@ inline fun <reified T : Activity> ComponentActivity.startActivityForResult(varar
     startActivityForResult(intent, callback)
 }
 
+inline fun <reified T : Activity> Fragment.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (ActivityResult) -> Unit) {
+    val act = activity ?: throw IllegalStateException("Fragment $this not attached to Activity")
+    val intent = act.createIntent<T>(*params)
+    startActivityForResult(intent, callback)
+}
+
 inline fun <reified T : Activity> ComponentActivity.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
     val intent = createIntent<T>(*params)
+    startActivityForResultOk(intent, callback)
+}
+
+inline fun <reified T : Activity> Fragment.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
+    val act = activity ?: throw IllegalStateException("Fragment $this not attached to Activity")
+    val intent = act.createIntent<T>(*params)
     startActivityForResultOk(intent, callback)
 }
 
