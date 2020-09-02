@@ -1,6 +1,5 @@
 package com.like.common.sample.activitytest
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -118,6 +117,9 @@ class TestActivity : AppCompatActivity() {
     }
 
     fun click1(view: View) {
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            Logger.e(it)
+        }.launch(Intent(this@TestActivity, TestActivity1::class.java))
     }
 
     fun click2(view: View) {
@@ -128,11 +130,8 @@ class TestActivity : AppCompatActivity() {
         startActivity(Intent(this, TestActivity3::class.java))
     }
 
-    @SuppressLint("CheckResult")
     fun click4(view: View) {
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            Logger.e(it)
-        }.launch(Intent(this@TestActivity, TestActivity1::class.java))
+        startActivity(Intent(this, LaunchModeActivity1::class.java))
     }
 
 }
