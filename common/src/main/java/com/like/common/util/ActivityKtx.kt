@@ -2,17 +2,11 @@ package com.like.common.util
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResult
-import androidx.fragment.app.Fragment
 import com.like.common.base.BaseApplication
 
-/*
- * 启动Activity
- * 启动Activity时，通过Intent传递的参数的注入
+/**
+ * 通过[Application]启动[Activity]
  */
-
 inline fun <reified T : Activity> startActivityByApplication(vararg params: Pair<String, Any?>) {
     BaseApplication.sInstance.apply {
         val intent = createIntent<T>(*params).newTask()
@@ -20,41 +14,16 @@ inline fun <reified T : Activity> startActivityByApplication(vararg params: Pair
     }
 }
 
+/**
+ * 通过[Context]启动[Activity]
+ */
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
     val intent = createIntent<T>(*params)
     startActivity(intent)
 }
 
-inline fun <reified T : Activity> Fragment.startActivity(vararg params: Pair<String, Any?>) {
-    val act = activity ?: throw IllegalStateException("Fragment $this not attached to Activity")
-    val intent = act.createIntent<T>(*params)
-    startActivity(intent)
-}
-
-inline fun <reified T : Activity> ComponentActivity.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (ActivityResult) -> Unit) {
-    val intent = createIntent<T>(*params)
-    startActivityForResult(intent, callback)
-}
-
-inline fun <reified T : Activity> Fragment.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (ActivityResult) -> Unit) {
-    val act = activity ?: throw IllegalStateException("Fragment $this not attached to Activity")
-    val intent = act.createIntent<T>(*params)
-    startActivityForResult(intent, callback)
-}
-
-inline fun <reified T : Activity> ComponentActivity.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
-    val intent = createIntent<T>(*params)
-    startActivityForResultOk(intent, callback)
-}
-
-inline fun <reified T : Activity> Fragment.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
-    val act = activity ?: throw IllegalStateException("Fragment $this not attached to Activity")
-    val intent = act.createIntent<T>(*params)
-    startActivityForResultOk(intent, callback)
-}
-
 /**
- * 通过反射从[android.content.Intent]中获取参数值，并赋值给被[AutoWired]注解的字段。
+ * 在[Activity]中，通过反射从[android.content.Intent]中获取参数值，并赋值给被[AutoWired]注解的字段。
  * 例子：
  * @AutoWired
  * private var param4: Int? = null
