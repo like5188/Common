@@ -44,13 +44,9 @@
             android:theme="@style/translucent" />
         <activity android:name=".zxing.ZXingActivity" />
         <activity android:name=".autowired.AutoWiredActivity" />
-        <activity
-            android:name=".activitytest.LaunchModeActivity1"
-            android:launchMode="singleInstance" />
-        <activity
-            android:name=".activitytest.LaunchModeActivity2"
-            android:taskAffinity="com.like"
-            android:launchMode="singleTask" />
+        <activity android:name=".activitytest.LaunchModeActivity1"
+            android:launchMode="singleTask"/>
+        <activity android:name=".activitytest.LaunchModeActivity2" />
         <activity android:name=".activitytest.LaunchModeActivity3" />
     </application>
 

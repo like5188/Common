@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.like.common.base.BaseApplication
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityLaunchmode2Binding
 
@@ -19,6 +20,9 @@ class LaunchModeActivity2 : AppCompatActivity() {
     }
 
     fun click0(view: View) {
-        startActivity(Intent(this, LaunchModeActivity3::class.java))
+        val intent = Intent(this@LaunchModeActivity2, LaunchModeActivity3::class.java)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        BaseApplication.sInstance.startActivity(intent)
+        startActivity(intent)
     }
 }
