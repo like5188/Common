@@ -44,6 +44,7 @@
 ```java
     validator
     ActivityKtx.kt
+    ActivityResultCallerKtx.kt
     ApkUtils
     AppUtils
     ArrayUtils

@@ -5,59 +5,26 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 
 /*
  * startActivity
  * startActivityForResult
- * 权限请求
  * Intent传递的参数的注入等
  */
 
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
-    startActivity(createIntent<T>(*params))
+    val intent = createIntent<T>(*params)
+    startActivity(intent)
 }
 
 inline fun <reified T : Activity> ComponentActivity.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (ActivityResult) -> Unit) {
-    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        callback(it)
-    }.launch(createIntent<T>(*params))
+    val intent = createIntent<T>(*params)
+    startActivityForResult(intent, callback)
 }
 
 inline fun <reified T : Activity> ComponentActivity.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
-    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            callback(it.data)
-        }
-    }.launch(createIntent<T>(*params))
-}
-
-inline fun ComponentActivity.requestPermission(permission: String, crossinline callback: (Boolean) -> Unit) {
-    registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        callback(it)
-    }.launch(permission)
-}
-
-inline fun ComponentActivity.requestPermissionTrue(permission: String, crossinline callback: () -> Unit) {
-    registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        if (it) {
-            callback()
-        }
-    }.launch(permission)
-}
-
-inline fun ComponentActivity.requestPermissions(vararg permissions: String, crossinline callback: (Map<String, Boolean>) -> Unit) {
-    registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        callback(it)
-    }.launch(permissions)
-}
-
-inline fun ComponentActivity.requestPermissionsTrue(vararg permissions: String, crossinline callback: () -> Unit) {
-    registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        if (it.values.all { it }) {
-            callback()
-        }
-    }.launch(permissions)
+    val intent = createIntent<T>(*params)
+    startActivityForResultOk(intent, callback)
 }
 
 /**
