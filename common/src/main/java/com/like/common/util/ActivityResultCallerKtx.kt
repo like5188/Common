@@ -9,11 +9,6 @@ import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 
-/*
- * startActivityForResult
- * 权限请求
- */
-
 val ActivityResultCaller.context: Context
     get() {
         return when (this) {
@@ -44,12 +39,15 @@ inline fun ActivityResultCaller.requestPermission(permission: String, crossinlin
     }.launch(permission)
 }
 
-inline fun ActivityResultCaller.requestPermissionTrue(permission: String, crossinline callback: () -> Unit) {
-    registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+/**
+ * 权限被同意
+ */
+inline fun ActivityResultCaller.requestPermissionGranted(permission: String, crossinline callback: () -> Unit) {
+    requestPermission(permission) {
         if (it) {
             callback()
         }
-    }.launch(permission)
+    }
 }
 
 inline fun ActivityResultCaller.requestPermissions(vararg permissions: String, crossinline callback: (Map<String, Boolean>) -> Unit) {
@@ -58,10 +56,13 @@ inline fun ActivityResultCaller.requestPermissions(vararg permissions: String, c
     }.launch(permissions)
 }
 
-inline fun ActivityResultCaller.requestPermissionsTrue(vararg permissions: String, crossinline callback: () -> Unit) {
-    registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+/**
+ * 所有权限都被同意
+ */
+inline fun ActivityResultCaller.requestPermissionsGranted(vararg permissions: String, crossinline callback: () -> Unit) {
+    requestPermissions(*permissions) {
         if (it.values.all { it }) {
             callback()
         }
-    }.launch(permissions)
+    }
 }
