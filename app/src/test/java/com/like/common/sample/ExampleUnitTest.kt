@@ -28,14 +28,14 @@ class ExampleUnitTest {
         }
 
         fun start(a: String?, b: Int?) {
-            execute(*getParamPairs(a, b))
+            executeProxy(a, b)
         }
 
         fun getParamPairs(vararg params: Any?): Array<Pair<String, Any?>> {
             if (params.isNullOrEmpty()) {
                 return emptyArray()
             }
-            val methodName = Thread.currentThread().stackTrace[2].methodName
+            val methodName = Thread.currentThread().stackTrace[3].methodName
             val parameters = findMethod(methodName, *params) ?: return emptyArray()
             return parameters.mapIndexed { index, kParameter -> Pair(kParameter.name ?: "", params[index]) }.toTypedArray()
         }
@@ -67,6 +67,10 @@ class ExampleUnitTest {
                 return realParameters
             }
             return null
+        }
+
+        fun executeProxy(vararg params: Any?) {
+            execute(*getParamPairs(*params))
         }
 
         fun execute(vararg params: Pair<String, Any?>) {
