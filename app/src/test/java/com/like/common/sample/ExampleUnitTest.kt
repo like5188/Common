@@ -13,9 +13,12 @@ import kotlin.reflect.jvm.javaType
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        start(0.1)
+//        start(0.1)
         start(0.2, 2)
-        start("3", 3)
+//        val caller = AAA()
+//        start(caller, "3", 3) {
+//
+//        }
     }
 
     companion object {
@@ -28,48 +31,58 @@ class ExampleUnitTest {
             startActivityProxy(a, b)
         }
 
-        fun start(a: String?, b: Int?) {
-            startActivityProxy(a, b)
+        fun start(activityResultCaller: ActivityResultCaller, a: String?, b: Int?, callback: (ActivityResultCaller) -> Unit) {
+            startActivityForResultProxy(activityResultCaller, callback, a, b)
         }
 
-        fun transformParamsToPairs(vararg params: Any?): Array<Pair<String, Any?>> {
-            if (params.isNullOrEmpty()) {
+        fun transformParametersToPairs(vararg actualParameters: Any?, filterFormalParameters: (List<KParameter>) -> List<KParameter>): Array<Pair<String, Any?>> {
+            if (actualParameters.isNullOrEmpty()) {
                 return emptyArray()
             }
-            val methodName = Thread.currentThread().stackTrace[3].methodName
-            val parameters = getParametersIfMethodFound(methodName, *params) ?: return emptyArray()
-            return parameters.mapIndexed { index, kParameter -> Pair(kParameter.name ?: "", params[index]) }.toTypedArray()
+            val callerMethodName = Thread.currentThread().stackTrace[3].methodName
+            val formalParameters = getFormalParametersIfMethodFound(callerMethodName, *actualParameters, filterFormalParameters = filterFormalParameters)
+                    ?: return emptyArray()
+            return formalParameters.mapIndexed { index, kParameter -> Pair(kParameter.name ?: "", actualParameters[index]) }.toTypedArray()
         }
 
         /**
          * 如果找到方法，就返回它的形参列表
          */
-        fun getParametersIfMethodFound(methodName: String, vararg params: Any?): List<KParameter>? {
+        fun getFormalParametersIfMethodFound(callerMethodName: String, vararg actualParameters: Any?, filterFormalParameters: (List<KParameter>) -> List<KParameter>): List<KParameter>? {
             loop@ for (kFunction in this::class.declaredMemberFunctions) {
                 //方法名称相同
-                if (kFunction.name != methodName) {
+                if (kFunction.name != callerMethodName) {
                     continue
                 }
                 //方法的形参数个数和实参个数相同
-                val realParameters = kFunction.parameters.filter { it.kind == KParameter.Kind.VALUE }
-                if (realParameters.size != params.size) {
+                var realFormalParameters = kFunction.parameters.filter { it.kind == KParameter.Kind.VALUE }
+                realFormalParameters = filterFormalParameters(realFormalParameters)
+                if (realFormalParameters.size != actualParameters.size) {
                     continue
                 }
                 //方法的每一个形参数据类型和实参数据类型都相同
-                for (i in realParameters.indices) {
-                    val kParameter = realParameters[i]
-                    val param = params[i]
-                    if (kParameter.type.javaType.typeName != param?.javaClass?.typeName) {
+                for (i in realFormalParameters.indices) {
+                    val formalParameter = realFormalParameters[i]
+                    val actualParameter = actualParameters[i]
+                    if (formalParameter.type.javaType.typeName != actualParameter?.javaClass?.typeName) {
                         continue@loop
                     }
                 }
-                return realParameters
+                return realFormalParameters
             }
             return null
         }
 
-        fun startActivityProxy(vararg params: Any?) {
-            execute(*transformParamsToPairs(*params))
+        fun startActivityProxy(vararg actualParameters: Any?) {
+            execute(*transformParametersToPairs(*actualParameters) {
+                return@transformParametersToPairs it
+            })
+        }
+
+        fun startActivityForResultProxy(activityResultCaller: ActivityResultCaller, callback: (ActivityResultCaller) -> Unit, vararg actualParameters: Any?) {
+            activityResultCaller.execute(*transformParametersToPairs(*actualParameters) {
+                return@transformParametersToPairs it.subList(1, it.size - 1)//去掉第一个和最后一个形参。
+            }, callback = callback)
         }
 
         fun execute(vararg params: Pair<String, Any?>) {
@@ -77,6 +90,15 @@ class ExampleUnitTest {
                 println(it)
             }
         }
+
+        fun ActivityResultCaller.execute(vararg params: Pair<String, Any?>, callback: (ActivityResultCaller) -> Unit) {
+            params.forEach {
+                println(it)
+            }
+        }
     }
+
+    open class ActivityResultCaller
+    class AAA : ActivityResultCaller()
 
 }
