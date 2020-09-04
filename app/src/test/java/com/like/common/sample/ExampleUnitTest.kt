@@ -14,11 +14,11 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         start(0.1)
-        start(0.2, 2)
-        val caller = AAA()
-        start(caller, "3", 3) {
-
-        }
+//        start(0.2, 2)
+//        val caller = AAA()
+//        start(caller, "3", 3) {
+//
+//        }
     }
 
     companion object {
@@ -45,10 +45,13 @@ class ExampleUnitTest {
             if (actualParameters.isNullOrEmpty()) {
                 return emptyArray()
             }
+            val stackTraceElement = Thread.currentThread().stackTrace[3]
+            val callerMethodName = stackTraceElement.methodName
+            val callerClass = Class.forName(stackTraceElement.className).kotlin
             // 查找调用者方法
-            loop@ for (kFunction in this::class.declaredMemberFunctions) {
+            loop@ for (kFunction in callerClass.declaredMemberFunctions) {
                 //方法名称相同
-                if (kFunction.name != Thread.currentThread().stackTrace[3].methodName) {
+                if (kFunction.name != callerMethodName) {
                     continue
                 }
                 //方法的形参数个数和实参个数相同
@@ -61,7 +64,7 @@ class ExampleUnitTest {
                 for (i in realFormalParameters.indices) {
                     val formalParameter = realFormalParameters[i]
                     val actualParameter = actualParameters[i]
-                    if (formalParameter.type.javaType.typeName != actualParameter?.javaClass?.typeName) {
+                    if (formalParameter.type.javaType != actualParameter?.javaClass) {
                         continue@loop
                     }
                 }
