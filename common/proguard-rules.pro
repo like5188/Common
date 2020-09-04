@@ -1,11 +1,11 @@
 # 关键字：
-# dontwarn                      通常用于处理我们无法解决的第三方 library 的警告
-# keep                          保留类和类中的成员，防止被混淆或移除
-# keepnames                     保留类和类中的成员，防止被混淆，成员没有被引用会被移除
-# keepclassmembers              只保留类中的成员，防止被混淆或移除
-# keepclassmembernames          只保留类中的成员，防止被混淆，成员没有引用会被移除
-# keepclasseswithmembers        保留类和类中的成员，防止被混淆或移除，保留指明的成员
-# keepclasseswithmembernames    保留类和类中的成员，防止被混淆，保留指明的成员，成员没有引用会被移除
+# dontwarn                      通常用于处理我们无法解决的第三方库的警告
+# keep                          保留类和类成员，防止被移除或者被重命名
+# keepnames                     保留类和类成员，防止被重命名
+# keepclassmembers              只保留类成员，防止被移除或者被重命名
+# keepclassmembernames          只保留类成员，防止被重命名
+# keepclasseswithmembers        如果拥有某成员，保留类和类成员，防止被移除或者被重命名
+# keepclasseswithmembernames    如果拥有某成员，保留类和类成员，防止被重命名
 
 # 通配符：
 # <field>	匹配类中的所有字段
@@ -14,20 +14,27 @@
 # *	        匹配任意长度字符，不包含包名分隔符(.)
 # **	    匹配任意长度字符，包含包名分隔符(.)
 # ***	    匹配任意参数类型
+# …         匹配任意长度的任意类型参数。比如void test(…)就能匹配任意 void test(String a) 或者是 void test(int a, String b) 这些方法。
 # $	        匹配内部类
 
 # 哪些不该混淆：
-# 使用了自定义控件那么要保证它们不参与混淆
-# 使用了枚举要保证枚举不被混淆
-# 对第三方库中的类不进行混淆
+# jni方法不可混淆，因为这个方法需要和native方法保持一致；
+#-keepclasseswithmembernames class * { # 保持native方法不被混淆
+#    native <methods>;
+#}
+# 使用enum类型时需要注意避免以下两个方法混淆，因为enum类的特殊性，以下两个方法会被反射调用。
+#-keepclassmembers enum * {
+#    public static **[] values();
+#    public static ** valueOf(java.lang.String);
+#}
+# 使用第三方开源库或者引用其他第三方的SDK包时，如果有特别要求，也需要在混淆文件中加入对应的混淆规则；
 # 运用了反射的类也不进行混淆
-# 使用了 Gson 之类的工具要使 JavaBean 类即实体类不被混淆
-# 在引用第三方库的时候，一般会标明库的混淆规则的，建议在使用的时候就把混淆规则添加上去，免得到最后才去找
-# 有用到 WebView 的 JS 调用也需要保证写的接口方法不混淆，原因和第一条一样
+# 使用了 Gson、fastjson 之类的工具要使 JavaBean 类即实体类不被混淆
+# 有用到 WebView 的 JS 调用也需要保证写的接口方法不混淆
 # Parcelable 的子类和 Creator 静态成员变量不混淆，否则会产生 Android.os.BadParcelableException 异常
-# 使用的四大组件，自定义的Application* 实体类
-# JNI中调用的类
-# Layout布局使用的View构造函数（自定义控件）、android:onClick等。
+#-keep class * implements Android.os.Parcelable { # 保持Parcelable不被混淆
+#    public static final Android.os.Parcelable$Creator *;
+#}
 
 #ToolbarUtils
 -keep class com.like.common.view.toolbar.custom.CustomActionProvider{*;}
