@@ -39,9 +39,12 @@ class ExampleUnitTest {
             if (actualParameters.isNullOrEmpty()) {
                 return emptyArray()
             }
+            // 获取调用者方法名
             val callerMethodName = Thread.currentThread().stackTrace[3].methodName
+            // 获取形参列表
             val formalParameters = getFormalParametersIfMethodFound(callerMethodName, *actualParameters, filterFormalParameters = filterFormalParameters)
                     ?: return emptyArray()
+            // 把形参列表和实参列表组合成Pair列表
             return formalParameters.mapIndexed { index, kParameter -> Pair(kParameter.name ?: "", actualParameters[index]) }.toTypedArray()
         }
 
