@@ -21,15 +21,15 @@ class ExampleUnitTest {
     companion object {
 
         fun start(c: Double?) {
-            executeProxy(c)
+            startActivityProxy(c)
         }
 
         fun start(a: Double?, b: Int?) {
-            executeProxy(a, b)
+            startActivityProxy(a, b)
         }
 
         fun start(a: String?, b: Int?) {
-            executeProxy(a, b)
+            startActivityProxy(a, b)
         }
 
         fun transformParamsToPairs(vararg params: Any?): Array<Pair<String, Any?>> {
@@ -68,7 +68,7 @@ class ExampleUnitTest {
             return null
         }
 
-        fun executeProxy(vararg params: Any?) {
+        fun startActivityProxy(vararg params: Any?) {
             execute(*transformParamsToPairs(*params))
         }
 
