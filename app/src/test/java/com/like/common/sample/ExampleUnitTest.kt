@@ -14,34 +14,67 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         start(0.1)
-//        start(0.2, 2)
-//        val caller = AAA()
-//        start(caller, "3", 3) {
-//
-//        }
+        start(0.2, 2)
+        val caller = AAA()
+        start(caller, "3", 3) {
+
+        }
     }
 
     companion object {
 
         fun start(c: Double?) {
-            startActivityProxy(c)
+            startActivityByApplicationByParameterNameKeyed(c)
         }
 
         fun start(a: Double?, b: Int?) {
-            startActivityProxy(a, b)
+            startActivityByApplicationByParameterNameKeyed(a, b)
         }
 
         fun start(activityResultCaller: ActivityResultCaller, a: String?, b: Int?, callback: (ActivityResultCaller) -> Unit) {
-            startActivityForResultProxy(activityResultCaller, callback, a, b)
+            activityResultCaller.startActivityForResultOkByParameterNameKeyed(callback, a, b)
         }
 
         /**
-         * 把参数转换成 "name" to name 这样的键值对
+         * [execute]方法的加强版
+         * 添加参数时不需要手动添加key，会通过反射自动把调用者方法的形参名作为key。
+         *
+         * @param params    实参列表，顺序必须和调用者方法的形参列表一致
+         *
+         * 必须在单独的方法中调用此方法，便于通过反射获取调用者方法的形参列表，如例子中的start()方法
+         */
+        fun startActivityByApplicationByParameterNameKeyed(vararg params: Any?) {
+            execute(*transformParametersToPairs(*params) {
+                return@transformParametersToPairs it
+            })
+        }
+
+        /**
+         * [ActivityResultCaller.execute]方法的加强版
+         * 添加参数时不需要手动添加key，会通过反射自动把调用者方法的形参名作为key
+         *
+         * @param params    实参列表，顺序必须和调用者方法的形参列表一致
+         *
+         * 必须在单独的方法中调用此方法，便于通过反射获取调用者方法的形参列表，如例子中的start()方法
+         */
+        fun ActivityResultCaller.startActivityForResultOkByParameterNameKeyed(callback: (ActivityResultCaller) -> Unit, vararg params: Any?) {
+            execute(*transformParametersToPairs(*params) {
+                // 去掉第一个形参（activityResultCaller: ActivityResultCaller）
+                // 去掉最后一个形参（callback: (ActivityResultCaller) -> Unit）
+                return@transformParametersToPairs it.subList(1, it.size - 1)
+            }, callback = callback)
+        }
+
+        /**
+         * 把形参转换成 "name" to name 这样的键值对
          *
          * @param actualParameters          实参（需要注入的参数）
          * @param filterFormalParameters    过滤掉形参中的不需要注入的参数
          */
-        fun transformParametersToPairs(vararg actualParameters: Any?, filterFormalParameters: (List<KParameter>) -> List<KParameter>): Array<Pair<String, Any?>> {
+        fun transformParametersToPairs(
+                vararg actualParameters: Any?,
+                filterFormalParameters: (List<KParameter>) -> List<KParameter>
+        ): Array<Pair<String, Any?>> {
             if (actualParameters.isNullOrEmpty()) {
                 return emptyArray()
             }
@@ -75,24 +108,6 @@ class ExampleUnitTest {
                 }.toTypedArray()
             }
             return emptyArray()
-        }
-
-        /**
-         * 不需要手动添加key，直接把参数名作为key
-         */
-        fun startActivityProxy(vararg actualParameters: Any?) {
-            execute(*transformParametersToPairs(*actualParameters) {
-                return@transformParametersToPairs it
-            })
-        }
-
-        /**
-         * 不需要手动添加key，直接把参数名作为key
-         */
-        fun startActivityForResultProxy(activityResultCaller: ActivityResultCaller, callback: (ActivityResultCaller) -> Unit, vararg actualParameters: Any?) {
-            activityResultCaller.execute(*transformParametersToPairs(*actualParameters) {
-                return@transformParametersToPairs it.subList(1, it.size - 1)//去掉第一个和最后一个形参。
-            }, callback = callback)
         }
 
         fun execute(vararg params: Pair<String, Any?>) {
