@@ -74,12 +74,18 @@ class ExampleUnitTest {
             return emptyArray()
         }
 
+        /**
+         * 不需要手动添加key，直接把参数名作为key
+         */
         fun startActivityProxy(vararg actualParameters: Any?) {
             execute(*transformParametersToPairs(*actualParameters) {
                 return@transformParametersToPairs it
             })
         }
 
+        /**
+         * 不需要手动添加key，直接把参数名作为key
+         */
         fun startActivityForResultProxy(activityResultCaller: ActivityResultCaller, callback: (ActivityResultCaller) -> Unit, vararg actualParameters: Any?) {
             activityResultCaller.execute(*transformParametersToPairs(*actualParameters) {
                 return@transformParametersToPairs it.subList(1, it.size - 1)//去掉第一个和最后一个形参。
