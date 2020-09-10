@@ -89,9 +89,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initDefaultTitlebar() {
         mBinding.titlebar.Default().apply {
-            showNavigation(R.drawable.icon_back, View.OnClickListener {
+            showNavigation(R.drawable.icon_back) {
                 shortToastCenter("返回")
-            })
+            }
 
             showTitle("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
             setTitleWidth(100f)
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
             CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单0") })
+                setOnClickListener { shortToastCenter("菜单0") }
                 setTitle("菜单0", Color.BLACK, 12f)
                 setMessageCount("0", Color.WHITE, 10, Color.RED)
                 setMargin(20, 10, 0, 10)
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             }
             CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
-                setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
+                setOnClickListener { shortToastCenter("菜单1") }
                 setTitle("菜单1", Color.BLACK, 12f)
                 setMessageCount("1", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 20, 10)
@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         mBinding.toolbar.addView(customNavigationView.getView(), 0)
         customNavigationView.setIcon(R.drawable.icon_back)
         customNavigationView.setTitle("返回")
-        customNavigationView.setOnClickListener(View.OnClickListener { shortToastCenter("返回") })
+        customNavigationView.setOnClickListener { shortToastCenter("返回") }
         customNavigationView.setMargin(42, 10, 20, 10)
         customNavigationView.setContentPadding(0, 0, 30, 0)
         customNavigationView.setMessageCount("99+", Color.WHITE, 10, Color.RED)
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                 ?.getCustomViewManager()
                 ?.apply {
                     setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单0") })
+                    setOnClickListener { shortToastCenter("菜单0") }
                     setTitle("菜单0", Color.BLACK, 12f)
                     setMessageCount("0", Color.WHITE, 10, Color.RED)
                     setMargin(0, 10, 0, 10)
@@ -182,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                 ?.getCustomViewManager()
                 ?.apply {
                     setIcon(R.drawable.icon_back)
-                    setOnClickListener(View.OnClickListener { shortToastCenter("菜单1") })
+                    setOnClickListener { shortToastCenter("菜单1") }
                     setTitle("菜单1", Color.BLACK, 12f)
                     setMessageCount("1", Color.WHITE, 10, Color.RED)
                     setMargin(0, 10, 0, 10)
