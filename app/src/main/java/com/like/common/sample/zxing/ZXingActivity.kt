@@ -8,21 +8,24 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
 import com.like.common.util.ZXingUtils
+import com.like.common.util.requestPermission
 
 class ZXingActivity : AppCompatActivity() {
-    private val mBinding: ActivityZxingBinding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityZxingBinding>(this, R.layout.activity_zxing)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this, heightWidthRatio = 1f))
-        mBinding.sv.setEnableZXing(true)
-//        mBinding.sv.setEnableZBar(true)
-//        mBinding.sv.setEnableIdCard(true)
-        mBinding.sv.setCallback { result ->
-            mBinding.tvScanResult.text = result.toString()
-            mBinding.sv.restartPreviewAfterDelay(2000)
+        requestPermission(android.Manifest.permission.CAMERA) {
+            mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this, heightWidthRatio = 1f))
+//            mBinding.sv.setEnableZXing(true)
+//            mBinding.sv.setEnableZBar(true)
+            mBinding.sv.setEnableIdCard(true)
+            mBinding.sv.setCallback { result ->
+                mBinding.tvScanResult.text = result.toString()
+                mBinding.sv.restartPreviewAfterDelay(2000)
+            }
         }
     }
 
