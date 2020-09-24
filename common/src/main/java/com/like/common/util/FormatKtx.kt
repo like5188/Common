@@ -1,5 +1,27 @@
 package com.like.common.util
 
+fun String?.toLongOrNull(): Long? {
+    if (this.isNullOrEmpty()) {
+        return null
+    }
+    return try {
+        java.lang.Long.parseLong(this)
+    } catch (e: Exception) {
+        null
+    }
+}
+
+fun String?.toLongOrDefault(default: Long = 0L): Long {
+    if (this.isNullOrEmpty()) {
+        return default
+    }
+    return try {
+        java.lang.Long.parseLong(this)
+    } catch (e: Exception) {
+        default
+    }
+}
+
 fun String?.toDoubleOrNull(): Double? {
     if (this.isNullOrEmpty()) {
         return null
@@ -88,6 +110,13 @@ fun Double?.toStringOrEmpty(suffix: String = ""): String {
 }
 
 fun Float?.toStringOrEmpty(suffix: String = ""): String {
+    if (this == null) {
+        return ""
+    }
+    return "$this$suffix"
+}
+
+fun Long?.toStringOrEmpty(suffix: String = ""): String {
     if (this == null) {
         return ""
     }
