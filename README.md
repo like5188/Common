@@ -31,102 +31,10 @@
     }
 ```
 
-2、基类
-```java
-    BaseActivity
-    BaseApplication
-    BaseComponentApplication.kt
-    BaseDialogFragment
-    BaseFragment
-```
-
-3、常用工具类
-```java
-    validator
-    ActivityKtx.kt
-    ActivityResultCallerKtx.kt
-    ApkUtils
-    AppUtils
-    ArrayUtils
-    AutoWired
-    BcdUtils
-    ByteUtils
-    CheckManager
-    ClickTextViewSpanUtils
-    ClickUtils
-    CloseableEx.kt
-    CoilEngine
-    CoilImageLoaderFactory
-    CompareEx.kt
-    DateUtils
-    DimensionUtils
-    DoubleFormatUtils
-    Executors.kt
-    FilterUtils
-    FormatEx.kt
-    FragmentKtx.kt
-    HexUtil
-    HighLightUtils
-    ImageUtils
-    InputSoftKeybordUtils
-    IntentKtx.kt
-    JsonEx.kt
-    ListEx.kt
-    LiveDataEx.kt
-    Logger
-    MD5Utils
-    NetWorkEx.kt
-    NotificationEx.kt
-    PhoneUtils
-    PickerViewEx.kt
-    PopupWindowEx.kt
-    RadioManager
-    RandomUtils
-    RectEx.kt
-    SelectableItemBackgroundUtils
-    SelectorDrawableEx.kt
-    SerializableUtils.kt
-    SingleLiveEvent
-    SingletonHolder
-    SoftKeyboardUtils
-    SPUtils.kt
-    StateHorizontalScrollView
-    StatusBarUtils
-    StorageUtils
-    StringEx.kt
-    TabLayoutUtils
-    TextViewEx.kt
-    TimerUtils
-    ToastEx.kt
-    UnitEx.kt
-    UriEx.kt
-    VibrateUtils
-    ViewEx.kt
-    ZXingUtils
-```
-
-4、自定义View
-```java
-    badgeview
-    dragview
-    pwdedittext
-    titlebar
-    AspectRatioImageView
-    CircleTextView
-    ContainsEmojiEditText
-    ExpandView
-    MyGridView
-    MyVideoView
-    RotateTextView
-    SidebarView
-    SquareImageView
-    TimerTextView
-```
-
-5、常用第三方库的引用
+2、常用第三方库的引用
 ```java
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    api 'com.google.android.material:material:1.2.0'
+    api 'com.google.android.material:material:1.2.1'
     api 'androidx.constraintlayout:constraintlayout:2.0.1'
     api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     api 'com.google.android:flexbox:1.0.0'
