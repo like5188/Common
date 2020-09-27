@@ -11,7 +11,6 @@ import com.like.common.util.onPreDrawListener
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
 import com.like.common.view.dragview.view.util.ViewFactory
-import com.like.common.view.dragview.view.util.postDelayed
 import kotlin.math.abs
 
 /**
@@ -77,11 +76,11 @@ class CustomPhotoView(context: Context, info: DragInfo, enterAnimation: Boolean 
                         },
                         onSuccess = {
                             mViewFactory.mPhotoView.setImageDrawable(it)
-                            postDelayed(100) {
+                            postDelayed({
                                 // 防闪烁
                                 mViewFactory.removeProgressBar()
                                 mViewFactory.removeThumbnailImageView()
-                            }
+                            }, 100)
                         })
                 .build()
         Coil.imageLoader(context.applicationContext).enqueue(request)

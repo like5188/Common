@@ -10,7 +10,6 @@ import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
 import com.like.common.view.dragview.view.util.HttpProxyCacheServerFactory
 import com.like.common.view.dragview.view.util.ViewFactory
-import com.like.common.view.dragview.view.util.postDelayed
 
 /**
  * 封装了缩略图、进度条、VideoView
@@ -20,11 +19,11 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
         ViewFactory(this).apply {
             mVideoView.setOnPreparedListener {
                 mVideoView.start()
-                postDelayed(100) {
+                postDelayed({
                     // 防闪烁
                     removeProgressBar()
                     removeThumbnailImageView()
-                }
+                }, 100)
             }
             mVideoView.setOnErrorListener { _, _, _ ->
                 removeProgressBar()
