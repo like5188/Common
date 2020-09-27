@@ -7,6 +7,7 @@ import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.atomic.AtomicReference
 
 /**
+ * https://gist.github.com/objcode/7ab4e7b1df8acd88696cb0ccecad16f7#file-concurrencyhelpers-kt-L158
  * 协程处理并发问题的工具类
  *
  * 有三个基本的模式可以让我们确保在同一时间只会有一次请求进行:
