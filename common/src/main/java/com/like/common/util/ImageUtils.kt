@@ -7,13 +7,13 @@ import android.graphics.*
 import android.graphics.Bitmap.createBitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.NinePatchDrawable
 import android.media.ExifInterface
 import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.util.Base64
 import android.util.Log
 import android.widget.ImageView
+import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Target
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ object ImageUtils {
      */
     fun getColor(drawable: Drawable?, target: Target, defaultColor: Int): Int {
         drawable ?: return defaultColor
-        return getColor(drawable2Bitmap(drawable), target, defaultColor)
+        return getColor(drawable.toBitmap(), target, defaultColor)
     }
 
     /**
@@ -98,31 +98,6 @@ object ImageUtils {
      */
     @JvmStatic
     fun bitmap2String(bitmap: Bitmap): String = bytes2String(bitmap2Bytes(bitmap))
-
-    /**
-     * 将Bitmap转化为Drawable
-     */
-    @JvmStatic
-    fun bitmap2Drawable(context: Context, bitmap: Bitmap): Drawable = BitmapDrawable(context.resources, bitmap)
-
-    /**
-     * 将Drawable转化为Bitmap
-     */
-    @JvmStatic
-    fun drawable2Bitmap(drawable: Drawable): Bitmap? = when (drawable) {
-        is BitmapDrawable -> drawable.bitmap
-        is NinePatchDrawable -> {
-            val bitmap = createBitmap(
-                    drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(),
-                    if (drawable.getOpacity() != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565)
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight())
-            drawable.draw(canvas)
-            bitmap
-        }
-        else -> null
-    }
 
     /**
      * 转换成带倒影的图片
