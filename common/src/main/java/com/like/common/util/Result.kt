@@ -22,7 +22,7 @@ import com.like.repository.Result
 fun <ResultType> Result<ResultType>.bindResult(
         lifecycleOwner: LifecycleOwner,
         onSuccess: ((ResultType?) -> Unit)? = null,
-        onFailed: ((RequestType, Throwable?) -> Unit)? = null
+        onFailed: ((RequestType, Throwable) -> Unit)? = null
 ) {
     if (onSuccess != null) {
         liveValue.observe(lifecycleOwner) {
