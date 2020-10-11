@@ -21,13 +21,15 @@ import com.like.repository.Result
  */
 fun <ResultType> Result<ResultType>.bindResult(
         lifecycleOwner: LifecycleOwner,
-        onSuccess: (ResultType?) -> Unit,
+        onSuccess: ((ResultType?) -> Unit)? = null,
         onFailed: ((RequestType, Throwable?) -> Unit)? = null
 ) {
-    liveValue.observe(lifecycleOwner) {
-        val stateReport = liveState.value
-        if (stateReport?.state is RequestState.Success) {
-            onSuccess(it)
+    if (onSuccess != null) {
+        liveValue.observe(lifecycleOwner) {
+            val stateReport = liveState.value
+            if (stateReport?.state is RequestState.Success) {
+                onSuccess(it)
+            }
         }
     }
     if (onFailed != null) {
