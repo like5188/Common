@@ -9,7 +9,7 @@ import org.koin.core.context.startKoin
 import java.util.*
 
 /**
- * 集成了 [koin]，对 [Activity] 进行了管理
+ * 集成了 [koin] 依赖注入框架，对 [Activity] 进行了管理
  */
 open class BaseApplication : Application() {
     companion object {
