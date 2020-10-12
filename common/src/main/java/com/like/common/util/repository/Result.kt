@@ -1,6 +1,7 @@
-package com.like.common.util
+package com.like.common.util.repository
 
 import androidx.lifecycle.LifecycleOwner
+import com.like.common.util.map
 import com.like.recyclerview.adapter.BaseAdapter
 import com.like.recyclerview.listener.OnItemClickListener
 import com.like.recyclerview.model.*
@@ -21,23 +22,23 @@ import com.like.repository.Result
  */
 fun <ResultType> Result<ResultType>.bindResult(
         lifecycleOwner: LifecycleOwner,
-        onSuccess: ((ResultType?) -> Unit)? = null,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((ResultType?) -> Unit)? = null
 ) {
-    if (onSuccess != null) {
-        liveValue.observe(lifecycleOwner) {
-            val stateReport = liveState.value
-            if (stateReport?.state is RequestState.Success) {
-                onSuccess(it)
-            }
-        }
-    }
     if (onFailed != null) {
         liveState.observe(lifecycleOwner) { stateReport ->
             val state = stateReport.state
             val type = stateReport.type
             if (state is RequestState.Failed) {
                 onFailed(type, state.throwable)
+            }
+        }
+    }
+    if (onSuccess != null) {
+        liveValue.observe(lifecycleOwner) {
+            val stateReport = liveState.value
+            if (stateReport?.state is RequestState.Success) {
+                onSuccess(it)
             }
         }
     }
