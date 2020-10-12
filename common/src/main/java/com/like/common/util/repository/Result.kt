@@ -50,7 +50,7 @@ fun <ResultType> Result<ResultType>.bindResult(
  * @param show      初始化或者刷新开始时显示进度条
  * @param hide      初始化或者刷新成功或者失败时隐藏进度条
  */
-fun <ResultType> Result<ResultType>.bindProgress(
+internal fun <ResultType> Result<ResultType>.bindProgress(
         lifecycleOwner: LifecycleOwner,
         show: () -> Unit,
         hide: () -> Unit
@@ -82,7 +82,7 @@ fun <ResultType> Result<ResultType>.bindProgress(
  * @param loadMoreHeader    往前加载更多的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultLoadMoreHeader]
  * @param listener          item点击监听
  */
-fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindRecyclerView(
+internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindRecyclerView(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
         transform: (ResultType) -> List<ValueInList>?,
