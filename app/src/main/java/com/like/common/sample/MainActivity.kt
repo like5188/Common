@@ -22,6 +22,7 @@ import com.like.common.sample.databinding.ViewTitlebarButtonBinding
 import com.like.common.sample.dialog.DialogActivity
 import com.like.common.sample.drag.DragViewTestActivity
 import com.like.common.sample.flexbox.FlexBoxActivity
+import com.like.common.sample.fragmenttest.FragmentContainer
 import com.like.common.sample.image.ImageActivity
 import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
@@ -206,6 +207,10 @@ class MainActivity : AppCompatActivity() {
         }
         view_flipper.flipInterval = 3000
         view_flipper.startFlipping()
+    }
+
+    fun gotoFragmentContainer(view: View) {
+        startActivity<FragmentContainer>()
     }
 
     fun gotoAutoWiredActivity(view: View) {

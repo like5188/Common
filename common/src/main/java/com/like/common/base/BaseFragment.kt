@@ -1,6 +1,7 @@
 package com.like.common.base
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 
 /**
@@ -26,10 +27,12 @@ abstract class BaseFragment : Fragment() {
      * Fragment 是否已经初始化完毕
      */
     private var isInitialized: Boolean = false
+
     /**
      * Fragment 是否对用户可见
      */
     var isVisibleToUser = false
+
     /**
      * 是否需要加载数据
      * 如果在第一次加载完成后，需要重新触发加载数据，可以设置[isNeedData]为true，那么下次显示该Fragment时，还会触发[onLazyLoadData]方法
@@ -74,6 +77,7 @@ abstract class BaseFragment : Fragment() {
             return
         }
         isNeedData = false
+        Log.d(this.javaClass.simpleName, "onLazyLoadData")
         onLazyLoadData()
     }
 
