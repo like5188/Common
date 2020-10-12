@@ -1,6 +1,7 @@
 package com.like.common.util.repository
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.like.common.base.BaseDialogFragment
 import com.like.recyclerview.adapter.BaseAdapter
@@ -13,18 +14,36 @@ import com.like.recyclerview.ui.DefaultLoadMoreHeader
 import com.like.repository.RequestType
 import com.like.repository.Result
 
+/**
+ * [RecyclerView] 的加载类型
+ */
 sealed class RecyclerViewLoadType {
+    /**
+     * 不分页
+     */
     object NotPaging : RecyclerViewLoadType()
+
+    /**
+     * 往后加载更多
+     */
     object LoadAfter : RecyclerViewLoadType()
+
+    /**
+     * 往前加载更多
+     */
     object LoadBefore : RecyclerViewLoadType()
 }
 
-fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultToRecyclerView(
+/**
+ * [Result]、[RecyclerView] 组合
+ */
+fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindListResultToRecyclerView(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
+        transform: (ResultType) -> List<ValueInList>?,
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((List<ValueInList>?) -> Unit)? = null,
+        onSuccess: ((ResultType?) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
     bindResult(lifecycleOwner, onFailed, onSuccess)
@@ -42,6 +61,7 @@ fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultT
     bindRecyclerView(
             lifecycleOwner,
             adapter,
+            transform,
             DefaultEmptyItem(),
             DefaultErrorItem(),
             loadMoreFooter,
@@ -50,13 +70,17 @@ fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultT
     )
 }
 
-fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultToRecyclerViewWithProgress(
+/**
+ * [Result]、[RecyclerView]、[BaseDialogFragment] 组合
+ */
+fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindListResultToRecyclerViewWithProgress(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
         progressDialogFragment: BaseDialogFragment,
+        transform: (ResultType) -> List<ValueInList>?,
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((List<ValueInList>?) -> Unit)? = null,
+        onSuccess: ((ResultType?) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
     bindResultWithProgress(lifecycleOwner, progressDialogFragment, onFailed, onSuccess)
@@ -74,6 +98,7 @@ fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultT
     bindRecyclerView(
             lifecycleOwner,
             adapter,
+            transform,
             DefaultEmptyItem(),
             DefaultErrorItem(),
             loadMoreFooter,
@@ -82,13 +107,17 @@ fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultT
     )
 }
 
-fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultToRecyclerViewWithProgress(
+/**
+ * [Result]、[RecyclerView]、[SwipeRefreshLayout] 组合
+ */
+fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindListResultToRecyclerViewWithProgress(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
         swipeRefreshLayout: SwipeRefreshLayout,
+        transform: (ResultType) -> List<ValueInList>?,
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((List<ValueInList>?) -> Unit)? = null,
+        onSuccess: ((ResultType?) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
     bindResultWithProgress(lifecycleOwner, swipeRefreshLayout, onFailed, onSuccess)
@@ -106,6 +135,7 @@ fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindListResultT
     bindRecyclerView(
             lifecycleOwner,
             adapter,
+            transform,
             DefaultEmptyItem(),
             DefaultErrorItem(),
             loadMoreFooter,

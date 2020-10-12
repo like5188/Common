@@ -75,15 +75,17 @@ fun <ResultType> Result<ResultType>.bindProgress(
  * 把 [Result] 与 [androidx.recyclerview.widget.RecyclerView] 进行绑定
  * 功能包括：Item数据的添加、空视图、错误视图、往后加载更多视图、往前加载更多视图、点击监听
  *
+ * @param transform         从 [ResultType] 中获取 List<ValueInList>? 类型的数据用于 RecyclerView 处理。
  * @param emptyItem         数据为空时显示的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultEmptyItem]
  * @param errorItem         失败时显示的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultErrorItem]
  * @param loadMoreFooter    往后加载更多的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultLoadMoreFooter]
  * @param loadMoreHeader    往前加载更多的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultLoadMoreHeader]
  * @param listener          item点击监听
  */
-fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindRecyclerView(
+fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindRecyclerView(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
+        transform: (ResultType) -> List<ValueInList>?,
         emptyItem: IEmptyItem? = null,
         errorItem: IErrorItem? = null,
         loadMoreFooter: ILoadMoreFooter? = null,
@@ -143,7 +145,8 @@ fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindRecyclerVie
             }
         }
     }
-    liveValue.observe(lifecycleOwner) { list ->
+    liveValue.observe(lifecycleOwner) { data ->
+        val list = transform(data)
         val stateReport = liveState.value ?: return@observe
         val state = stateReport.state
         val type = stateReport.type

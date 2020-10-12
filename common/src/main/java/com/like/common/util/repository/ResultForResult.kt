@@ -10,7 +10,7 @@ import com.like.repository.RequestType
 import com.like.repository.Result
 
 /**
- * 把 [Result] 与 [com.like.common.base.BaseDialogFragment] 进行绑定
+ * [Result]、[BaseDialogFragment] 组合
  */
 fun <ResultType> Result<ResultType>.bindResultWithProgress(
         lifecycleOwner: LifecycleOwner,
@@ -36,7 +36,7 @@ fun <ResultType> Result<ResultType>.bindResultWithProgress(
 }
 
 /**
- * 把 [Result] 与 [SwipeRefreshLayout] 进行绑定
+ * [Result]、[SwipeRefreshLayout] 组合
  */
 fun <ResultType> Result<ResultType>.bindResultWithProgress(
         lifecycleOwner: LifecycleOwner,
