@@ -14,13 +14,21 @@ class FragmentContainer : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        val fragment1 = Fragment1()
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment_holder, fragment1)
-            hide(fragment1)
-        }.commit()
-        supportFragmentManager.beginTransaction().apply {
-            show(fragment1)
-        }.commit()
+//        val fragment1 = Fragment1()
+//        supportFragmentManager.beginTransaction().apply {
+//            replace(R.id.fragment_holder, fragment1)
+//            hide(fragment1)
+//        }.commit()
+//        supportFragmentManager.beginTransaction().apply {
+//            show(fragment1)
+//        }.commit()
+
+        val fragments = listOf(
+                Fragment1(),
+                Fragment2(),
+                Fragment3(),
+                Fragment4()
+        )
+        mBinding.vp.adapter = ViewPagerAdapter(fragments, supportFragmentManager)
     }
 }

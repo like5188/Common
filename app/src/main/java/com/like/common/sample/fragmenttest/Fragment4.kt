@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 
-class Fragment1 : LogFragment() {
+class Fragment4 : LogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
             gravity = Gravity.CENTER
-            text = Fragment1::class.java.simpleName
+            text = Fragment4::class.java.simpleName
         }
     }
 }
