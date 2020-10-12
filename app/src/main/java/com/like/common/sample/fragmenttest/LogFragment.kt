@@ -78,7 +78,7 @@ open class LogFragment : BaseFragment() {
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
-        Log.v(TAG, "onHiddenChanged:hidden-->$hidden")
+        Log.v(TAG, "onHiddenChanged:shown-->${!hidden}")
         super.onHiddenChanged(hidden)
     }
 
