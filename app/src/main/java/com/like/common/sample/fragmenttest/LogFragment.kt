@@ -43,7 +43,7 @@ open class LogFragment : BaseFragment() {
     }
 
     override fun onResume() {
-        Log.w(TAG, "onResume")
+        Log.e(TAG, "onResume")
         super.onResume()
     }
 
