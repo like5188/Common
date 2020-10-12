@@ -29,6 +29,6 @@ class FragmentContainer : FragmentActivity() {
                 Fragment3(),
                 Fragment4()
         )
-        mBinding.vp.adapter = ViewPagerAdapter(fragments, supportFragmentManager)
+        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
     }
 }

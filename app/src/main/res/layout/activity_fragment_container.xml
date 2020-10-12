@@ -12,7 +12,7 @@
             android:layout_height="200dp"
             android:background="#00a7ff" />
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

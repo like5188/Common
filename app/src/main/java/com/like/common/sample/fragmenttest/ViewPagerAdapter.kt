@@ -1,12 +1,16 @@
 package com.like.common.sample.fragmenttest
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ViewPagerAdapter(private val fragments: List<Fragment>, fm: FragmentManager) : FragmentPagerAdapter(fm) {
-    override fun getItem(p0: Int): Fragment = fragments[p0]
+class ViewPagerAdapter(private val fragments: List<Fragment>, fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+    override fun getItemCount(): Int {
+        return fragments.size
+    }
 
-    override fun getCount(): Int = fragments.size
+    override fun createFragment(position: Int): Fragment {
+        return fragments[position]
+    }
 
 }
