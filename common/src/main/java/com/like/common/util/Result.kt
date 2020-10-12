@@ -80,7 +80,7 @@ fun <ResultType> Result<ResultType>.bindProgress(
  * @param loadMoreHeader    往前加载更多的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultLoadMoreHeader]
  * @param listener          item点击监听
  */
-fun <T : IRecyclerViewItem> Result<List<T>?>.bindRecyclerView(
+fun <ValueInList : IRecyclerViewItem> Result<List<ValueInList>?>.bindRecyclerView(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
         emptyItem: IEmptyItem? = null,
