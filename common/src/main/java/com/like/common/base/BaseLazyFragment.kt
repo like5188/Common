@@ -38,7 +38,7 @@ abstract class BaseLazyFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (!isHidden && isLoaded.compareAndSet(false, true)) {
+        if (isLoaded.compareAndSet(false, true)) {
             onLazyLoadData()
         }
     }

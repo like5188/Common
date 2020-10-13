@@ -5,6 +5,7 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
+import com.like.common.base.addFragments
 import com.like.common.base.showFragment
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityFragmentContainerBinding
@@ -23,10 +24,10 @@ class FragmentContainer : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-//        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
+        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
 
-        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
-        mBinding.vp.orientation = ViewPager2.ORIENTATION_VERTICAL
+//        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
+//        mBinding.vp.orientation = ViewPager2.ORIENTATION_VERTICAL
     }
 
     fun showFragment1(view: View) {
