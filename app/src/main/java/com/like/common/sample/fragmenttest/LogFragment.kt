@@ -6,10 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.like.common.base.BaseLazyFragment
 
 //生命周期方法：onAttach -> onCreate -> onCreatedView -> onActivityCreated -> onStart -> onResume -> onPause -> onStop -> onDestroyView -> onDestroy -> onDetach
-open class LogFragment : Fragment() {
+open class LogFragment : BaseLazyFragment() {
     private var TAG = javaClass.simpleName
 
     override fun onAttach(context: Context) {
