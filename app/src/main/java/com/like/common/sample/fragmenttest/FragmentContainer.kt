@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import androidx.viewpager2.widget.ViewPager2
-import com.like.common.base.addFragments
-import com.like.common.base.showFragment
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityFragmentContainerBinding
 
@@ -20,13 +17,15 @@ class FragmentContainer : FragmentActivity() {
             Fragment3(),
             Fragment4()
     )
+    private val mViewPagerAdapter = ViewPagerAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
 //        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
 
-        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
+        mViewPagerAdapter.fragments = fragments
+        mBinding.vp.adapter = mViewPagerAdapter
     }
 
     fun showFragment1(view: View) {
@@ -47,6 +46,15 @@ class FragmentContainer : FragmentActivity() {
     fun showFragment4(view: View) {
 //        showFragment(fragments[3])
         mBinding.vp.setCurrentItem(3, false)
+    }
+
+    fun changeDataSet(view: View) {
+        mViewPagerAdapter.fragments = listOf(
+                Fragment1(),
+                Fragment2(),
+                Fragment3()
+        )
+        mViewPagerAdapter.notifyDataSetChanged()
     }
 
 }
