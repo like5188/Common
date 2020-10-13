@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import com.like.common.base.addFragments
 import com.like.common.base.showFragment
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityFragmentContainerBinding
@@ -23,9 +22,8 @@ class FragmentContainer : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
-
-//        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
+//        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
+        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
     }
 
     fun showFragment1(view: View) {
