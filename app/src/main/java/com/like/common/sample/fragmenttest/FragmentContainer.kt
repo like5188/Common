@@ -24,26 +24,29 @@ class FragmentContainer : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
+//        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
 
-//        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
-//        mBinding.vp.orientation = ViewPager2.ORIENTATION_VERTICAL
+        mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
     }
 
     fun showFragment1(view: View) {
-        showFragment(fragments[0])
+//        showFragment(fragments[0])
+        mBinding.vp.setCurrentItem(0, false)
     }
 
     fun showFragment2(view: View) {
-        showFragment(fragments[1])
+//        showFragment(fragments[1])
+        mBinding.vp.setCurrentItem(1, false)
     }
 
     fun showFragment3(view: View) {
-        showFragment(fragments[2])
+//        showFragment(fragments[2])
+        mBinding.vp.setCurrentItem(2, false)
     }
 
     fun showFragment4(view: View) {
-        showFragment(fragments[3])
+//        showFragment(fragments[3])
+        mBinding.vp.setCurrentItem(3, false)
     }
 
 }
