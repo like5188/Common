@@ -26,7 +26,7 @@ class FragmentContainer : FragmentActivity() {
 //        addFragments(R.id.fragment_holder, 0, *fragments.toTypedArray())
 
         mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
-        mBinding.vp.offscreenPageLimit = fragments.size - 1
+        mBinding.vp.offscreenPageLimit = fragments.size - 1// 避免fragment被销毁导致重新懒加载
     }
 
     fun showFragment1(view: View) {
