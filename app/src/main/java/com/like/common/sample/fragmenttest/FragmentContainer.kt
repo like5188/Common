@@ -30,22 +30,22 @@ class FragmentContainer : FragmentActivity() {
 
     fun showFragment1(view: View) {
 //        showFragment(fragments[0])
-        mBinding.vp.setCurrentItem(0, false)
+        mBinding.vp.setCurrentItem(0, true)
     }
 
     fun showFragment2(view: View) {
 //        showFragment(fragments[1])
-        mBinding.vp.setCurrentItem(1, false)
+        mBinding.vp.setCurrentItem(1, true)
     }
 
     fun showFragment3(view: View) {
 //        showFragment(fragments[2])
-        mBinding.vp.setCurrentItem(2, false)
+        mBinding.vp.setCurrentItem(2, true)
     }
 
     fun showFragment4(view: View) {
 //        showFragment(fragments[3])
-        mBinding.vp.setCurrentItem(3, false)
+        mBinding.vp.setCurrentItem(3, true)
     }
 
     fun changeDataSet(view: View) {
