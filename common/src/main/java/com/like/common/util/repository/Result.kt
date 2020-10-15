@@ -13,14 +13,14 @@ import com.like.repository.RequestState
 import com.like.repository.RequestType
 import com.like.repository.Result
 
-//[com.like.repository.Result]相关的操作
+//[com.like.repository.Result]相关的基础绑定操作
 /**
  * 绑定成功失败回调。
  *
  * @param onSuccess         成功回调
  * @param onFailed          失败回调
  */
-fun <ResultType> Result<ResultType>.bindResult(
+internal fun <ResultType> Result<ResultType>.bind(
         lifecycleOwner: LifecycleOwner,
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
         onSuccess: ((ResultType?) -> Unit)? = null

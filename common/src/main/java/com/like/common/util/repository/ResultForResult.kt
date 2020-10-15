@@ -10,6 +10,17 @@ import com.like.repository.RequestType
 import com.like.repository.Result
 
 /**
+ * [Result]
+ */
+fun <ResultType> Result<ResultType>.bindResult(
+        lifecycleOwner: LifecycleOwner,
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((ResultType?) -> Unit)? = null
+) {
+    bind(lifecycleOwner, onFailed, onSuccess)
+}
+
+/**
  * [Result]、[BaseDialogFragment] 组合
  */
 fun <ResultType> Result<ResultType>.bindResultWithProgress(
@@ -18,7 +29,7 @@ fun <ResultType> Result<ResultType>.bindResultWithProgress(
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
         onSuccess: ((ResultType?) -> Unit)? = null
 ) {
-    bindResult(lifecycleOwner, onFailed, onSuccess)
+    bind(lifecycleOwner, onFailed, onSuccess)
     bindProgress(
             lifecycleOwner,
             {
@@ -44,7 +55,7 @@ fun <ResultType> Result<ResultType>.bindResultWithProgress(
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
         onSuccess: ((ResultType?) -> Unit)? = null
 ) {
-    bindResult(lifecycleOwner, onFailed, onSuccess)
+    bind(lifecycleOwner, onFailed, onSuccess)
     swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW)
     swipeRefreshLayout.setOnRefreshListener {
         refresh()
