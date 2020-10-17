@@ -12,11 +12,16 @@ import kotlinx.coroutines.flow.*
 /**
  * 防抖动搜索
  *
- * @param debounceTimeoutMillis     指定时间间隔内，[EditText] 中的数据没有变化，就会触发 [search] 进行搜索。
+ * @param debounceTimeoutMillis     指定时间间隔内，[EditText] 中的数据没有变化，就会触发 [search] 进行搜索。默认 500 毫秒
+ * @param filter                    过滤条件。参数为非空字符串。默认返回 true。返回 true 表示放行；false 表示拦截。
  * @param search                    搜索的方法。参数为非空字符串。
  */
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-fun <T> EditText.search(debounceTimeoutMillis: Long = 500L, search: suspend (String) -> T): LiveData<T> {
+fun <T> EditText.search(
+        debounceTimeoutMillis: Long = 500L,
+        filter: (String) -> Boolean = { true },
+        search: suspend (String) -> T
+): LiveData<T> {
     // stateFlow 的使用方式类似于 LiveData，用于替代 ConflatedBroadcastChannel
     val stateFlow = MutableStateFlow<String?>(null)
     this.doAfterTextChanged {
@@ -24,7 +29,7 @@ fun <T> EditText.search(debounceTimeoutMillis: Long = 500L, search: suspend (Str
     }
     return stateFlow.debounce(debounceTimeoutMillis)
             .filter {
-                return@filter !it.isNullOrEmpty()
+                return@filter !it.isNullOrEmpty() && filter(it)
             }
             .flatMapLatest {
                 // 只显示最后一次搜索的结果，忽略之前的请求

@@ -72,7 +72,9 @@ class MainActivity : AppCompatActivity() {
         mBinding.cbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.btnTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
 
-        mBinding.etSearch.search {
+        mBinding.etSearch.search(filter = {
+            it.length > 3
+        }) {
             delay(1000)
             "search $it"
         }.observe(this) {
