@@ -33,9 +33,10 @@ import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.delay
 
 class MainActivity : AppCompatActivity() {
-    private val mBinding: ActivityMainBinding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
 
@@ -70,6 +71,13 @@ class MainActivity : AppCompatActivity() {
         mBinding.rbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.cbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.btnTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
+
+        mBinding.etSearch.search {
+            delay(1000)
+            "search $it"
+        }.observe(this) {
+            Logger.w("搜索成功：$it")
+        }
     }
 
     private fun initCustomTitlebar() {
