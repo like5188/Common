@@ -35,13 +35,12 @@ fun <T> EditText.search(
                 // 只显示最后一次搜索的结果，忽略之前的请求
                 // 网络请求，这里替换自己的实现即可
                 flow {
-                    Log.d("EditText", "flatMapLatest 1 $it")
                     emit(search(it!!))
-                    Log.d("EditText", "flatMapLatest 2 $it")
                 }
             }
             .catch { throwable ->
                 //  异常捕获
+                throwable.printStackTrace()
                 Log.e("EditText", "search error $throwable")
             }
             .asLiveData()
