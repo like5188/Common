@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.*
  */
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 fun <T> EditText.search(debounceTimeoutMillis: Long = 500L, search: suspend (String) -> T): LiveData<T> {
+    // stateFlow 类似于 LiveData，用于替代 ConflatedBroadcastChannel
     val stateFlow = MutableStateFlow<String?>(null)
     this.doAfterTextChanged {
         stateFlow.value = it?.toString()
