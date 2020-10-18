@@ -1,9 +1,11 @@
-package com.like.common.util.repository
+package com.like.common.util.datasource
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.like.common.base.BaseDialogFragment
+import com.like.datasource.Result
+import com.like.datasource.ResultReport
 import com.like.recyclerview.adapter.BaseAdapter
 import com.like.recyclerview.listener.OnItemClickListener
 import com.like.recyclerview.model.IRecyclerViewItem
@@ -11,8 +13,6 @@ import com.like.recyclerview.ui.DefaultEmptyItem
 import com.like.recyclerview.ui.DefaultErrorItem
 import com.like.recyclerview.ui.DefaultLoadMoreFooter
 import com.like.recyclerview.ui.DefaultLoadMoreHeader
-import com.like.repository.RequestType
-import com.like.repository.Result
 
 /**
  * [RecyclerView] 的加载类型
@@ -37,17 +37,14 @@ sealed class RecyclerViewLoadType {
 /**
  * [Result]、[RecyclerView] 组合
  */
-fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultToRecyclerView(
-        lifecycleOwner: LifecycleOwner,
+suspend fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.collectForRecyclerView(
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
         transform: (ResultType) -> List<ValueInList>?,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((ResultType?) -> Unit)? = null,
+        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
+        onSuccess: ((ResultType) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
-    bind(lifecycleOwner, onFailed, onSuccess)
-
     val loadMoreFooter = if (type is RecyclerViewLoadType.LoadAfter) {
         DefaultLoadMoreFooter { this.retry() }
     } else {
@@ -58,8 +55,7 @@ fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultT
     } else {
         null
     }
-    bindRecyclerView(
-            lifecycleOwner,
+    recyclerView(
             adapter,
             transform,
             DefaultEmptyItem(),
@@ -67,24 +63,22 @@ fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultT
             loadMoreFooter,
             loadMoreHeader,
             listener
-    )
+    ).collect(onFailed, onSuccess)
 }
 
 /**
  * [Result]、[RecyclerView]、[BaseDialogFragment] 组合
  */
-fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultToRecyclerViewWithProgress(
+suspend fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.collectWithProgressForRecyclerView(
         lifecycleOwner: LifecycleOwner,
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
         progressDialogFragment: BaseDialogFragment,
         transform: (ResultType) -> List<ValueInList>?,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((ResultType?) -> Unit)? = null,
+        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
+        onSuccess: ((ResultType) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
-    bindResultWithProgress(lifecycleOwner, progressDialogFragment, onFailed, onSuccess)
-
     val loadMoreFooter = if (type is RecyclerViewLoadType.LoadAfter) {
         DefaultLoadMoreFooter { this.retry() }
     } else {
@@ -95,8 +89,7 @@ fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultT
     } else {
         null
     }
-    bindRecyclerView(
-            lifecycleOwner,
+    recyclerView(
             adapter,
             transform,
             DefaultEmptyItem(),
@@ -104,24 +97,21 @@ fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultT
             loadMoreFooter,
             loadMoreHeader,
             listener
-    )
+    ).collectWithProgress(lifecycleOwner, progressDialogFragment, onFailed, onSuccess)
 }
 
 /**
  * [Result]、[RecyclerView]、[SwipeRefreshLayout] 组合
  */
-fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultToRecyclerViewWithProgress(
-        lifecycleOwner: LifecycleOwner,
+suspend fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.collectWithProgressForRecyclerView(
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
         swipeRefreshLayout: SwipeRefreshLayout,
         transform: (ResultType) -> List<ValueInList>?,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((ResultType?) -> Unit)? = null,
+        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
+        onSuccess: ((ResultType) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
-    bindResultWithProgress(lifecycleOwner, swipeRefreshLayout, onFailed, onSuccess)
-
     val loadMoreFooter = if (type is RecyclerViewLoadType.LoadAfter) {
         DefaultLoadMoreFooter { this.retry() }
     } else {
@@ -132,8 +122,7 @@ fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultT
     } else {
         null
     }
-    bindRecyclerView(
-            lifecycleOwner,
+    recyclerView(
             adapter,
             transform,
             DefaultEmptyItem(),
@@ -141,5 +130,5 @@ fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.bindResultT
             loadMoreFooter,
             loadMoreHeader,
             listener
-    )
+    ).collectWithProgress(swipeRefreshLayout, onFailed, onSuccess)
 }

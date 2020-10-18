@@ -1,4 +1,4 @@
-package com.like.common.util.repository
+package com.like.common.util.datasource
 
 import android.graphics.Color
 import androidx.fragment.app.Fragment
@@ -6,32 +6,19 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.like.common.base.BaseDialogFragment
-import com.like.repository.RequestType
-import com.like.repository.Result
-
-/**
- * [Result]
- */
-fun <ResultType> Result<ResultType>.bindResult(
-        lifecycleOwner: LifecycleOwner,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((ResultType?) -> Unit)? = null
-) {
-    bind(lifecycleOwner, onFailed, onSuccess)
-}
+import com.like.datasource.Result
+import com.like.datasource.ResultReport
 
 /**
  * [Result]、[BaseDialogFragment] 组合
  */
-fun <ResultType> Result<ResultType>.bindResultWithProgress(
+suspend fun <ResultType> Result<ResultType>.collectWithProgress(
         lifecycleOwner: LifecycleOwner,
         progressDialogFragment: BaseDialogFragment,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((ResultType?) -> Unit)? = null
+        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
+        onSuccess: ((ResultType) -> Unit)? = null
 ) {
-    bind(lifecycleOwner, onFailed, onSuccess)
-    bindProgress(
-            lifecycleOwner,
+    progress(
             {
                 when (lifecycleOwner) {
                     is FragmentActivity -> {
@@ -43,26 +30,23 @@ fun <ResultType> Result<ResultType>.bindResultWithProgress(
                 }
             },
             { progressDialogFragment.dismiss() }
-    )
+    ).collect(onFailed, onSuccess)
 }
 
 /**
  * [Result]、[SwipeRefreshLayout] 组合
  */
-fun <ResultType> Result<ResultType>.bindResultWithProgress(
-        lifecycleOwner: LifecycleOwner,
+suspend fun <ResultType> Result<ResultType>.collectWithProgress(
         swipeRefreshLayout: SwipeRefreshLayout,
-        onFailed: ((RequestType, Throwable) -> Unit)? = null,
-        onSuccess: ((ResultType?) -> Unit)? = null
+        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
+        onSuccess: ((ResultType) -> Unit)? = null
 ) {
-    bind(lifecycleOwner, onFailed, onSuccess)
     swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW)
     swipeRefreshLayout.setOnRefreshListener {
         refresh()
     }
-    bindProgress(
-            lifecycleOwner,
+    progress(
             { swipeRefreshLayout.isRefreshing = true },
             { swipeRefreshLayout.isRefreshing = false }
-    )
+    ).collect(onFailed, onSuccess)
 }

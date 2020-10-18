@@ -107,7 +107,7 @@ dependencies {
     // websocket
     api 'org.java-websocket:Java-WebSocket:1.4.1'
 
-    api 'com.github.like5188:Repository:3.1.6'
+    api 'com.github.like5188:DataSource:0.1.0'
     api 'com.github.like5188.RecyclerView:core:0.1.4'
     api 'com.github.like5188.RecyclerView:ui:0.1.4'
     api 'com.github.like5188.RecyclerView:ext:0.1.4'
