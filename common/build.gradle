@@ -108,9 +108,9 @@ dependencies {
     api 'org.java-websocket:Java-WebSocket:1.4.1'
 
     api 'com.github.like5188:DataSource:0.1.0'
-    api 'com.github.like5188.RecyclerView:core:0.1.4'
-    api 'com.github.like5188.RecyclerView:ui:0.1.4'
-    api 'com.github.like5188.RecyclerView:ext:0.1.4'
+    api 'com.github.like5188.RecyclerView:core:0.1.5'
+    api 'com.github.like5188.RecyclerView:ui:0.1.5'
+    api 'com.github.like5188.RecyclerView:ext:0.1.5'
     api 'com.github.like5188.Retrofit:core:0.1.2'
     api 'com.github.like5188.Retrofit:common:0.1.2'
     api 'com.github.like5188.Retrofit:download:0.1.2'
