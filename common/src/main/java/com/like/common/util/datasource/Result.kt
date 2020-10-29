@@ -25,18 +25,18 @@ import kotlinx.coroutines.flow.onEach
  * @param onFailed          失败回调
  */
 suspend fun <ResultType> Result<ResultType>.collect(
-        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
-        onSuccess: ((ResultType) -> Unit)? = null
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((RequestType, ResultType) -> Unit)? = null
 ) {
     resultReportFlow.collect { resultReport ->
         val state = resultReport.state
         val type = resultReport.type
         when (state) {
             is RequestState.Failed -> {
-                onFailed?.invoke(resultReport as ResultReport<Nothing>)
+                onFailed?.invoke(type, state.throwable)
             }
             is RequestState.Success<ResultType> -> {
-                onSuccess?.invoke(state.data)
+                onSuccess?.invoke(type, state.data)
             }
         }
     }
