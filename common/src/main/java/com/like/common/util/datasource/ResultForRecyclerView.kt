@@ -4,8 +4,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.like.common.base.BaseDialogFragment
+import com.like.datasource.RequestType
 import com.like.datasource.Result
-import com.like.datasource.ResultReport
 import com.like.recyclerview.adapter.BaseAdapter
 import com.like.recyclerview.listener.OnItemClickListener
 import com.like.recyclerview.model.IRecyclerViewItem
@@ -41,8 +41,8 @@ suspend fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.col
         adapter: BaseAdapter,
         type: RecyclerViewLoadType,
         transform: (ResultType) -> List<ValueInList>?,
-        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
-        onSuccess: ((ResultType) -> Unit)? = null,
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((RequestType, ResultType) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
     val loadMoreFooter = if (type is RecyclerViewLoadType.LoadAfter) {
@@ -75,8 +75,8 @@ suspend fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.col
         type: RecyclerViewLoadType,
         progressDialogFragment: BaseDialogFragment,
         transform: (ResultType) -> List<ValueInList>?,
-        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
-        onSuccess: ((ResultType) -> Unit)? = null,
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((RequestType, ResultType) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
     val loadMoreFooter = if (type is RecyclerViewLoadType.LoadAfter) {
@@ -108,8 +108,8 @@ suspend fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.col
         type: RecyclerViewLoadType,
         swipeRefreshLayout: SwipeRefreshLayout,
         transform: (ResultType) -> List<ValueInList>?,
-        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
-        onSuccess: ((ResultType) -> Unit)? = null,
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((RequestType, ResultType) -> Unit)? = null,
         listener: OnItemClickListener? = null
 ) {
     val loadMoreFooter = if (type is RecyclerViewLoadType.LoadAfter) {

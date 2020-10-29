@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.like.common.base.BaseDialogFragment
+import com.like.datasource.RequestType
 import com.like.datasource.Result
-import com.like.datasource.ResultReport
 
 /**
  * [Result]、[BaseDialogFragment] 组合
@@ -15,8 +15,8 @@ import com.like.datasource.ResultReport
 suspend fun <ResultType> Result<ResultType>.collectWithProgress(
         lifecycleOwner: LifecycleOwner,
         progressDialogFragment: BaseDialogFragment,
-        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
-        onSuccess: ((ResultType) -> Unit)? = null
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((RequestType, ResultType) -> Unit)? = null
 ) {
     progress(
             {
@@ -38,8 +38,8 @@ suspend fun <ResultType> Result<ResultType>.collectWithProgress(
  */
 suspend fun <ResultType> Result<ResultType>.collectWithProgress(
         swipeRefreshLayout: SwipeRefreshLayout,
-        onFailed: ((ResultReport<Nothing>) -> Unit)? = null,
-        onSuccess: ((ResultType) -> Unit)? = null
+        onFailed: ((RequestType, Throwable) -> Unit)? = null,
+        onSuccess: ((RequestType, ResultType) -> Unit)? = null
 ) {
     swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW)
     swipeRefreshLayout.setOnRefreshListener {
