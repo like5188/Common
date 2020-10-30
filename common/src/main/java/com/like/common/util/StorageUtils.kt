@@ -222,7 +222,7 @@ object StorageUtils {
                 } else 0
 
         /**
-         * 获取私有目录下的Files目录
+         * 获取外部存储在内置存储卡分区上的私有目录下的Files目录
          *
          * @param context
          * @param type The type of files directory to return. May be {@code null}
@@ -243,7 +243,7 @@ object StorageUtils {
                 } else null
 
         /**
-         * 获取私有目录下的Cache目录
+         * 获取外部存储在内置存储卡分区上的私有目录下的Cache目录
          *
          * @param context
          * @return /storage/emulated/(0/1/...)/Android/data/packagename/cache
@@ -251,6 +251,30 @@ object StorageUtils {
         fun getExternalCacheDir(context: Context): File? =
                 if (isMounted()) {
                     context.applicationContext.externalCacheDir
+                } else null
+
+        /**
+         * 获取外部存储在内置存储卡分区和外置SD卡的私有目录地址。
+         *
+         * 有些设备支持外插SD卡，所以这类设备的外部存储由内置存储卡分区和外置SD卡组成：
+         * 在Android4.3及以下的系统，只能通过Context.getExternalFilesDir(type)来获取外部存储在内置存储卡分区上的私有目录地址，而无法获取到外部存储在外置SD卡上的地址。
+         * 从Android4.4开始，你可以通过Context.getExternalFilesDirs(type)获取一个File数组，File数组中就包含了内置存储卡分区和外置SD卡的私有目录地址。
+         *
+         * @param context
+         * @param type The type of files directory to return. May be {@code null}
+         *            for the root of the files directory or one of the following
+         *            constants for a subdirectory:
+         *            {@link android.os.Environment#DIRECTORY_MUSIC},
+         *            {@link android.os.Environment#DIRECTORY_PODCASTS},
+         *            {@link android.os.Environment#DIRECTORY_RINGTONES},
+         *            {@link android.os.Environment#DIRECTORY_ALARMS},
+         *            {@link android.os.Environment#DIRECTORY_NOTIFICATIONS},
+         *            {@link android.os.Environment#DIRECTORY_PICTURES}, or
+         *            {@link android.os.Environment#DIRECTORY_MOVIES}.
+         */
+        fun getExternalFilesDirs(context: Context, type: String): Array<out File>? =
+                if (isMounted()) {
+                    context.applicationContext.getExternalFilesDirs(type)
                 } else null
 
     }
