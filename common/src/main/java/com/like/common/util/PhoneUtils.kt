@@ -7,7 +7,7 @@ import android.view.WindowManager
 
 object PhoneUtils {
 
-    fun getWindowManager(context: Context?) = context?.applicationContext?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+    private fun getWindowManager(context: Context?) = context?.applicationContext?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
 
     /**
      * android系统版本

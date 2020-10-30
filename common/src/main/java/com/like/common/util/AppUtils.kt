@@ -15,7 +15,7 @@ import kotlin.system.exitProcess
  * app相关工具类
  */
 object AppUtils {
-    fun getActivityManager(context: Context?) = context?.applicationContext?.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+    private fun getActivityManager(context: Context?) = context?.applicationContext?.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
 
     /**
      * 版本名称
