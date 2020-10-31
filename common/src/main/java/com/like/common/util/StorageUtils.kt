@@ -15,7 +15,7 @@ import java.io.File
  * 二、外部存储可以是外置SD卡 ，也可以是内置存储卡 的部分分区。 外部存储是可以全局访问的，分为公共目录和私有目录。
  *  私有目录：文件访问方式与之前Android版本一致，可以通过File path获取资源。(不需要申请存储权限)
  *  公共目录：
- *      api<29：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
+ *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
  *      api>=29文件需要通过MediaStore API或者Storage Access Framework方式访问。
  *      1、访问自己应用创建的文件：MediaStore API、SAF。(不需要申请存储权限)
  *      2、访问其他应用创建的文件：(需要申请存储权限)
