@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.autowired.AutoWiredActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
@@ -28,12 +29,17 @@ import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
+import com.like.common.sample.storage.StorageActivity
 import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -72,13 +78,18 @@ class MainActivity : AppCompatActivity() {
         mBinding.cbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.btnTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
 
-        mBinding.etSearch.search(filter = {
-            it.length > 3
-        }) {
-            delay(1000)
-            "search $it"
-        }.observe(this) {
-            Logger.w("搜索成功：$it")
+        lifecycleScope.launch {
+            mBinding.etSearch.search()
+                    .filter {
+                        !it.isNullOrEmpty() && it.length > 3
+                    }
+                    .map {
+                        delay(1000)
+                        "search $it"
+                    }
+                    .collect {
+                        Logger.w("搜索成功：$it")
+                    }
         }
     }
 
@@ -221,6 +232,10 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoFragmentContainer(view: View) {
         startActivity<FragmentContainer>()
+    }
+
+    fun gotoStorageActivity(view: View) {
+        startActivity<StorageActivity>()
     }
 
     fun gotoAutoWiredActivity(view: View) {

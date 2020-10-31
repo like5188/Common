@@ -49,6 +49,7 @@
         <activity android:name=".activitytest.LaunchModeActivity2" />
         <activity android:name=".activitytest.LaunchModeActivity3" />
         <activity android:name=".fragmenttest.FragmentContainer" />
+        <activity android:name=".storage.StorageActivity" />
     </application>
 
 </manifest>

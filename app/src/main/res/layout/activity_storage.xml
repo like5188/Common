@@ -9,15 +9,15 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="get"
-            android:text="get"
+            android:onClick="openDocument"
+            android:text="SAF选择文件"
             android:textAllCaps="false" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="put"
-            android:text="put"
+            android:onClick="createFile"
+            android:text="createFile"
             android:textAllCaps="false" />
 
         <Button
