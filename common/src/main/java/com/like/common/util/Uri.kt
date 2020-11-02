@@ -4,11 +4,16 @@ import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.util.Size
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -17,6 +22,61 @@ fun File.getUri(context: Context) = UriUtils.getUriByFile(context, this)
 fun Uri.getFilePath(context: Context) = UriUtils.getFilePathByUri(context, this)
 
 object UriUtils {
+    fun getBitmapFromUri(context: Context, uri: Uri?): Bitmap? {
+        uri ?: return null
+        return try {
+            context.contentResolver.openFileDescriptor(uri, "r")?.use {
+                val fileDescriptor = it.fileDescriptor
+                BitmapFactory.decodeFileDescriptor(fileDescriptor)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun getThumbnailFromUri(context: Context, uri: Uri?, with: Int, height: Int): Bitmap? {
+        uri ?: return null
+        return try {
+            context.contentResolver.loadThumbnail(uri, Size(with, height), null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun readTextFromUri(context: Context, uri: Uri?): String? {
+        uri ?: return null
+        return try {
+            context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun writeTextToUri(context: Context, uri: Uri?, text: String) {
+        uri ?: return
+        try {
+            context.contentResolver.openOutputStream(uri)?.bufferedWriter()?.write(text)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun dumpImageMetaData(context: Context, imageUri: Uri, callback: (String, String) -> Unit) {
+        // 获取图片信息
+        context.contentResolver
+                .query(imageUri, null, null, null, null, null)
+                ?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                        val size = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE))
+                        callback(displayName, size)
+                    }
+                }
+    }
 
     fun getUriByFile(context: Context, file: File): Uri =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

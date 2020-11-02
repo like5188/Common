@@ -7,7 +7,7 @@ import android.os.StatFs
 import java.io.File
 
 /**
- * 存储空间工具类
+ * 内部存储、外部存储私有目录操作工具类
  *
  * 一、内部存储：/data/data(user/0)/packagename/xxx
  * 访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，当应用被卸载时，内部存储中的文件也会被删除。空间小，容易被系统删除。

@@ -27,7 +27,7 @@ class StorageActivity : AppCompatActivity() {
     }
 
     fun createFile(view: View) {
-        SAFUtils.createFile(this, "123.jpg", "image/jpg") {
+        SAFUtils.createDocument(this, "123.jpg", "image/jpg") {
             Logger.d("createFile：$it")
         }
     }

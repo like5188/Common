@@ -3,13 +3,13 @@ package com.like.common.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.provider.DocumentsContract
-import android.provider.OpenableColumns
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.documentfile.provider.DocumentFile
 
 
 /**
@@ -33,15 +33,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 object SAFUtils {
 
     /**
-     * 选择图片文件
+     * 选择单个文件
+     *
+     * @param callback  返回的 Uri 为文件的
      */
-    inline fun openDocument(activityResultCaller: ActivityResultCaller, crossinline callback: (Uri?) -> Unit) {
+    inline fun openDocument(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0, crossinline callback: (Uri?) -> Unit) {
         //通过系统的文件浏览器选择一个文件
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         //筛选，只显示可以“打开”的结果，如文件(而不是联系人或时区列表)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        //过滤只显示图像类型文件
-        intent.type = "image/*"
+        //过滤只显示指定类型文件
+        intent.type = mimeType.value
         activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 callback(it?.data?.data)
@@ -49,11 +51,40 @@ object SAFUtils {
         }.launch(intent)
     }
 
-    inline fun createFile(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: String, crossinline callback: (Uri?) -> Unit) {
+    /**
+     * 选择文件夹
+     *
+     * 注意：在Android 11上，无法通过SAF选择External Storage根目录、Downloads目录以及App专属目录(Android/data、Android/obb)
+     *
+     * @param callback  返回文件夹 DocumentFile
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    inline fun openDocumentTree(activityResultCaller: ActivityResultCaller, crossinline callback: (DocumentFile?) -> Unit) {
+        //通过系统的文件浏览器选择一个文件
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val treeUri = it?.data?.data
+                val documentFile = if (treeUri == null) {
+                    null
+                } else {
+                    DocumentFile.fromTreeUri(activityResultCaller.context, treeUri)
+                }
+                callback(documentFile)
+            }
+        }.launch(intent)
+    }
+
+    /**
+     * 创建文件
+     *
+     * @param callback  返回的 Uri 为文件的
+     */
+    inline fun createDocument(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: MimeType = MimeType._0, crossinline callback: (Uri?) -> Unit) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
         // Filter to only show results that can be "opened", such as a file (as opposed to a list of contacts or timezones).
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = mimeType// 文件类型
+        intent.type = mimeType.value// 文件类型
         intent.putExtra(Intent.EXTRA_TITLE, fileName)// 文件名称
         activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
@@ -62,39 +93,10 @@ object SAFUtils {
         }.launch(intent)
     }
 
-    fun getBitmapFromUri(context: Context, uri: Uri?): Bitmap? {
-        uri ?: return null
-        return try {
-            context.contentResolver.openFileDescriptor(uri, "r")?.use {
-                val fileDescriptor = it.fileDescriptor
-                BitmapFactory.decodeFileDescriptor(fileDescriptor)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    fun readTextFromUri(context: Context, uri: Uri?): String? {
-        uri ?: return null
-        return try {
-            context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
-    fun writeTextToUri(context: Context, uri: Uri?, text: String) {
-        uri ?: return
-        try {
-            context.contentResolver.openOutputStream(uri)?.bufferedWriter()?.write(text)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    fun deleteFile(context: Context, uri: Uri?): Boolean {
+    /**
+     * 删除文件
+     */
+    fun deleteDocument(context: Context, uri: Uri?): Boolean {
         uri ?: return false
         return try {
             DocumentsContract.deleteDocument(context.contentResolver, uri)
@@ -102,18 +104,5 @@ object SAFUtils {
             e.printStackTrace()
             false
         }
-    }
-
-    fun dumpImageMetaData(context: Context, imageUri: Uri, callback: (String, String) -> Unit) {
-        // 获取图片信息
-        context.contentResolver
-                .query(imageUri, null, null, null, null, null)
-                ?.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        val displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                        val size = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE))
-                        callback(displayName, size)
-                    }
-                }
     }
 }
