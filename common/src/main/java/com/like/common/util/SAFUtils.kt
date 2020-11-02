@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +9,10 @@ import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 /**
@@ -35,9 +38,9 @@ object SAFUtils {
     /**
      * 选择单个文件
      *
-     * @param callback  返回的 Uri 为文件的
+     * @return  返回的 Uri 为文件的
      */
-    inline fun openDocument(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0, crossinline callback: (Uri?) -> Unit) {
+    suspend fun openDocument(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0): Uri? = suspendCoroutine { cont ->
         //通过系统的文件浏览器选择一个文件
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         //筛选，只显示可以“打开”的结果，如文件(而不是联系人或时区列表)
@@ -45,9 +48,7 @@ object SAFUtils {
         //过滤只显示指定类型文件
         intent.type = mimeType.value
         activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                callback(it?.data?.data)
-            }
+            cont.resume(it?.data?.data)
         }.launch(intent)
     }
 
@@ -56,53 +57,51 @@ object SAFUtils {
      *
      * 注意：在Android 11上，无法通过SAF选择External Storage根目录、Downloads目录以及App专属目录(Android/data、Android/obb)
      *
-     * @param callback  返回文件夹 DocumentFile
+     * @return  返回文件夹 DocumentFile
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    inline fun openDocumentTree(activityResultCaller: ActivityResultCaller, crossinline callback: (DocumentFile?) -> Unit) {
+    suspend fun openDocumentTree(activityResultCaller: ActivityResultCaller): DocumentFile? = suspendCoroutine { cont ->
         //通过系统的文件浏览器选择一个文件
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val treeUri = it?.data?.data
-                val documentFile = if (treeUri == null) {
-                    null
-                } else {
-                    DocumentFile.fromTreeUri(activityResultCaller.context, treeUri)
-                }
-                callback(documentFile)
+            val treeUri = it?.data?.data
+            val documentFile = if (treeUri == null) {
+                null
+            } else {
+                DocumentFile.fromTreeUri(activityResultCaller.context, treeUri)
             }
+            cont.resume(documentFile)
         }.launch(intent)
     }
 
     /**
      * 创建文件
      *
-     * @param callback  返回的 Uri 为文件的
+     * @return  返回的 Uri 为文件的
      */
-    inline fun createDocument(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: MimeType = MimeType._0, crossinline callback: (Uri?) -> Unit) {
+    suspend fun createDocument(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: MimeType = MimeType._0): Uri? = suspendCoroutine { cont ->
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
         // Filter to only show results that can be "opened", such as a file (as opposed to a list of contacts or timezones).
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = mimeType.value// 文件类型
         intent.putExtra(Intent.EXTRA_TITLE, fileName)// 文件名称
         activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                callback(it?.data?.data)
-            }
+            cont.resume(it?.data?.data)
         }.launch(intent)
     }
 
     /**
      * 删除文件
      */
-    fun deleteDocument(context: Context, uri: Uri?): Boolean {
+    suspend fun deleteDocument(context: Context, uri: Uri?): Boolean {
         uri ?: return false
-        return try {
-            DocumentsContract.deleteDocument(context.contentResolver, uri)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
+        return withContext(Dispatchers.IO) {
+            try {
+                DocumentsContract.deleteDocument(context.contentResolver, uri)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
         }
     }
 }
