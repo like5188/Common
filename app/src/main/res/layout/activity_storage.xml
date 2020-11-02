@@ -62,6 +62,20 @@
             android:text="getVideos"
             android:textAllCaps="false" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createFile"
+            android:text="createFile"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="deleteFile"
+            android:text="deleteFile"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
 </layout>

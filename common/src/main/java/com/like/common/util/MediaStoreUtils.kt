@@ -18,6 +18,42 @@ import java.util.concurrent.TimeUnit
 
 /**
  * MediaStore 是 android 系统提供的一个多媒体数据库，专门用于存放多媒体信息的，通过 ContentResolver.query() 获取 Cursor 即可对数据库进行操作。
+ * content://media/<volumeName>/<Uri路径>
+●Audio
+■  Internal: MediaStore.Audio.Media.INTERNAL_CONTENT_URI
+content://media/internal/audio/media。
+■  External: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+content://media/external/audio/media。
+■  可移动存储: MediaStore.Audio.Media.getContentUri
+content://media/<volumeName>/audio/media。
+
+●  Video
+■    Internal: MediaStore.Video.Media.INTERNAL_CONTENT_URI
+content://media/internal/video/media。
+■    External: MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+content://media/external/video/media。
+■    可移动存储: MediaStore.Video.Media.getContentUri
+content://media/<volumeName>/video/media。
+
+●  Image
+■    Internal: MediaStore.Images.Media.INTERNAL_CONTENT_URI
+content://media/internal/images/media。
+■    External: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+content://media/external/images/media。
+■    可移动存储: MediaStore.Images.Media.getContentUri
+content://media/<volumeName>/images/media。
+
+●  File
+■    MediaStore. Files.Media.getContentUri
+content://media/<volumeName>/file。
+
+●  Downloads
+■    Internal: MediaStore.Downloads.INTERNAL_CONTENT_URI
+content://media/internal/downloads。
+■    External: MediaStore.Downloads.EXTERNAL_CONTENT_URI
+content://media/external/downloads。
+■    可移动存储: MediaStore.Downloads.getContentUri
+content://media/<volumeName>/downloads。
  *
  * MediaStore.Files: 共享的文件,包括多媒体和非多媒体信息
  * MediaStore.Image: 存放图片信息
@@ -61,6 +97,7 @@ object MediaStoreUtils {
                     MediaStore.MediaColumns.DATE_ADDED
             )
         }
+
     }
 
     class FileEntity : MediaEntity() {
@@ -72,6 +109,10 @@ object MediaStoreUtils {
                     MediaStore.Files.FileColumns.MEDIA_TYPE
             )
         }
+
+        override fun toString(): String {
+            return "FileEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, mediaType=$mediaType, uri=$uri)"
+        }
     }
 
     class ImageEntity : MediaEntity() {
@@ -82,6 +123,10 @@ object MediaStoreUtils {
             val projection = arrayOf(
                     MediaStore.Images.ImageColumns.DESCRIPTION
             )
+        }
+
+        override fun toString(): String {
+            return "ImageEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description, uri=$uri)"
         }
     }
 
@@ -95,6 +140,10 @@ object MediaStoreUtils {
                     MediaStore.Audio.AudioColumns.ARTIST,
                     MediaStore.Audio.AudioColumns.ALBUM
             )
+        }
+
+        override fun toString(): String {
+            return "AudioEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album, uri=$uri)"
         }
     }
 
@@ -110,6 +159,10 @@ object MediaStoreUtils {
                     MediaStore.Video.VideoColumns.ALBUM,
                     MediaStore.Video.VideoColumns.DESCRIPTION
             )
+        }
+
+        override fun toString(): String {
+            return "VideoEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album,  description=$description, uri=$uri)"
         }
     }
 

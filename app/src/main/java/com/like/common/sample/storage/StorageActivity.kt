@@ -1,7 +1,9 @@
 package com.like.common.sample.storage
 
+import android.content.ContentValues
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -72,6 +74,28 @@ class StorageActivity : AppCompatActivity() {
     fun getVideos(view: View) {
         lifecycleScope.launch {
             Logger.printCollection(MediaStoreUtils.getVideos(this@StorageActivity))
+        }
+    }
+
+    private var createdFileUri: Uri? = null
+    fun createFile(view: View) {
+        lifecycleScope.launch {
+            val values = ContentValues()
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "2.jpg")
+            values.put(MediaStore.MediaColumns.TITLE, "2.jpg")
+            values.put(MediaStore.MediaColumns.MIME_TYPE, MimeType._jpg.value)
+            createdFileUri = MediaStoreUtils.createFile(
+                    this@StorageActivity,
+                    Uri.parse("content://media/external/images/media"),
+                    values
+            )
+            Logger.d(createdFileUri)
+        }
+    }
+
+    fun deleteFile(view: View) {
+        lifecycleScope.launch {
+            Logger.d(MediaStoreUtils.deleteFile(this@StorageActivity, createdFileUri))
         }
     }
 }
