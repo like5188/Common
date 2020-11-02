@@ -23,29 +23,29 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="getAll"
-            android:text="getAll"
+            android:onClick="getFiles"
+            android:text="getFiles"
             android:textAllCaps="false" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="contains"
-            android:text="contains"
+            android:onClick="getImages"
+            android:text="getImages"
             android:textAllCaps="false" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clear"
-            android:text="clear"
+            android:onClick="getAudios"
+            android:text="getAudios"
             android:textAllCaps="false" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="remove"
-            android:text="remove"
+            android:onClick="getVideos"
+            android:text="getVideos"
             android:textAllCaps="false" />
 
     </LinearLayout>

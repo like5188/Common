@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
+import com.like.common.util.MediaStoreUtils
 import com.like.common.util.SAFUtils
 
 class StorageActivity : AppCompatActivity() {
@@ -26,20 +27,24 @@ class StorageActivity : AppCompatActivity() {
     }
 
     fun createFile(view: View) {
-        SAFUtils.createFile(this, "123.jpg") {
+        SAFUtils.createFile(this, "123.jpg", "image/jpg") {
             Logger.d("createFile：$it")
         }
     }
 
-    fun getAll(view: View) {
+    fun getFiles(view: View) {
+        Logger.printCollection(MediaStoreUtils.getFiles(this))
     }
 
-    fun contains(view: View) {
+    fun getImages(view: View) {
+        Logger.printCollection(MediaStoreUtils.getImages(this))
     }
 
-    fun clear(view: View) {
+    fun getAudios(view: View) {
+        Logger.printCollection(MediaStoreUtils.getAudios(this))
     }
 
-    fun remove(view: View) {
+    fun getVideos(view: View) {
+        Logger.printCollection(MediaStoreUtils.getVideos(this))
     }
 }

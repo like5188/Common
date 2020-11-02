@@ -1,11 +1,8 @@
 package com.like.common.util
 
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.annotation.RequiresApi
-import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
 
@@ -18,10 +15,9 @@ import androidx.core.database.getStringOrNull
  * MediaStore.Video: 存放视频信息
  * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
  */
-@RequiresApi(Build.VERSION_CODES.Q)
 object MediaStoreUtils {
 
-    class FileEntity {
+    open class MediaEntity {
         var size: Int? = null
         var displayName: String? = null
         var title: String? = null
@@ -30,35 +26,40 @@ object MediaStoreUtils {
         var height: Int? = null
         var duration: Int? = null
         var orientation: Int? = null
+    }
 
-        /**
-         * The media type (audio, video, image or playlist)
-         * of the file, or 0 for not a media file
-         */
+    class FileEntity : MediaEntity() {
         var mediaType: Int? = null
+    }
+
+    class ImageEntity : MediaEntity() {
+        var description: String? = null
+    }
+
+    class AudioEntity : MediaEntity() {
+        var artist: String? = null
+        var album: String? = null
+    }
+
+    class VideoEntity : MediaEntity() {
         var artist: String? = null
         var album: String? = null
         var description: String? = null
-        var latitude: Float? = null
-        var longitude: Float? = null
     }
 
     /**
-     * @param uri
-     * 比如：MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)、
-     * MediaStore.Images.Media.EXTERNAL_CONTENT_URI、
-     * MediaStore.Audio.Media.EXTERNAL_CONTENT_URI、
-     * MediaStore.Video.Media.EXTERNAL_CONTENT_URI
      * @param selection         查询条件
      * @param selectionArgs     查询条件填充值
      * @param sortOrder         排序依据
      */
-    private fun getFiles(context: Context,
-                         uri: Uri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL),
-                         selection: String? = null,
-                         selectionArgs: Array<String>? = null,
-                         sortOrder: String? = null
+    fun getFiles(context: Context,
+                 selection: String? = null,
+                 selectionArgs: Array<String>? = null,
+                 sortOrder: String? = null
     ): List<FileEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
         val projection = arrayOf(
                 MediaStore.MediaColumns.SIZE,
                 MediaStore.MediaColumns.DISPLAY_NAME,
@@ -68,12 +69,13 @@ object MediaStoreUtils {
                 MediaStore.MediaColumns.HEIGHT,
                 MediaStore.MediaColumns.DURATION,
                 MediaStore.MediaColumns.ORIENTATION,
-                "media_type", "artist", "album", "description", "latitude", "longitude"
+                MediaStore.Files.FileColumns.MEDIA_TYPE
         )
         val files = mutableListOf<FileEntity>()
-        context.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+        context.contentResolver.query(MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL), projection, selection, selectionArgs, sortOrder)?.use { cursor ->
             while (cursor.moveToFirst()) {
                 FileEntity().apply {
+                    // MediaStore.MediaColumns 中的公共字段
                     size = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE))
                     displayName = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
                     title = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.TITLE))
@@ -82,12 +84,148 @@ object MediaStoreUtils {
                     height = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.HEIGHT))
                     duration = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DURATION))
                     orientation = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.ORIENTATION))
-                    mediaType = cursor.getIntOrNull(cursor.getColumnIndex("media_type"))
-                    artist = cursor.getStringOrNull(cursor.getColumnIndex("artist"))
-                    album = cursor.getStringOrNull(cursor.getColumnIndex("album"))
-                    description = cursor.getStringOrNull(cursor.getColumnIndex("description"))
-                    latitude = cursor.getFloatOrNull(cursor.getColumnIndex("latitude"))
-                    longitude = cursor.getFloatOrNull(cursor.getColumnIndex("longitude"))
+                    mediaType = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE))
+                    files.add(this)
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    fun getImages(context: Context,
+                  selection: String? = null,
+                  selectionArgs: Array<String>? = null,
+                  sortOrder: String? = null
+    ): List<ImageEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val projection = arrayOf(
+                MediaStore.MediaColumns.SIZE,
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.TITLE,
+                MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.WIDTH,
+                MediaStore.MediaColumns.HEIGHT,
+                MediaStore.MediaColumns.DURATION,
+                MediaStore.MediaColumns.ORIENTATION,
+                MediaStore.Images.ImageColumns.DESCRIPTION
+        )
+        val files = mutableListOf<ImageEntity>()
+        context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+            while (cursor.moveToFirst()) {
+                ImageEntity().apply {
+                    // MediaStore.MediaColumns 中的公共字段
+                    size = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE))
+                    displayName = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                    title = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.TITLE))
+                    mimeType = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+                    width = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.WIDTH))
+                    height = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.HEIGHT))
+                    duration = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DURATION))
+                    orientation = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.ORIENTATION))
+                    description = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DESCRIPTION))
+                    files.add(this)
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    fun getAudios(context: Context,
+                  selection: String? = null,
+                  selectionArgs: Array<String>? = null,
+                  sortOrder: String? = null
+    ): List<AudioEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val projection = arrayOf(
+                MediaStore.MediaColumns.SIZE,
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.TITLE,
+                MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.WIDTH,
+                MediaStore.MediaColumns.HEIGHT,
+                MediaStore.MediaColumns.DURATION,
+                MediaStore.MediaColumns.ORIENTATION,
+                MediaStore.Audio.AudioColumns.ARTIST,
+                MediaStore.Audio.AudioColumns.ALBUM
+        )
+        val files = mutableListOf<AudioEntity>()
+        context.contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+            while (cursor.moveToFirst()) {
+                AudioEntity().apply {
+                    // MediaStore.MediaColumns 中的公共字段
+                    size = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE))
+                    displayName = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                    title = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.TITLE))
+                    mimeType = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+                    width = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.WIDTH))
+                    height = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.HEIGHT))
+                    duration = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DURATION))
+                    orientation = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.ORIENTATION))
+                    artist = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST))
+                    album = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM))
+                    files.add(this)
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    fun getVideos(context: Context,
+                  selection: String? = null,
+                  selectionArgs: Array<String>? = null,
+                  sortOrder: String? = null
+    ): List<VideoEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val projection = arrayOf(
+                MediaStore.MediaColumns.SIZE,
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.TITLE,
+                MediaStore.MediaColumns.MIME_TYPE,
+                MediaStore.MediaColumns.WIDTH,
+                MediaStore.MediaColumns.HEIGHT,
+                MediaStore.MediaColumns.DURATION,
+                MediaStore.MediaColumns.ORIENTATION,
+                MediaStore.Video.VideoColumns.ARTIST,
+                MediaStore.Video.VideoColumns.ALBUM,
+                MediaStore.Video.VideoColumns.DESCRIPTION
+        )
+        val files = mutableListOf<VideoEntity>()
+        context.contentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+            while (cursor.moveToFirst()) {
+                VideoEntity().apply {
+                    // MediaStore.MediaColumns 中的公共字段
+                    size = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE))
+                    displayName = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                    title = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.TITLE))
+                    mimeType = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE))
+                    width = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.WIDTH))
+                    height = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.HEIGHT))
+                    duration = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.DURATION))
+                    orientation = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.MediaColumns.ORIENTATION))
+                    artist = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Video.VideoColumns.ARTIST))
+                    album = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Video.VideoColumns.ALBUM))
+                    description = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DESCRIPTION))
                     files.add(this)
                 }
             }
