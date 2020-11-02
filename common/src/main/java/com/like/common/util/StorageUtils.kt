@@ -7,7 +7,8 @@ import android.os.StatFs
 import java.io.File
 
 /**
- * 内部存储、外部存储私有目录操作工具类
+ * 内部存储、外部存储私有目录操作工具类。
+ * 公共目录操作工具类为：[SAFUtils]、[MediaStoreUtils]
  *
  * 一、内部存储：/data/data(user/0)/packagename/xxx
  * 访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，当应用被卸载时，内部存储中的文件也会被删除。空间小，容易被系统删除。
@@ -77,7 +78,7 @@ object StorageUtils {
             }
 
     /**
-     * 内部存储工具类，此工具类全部基于InternalStorage
+     * 内部存储工具类
      */
     object InternalStorageHelper {
         /**
@@ -165,7 +166,7 @@ object StorageUtils {
     }
 
     /**
-     * 外部存储工具类，此工具类全部基于ExternalStorage
+     * 外部存储私有目录工具类
      */
     object ExternalStorageHelper {
         /**
