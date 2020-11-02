@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.os.Environment
@@ -35,7 +34,6 @@ object StorageUtils {
      * @param dir
      * @return
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun getStorageSize(dir: String?): Long =
             try {
                 val fs = StatFs(dir)
@@ -52,7 +50,6 @@ object StorageUtils {
      * @param dir
      * @return
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun getStorageFreeSize(dir: String?): Long =
             try {
                 val fs = StatFs(dir)
@@ -69,7 +66,6 @@ object StorageUtils {
      * @param dir
      * @return
      */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun getStorageAvailableSize(dir: String?): Long =
             try {
                 val fs = StatFs(dir)
@@ -103,7 +99,6 @@ object StorageUtils {
          * @param context
          * @return
          */
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         fun getSize(context: Context): Long =
                 getStorageSize(getBaseDir(context.applicationContext))
 
@@ -113,7 +108,6 @@ object StorageUtils {
          * @param context
          * @return
          */
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         fun getFreeSize(context: Context): Long =
                 getStorageFreeSize(getBaseDir(context.applicationContext))
 
@@ -123,7 +117,6 @@ object StorageUtils {
          * @param context
          * @return
          */
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
         fun getAvailableSize(context: Context): Long =
                 getStorageAvailableSize(getBaseDir(context.applicationContext))
 
