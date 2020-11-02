@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit
  * MediaStore.Video: 存放视频信息
  * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
  */
-@RequiresApi(Build.VERSION_CODES.Q)
 object MediaStoreUtils {
     open class BaseEntity {
         var id: Long? = null
@@ -49,6 +48,7 @@ object MediaStoreUtils {
         var dateAdded: Date? = null
 
         companion object {
+            @RequiresApi(Build.VERSION_CODES.Q)
             val projection = arrayOf(
                     MediaStore.MediaColumns.SIZE,
                     MediaStore.MediaColumns.DISPLAY_NAME,
@@ -142,7 +142,7 @@ object MediaStoreUtils {
                 val orientationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)
                 val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
                 val mediaTypeColumn = cursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE)
-                while (cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
                     FileEntity().apply {
                         id = cursor.getLongOrNull(idColumn)
                         size = cursor.getIntOrNull(sizeColumn)
@@ -193,7 +193,7 @@ object MediaStoreUtils {
                 val orientationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)
                 val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
                 val descriptionColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DESCRIPTION)
-                while (cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
                     ImageEntity().apply {
                         id = cursor.getLongOrNull(idColumn)
                         size = cursor.getIntOrNull(sizeColumn)
@@ -245,7 +245,7 @@ object MediaStoreUtils {
                 val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
                 val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ARTIST)
                 val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM)
-                while (cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
                     AudioEntity().apply {
                         id = cursor.getLongOrNull(idColumn)
                         size = cursor.getIntOrNull(sizeColumn)
@@ -299,7 +299,7 @@ object MediaStoreUtils {
                 val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ARTIST)
                 val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ALBUM)
                 val descriptionColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DESCRIPTION)
-                while (cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
                     VideoEntity().apply {
                         id = cursor.getLongOrNull(idColumn)
                         size = cursor.getIntOrNull(sizeColumn)

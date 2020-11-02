@@ -10,14 +10,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="openDocument"
-            android:text="SAF选择文件"
+            android:text="openDocument"
             android:textAllCaps="false" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="createFile"
-            android:text="createFile"
+            android:onClick="openDocumentTree"
+            android:text="openDocumentTree"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="createDocument"
+            android:text="createDocument"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="deleteDocument"
+            android:text="deleteDocument"
             android:textAllCaps="false" />
 
         <Button

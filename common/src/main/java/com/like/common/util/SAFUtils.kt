@@ -7,7 +7,6 @@ import android.os.Build
 import android.provider.DocumentsContract
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -59,8 +58,11 @@ object SAFUtils {
      *
      * @return  返回文件夹 DocumentFile
      */
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     suspend fun openDocumentTree(activityResultCaller: ActivityResultCaller): DocumentFile? = suspendCoroutine { cont ->
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            cont.resume(null)
+            return@suspendCoroutine
+        }
         //通过系统的文件浏览器选择一个文件
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
