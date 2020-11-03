@@ -11,9 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
-import com.like.common.util.MediaStoreUtils
-import com.like.common.util.MimeType
-import com.like.common.util.SAFUtils
+import com.like.common.util.StoragePublicUtils
 import kotlinx.coroutines.launch
 
 class StorageActivity : AppCompatActivity() {
@@ -28,13 +26,13 @@ class StorageActivity : AppCompatActivity() {
 
     fun openDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("openDocument：${SAFUtils.openDocument(this@StorageActivity)}")
+            Logger.d("openDocument：${StoragePublicUtils.SAFUtils.openDocument(this@StorageActivity)}")
         }
     }
 
     fun openDocumentTree(view: View) {
         lifecycleScope.launch {
-            val documentFile = SAFUtils.openDocumentTree(this@StorageActivity)
+            val documentFile = StoragePublicUtils.SAFUtils.openDocumentTree(this@StorageActivity)
             documentFile?.listFiles()?.forEach {
                 Logger.d("openDocumentTree：${it?.uri}")
             }
@@ -43,37 +41,37 @@ class StorageActivity : AppCompatActivity() {
 
     fun createDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("createDocument：${SAFUtils.createDocument(this@StorageActivity, "123.jpg", MimeType._jpg)}")
+            Logger.d("createDocument：${StoragePublicUtils.SAFUtils.createDocument(this@StorageActivity, "123.jpg", StoragePublicUtils.MimeType._jpg)}")
         }
     }
 
     fun deleteDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("deleteDocument：${SAFUtils.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
+            Logger.d("deleteDocument：${StoragePublicUtils.SAFUtils.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
         }
     }
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getFiles(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getFiles(this@StorageActivity))
         }
     }
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getImages(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getImages(this@StorageActivity))
         }
     }
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getAudios(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getAudios(this@StorageActivity))
         }
     }
 
     fun getVideos(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getVideos(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getVideos(this@StorageActivity))
         }
     }
 
@@ -83,8 +81,8 @@ class StorageActivity : AppCompatActivity() {
             val values = ContentValues()
             values.put(MediaStore.MediaColumns.DISPLAY_NAME, "3.jpg")
             values.put(MediaStore.MediaColumns.TITLE, "3.jpg")
-            values.put(MediaStore.MediaColumns.MIME_TYPE, MimeType._jpg.value)
-            createdFileUri = MediaStoreUtils.createFile(
+            values.put(MediaStore.MediaColumns.MIME_TYPE, StoragePublicUtils.MimeType._jpg.value)
+            createdFileUri = StoragePublicUtils.MediaStoreUtils.createFile(
                     this@StorageActivity,
                     Uri.parse("content://media/external/images/media"),
                     values
@@ -95,7 +93,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun deleteFile(view: View) {
         lifecycleScope.launch {
-            Logger.d(MediaStoreUtils.deleteFile(this@StorageActivity, createdFileUri))
+            Logger.d(StoragePublicUtils.MediaStoreUtils.deleteFile(this@StorageActivity, createdFileUri))
         }
     }
 }

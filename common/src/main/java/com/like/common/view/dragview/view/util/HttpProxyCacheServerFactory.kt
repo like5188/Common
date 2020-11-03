@@ -2,7 +2,7 @@ package com.like.common.view.dragview.view.util
 
 import android.content.Context
 import com.danikula.videocache.HttpProxyCacheServer
-import com.like.common.util.StorageUtils
+import com.like.common.util.StoragePrivateUtils
 
 /**
  * 使用com.danikula:videocache:2.7.1来缓存VideoView适配时需要的代理类工厂
@@ -19,7 +19,7 @@ object HttpProxyCacheServerFactory {
 
         val created = HttpProxyCacheServer.Builder(context)
                 .maxCacheFilesCount(20)
-                .cacheDirectory(StorageUtils.InternalStorageHelper.getCacheDir(context))
+                .cacheDirectory(StoragePrivateUtils.InternalStorageHelper.getCacheDir(context))
                 .build()
         proxy = created
         return created

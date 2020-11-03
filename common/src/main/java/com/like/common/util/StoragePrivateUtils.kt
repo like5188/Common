@@ -8,7 +8,7 @@ import java.io.File
 
 /**
  * 内部存储、外部存储私有目录操作工具类。
- * 公共目录操作工具类为：[SAFUtils]、[MediaStoreUtils]
+ * 公共目录操作工具类为：[StoragePublicUtils]
  *
  * 一、内部存储：/data/data(user/0)/packagename/xxx
  * 访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，当应用被卸载时，内部存储中的文件也会被删除。空间小，容易被系统删除。
@@ -28,7 +28,7 @@ import java.io.File
  *      1 Clear Data清理的是外部存储中的应用私有目录下的file文件夹
  *      2 Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
  */
-object StorageUtils {
+object StoragePrivateUtils {
     /**
      * 获取指定目录空间大小(byte)。
      *
