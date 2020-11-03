@@ -400,12 +400,6 @@ object StoragePublicUtils {
      * 1、Document Provider 文件存储服务提供者。
      * Document Provider让一个存储服务（比如Google Drive）可以对外以统一的形式展示自己所管理的文件，一个Document Provider代码上就是实现了DocumentsProvider.java的子类
      * 2、DocumentsUI 文件存储选择器App
-     *
-     * 访问外部存储的公共目录：
-     *    api<29（Android10）：不需要申请存储权限
-     *    api>=29：
-     *      1、访问自己应用创建的文件：(不需要申请存储权限)
-     *      2、访问其他应用创建的非媒体文件(pdf、office、doc、txt等)：(需要申请存储权限)
      */
     object SAFUtils {
 
