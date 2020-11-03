@@ -7,6 +7,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.provider.BaseColumns
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -117,7 +118,7 @@ object StoragePublicUtils {
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
                 val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
-                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += FileEntity().apply { fill(cursor, contentUri) }
                     }
@@ -148,7 +149,7 @@ object StoragePublicUtils {
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection
                 val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += ImageEntity().apply { fill(cursor, contentUri) }
                     }
@@ -176,7 +177,7 @@ object StoragePublicUtils {
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projection
                 val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += AudioEntity().apply { fill(cursor, contentUri) }
                     }
@@ -204,7 +205,7 @@ object StoragePublicUtils {
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection
                 val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += VideoEntity().apply { fill(cursor, contentUri) }
                     }
@@ -232,7 +233,7 @@ object StoragePublicUtils {
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + DownloadEntity.projection
                 val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += DownloadEntity().apply { fill(cursor, contentUri) }
                     }
@@ -241,44 +242,57 @@ object StoragePublicUtils {
             return files
         }
 
-        /*
-            // Add a media item that other apps shouldn't see until the item is
-            // fully written to the media store.
-            val resolver = applicationContext.contentResolver
-
-            // Find all audio files on the primary external storage device.
-            // On API <= 28, use VOLUME_EXTERNAL instead.
-            val audioCollection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-
-            val songDetails = ContentValues().apply {
-                put(MediaStore.Audio.Media.DISPLAY_NAME, "My Workout Playlist.mp3")
-                put(MediaStore.Audio.Media.IS_PENDING, 1)
-            }
-
-            val songContentUri = resolver.insert(audioCollection, songDetails)
-
-            resolver.openFileDescriptor(songContentUri, "w", null).use { pfd ->
-                // Write data into the pending audio file.
-            }
-
-            // Now that we're finished, release the "pending" status, and allow other apps
-            // to play the audio track.
-            songDetails.clear()
-            songDetails.put(MediaStore.Audio.Media.IS_PENDING, 0)
-            resolver.update(songContentUri, songDetails, null, null)
-         */
         /**
          * 创建文件
-         *
-         * @param values
-         * IS_PENDING：如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
-         * MediaColumns.RELATIVE_PATH：可以设置子目录
          */
         suspend fun createFile(context: Context, uri: Uri?, values: ContentValues): Uri? {
             uri ?: return null
             return withContext(Dispatchers.IO) {
                 try {
-                    context.contentResolver.insert(uri, values)
+                    context.applicationContext.contentResolver.insert(uri, values)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+        }
+
+        /**
+         * 创建文件并写入数据
+         *
+         * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
+         */
+        @RequiresApi(Build.VERSION_CODES.Q)
+        suspend fun createFile(context: Context, uri: Uri?, relativePath: String, fileName: String, onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
+            uri ?: return null
+
+            return withContext(Dispatchers.IO) {
+                try {
+                    // Add a media item that other apps shouldn't see until the item is
+                    // fully written to the media store.
+                    val resolver = context.applicationContext.contentResolver
+
+                    // Find all audio files on the primary external storage device.
+                    // On API <= 28, use VOLUME_EXTERNAL instead.
+                    val audioCollection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+                    val values = ContentValues().apply {
+                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
+                        put(MediaStore.Audio.Media.IS_PENDING, 1)
+                    }
+
+                    resolver.insert(audioCollection, values)?.also {
+                        resolver.openFileDescriptor(it, "w", null).use { pfd ->
+                            // Write data into the pending audio file.
+                            onWrite(pfd)
+                        }
+                        // Now that we're finished, release the "pending" status, and allow other apps
+                        // to play the audio track.
+                        values.clear()
+                        values.put(MediaStore.Audio.Media.IS_PENDING, 0)
+                        resolver.update(it, values, null, null)
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     null
@@ -293,7 +307,7 @@ object StoragePublicUtils {
             uri ?: return false
             return withContext(Dispatchers.IO) {
                 try {
-                    context.contentResolver.delete(uri, null, null) > 0
+                    context.applicationContext.contentResolver.delete(uri, null, null) > 0
                 } catch (e: Exception) {
                     e.printStackTrace()
                     false
@@ -564,7 +578,7 @@ object StoragePublicUtils {
             uri ?: return false
             return withContext(Dispatchers.IO) {
                 try {
-                    DocumentsContract.deleteDocument(context.contentResolver, uri)
+                    DocumentsContract.deleteDocument(context.applicationContext.contentResolver, uri)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     false
