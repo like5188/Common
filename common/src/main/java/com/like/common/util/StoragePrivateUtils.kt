@@ -99,7 +99,7 @@ object StoragePrivateUtils {
          * @return
          */
         fun getSize(context: Context): Long =
-                getStorageSize(getBaseDir(context.applicationContext))
+                getStorageSize(getBaseDir(context))
 
         /**
          * 获取剩余空间大小。包括预留的一般程序无法访问的
@@ -108,7 +108,7 @@ object StoragePrivateUtils {
          * @return
          */
         fun getFreeSize(context: Context): Long =
-                getStorageFreeSize(getBaseDir(context.applicationContext))
+                getStorageFreeSize(getBaseDir(context))
 
         /**
          * 获取可用空间大小。
@@ -117,7 +117,7 @@ object StoragePrivateUtils {
          * @return
          */
         fun getAvailableSize(context: Context): Long =
-                getStorageAvailableSize(getBaseDir(context.applicationContext))
+                getStorageAvailableSize(getBaseDir(context))
 
         /**
          * 获取数据库所在的路径
