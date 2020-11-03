@@ -133,8 +133,8 @@ object UriUtils {
                     return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
                 }
             } else if (isDownloadsDocument(uri)) {
-                val id = DocumentsContract.getDocumentId(uri)
-                val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
+                val id = DocumentsContract.getDocumentId(uri).toLong()
+                val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), id)
                 return getDataColumn(applicationContext, contentUri, null, null)
             } else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
