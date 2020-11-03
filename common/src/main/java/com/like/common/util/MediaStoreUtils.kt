@@ -72,6 +72,14 @@ object MediaStoreUtils {
                     BaseColumns._ID
             )
         }
+
+        @RequiresApi(Build.VERSION_CODES.Q)
+        open fun fill(cursor: Cursor, uri: Uri) {
+            with(cursor) {
+                this@BaseEntity.id = getLongOrNull(getColumnIndexOrThrow(projection[0]))
+                this@BaseEntity.uri = ContentUris.withAppendedId(uri, id ?: -1L)
+            }
+        }
     }
 
     open class MediaEntity : BaseEntity() {
@@ -101,19 +109,18 @@ object MediaStoreUtils {
         }
 
         @RequiresApi(Build.VERSION_CODES.Q)
-        fun fill(cursor: Cursor, uri: Uri) {
+        override fun fill(cursor: Cursor, uri: Uri) {
+            super.fill(cursor, uri)
             with(cursor) {
-                this@MediaEntity.id = getLongOrNull(getColumnIndexOrThrow(BaseColumns._ID))
-                this@MediaEntity.uri = ContentUris.withAppendedId(uri, id ?: -1L)
-                this@MediaEntity.size = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
-                this@MediaEntity.displayName = getStringOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
-                this@MediaEntity.title = getStringOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE))
-                this@MediaEntity.mimeType = getStringOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE))
-                this@MediaEntity.width = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH))
-                this@MediaEntity.height = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT))
-                this@MediaEntity.duration = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.DURATION))
-                this@MediaEntity.orientation = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION))
-                this@MediaEntity.dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED))))
+                this@MediaEntity.size = getIntOrNull(getColumnIndexOrThrow(projection[0]))
+                this@MediaEntity.displayName = getStringOrNull(getColumnIndexOrThrow(projection[1]))
+                this@MediaEntity.title = getStringOrNull(getColumnIndexOrThrow(projection[2]))
+                this@MediaEntity.mimeType = getStringOrNull(getColumnIndexOrThrow(projection[3]))
+                this@MediaEntity.width = getIntOrNull(getColumnIndexOrThrow(projection[4]))
+                this@MediaEntity.height = getIntOrNull(getColumnIndexOrThrow(projection[5]))
+                this@MediaEntity.duration = getIntOrNull(getColumnIndexOrThrow(projection[6]))
+                this@MediaEntity.orientation = getIntOrNull(getColumnIndexOrThrow(projection[7]))
+                this@MediaEntity.dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[8]))))
             }
         }
 
@@ -131,6 +138,14 @@ object MediaStoreUtils {
         override fun toString(): String {
             return "FileEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, mediaType=$mediaType)"
         }
+
+        @RequiresApi(Build.VERSION_CODES.Q)
+        override fun fill(cursor: Cursor, uri: Uri) {
+            super.fill(cursor, uri)
+            with(cursor) {
+                this@FileEntity.mediaType = getIntOrNull(getColumnIndex(projection[0]))
+            }
+        }
     }
 
     class ImageEntity : MediaEntity() {
@@ -144,6 +159,14 @@ object MediaStoreUtils {
 
         override fun toString(): String {
             return "ImageEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description)"
+        }
+
+        @RequiresApi(Build.VERSION_CODES.Q)
+        override fun fill(cursor: Cursor, uri: Uri) {
+            super.fill(cursor, uri)
+            with(cursor) {
+                this@ImageEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+            }
         }
     }
 
@@ -160,6 +183,15 @@ object MediaStoreUtils {
 
         override fun toString(): String {
             return "AudioEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album)"
+        }
+
+        @RequiresApi(Build.VERSION_CODES.Q)
+        override fun fill(cursor: Cursor, uri: Uri) {
+            super.fill(cursor, uri)
+            with(cursor) {
+                this@AudioEntity.artist = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+                this@AudioEntity.album = getStringOrNull(getColumnIndexOrThrow(projection[1]))
+            }
         }
     }
 
@@ -178,6 +210,16 @@ object MediaStoreUtils {
 
         override fun toString(): String {
             return "VideoEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album,  description=$description)"
+        }
+
+        @RequiresApi(Build.VERSION_CODES.Q)
+        override fun fill(cursor: Cursor, uri: Uri) {
+            super.fill(cursor, uri)
+            with(cursor) {
+                this@VideoEntity.artist = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+                this@VideoEntity.album = getStringOrNull(getColumnIndexOrThrow(projection[1]))
+                this@VideoEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[2]))
+            }
         }
     }
 
@@ -202,7 +244,6 @@ object MediaStoreUtils {
                 while (cursor.moveToNext()) {
                     FileEntity().apply {
                         fill(cursor, contentUri)
-                        mediaType = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE))
                         files += this
                     }
                 }
@@ -232,7 +273,6 @@ object MediaStoreUtils {
                 while (cursor.moveToNext()) {
                     ImageEntity().apply {
                         fill(cursor, contentUri)
-                        description = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DESCRIPTION))
                         files += this
                     }
                 }
@@ -262,8 +302,6 @@ object MediaStoreUtils {
                 while (cursor.moveToNext()) {
                     AudioEntity().apply {
                         fill(cursor, contentUri)
-                        artist = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ARTIST))
-                        album = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM))
                         files += this
                     }
                 }
@@ -293,9 +331,6 @@ object MediaStoreUtils {
                 while (cursor.moveToNext()) {
                     VideoEntity().apply {
                         fill(cursor, contentUri)
-                        artist = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ARTIST))
-                        album = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ALBUM))
-                        description = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DESCRIPTION))
                         files += this
                     }
                 }
