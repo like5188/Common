@@ -36,7 +36,7 @@ import kotlin.coroutines.suspendCoroutine
  *  公共目录：/storage/emulated/(0/1/...)/xxx
  *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
  *      api>=29文件需要通过MediaStore API或者Storage Access Framework方式访问。
- *      1、访问自己应用创建的文件：MediaStore API、SAF。(不需要申请存储权限)
+ *      1、访问自己应用新建的文件：MediaStore API、SAF。(不需要申请存储权限)
  *      2、访问其他应用创建的文件：(需要申请存储权限)
  *          ①媒体文件(图片、音频、视频)：MediaStore API
  *          ①非媒体文件(pdf、office、doc、txt等)：SAF

@@ -79,8 +79,8 @@ class StorageActivity : AppCompatActivity() {
     fun createFile(view: View) {
         lifecycleScope.launch {
             val values = ContentValues()
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "3.jpg")
-            values.put(MediaStore.MediaColumns.TITLE, "3.jpg")
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "4.jpg")
+            values.put(MediaStore.MediaColumns.TITLE, "4.jpg")
             values.put(MediaStore.MediaColumns.MIME_TYPE, StoragePublicUtils.MimeType._jpg.value)
             createdFileUri = StoragePublicUtils.MediaStoreUtils.createFile(
                     this@StorageActivity,
