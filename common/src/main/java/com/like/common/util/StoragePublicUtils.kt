@@ -241,8 +241,38 @@ object StoragePublicUtils {
             return files
         }
 
+        /*
+            // Add a media item that other apps shouldn't see until the item is
+            // fully written to the media store.
+            val resolver = applicationContext.contentResolver
+
+            // Find all audio files on the primary external storage device.
+            // On API <= 28, use VOLUME_EXTERNAL instead.
+            val audioCollection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+
+            val songDetails = ContentValues().apply {
+                put(MediaStore.Audio.Media.DISPLAY_NAME, "My Workout Playlist.mp3")
+                put(MediaStore.Audio.Media.IS_PENDING, 1)
+            }
+
+            val songContentUri = resolver.insert(audioCollection, songDetails)
+
+            resolver.openFileDescriptor(songContentUri, "w", null).use { pfd ->
+                // Write data into the pending audio file.
+            }
+
+            // Now that we're finished, release the "pending" status, and allow other apps
+            // to play the audio track.
+            songDetails.clear()
+            songDetails.put(MediaStore.Audio.Media.IS_PENDING, 0)
+            resolver.update(songContentUri, songDetails, null, null)
+         */
         /**
          * 创建文件
+         *
+         * @param values
+         * IS_PENDING：如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
+         * MediaColumns.RELATIVE_PATH：可以设置子目录
          */
         suspend fun createFile(context: Context, uri: Uri?, values: ContentValues): Uri? {
             uri ?: return null
