@@ -245,10 +245,15 @@ object StoragePublicUtils {
         /**
          * 创建文件
          */
-        suspend fun createFile(context: Context, uri: Uri?, values: ContentValues): Uri? {
+        @RequiresApi(Build.VERSION_CODES.Q)
+        suspend fun createFile(context: Context, uri: Uri?, relativePath: String, fileName: String): Uri? {
             uri ?: return null
             return withContext(Dispatchers.IO) {
                 try {
+                    val values = ContentValues().apply {
+                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
+                    }
                     context.applicationContext.contentResolver.insert(uri, values)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -272,17 +277,13 @@ object StoragePublicUtils {
                     // fully written to the media store.
                     val resolver = context.applicationContext.contentResolver
 
-                    // Find all audio files on the primary external storage device.
-                    // On API <= 28, use VOLUME_EXTERNAL instead.
-                    val audioCollection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-
                     val values = ContentValues().apply {
                         put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
                         put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
                         put(MediaStore.Audio.Media.IS_PENDING, 1)
                     }
 
-                    resolver.insert(audioCollection, values)?.also {
+                    resolver.insert(uri, values)?.also {
                         resolver.openFileDescriptor(it, "w", null).use { pfd ->
                             // Write data into the pending audio file.
                             onWrite(pfd)
