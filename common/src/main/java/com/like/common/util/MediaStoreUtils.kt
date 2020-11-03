@@ -242,9 +242,7 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    files += FileEntity().apply {
-                        fill(cursor, contentUri)
-                    }
+                    files += FileEntity().apply { fill(cursor, contentUri) }
                 }
             }
         }
@@ -270,9 +268,7 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    files += ImageEntity().apply {
-                        fill(cursor, contentUri)
-                    }
+                    files += ImageEntity().apply { fill(cursor, contentUri) }
                 }
             }
         }
@@ -298,9 +294,7 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    files += AudioEntity().apply {
-                        fill(cursor, contentUri)
-                    }
+                    files += AudioEntity().apply { fill(cursor, contentUri) }
                 }
             }
         }
@@ -326,9 +320,7 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    files += VideoEntity().apply {
-                        fill(cursor, contentUri)
-                    }
+                    files += VideoEntity().apply { fill(cursor, contentUri) }
                 }
             }
         }
