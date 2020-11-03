@@ -10,11 +10,11 @@ import java.io.File
  * 内部存储、外部存储私有目录操作工具类。
  * 公共目录操作工具类为：[StoragePublicUtils]
  *
- * 一、内部存储：/data/data(user/0)/packagename/xxx
+ * 一、内部存储：/data/data(user/0)/packageName/xxx
  * 访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，当应用被卸载时，内部存储中的文件也会被删除。空间小，容易被系统删除。
  *
  * 二、外部存储：可以是外置SD卡 ，也可以是内置存储卡 的部分分区。 外部存储是可以全局访问的，分为公共目录和私有目录。
- *  私有目录：/storage/emulated/(0/1/...)/Android/data/packagename/xxx
+ *  私有目录：/storage/emulated/(0/1/...)/Android/data/packageName/xxx
  *      文件访问方式与之前Android版本一致，可以通过File path获取资源。(不需要申请存储权限)
  *  公共目录：/storage/emulated/(0/1/...)/xxx
  *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
@@ -86,7 +86,7 @@ object StoragePrivateUtils {
          * 获取根目录
          *
          * @param context
-         * @return /data/data(user/0)/packagename
+         * @return /data/data(user/0)/packageName
          */
         private fun getBaseDir(context: Context): String =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -127,7 +127,7 @@ object StoragePrivateUtils {
          *
          * @param context
          * @param name    子路径或者文件名
-         * @return /data/data(user/0)/packagename/databases/name
+         * @return /data/data(user/0)/packageName/databases/name
          */
         fun getDatabasePath(context: Context, name: String): File =
                 context.applicationContext.getDatabasePath(name)
@@ -136,7 +136,7 @@ object StoragePrivateUtils {
          * 获取Files目录
          *
          * @param context
-         * @return /data/data(user/0)/packagename/files
+         * @return /data/data(user/0)/packageName/files
          */
         fun getFilesDir(context: Context): File =
                 context.applicationContext.filesDir
@@ -145,25 +145,26 @@ object StoragePrivateUtils {
          * 获取Cache目录
          *
          * @param context
-         * @return /data/data(user/0)/packagename/cache
+         * @return /data/data(user/0)/packageName/cache
          */
         fun getCacheDir(context: Context): File =
                 context.applicationContext.cacheDir
 
         /**
-         * 创建并返回一个内部存储的文件
+         * 创建并返回一个内部存储的目录
          *
          * @param context
-         * @param name      文件名
+         * @param dirName   目录名
          * @param mode      [android.content.Context.MODE_PRIVATE]、[android.content.Context.MODE_APPEND]
-         * 注意:自 API 级别 17 以来，常量 MODE_WORLD_READABLE 和 MODE_WORLD_WRITEABLE 已被弃用。从 Android N 开始，
+         * 注意:自 API 级别 17 以来，常量 MODE_WORLD_READABLE 和 MODE_WORLD_WRITEABLE 已被弃用。从 Android N (7.0) 开始，
          * 使用这些常量将会导致引发 SecurityException。这意味着，面向 Android N 和更高版本的应用无法按名称共享私有文件，
-         * 尝试共享“file://”URI 将会导致引发FileUriExposedException。 如果您的应用需要与其他应用共享私有文件，则可以将 FileProvider 与 FLAG_GRANT_READ_URI_PERMISSION 配合使用。
+         * 尝试共享“file://”URI 将会导致引发FileUriExposedException。
+         * 如果您的应用需要与其他应用共享私有文件，则可以将 FileProvider 与 FLAG_GRANT_READ_URI_PERMISSION 配合使用。
          *
-         * @return /data/data(user/0)/packagename/name
+         * @return /data/data(user/0)/packageName/dirName
          */
-        fun getDir(context: Context, name: String, mode: Int = Context.MODE_PRIVATE): File =
-                context.applicationContext.getDir(name, mode)
+        fun getDir(context: Context, dirName: String, mode: Int = Context.MODE_PRIVATE): File =
+                context.applicationContext.getDir(dirName, mode)
     }
 
     /**
@@ -232,7 +233,7 @@ object StoragePrivateUtils {
          *            {@link android.os.Environment#DIRECTORY_NOTIFICATIONS},
          *            {@link android.os.Environment#DIRECTORY_PICTURES}, or
          *            {@link android.os.Environment#DIRECTORY_MOVIES}.
-         * @return /storage/emulated/(0/1/...)/Android/data/packagename/files/(DCIM/Download/Pictures/...)
+         * @return /storage/emulated/(0/1/...)/Android/data/packageName/files/(DCIM/Download/Pictures/...)
          */
         fun getExternalFilesDir(context: Context, type: String): File? =
                 if (isMounted()) {
@@ -243,7 +244,7 @@ object StoragePrivateUtils {
          * 获取外部存储在内置存储卡分区上的私有目录下的Cache目录
          *
          * @param context
-         * @return /storage/emulated/(0/1/...)/Android/data/packagename/cache
+         * @return /storage/emulated/(0/1/...)/Android/data/packageName/cache
          */
         fun getExternalCacheDir(context: Context): File? =
                 if (isMounted()) {

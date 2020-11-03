@@ -26,13 +26,13 @@ class StorageActivity : AppCompatActivity() {
 
     fun openDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("openDocument：${StoragePublicUtils.SAFUtils.openDocument(this@StorageActivity)}")
+            Logger.d("openDocument：${StoragePublicUtils.SAFHelper.openDocument(this@StorageActivity)}")
         }
     }
 
     fun openDocumentTree(view: View) {
         lifecycleScope.launch {
-            val documentFile = StoragePublicUtils.SAFUtils.openDocumentTree(this@StorageActivity)
+            val documentFile = StoragePublicUtils.SAFHelper.openDocumentTree(this@StorageActivity)
             documentFile?.listFiles()?.forEach {
                 Logger.d("openDocumentTree：${it?.uri}")
             }
@@ -41,37 +41,37 @@ class StorageActivity : AppCompatActivity() {
 
     fun createDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("createDocument：${StoragePublicUtils.SAFUtils.createDocument(this@StorageActivity, "123.jpg", StoragePublicUtils.MimeType._jpg)}")
+            Logger.d("createDocument：${StoragePublicUtils.SAFHelper.createDocument(this@StorageActivity, "123.jpg", StoragePublicUtils.MimeType._jpg)}")
         }
     }
 
     fun deleteDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("deleteDocument：${StoragePublicUtils.SAFUtils.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
+            Logger.d("deleteDocument：${StoragePublicUtils.SAFHelper.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
         }
     }
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getFiles(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getFiles(this@StorageActivity))
         }
     }
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getImages(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getImages(this@StorageActivity))
         }
     }
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getAudios(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getAudios(this@StorageActivity))
         }
     }
 
     fun getVideos(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreUtils.getVideos(this@StorageActivity))
+            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getVideos(this@StorageActivity))
         }
     }
 
@@ -82,7 +82,7 @@ class StorageActivity : AppCompatActivity() {
             values.put(MediaStore.MediaColumns.DISPLAY_NAME, "4.jpg")
             values.put(MediaStore.MediaColumns.TITLE, "4.jpg")
             values.put(MediaStore.MediaColumns.MIME_TYPE, StoragePublicUtils.MimeType._jpg.value)
-            createdFileUri = StoragePublicUtils.MediaStoreUtils.createFile(
+            createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
                     Uri.parse("content://media/external/images/media"),
                     values
@@ -93,7 +93,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun deleteFile(view: View) {
         lifecycleScope.launch {
-            Logger.d(StoragePublicUtils.MediaStoreUtils.deleteFile(this@StorageActivity, createdFileUri))
+            Logger.d(StoragePublicUtils.MediaStoreHelper.deleteFile(this@StorageActivity, createdFileUri))
         }
     }
 }

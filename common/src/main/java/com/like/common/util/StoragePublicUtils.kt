@@ -93,7 +93,7 @@ object StoragePublicUtils {
      * MediaStore.Video: 存放视频信息
      * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
      */
-    object MediaStoreUtils {
+    object MediaStoreHelper {
 
         /**
          * @param selection         查询条件
@@ -402,7 +402,7 @@ object StoragePublicUtils {
      * Document Provider让一个存储服务（比如Google Drive）可以对外以统一的形式展示自己所管理的文件，一个Document Provider代码上就是实现了DocumentsProvider.java的子类
      * 2、DocumentsUI 文件存储选择器App
      */
-    object SAFUtils {
+    object SAFHelper {
 
         /**
          * 选择单个文件
