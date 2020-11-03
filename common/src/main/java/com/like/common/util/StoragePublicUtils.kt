@@ -246,12 +246,14 @@ object StoragePublicUtils {
          * 创建文件
          */
         @RequiresApi(Build.VERSION_CODES.Q)
-        suspend fun createFile(context: Context, uri: Uri?, relativePath: String, fileName: String): Uri? {
+        suspend fun createFile(context: Context, uri: Uri?, fileName: String, relativePath: String = ""): Uri? {
             uri ?: return null
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
-                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        if (relativePath.isNotEmpty()) {
+                            put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        }
                         put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
                     }
                     context.applicationContext.contentResolver.insert(uri, values)
@@ -268,7 +270,7 @@ object StoragePublicUtils {
          * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
          */
         @RequiresApi(Build.VERSION_CODES.Q)
-        suspend fun createFile(context: Context, uri: Uri?, relativePath: String, fileName: String, onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
+        suspend fun createFile(context: Context, uri: Uri?, fileName: String, relativePath: String = "", onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
             uri ?: return null
 
             return withContext(Dispatchers.IO) {
@@ -278,7 +280,9 @@ object StoragePublicUtils {
                     val resolver = context.applicationContext.contentResolver
 
                     val values = ContentValues().apply {
-                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        if (relativePath.isNotEmpty()) {
+                            put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        }
                         put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
                         put(MediaStore.Audio.Media.IS_PENDING, 1)
                     }
