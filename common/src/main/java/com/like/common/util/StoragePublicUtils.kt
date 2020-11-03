@@ -25,17 +25,23 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * 外部存储公共目录操作工具类。
+ * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
  *
  * 外部存储公共目录：/storage/emulated/(0/1/...)/xxx
- *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
- *      api>=29文件需要通过MediaStore API或者Storage Access Framework方式访问。
- *      1、访问自己应用新建的文件：MediaStore API、SAF。(不需要申请存储权限)
- *      2、访问其他应用创建的文件：(需要申请存储权限)
- *          ①媒体文件(图片、音频、视频)：MediaStore API
- *          ①非媒体文件(pdf、office、doc、txt等)：SAF
+ * 应用卸载后，文件不会删除。其他应用可以访问，但需要 READ_EXTERNAL_STORAGE 权限
+ *
+ * 1、媒体文件：MediaStore API
+ *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问自己应用或者其它应用的文件(需要申请存储权限)。
+ *      api>=29：
+ *      1、访问自己应用新建的文件。(不需要申请存储权限)
+ *      2、访问其他应用创建的文件。(需要申请存储权限)
+ * 2、其它文件：Storage Access Framework
  *
  * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在私有目录
+ *
+ * 如果您需要与其他应用共享单个文件或应用数据，可以使用 Android 提供的以下 API：
+ * 如果您需要与其他应用共享特定文件，请使用 FileProvider API。
+ * 如果您需要向其他应用提供数据，可以使用内容提供器。借助内容提供器，您可以完全控制向其他应用提供的读取和写入访问权限。尽管您可以将内容提供器与任何存储媒介一起使用，但它们通常与数据库一起使用。
  */
 object StoragePublicUtils {
 
