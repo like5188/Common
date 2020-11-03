@@ -41,6 +41,7 @@ import kotlin.coroutines.suspendCoroutine
  *          ①媒体文件(图片、音频、视频)：MediaStore API
  *          ①非媒体文件(pdf、office、doc、txt等)：SAF
  *
+ * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在SDCARD私有目录
  * 设置项的 Clear Data 和 Clear cache 两个选项，这两个都是清空应用的缓存数据，具体区别如下：
  *      1 Clear Data清理的是外部存储中的应用私有目录下的file文件夹
  *      2 Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
