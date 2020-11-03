@@ -63,6 +63,141 @@ content://media/<volumeName>/downloads。
  * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
  */
 object MediaStoreUtils {
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    suspend fun getFiles(context: Context,
+                         selection: String? = null,
+                         selectionArgs: Array<String>? = null,
+                         sortOrder: String? = null
+    ): List<FileEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val files = mutableListOf<FileEntity>()
+        withContext(Dispatchers.IO) {
+            val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
+            val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
+            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    files += FileEntity().apply { fill(cursor, contentUri) }
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    suspend fun getImages(context: Context,
+                          selection: String? = null,
+                          selectionArgs: Array<String>? = null,
+                          sortOrder: String? = null
+    ): List<ImageEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val files = mutableListOf<ImageEntity>()
+        withContext(Dispatchers.IO) {
+            val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection
+            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    files += ImageEntity().apply { fill(cursor, contentUri) }
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    suspend fun getAudios(context: Context,
+                          selection: String? = null,
+                          selectionArgs: Array<String>? = null,
+                          sortOrder: String? = null
+    ): List<AudioEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val files = mutableListOf<AudioEntity>()
+        withContext(Dispatchers.IO) {
+            val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projection
+            val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    files += AudioEntity().apply { fill(cursor, contentUri) }
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    suspend fun getVideos(context: Context,
+                          selection: String? = null,
+                          selectionArgs: Array<String>? = null,
+                          sortOrder: String? = null
+    ): List<VideoEntity> {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return emptyList()
+        }
+        val files = mutableListOf<VideoEntity>()
+        withContext(Dispatchers.IO) {
+            val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection
+            val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    files += VideoEntity().apply { fill(cursor, contentUri) }
+                }
+            }
+        }
+        return files
+    }
+
+    /**
+     * 创建文件
+     */
+    suspend fun createFile(context: Context, uri: Uri?, values: ContentValues): Uri? {
+        uri ?: return null
+        return withContext(Dispatchers.IO) {
+            try {
+                context.contentResolver.insert(uri, values)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    /**
+     * 删除文件
+     */
+    suspend fun deleteFile(context: Context, uri: Uri?): Boolean {
+        uri ?: return false
+        return withContext(Dispatchers.IO) {
+            try {
+                context.contentResolver.delete(uri, null, null) > 0
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
     open class BaseEntity {
         var id: Long? = null
         var uri: Uri? = null
@@ -219,140 +354,6 @@ object MediaStoreUtils {
                 this@VideoEntity.artist = getStringOrNull(getColumnIndexOrThrow(projection[0]))
                 this@VideoEntity.album = getStringOrNull(getColumnIndexOrThrow(projection[1]))
                 this@VideoEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[2]))
-            }
-        }
-    }
-
-    /**
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
-     */
-    suspend fun getFiles(context: Context,
-                         selection: String? = null,
-                         selectionArgs: Array<String>? = null,
-                         sortOrder: String? = null
-    ): List<FileEntity> {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return emptyList()
-        }
-        val files = mutableListOf<FileEntity>()
-        withContext(Dispatchers.IO) {
-            val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
-            val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += FileEntity().apply { fill(cursor, contentUri) }
-                }
-            }
-        }
-        return files
-    }
-
-    /**
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
-     */
-    suspend fun getImages(context: Context,
-                          selection: String? = null,
-                          selectionArgs: Array<String>? = null,
-                          sortOrder: String? = null
-    ): List<ImageEntity> {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return emptyList()
-        }
-        val files = mutableListOf<ImageEntity>()
-        withContext(Dispatchers.IO) {
-            val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection
-            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += ImageEntity().apply { fill(cursor, contentUri) }
-                }
-            }
-        }
-        return files
-    }
-
-    /**
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
-     */
-    suspend fun getAudios(context: Context,
-                          selection: String? = null,
-                          selectionArgs: Array<String>? = null,
-                          sortOrder: String? = null
-    ): List<AudioEntity> {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return emptyList()
-        }
-        val files = mutableListOf<AudioEntity>()
-        withContext(Dispatchers.IO) {
-            val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projection
-            val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += AudioEntity().apply { fill(cursor, contentUri) }
-                }
-            }
-        }
-        return files
-    }
-
-    /**
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
-     */
-    suspend fun getVideos(context: Context,
-                          selection: String? = null,
-                          selectionArgs: Array<String>? = null,
-                          sortOrder: String? = null
-    ): List<VideoEntity> {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return emptyList()
-        }
-        val files = mutableListOf<VideoEntity>()
-        withContext(Dispatchers.IO) {
-            val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection
-            val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += VideoEntity().apply { fill(cursor, contentUri) }
-                }
-            }
-        }
-        return files
-    }
-
-    /**
-     * 创建文件
-     */
-    suspend fun createFile(context: Context, uri: Uri?, values: ContentValues): Uri? {
-        uri ?: return null
-        return withContext(Dispatchers.IO) {
-            try {
-                context.contentResolver.insert(uri, values)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
-        }
-    }
-
-    /**
-     * 删除文件
-     */
-    suspend fun deleteFile(context: Context, uri: Uri?): Boolean {
-        uri ?: return false
-        return withContext(Dispatchers.IO) {
-            try {
-                context.contentResolver.delete(uri, null, null) > 0
-            } catch (e: Exception) {
-                e.printStackTrace()
-                false
             }
         }
     }
