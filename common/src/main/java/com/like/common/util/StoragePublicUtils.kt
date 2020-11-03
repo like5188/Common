@@ -31,10 +31,10 @@ import kotlin.coroutines.suspendCoroutine
  * 应用卸载后，文件不会删除。其他应用可以访问，但需要 READ_EXTERNAL_STORAGE 权限
  *
  * 1、媒体文件：MediaStore API
- *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问自己应用或者其它应用的文件(需要申请存储权限)。
+ *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问自己应用或者其它应用的文件(需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />)。
  *      api>=29：
- *      1、访问自己应用新建的文件。(不需要申请存储权限)
- *      2、访问其他应用创建的文件。(需要申请存储权限)
+ *      1、访问自己应用新建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio、MediaStore.Downloads)。(不需要申请存储权限)
+ *      2、访问其他应用创建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio需要申请 READ_EXTERNAL_STORAGE 存储权限；MediaStore.Downloads则应使用 SAF)
  * 2、其它文件：Storage Access Framework
  *
  * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在私有目录
@@ -123,6 +123,9 @@ object StoragePublicUtils {
 
         /**
          * （包括照片和屏幕截图），存储在 DCIM/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Images 表格中。
+         *
+         * 您需要在应用的清单中声明 ACCESS_MEDIA_LOCATION 权限，然后在运行时请求此权限，应用才能从照片中检索未编辑的 Exif 元数据。
+         * 一些照片在其 Exif 元数据中包含位置信息，以便用户查看照片的拍摄地点。但是，由于此位置信息属于敏感信息，如果应用使用了分区存储，默认情况下 Android 10 会对应用隐藏此信息。
          *
          * @param selection         查询条件
          * @param selectionArgs     查询条件填充值

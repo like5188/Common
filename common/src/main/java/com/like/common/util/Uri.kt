@@ -1,11 +1,13 @@
 package com.like.common.util
 
+import android.Manifest
 import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -14,6 +16,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Size
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -22,12 +25,47 @@ fun File.getUri(context: Context) = UriUtils.getUriByFile(context, this)
 fun Uri.getFilePath(context: Context) = UriUtils.getFilePathByUri(context, this)
 
 object UriUtils {
-    fun getBitmapFromUri(context: Context, uri: Uri?): Bitmap? {
+
+    @RequiresPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray {
+        val output = floatArrayOf(0f, 0f)
+        uri ?: return output
+        try {
+            // 更新 Uri
+            val photoUri = MediaStore.setRequireOriginal(uri)
+            context.contentResolver.openInputStream(photoUri)?.use { stream ->
+                ExifInterface(stream).run {
+                    // If lat/long is null, fall back to the coordinates (0, 0).
+                    getLatLong(output)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return output
+    }
+
+    fun getBitmapFromUriByFileDescriptor(context: Context, uri: Uri?): Bitmap? {
         uri ?: return null
         return try {
+            // 使用文件描述符打开媒体文件
             context.contentResolver.openFileDescriptor(uri, "r")?.use {
                 val fileDescriptor = it.fileDescriptor
                 BitmapFactory.decodeFileDescriptor(fileDescriptor)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun getBitmapFromUriByStream(context: Context, uri: Uri?): Bitmap? {
+        uri ?: return null
+        return try {
+            // 使用文件流打开媒体文件
+            context.contentResolver.openInputStream(uri)?.use {
+                BitmapFactory.decodeStream(it)
             }
         } catch (e: Exception) {
             e.printStackTrace()
