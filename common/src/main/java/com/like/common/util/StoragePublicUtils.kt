@@ -34,6 +34,9 @@ import kotlin.coroutines.suspendCoroutine
  *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问自己应用或者其它应用的文件(需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />)。
  *      api>=29：
  *      1、访问自己应用新建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio、MediaStore.Downloads)。(不需要申请存储权限)
+ *          为什么这里是新建的文件？
+ *              当以 Android 10 或更高版本为目标平台的应用启用了分区存储时，系统会将每个媒体文件归因于一个应用，这决定了应用在未请求任何存储权限时可以访问的文件。每个文件只能归因于一个应用。因此，如果您的应用创建的媒体文件存储在照片、视频或音频文件媒体集合中，应用便可以访问该文件。
+ *              但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
  *      2、访问其他应用创建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio需要申请 READ_EXTERNAL_STORAGE 存储权限；MediaStore.Downloads则应使用 SAF)
  * 2、其它文件：Storage Access Framework
  *
@@ -42,6 +45,8 @@ import kotlin.coroutines.suspendCoroutine
  * 如果您需要与其他应用共享单个文件或应用数据，可以使用 Android 提供的以下 API：
  * 如果您需要与其他应用共享特定文件，请使用 FileProvider API。
  * 如果您需要向其他应用提供数据，可以使用内容提供器。借助内容提供器，您可以完全控制向其他应用提供的读取和写入访问权限。尽管您可以将内容提供器与任何存储媒介一起使用，但它们通常与数据库一起使用。
+ *
+ * 媒体共享：按照内容提供程序创建指南中的建议使用 content:// URI
  */
 object StoragePublicUtils {
 
