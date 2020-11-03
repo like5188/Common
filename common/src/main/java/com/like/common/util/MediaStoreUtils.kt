@@ -3,6 +3,7 @@ package com.like.common.util
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.BaseColumns
@@ -64,6 +65,7 @@ content://media/<volumeName>/downloads。
 object MediaStoreUtils {
     open class BaseEntity {
         var id: Long? = null
+        var uri: Uri? = null
 
         companion object {
             val projection = arrayOf(
@@ -98,11 +100,27 @@ object MediaStoreUtils {
             )
         }
 
+        @RequiresApi(Build.VERSION_CODES.Q)
+        fun fill(cursor: Cursor, uri: Uri) {
+            with(cursor) {
+                this@MediaEntity.id = getLongOrNull(getColumnIndexOrThrow(BaseColumns._ID))
+                this@MediaEntity.uri = ContentUris.withAppendedId(uri, id ?: -1L)
+                this@MediaEntity.size = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
+                this@MediaEntity.displayName = getStringOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                this@MediaEntity.title = getStringOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE))
+                this@MediaEntity.mimeType = getStringOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE))
+                this@MediaEntity.width = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH))
+                this@MediaEntity.height = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT))
+                this@MediaEntity.duration = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.DURATION))
+                this@MediaEntity.orientation = getIntOrNull(getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION))
+                this@MediaEntity.dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED))))
+            }
+        }
+
     }
 
     class FileEntity : MediaEntity() {
         var mediaType: Int? = null
-        var uri: Uri? = null
 
         companion object {
             val projection = arrayOf(
@@ -111,13 +129,12 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "FileEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, mediaType=$mediaType, uri=$uri)"
+            return "FileEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, mediaType=$mediaType)"
         }
     }
 
     class ImageEntity : MediaEntity() {
         var description: String? = null
-        var uri: Uri? = null
 
         companion object {
             val projection = arrayOf(
@@ -126,14 +143,13 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "ImageEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description, uri=$uri)"
+            return "ImageEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description)"
         }
     }
 
     class AudioEntity : MediaEntity() {
         var artist: String? = null
         var album: String? = null
-        var uri: Uri? = null
 
         companion object {
             val projection = arrayOf(
@@ -143,7 +159,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "AudioEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album, uri=$uri)"
+            return "AudioEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album)"
         }
     }
 
@@ -151,7 +167,6 @@ object MediaStoreUtils {
         var artist: String? = null
         var album: String? = null
         var description: String? = null
-        var uri: Uri? = null
 
         companion object {
             val projection = arrayOf(
@@ -162,7 +177,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "VideoEntity(id=$id, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album,  description=$description, uri=$uri)"
+            return "VideoEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album,  description=$description)"
         }
     }
 
@@ -184,31 +199,10 @@ object MediaStoreUtils {
             val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
             val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID)
-                val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE)
-                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
-                val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
-                val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
-                val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DURATION)
-                val orientationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
-                val mediaTypeColumn = cursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE)
                 while (cursor.moveToNext()) {
                     FileEntity().apply {
-                        id = cursor.getLongOrNull(idColumn)
-                        size = cursor.getIntOrNull(sizeColumn)
-                        displayName = cursor.getStringOrNull(displayNameColumn)
-                        title = cursor.getStringOrNull(titleColumn)
-                        mimeType = cursor.getStringOrNull(mimeTypeColumn)
-                        width = cursor.getIntOrNull(widthColumn)
-                        height = cursor.getIntOrNull(heightColumn)
-                        duration = cursor.getIntOrNull(durationColumn)
-                        orientation = cursor.getIntOrNull(orientationColumn)
-                        dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
-                        mediaType = cursor.getIntOrNull(mediaTypeColumn)
-                        uri = ContentUris.withAppendedId(contentUri, id ?: -1L)
+                        fill(cursor, contentUri)
+                        mediaType = cursor.getIntOrNull(cursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE))
                         files += this
                     }
                 }
@@ -235,31 +229,10 @@ object MediaStoreUtils {
             val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection
             val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID)
-                val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE)
-                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
-                val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
-                val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
-                val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DURATION)
-                val orientationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
-                val descriptionColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DESCRIPTION)
                 while (cursor.moveToNext()) {
                     ImageEntity().apply {
-                        id = cursor.getLongOrNull(idColumn)
-                        size = cursor.getIntOrNull(sizeColumn)
-                        displayName = cursor.getStringOrNull(displayNameColumn)
-                        title = cursor.getStringOrNull(titleColumn)
-                        mimeType = cursor.getStringOrNull(mimeTypeColumn)
-                        width = cursor.getIntOrNull(widthColumn)
-                        height = cursor.getIntOrNull(heightColumn)
-                        duration = cursor.getIntOrNull(durationColumn)
-                        orientation = cursor.getIntOrNull(orientationColumn)
-                        dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
-                        description = cursor.getStringOrNull(descriptionColumn)
-                        uri = ContentUris.withAppendedId(contentUri, id ?: -1L)
+                        fill(cursor, contentUri)
+                        description = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DESCRIPTION))
                         files += this
                     }
                 }
@@ -286,34 +259,12 @@ object MediaStoreUtils {
             val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projection
             val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID)
-                val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE)
-                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
-                val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
-                val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
-                val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DURATION)
-                val orientationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
-                val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ARTIST)
-                val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM)
                 while (cursor.moveToNext()) {
                     AudioEntity().apply {
-                        id = cursor.getLongOrNull(idColumn)
-                        size = cursor.getIntOrNull(sizeColumn)
-                        displayName = cursor.getStringOrNull(displayNameColumn)
-                        title = cursor.getStringOrNull(titleColumn)
-                        mimeType = cursor.getStringOrNull(mimeTypeColumn)
-                        width = cursor.getIntOrNull(widthColumn)
-                        height = cursor.getIntOrNull(heightColumn)
-                        duration = cursor.getIntOrNull(durationColumn)
-                        orientation = cursor.getIntOrNull(orientationColumn)
-                        dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
-                        artist = cursor.getStringOrNull(artistColumn)
-                        album = cursor.getStringOrNull(albumColumn)
-                        uri = ContentUris.withAppendedId(contentUri, id ?: -1L)
-                        files.add(this)
+                        fill(cursor, contentUri)
+                        artist = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ARTIST))
+                        album = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM))
+                        files += this
                     }
                 }
             }
@@ -339,36 +290,13 @@ object MediaStoreUtils {
             val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection
             val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID)
-                val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.TITLE)
-                val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
-                val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.WIDTH)
-                val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.HEIGHT)
-                val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DURATION)
-                val orientationColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.ORIENTATION)
-                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
-                val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ARTIST)
-                val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ALBUM)
-                val descriptionColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DESCRIPTION)
                 while (cursor.moveToNext()) {
                     VideoEntity().apply {
-                        id = cursor.getLongOrNull(idColumn)
-                        size = cursor.getIntOrNull(sizeColumn)
-                        displayName = cursor.getStringOrNull(displayNameColumn)
-                        title = cursor.getStringOrNull(titleColumn)
-                        mimeType = cursor.getStringOrNull(mimeTypeColumn)
-                        width = cursor.getIntOrNull(widthColumn)
-                        height = cursor.getIntOrNull(heightColumn)
-                        duration = cursor.getIntOrNull(durationColumn)
-                        orientation = cursor.getIntOrNull(orientationColumn)
-                        dateAdded = Date(TimeUnit.SECONDS.toMillis(cursor.getLong(dateAddedColumn)))
-                        artist = cursor.getStringOrNull(artistColumn)
-                        album = cursor.getStringOrNull(albumColumn)
-                        description = cursor.getStringOrNull(descriptionColumn)
-                        uri = ContentUris.withAppendedId(contentUri, id ?: -1L)
-                        files.add(this)
+                        fill(cursor, contentUri)
+                        artist = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ARTIST))
+                        album = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.ALBUM))
+                        description = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DESCRIPTION))
+                        files += this
                     }
                 }
             }
