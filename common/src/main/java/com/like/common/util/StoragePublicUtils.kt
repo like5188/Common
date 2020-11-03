@@ -27,13 +27,7 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * 外部存储公共目录操作工具类。
  *
- * 一、内部存储：/data/data(user/0)/packagename/xxx
- * 访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，当应用被卸载时，内部存储中的文件也会被删除。空间小，容易被系统删除。
- *
- * 二、外部存储：可以是外置SD卡 ，也可以是内置存储卡 的部分分区。 外部存储是可以全局访问的，分为公共目录和私有目录。
- *  私有目录：/storage/emulated/(0/1/...)/Android/data/packagename/xxx
- *      文件访问方式与之前Android版本一致，可以通过File path获取资源。(不需要申请存储权限)
- *  公共目录：/storage/emulated/(0/1/...)/xxx
+ * 外部存储公共目录：/storage/emulated/(0/1/...)/xxx
  *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
  *      api>=29文件需要通过MediaStore API或者Storage Access Framework方式访问。
  *      1、访问自己应用新建的文件：MediaStore API、SAF。(不需要申请存储权限)
@@ -41,10 +35,7 @@ import kotlin.coroutines.suspendCoroutine
  *          ①媒体文件(图片、音频、视频)：MediaStore API
  *          ①非媒体文件(pdf、office、doc、txt等)：SAF
  *
- * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在SDCARD私有目录
- * 设置项的 Clear Data 和 Clear cache 两个选项，这两个都是清空应用的缓存数据，具体区别如下：
- *      1 Clear Data清理的是外部存储中的应用私有目录下的file文件夹
- *      2 Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
+ * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在私有目录
  */
 object StoragePublicUtils {
 

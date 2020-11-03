@@ -10,24 +10,10 @@ import java.io.File
  * 内部存储、外部存储私有目录操作工具类。
  * 公共目录操作工具类为：[StoragePublicUtils]
  *
- * 一、内部存储：/data/data(user/0)/packageName/xxx
- * 访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，当应用被卸载时，内部存储中的文件也会被删除。空间小，容易被系统删除。
+ * 一、内部存储：访问是不需要权限的，内部存储属于应用的私有存储区域，其它应用不可访问，卸载应用后，系统会移除这些目录中存储的文件。空间小。
  *
  * 二、外部存储：可以是外置SD卡 ，也可以是内置存储卡 的部分分区。 外部存储是可以全局访问的，分为公共目录和私有目录。
- *  私有目录：/storage/emulated/(0/1/...)/Android/data/packageName/xxx
- *      文件访问方式与之前Android版本一致，可以通过File path获取资源。(不需要申请存储权限)
- *  公共目录：/storage/emulated/(0/1/...)/xxx
- *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问(需要申请存储权限)。通过SAF访问(不需要申请存储权限)
- *      api>=29文件需要通过MediaStore API或者Storage Access Framework方式访问。
- *      1、访问自己应用创建的文件：MediaStore API、SAF。(不需要申请存储权限)
- *      2、访问其他应用创建的文件：(需要申请存储权限)
- *          ①媒体文件(图片、音频、视频)：MediaStore API
- *          ①非媒体文件(pdf、office、doc、txt等)：SAF
  *
- * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在SDCARD私有目录
- * 设置项的 Clear Data 和 Clear cache 两个选项，这两个都是清空应用的缓存数据，具体区别如下：
- *      1 Clear Data清理的是外部存储中的应用私有目录下的file文件夹
- *      2 Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
  */
 object StoragePrivateUtils {
     /**
@@ -80,6 +66,17 @@ object StoragePrivateUtils {
 
     /**
      * 内部存储工具类
+     *
+     * /data/data(user/0)/packageName/xxx
+     *
+     * 设置项的 Clear Data 和 Clear cache 两个选项，这两个都是清空应用的缓存数据，具体区别如下：
+     *     1、Clear Data清理的是外部存储中的应用私有目录下的file文件夹
+     *     2、Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
+     *
+     * 注意:自 API 级别 17 以来，常量 MODE_WORLD_READABLE 和 MODE_WORLD_WRITEABLE 已被弃用。
+     * 从 Android N (7.0) 开始，使用这些常量将会导致引发 SecurityException。
+     * 这意味着，面向 Android N 和更高版本的应用无法按名称共享私有文件，尝试共享“file://”URI 将会导致引发 FileUriExposedException。
+     * 如需允许其他应用访问存储在内部存储空间内此目录中的文件，请使用具有 FLAG_GRANT_READ_URI_PERMISSION 属性的 FileProvider。
      */
     object InternalStorageHelper {
         /**
@@ -133,7 +130,7 @@ object StoragePrivateUtils {
                 context.applicationContext.getDatabasePath(name)
 
         /**
-         * 获取Files目录
+         * 获取Files目录。存储应用的持久性文件
          *
          * @param context
          * @return /data/data(user/0)/packageName/files
@@ -142,7 +139,7 @@ object StoragePrivateUtils {
                 context.applicationContext.filesDir
 
         /**
-         * 获取Cache目录
+         * 获取Cache目录。存储缓存文件。注意：当设备的内部存储空间不足时，Android 可能会删除这些缓存文件以回收空间。因此，请在读取前检查缓存文件是否存在。
          *
          * @param context
          * @return /data/data(user/0)/packageName/cache
@@ -156,11 +153,6 @@ object StoragePrivateUtils {
          * @param context
          * @param dirName   目录名
          * @param mode      [android.content.Context.MODE_PRIVATE]、[android.content.Context.MODE_APPEND]
-         * 注意:自 API 级别 17 以来，常量 MODE_WORLD_READABLE 和 MODE_WORLD_WRITEABLE 已被弃用。从 Android N (7.0) 开始，
-         * 使用这些常量将会导致引发 SecurityException。这意味着，面向 Android N 和更高版本的应用无法按名称共享私有文件，
-         * 尝试共享“file://”URI 将会导致引发FileUriExposedException。
-         * 如果您的应用需要与其他应用共享私有文件，则可以将 FileProvider 与 FLAG_GRANT_READ_URI_PERMISSION 配合使用。
-         *
          * @return /data/data(user/0)/packageName/dirName
          */
         fun getDir(context: Context, dirName: String, mode: Int = Context.MODE_PRIVATE): File =
@@ -169,24 +161,29 @@ object StoragePrivateUtils {
 
     /**
      * 外部存储私有目录工具类
+     *
+     * /storage/emulated/(0/1/...)/Android/data/packageName/xxx
+     *
+     * 文件访问方式与之前Android版本一致，可以通过File path获取资源。卸载应用后，系统会移除这些目录中存储的文件。( Android 4.4 以后不需要申请存储权限)
+     * 注意：无法保证可以访问这些目录中的文件，例如从设备中取出可移除的 SD 卡后，就无法访问其中的文件。如果应用的功能取决于这些文件，应改为将文件存储在内部存储空间中。
+     * Android 10（API 级别 29）及更高版本为目标平台的应用在默认情况下被授予了对外部存储空间的分区访问权限（即分区存储）。启用分区存储后，应用将无法访问属于其他应用的私有目录。
      */
     object ExternalStorageHelper {
-        /**
-         * 判断是否被挂载
-         *
-         * @return
-         */
-        fun isMounted(): Boolean =
-                Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()
+
+        fun isWritable(): Boolean =
+                Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+
+        fun isReadable(): Boolean =
+                Environment.getExternalStorageState() in setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
 
         /**
          * 获取根目录
          *
-         * @return /storage/emulated/(0/1/...)或者/mnt/sdcard
+         * @return /storage/emulated/(0/1/...)/Android/data/packageName
          */
-        private fun getBaseDir(): String? =
-                if (isMounted()) {
-                    Environment.getExternalStorageDirectory().absolutePath
+        private fun getBaseDir(context: Context): String? =
+                if (isWritable()) {
+                    context.applicationContext.getExternalFilesDir(null)?.parent
                 } else null
 
         /**
@@ -194,9 +191,9 @@ object StoragePrivateUtils {
          *
          * @return
          */
-        fun getSize(): Long =
-                if (isMounted()) {
-                    getStorageSize(getBaseDir())
+        fun getSize(context: Context): Long =
+                if (isWritable()) {
+                    getStorageSize(getBaseDir(context))
                 } else 0
 
         /**
@@ -204,9 +201,9 @@ object StoragePrivateUtils {
          *
          * @return
          */
-        fun getFreeSize(): Long =
-                if (isMounted()) {
-                    getStorageFreeSize(getBaseDir())
+        fun getFreeSize(context: Context): Long =
+                if (isWritable()) {
+                    getStorageFreeSize(getBaseDir(context))
                 } else 0
 
         /**
@@ -214,13 +211,13 @@ object StoragePrivateUtils {
          *
          * @return
          */
-        fun getAvailableSize(): Long =
-                if (isMounted()) {
-                    getStorageAvailableSize(getBaseDir())
+        fun getAvailableSize(context: Context): Long =
+                if (isWritable()) {
+                    getStorageAvailableSize(getBaseDir(context))
                 } else 0
 
         /**
-         * 获取外部存储在内置存储卡分区上的私有目录下的Files目录
+         * 根据 type 创建并返回一个外部存储在内置存储卡分区上的私有目录下的Files目录
          *
          * @param context
          * @param type The type of files directory to return. May be {@code null}
@@ -233,29 +230,29 @@ object StoragePrivateUtils {
          *            {@link android.os.Environment#DIRECTORY_NOTIFICATIONS},
          *            {@link android.os.Environment#DIRECTORY_PICTURES}, or
          *            {@link android.os.Environment#DIRECTORY_MOVIES}.
-         * @return /storage/emulated/(0/1/...)/Android/data/packageName/files/(DCIM/Download/Pictures/...)
+         * @return /storage/emulated/(0/1/...)/Android/data/packageName/files/(根据 type 确定此级目录，如果 type 为 null，则没有此级目录)
          */
-        fun getExternalFilesDir(context: Context, type: String): File? =
-                if (isMounted()) {
+        fun getExternalFilesDir(context: Context, type: String? = null): File? =
+                if (isWritable()) {
                     context.applicationContext.getExternalFilesDir(type)
                 } else null
 
         /**
-         * 获取外部存储在内置存储卡分区上的私有目录下的Cache目录
+         * 创建并返回一个外部存储在内置存储卡分区上的私有目录下的Cache目录
          *
          * @param context
          * @return /storage/emulated/(0/1/...)/Android/data/packageName/cache
          */
         fun getExternalCacheDir(context: Context): File? =
-                if (isMounted()) {
+                if (isWritable()) {
                     context.applicationContext.externalCacheDir
                 } else null
 
         /**
-         * 获取外部存储在内置存储卡分区和外置SD卡的私有目录地址。
+         * 根据 type 创建并返回一个外部存储在内置存储卡分区或者外置SD卡的私有目录
          *
          * 有些设备支持外插SD卡，所以这类设备的外部存储由内置存储卡分区和外置SD卡组成：
-         * 在Android4.3及以下的系统，只能通过Context.getExternalFilesDir(type)来获取外部存储在内置存储卡分区上的私有目录地址，而无法获取到外部存储在外置SD卡上的地址。
+         * 在Android4.3及以下的系统，只能通过Context.getExternalFilesDir(type)来获取外部存储在内置存储卡分区上的私有目录地址，而无法获取到外部存储在外置SD卡上的私有目录地址。
          * 从Android4.4开始，你可以通过Context.getExternalFilesDirs(type)获取一个File数组，File数组中就包含了内置存储卡分区和外置SD卡的私有目录地址。
          *
          * @param context
@@ -269,9 +266,11 @@ object StoragePrivateUtils {
          *            {@link android.os.Environment#DIRECTORY_NOTIFICATIONS},
          *            {@link android.os.Environment#DIRECTORY_PICTURES}, or
          *            {@link android.os.Environment#DIRECTORY_MOVIES}.
+         * @return /storage/emulated/(0/1/...)/Android/data/packageName/files/(根据 type 确定此级目录，如果 type 为 null，则没有此级目录)
+         * 返回数组中的第一个元素被视为主外部存储卷。除非该卷已满或不可用，否则请使用该卷。
          */
-        fun getExternalFilesDirs(context: Context, type: String): Array<out File>? =
-                if (isMounted()) {
+        fun getExternalFilesDirs(context: Context, type: String? = null): Array<out File>? =
+                if (isWritable()) {
                     context.applicationContext.getExternalFilesDirs(type)
                 } else null
 
