@@ -93,6 +93,9 @@ object StoragePublicUtils {
     object MediaStoreHelper {
 
         /**
+         * 如果启用了分区存储，集合只会显示您的应用创建的照片、视频和音频文件。
+         * 如果分区存储不可用或未使用，集合将显示所有类型的媒体文件。
+         *
          * @param selection         查询条件
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
@@ -119,6 +122,8 @@ object StoragePublicUtils {
         }
 
         /**
+         * （包括照片和屏幕截图），存储在 DCIM/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Images 表格中。
+         *
          * @param selection         查询条件
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
@@ -145,6 +150,8 @@ object StoragePublicUtils {
         }
 
         /**
+         * 存储在 Alarms/、Audiobooks/、Music/、Notifications/、Podcasts/ 和 Ringtones/ 目录中，以及位于 Music/ 或 Movies/ 目录中的音频播放列表中。系统将这些文件添加到 MediaStore.Audio 表格中。
+         *
          * @param selection         查询条件
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
@@ -171,6 +178,8 @@ object StoragePublicUtils {
         }
 
         /**
+         * 存储在 DCIM/、Movies/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
+         *
          * @param selection         查询条件
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
@@ -190,6 +199,34 @@ object StoragePublicUtils {
                 context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += VideoEntity().apply { fill(cursor, contentUri) }
+                    }
+                }
+            }
+            return files
+        }
+
+        /**
+         * 存储在 Download/ 目录中。在搭载 Android 10（API 级别 29）及更高版本的设备上，这些文件存储在 MediaStore.Downloads 表格中。此表格在 Android 9（API 级别 28）及更低版本中不可用。
+         *
+         * @param selection         查询条件
+         * @param selectionArgs     查询条件填充值
+         * @param sortOrder         排序依据
+         */
+        suspend fun getDownloads(context: Context,
+                                 selection: String? = null,
+                                 selectionArgs: Array<String>? = null,
+                                 sortOrder: String? = null
+        ): List<DownloadEntity> {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                return emptyList()
+            }
+            val files = mutableListOf<DownloadEntity>()
+            withContext(Dispatchers.IO) {
+                val projection = BaseEntity.projection + MediaEntity.projection + DownloadEntity.projection
+                val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        files += DownloadEntity().apply { fill(cursor, contentUri) }
                     }
                 }
             }
@@ -382,6 +419,29 @@ object StoragePublicUtils {
                     this@VideoEntity.artist = getStringOrNull(getColumnIndexOrThrow(projection[0]))
                     this@VideoEntity.album = getStringOrNull(getColumnIndexOrThrow(projection[1]))
                     this@VideoEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[2]))
+                }
+            }
+        }
+
+        class DownloadEntity : MediaEntity() {
+            var downloadUri: String? = null
+
+            companion object {
+                @RequiresApi(Build.VERSION_CODES.Q)
+                val projection = arrayOf(
+                        MediaStore.DownloadColumns.DOWNLOAD_URI
+                )
+            }
+
+            override fun toString(): String {
+                return "DownloadEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, downloadUri=$downloadUri)"
+            }
+
+            @RequiresApi(Build.VERSION_CODES.Q)
+            override fun fill(cursor: Cursor, uri: Uri) {
+                super.fill(cursor, uri)
+                with(cursor) {
+                    this@DownloadEntity.downloadUri = getStringOrNull(getColumnIndexOrThrow(projection[0]))
                 }
             }
         }
