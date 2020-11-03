@@ -242,9 +242,8 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    FileEntity().apply {
+                    files += FileEntity().apply {
                         fill(cursor, contentUri)
-                        files += this
                     }
                 }
             }
@@ -271,9 +270,8 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    ImageEntity().apply {
+                    files += ImageEntity().apply {
                         fill(cursor, contentUri)
-                        files += this
                     }
                 }
             }
@@ -300,9 +298,8 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    AudioEntity().apply {
+                    files += AudioEntity().apply {
                         fill(cursor, contentUri)
-                        files += this
                     }
                 }
             }
@@ -329,9 +326,8 @@ object MediaStoreUtils {
             val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    VideoEntity().apply {
+                    files += VideoEntity().apply {
                         fill(cursor, contentUri)
-                        files += this
                     }
                 }
             }
