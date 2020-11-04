@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,9 +33,9 @@ suspend inline fun <reified T : Activity> ActivityResultCaller.startActivityForR
     }.launch(intent)
 }
 
-suspend fun ActivityResultCaller.startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): ActivityResult = suspendCoroutine { cont ->
+suspend fun ActivityResultCaller.startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): Boolean = suspendCoroutine { cont ->
     registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-        cont.resume(it)
+        cont.resume(it.resultCode == Activity.RESULT_OK)
     }.launch(intentSenderRequest)
 }
 

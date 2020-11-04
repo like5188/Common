@@ -5,11 +5,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -45,7 +45,7 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api 'com.google.android.material:material:1.2.1'
-    api 'androidx.constraintlayout:constraintlayout:2.0.2'
+    api 'androidx.constraintlayout:constraintlayout:2.0.4'
     api 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     api 'com.google.android:flexbox:1.0.0'
     // 升级到 beta01 版本，调用 registerForActivityResult() 方法时会报错 LifecycleOwners must call register before they are STARTED

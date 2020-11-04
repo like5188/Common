@@ -16,6 +16,7 @@ import android.provider.BaseColumns
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.database.getFloatOrNull
@@ -71,6 +72,54 @@ object StoragePublicUtils {
      * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
      */
     object MediaStoreHelper {
+
+        /**
+         * 用户向应用授予对指定媒体文件组的写入访问权限的请求。
+         *
+         * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        suspend fun createWriteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>): Boolean {
+            val pendingIntent = MediaStore.createWriteRequest(activityResultCaller.context.applicationContext.contentResolver, uris)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
+
+        /**
+         * 用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        suspend fun createDeleteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>): Boolean {
+            val pendingIntent = MediaStore.createDeleteRequest(activityResultCaller.context.applicationContext.contentResolver, uris)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
+
+        /**
+         * 用户将指定的媒体文件放入设备垃圾箱的请求。垃圾箱中的内容会在系统定义的时间段后被永久删除。
+         *
+         * @param isTrashed     注意：如果您的应用是设备 OEM 的预安装图库应用，您可以将文件放入垃圾箱而不显示对话框。如需执行该操作，请直接将 IS_TRASHED 设置为 1。及把参数设置为 true
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        suspend fun createTrashRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>, isTrashed: Boolean): Boolean {
+            val pendingIntent = MediaStore.createTrashRequest(activityResultCaller.context.applicationContext.contentResolver, uris, isTrashed)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
+
+        /**
+         * 用户将设备上指定的媒体文件标记为“收藏”的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为“收藏”。
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        suspend fun createFavoriteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>, isFavorite: Boolean): Boolean {
+            val pendingIntent = MediaStore.createFavoriteRequest(activityResultCaller.context.applicationContext.contentResolver, uris, isFavorite)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
 
         /**
          * 如果启用了分区存储，集合只会显示您的应用创建的照片、视频和音频文件。
