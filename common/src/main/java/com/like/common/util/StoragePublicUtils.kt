@@ -1,5 +1,7 @@
 package com.like.common.util
 
+import android.app.Activity
+import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -204,6 +206,58 @@ object StoragePublicUtils {
                 }
             }
             return files
+        }
+
+        /**
+         * 更新自己创建的文件。也可以通过更改 MediaColumns.RELATIVE_PATH 在磁盘上移动文件。
+         */
+        suspend fun updateFile(context: Context, uri: Uri?, fileName: String, relativePath: String = "", selection: String? = null, selectionArgs: Array<String>? = null): Boolean {
+            uri ?: return false
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                return false
+            }
+            return withContext(Dispatchers.IO) {
+                try {
+                    val values = ContentValues().apply {
+                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
+                        put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
+                    }
+                    context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    false
+                }
+            }
+        }
+
+        /**
+         * 更新其他应用的媒体文件
+         *
+         * 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限
+         */
+        suspend fun updateFile(activity: Activity, uri: Uri?, onWrite: (ParcelFileDescriptor?) -> Unit) {
+            uri ?: return
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                return
+            }
+            withContext(Dispatchers.IO) {
+                try {
+                    activity.applicationContext.contentResolver.openFileDescriptor(uri, "w")?.use { pfd ->
+                        onWrite(pfd)
+                    }
+                } catch (securityException: SecurityException) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val recoverableSecurityException = securityException as? RecoverableSecurityException
+                                ?: throw RuntimeException(securityException.message, securityException)
+
+                        recoverableSecurityException.userAction.actionIntent.intentSender?.let {
+                            activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        }
+                    } else {
+                        throw RuntimeException(securityException.message, securityException)
+                    }
+                }
+            }
         }
 
         /**
