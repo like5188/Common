@@ -30,6 +30,10 @@ object UriUtils {
 
     /**
      * 获取图片的位置信息
+     *
+     * 一些照片在其 Exif 元数据中包含位置信息，以便用户查看照片的拍摄地点。
+     * 但是，由于此位置信息属于敏感信息，如果应用使用了分区存储，默认情况下 Android 10 会对应用隐藏此信息。
+     * 所以需要用此方法获取位置信息。
      */
     @RequiresPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
     @RequiresApi(Build.VERSION_CODES.Q)
