@@ -9,6 +9,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.BaseColumns
 import android.provider.DocumentsContract
@@ -16,6 +17,7 @@ import android.provider.MediaStore
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
@@ -124,7 +126,15 @@ object StoragePublicUtils {
                 val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
-                        files += ImageEntity().apply { fill(cursor, contentUri) }
+                        files += ImageEntity().apply {
+                            fill(cursor, contentUri)
+                            if (!Environment.isExternalStorageLegacy()) {
+                                // 如果开启了分区存储
+                                val array = UriUtils.getLatLongFromImageUri(context, uri)
+                                latitude = array?.get(0)
+                                longitude = array?.get(1)
+                            }
+                        }
                     }
                 }
             }
@@ -411,7 +421,6 @@ object StoragePublicUtils {
                 )
             }
 
-            @RequiresApi(Build.VERSION_CODES.Q)
             open fun fill(cursor: Cursor, uri: Uri) {
                 with(cursor) {
                     this@BaseEntity.id = getLongOrNull(getColumnIndexOrThrow(projection[0]))
@@ -488,15 +497,19 @@ object StoragePublicUtils {
 
         class ImageEntity : MediaEntity() {
             var description: String? = null
+            var latitude: Float? = null
+            var longitude: Float? = null
 
             companion object {
                 val projection = arrayOf(
-                        MediaStore.Images.ImageColumns.DESCRIPTION
+                        MediaStore.Images.ImageColumns.DESCRIPTION,
+                        MediaStore.Images.ImageColumns.LATITUDE,
+                        MediaStore.Images.ImageColumns.LONGITUDE
                 )
             }
 
             override fun toString(): String {
-                return "ImageEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description)"
+                return "ImageEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description, latitude=$latitude, longitude=$longitude)"
             }
 
             @RequiresApi(Build.VERSION_CODES.Q)
@@ -504,6 +517,8 @@ object StoragePublicUtils {
                 super.fill(cursor, uri)
                 with(cursor) {
                     this@ImageEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+                    this@ImageEntity.latitude = getFloatOrNull(getColumnIndexOrThrow(projection[1]))
+                    this@ImageEntity.longitude = getFloatOrNull(getColumnIndexOrThrow(projection[2]))
                 }
             }
         }

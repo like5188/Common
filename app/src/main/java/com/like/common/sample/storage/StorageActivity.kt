@@ -86,7 +86,7 @@ class StorageActivity : AppCompatActivity() {
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    "7.jpg",
+                    "17.jpg",
                     "Pictures/like"
             )
             Logger.d(createdFileUri)

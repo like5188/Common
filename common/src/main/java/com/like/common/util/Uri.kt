@@ -37,22 +37,23 @@ object UriUtils {
      */
     @RequiresPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray {
-        val output = floatArrayOf(0f, 0f)
-        uri ?: return output
+    fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray? {
+        uri ?: return null
         try {
             // 更新 Uri
             val photoUri = MediaStore.setRequireOriginal(uri)
             context.contentResolver.openInputStream(photoUri)?.use { stream ->
+                val output = floatArrayOf(0f, 0f)
                 ExifInterface(stream).run {
                     // If lat/long is null, fall back to the coordinates (0, 0).
                     getLatLong(output)
                 }
+                return output
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return output
+        return null
     }
 
     suspend fun getBitmapFromUriByFileDescriptor(context: Context, uri: Uri?): Bitmap? {
