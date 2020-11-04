@@ -18,6 +18,8 @@ import android.util.Size
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 fun File.getUri(context: Context) = UriUtils.getUriByFile(context, this)
@@ -46,30 +48,34 @@ object UriUtils {
         return output
     }
 
-    fun getBitmapFromUriByFileDescriptor(context: Context, uri: Uri?): Bitmap? {
+    suspend fun getBitmapFromUriByFileDescriptor(context: Context, uri: Uri?): Bitmap? {
         uri ?: return null
-        return try {
-            // 使用文件描述符打开媒体文件
-            context.contentResolver.openFileDescriptor(uri, "r")?.use {
-                val fileDescriptor = it.fileDescriptor
-                BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        return withContext(Dispatchers.IO) {
+            try {
+                // 使用文件描述符打开媒体文件
+                context.contentResolver.openFileDescriptor(uri, "r")?.use {
+                    val fileDescriptor = it.fileDescriptor
+                    BitmapFactory.decodeFileDescriptor(fileDescriptor)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 
-    fun getBitmapFromUriByStream(context: Context, uri: Uri?): Bitmap? {
+    suspend fun getBitmapFromUriByStream(context: Context, uri: Uri?): Bitmap? {
         uri ?: return null
-        return try {
-            // 使用文件流打开媒体文件
-            context.contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it)
+        return withContext(Dispatchers.IO) {
+            try {
+                // 使用文件流打开媒体文件
+                context.contentResolver.openInputStream(uri)?.use {
+                    BitmapFactory.decodeStream(it)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 

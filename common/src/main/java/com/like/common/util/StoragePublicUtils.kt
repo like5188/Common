@@ -22,6 +22,9 @@ import androidx.core.database.getStringOrNull
 import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
 import java.sql.Date
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -681,6 +684,56 @@ object StoragePublicUtils {
                     e.printStackTrace()
                     false
                 }
+            }
+        }
+
+        /**
+         * 是否虚拟文件
+         *
+         * 注意：由于应用无法使用 openInputStream() 方法直接打开虚拟文件，因此在创建包含 ACTION_OPEN_DOCUMENT 或 ACTION_OPEN_DOCUMENT_TREE 操作的 intent 时，请勿使用 CATEGORY_OPENABLE 类别。
+         */
+        @RequiresApi(Build.VERSION_CODES.N)
+        suspend fun isVirtualFile(context: Context, uri: Uri): Boolean {
+            if (!DocumentsContract.isDocumentUri(context, uri)) {
+                return false
+            }
+
+            return withContext(Dispatchers.IO) {
+                val cursor: Cursor? = context.applicationContext.contentResolver.query(
+                        uri,
+                        arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
+                        null,
+                        null,
+                        null
+                )
+
+                val flags: Int = cursor?.use {
+                    if (cursor.moveToFirst()) {
+                        cursor.getInt(0)
+                    } else {
+                        0
+                    }
+                } ?: 0
+
+                flags and DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT != 0
+            }
+        }
+
+        /**
+         * 在验证文档为虚拟文件后，您可以将其强制转换为另一种 MIME 类型，例如 "image/png"。
+         * 以下代码段展示了如何查看某个虚拟文件是否可以表示为图片，如果可以，则从该虚拟文件获取输入流：
+         */
+        @Throws(IOException::class)
+        fun getInputStreamForVirtualFile(context: Context, uri: Uri, mimeTypeFilter: String): InputStream? {
+            val openableMimeTypes: Array<String>? =
+                    context.applicationContext.contentResolver.getStreamTypes(uri, mimeTypeFilter)
+
+            return if (openableMimeTypes?.isNotEmpty() == true) {
+                context.applicationContext.contentResolver
+                        .openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)
+                        ?.createInputStream()
+            } else {
+                throw FileNotFoundException()
             }
         }
     }
