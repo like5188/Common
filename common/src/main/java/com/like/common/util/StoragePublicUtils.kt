@@ -375,14 +375,20 @@ object StoragePublicUtils {
 
         /**
          * 删除文件
+         *
+         * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
          */
-        suspend fun deleteFile(context: Context, uri: Uri?): Boolean {
+        suspend fun deleteFile(activity: Activity, uri: Uri?): Boolean {
             uri ?: return false
             return withContext(Dispatchers.IO) {
                 try {
-                    context.applicationContext.contentResolver.delete(uri, null, null) > 0
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                    activity.applicationContext.contentResolver.delete(uri, null, null) > 0
+                } catch (securityException: SecurityException) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
+                            activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        }
+                    }
                     false
                 }
             }
