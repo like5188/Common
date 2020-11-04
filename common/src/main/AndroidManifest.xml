@@ -12,7 +12,9 @@
 
     <!--application标签中的三个配置是为了解决AndroidVideoCache库在android9.0以上无法缓存的bug-->
     <!--参考https://blog.csdn.net/qq_25017839/article/details/89948220-->
+    <!--以 Android 10（API 级别 29）或更高版本为目标平台时暂时停用分区存储 android:requestLegacyExternalStorage="true"-->
     <application
+        android:requestLegacyExternalStorage="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:targetSandboxVersion="1"
         android:usesCleartextTraffic="true">
