@@ -140,7 +140,7 @@ object StoragePublicUtils {
                         files += ImageEntity().apply {
                             fill(cursor, contentUri)
                             if (!Environment.isExternalStorageLegacy()) {
-                                // 如果开启了分区存储
+                                // 如果开启了分区存储，以下面的方式来获取位置信息。
                                 val array = UriUtils.getLatLongFromImageUri(context, uri)
                                 latitude = array?.get(0)
                                 longitude = array?.get(1)
