@@ -637,6 +637,8 @@ object StoragePublicUtils {
         /**
          * 创建文件
          *
+         * 注意：ACTION_CREATE_DOCUMENT 无法覆盖现有文件。如果您的应用尝试保存同名文件，系统会在文件名的末尾附加一个数字并将其包含在一对括号中。
+         *
          * @return  返回的 Uri 为文件的
          */
         suspend fun createDocument(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: MimeType = MimeType._0): Uri? = suspendCoroutine { cont ->
