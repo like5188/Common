@@ -28,6 +28,9 @@ fun Uri.getFilePath(context: Context) = UriUtils.getFilePathByUri(context, this)
 
 object UriUtils {
 
+    /**
+     * 获取图片的位置信息
+     */
     @RequiresPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
     @RequiresApi(Build.VERSION_CODES.Q)
     fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray {
