@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import kotlin.coroutines.resume
@@ -30,6 +32,12 @@ suspend inline fun <reified T : Activity> ActivityResultCaller.startActivityForR
                 }
         )
     }.launch(intent)
+}
+
+suspend fun ActivityResultCaller.startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): ActivityResult = suspendCoroutine { cont ->
+    registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+        cont.resume(it)
+    }.launch(intentSenderRequest)
 }
 
 suspend fun ActivityResultCaller.requestPermission(permission: String): Boolean = suspendCoroutine { cont ->
