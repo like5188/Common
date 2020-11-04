@@ -1,5 +1,6 @@
 package com.like.common.util
 
+import android.Manifest
 import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.ContentUris
@@ -81,7 +82,7 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getFiles(context: Context,
+        suspend fun getFiles(activityResultCaller: ActivityResultCaller,
                              selection: String? = null,
                              selectionArgs: Array<String>? = null,
                              sortOrder: String? = null
@@ -89,6 +90,11 @@ object StoragePublicUtils {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 return emptyList()
             }
+
+            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return emptyList()
+            }
+            val context = activityResultCaller.context
             val files = mutableListOf<FileEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
@@ -112,7 +118,7 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getImages(context: Context,
+        suspend fun getImages(activityResultCaller: ActivityResultCaller,
                               selection: String? = null,
                               selectionArgs: Array<String>? = null,
                               sortOrder: String? = null
@@ -120,6 +126,11 @@ object StoragePublicUtils {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 return emptyList()
             }
+
+            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return emptyList()
+            }
+            val context = activityResultCaller.context
             val files = mutableListOf<ImageEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection
@@ -148,7 +159,7 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getAudios(context: Context,
+        suspend fun getAudios(activityResultCaller: ActivityResultCaller,
                               selection: String? = null,
                               selectionArgs: Array<String>? = null,
                               sortOrder: String? = null
@@ -156,6 +167,11 @@ object StoragePublicUtils {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 return emptyList()
             }
+
+            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return emptyList()
+            }
+            val context = activityResultCaller.context
             val files = mutableListOf<AudioEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projection
@@ -176,7 +192,7 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getVideos(context: Context,
+        suspend fun getVideos(activityResultCaller: ActivityResultCaller,
                               selection: String? = null,
                               selectionArgs: Array<String>? = null,
                               sortOrder: String? = null
@@ -184,6 +200,11 @@ object StoragePublicUtils {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 return emptyList()
             }
+
+            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return emptyList()
+            }
+            val context = activityResultCaller.context
             val files = mutableListOf<VideoEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection
@@ -204,7 +225,7 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getDownloads(context: Context,
+        suspend fun getDownloads(activityResultCaller: ActivityResultCaller,
                                  selection: String? = null,
                                  selectionArgs: Array<String>? = null,
                                  sortOrder: String? = null
@@ -212,6 +233,11 @@ object StoragePublicUtils {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 return emptyList()
             }
+
+            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return emptyList()
+            }
+            val context = activityResultCaller.context
             val files = mutableListOf<DownloadEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + DownloadEntity.projection

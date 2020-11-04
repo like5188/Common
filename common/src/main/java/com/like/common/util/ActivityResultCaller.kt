@@ -8,6 +8,8 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 val ActivityResultCaller.context: Context
     get() {
@@ -33,21 +35,10 @@ inline fun <reified T : Activity> ActivityResultCaller.startActivityForResultOk(
     }
 }
 
-inline fun ActivityResultCaller.requestPermission(permission: String, crossinline callback: (Boolean) -> Unit) {
+suspend fun ActivityResultCaller.requestPermission(permission: String): Boolean = suspendCoroutine { cont ->
     registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        callback(it)
+        cont.resume(it)
     }.launch(permission)
-}
-
-/**
- * 权限被同意
- */
-inline fun ActivityResultCaller.requestPermissionGranted(permission: String, crossinline callback: () -> Unit) {
-    requestPermission(permission) {
-        if (it) {
-            callback()
-        }
-    }
 }
 
 inline fun ActivityResultCaller.requestPermissions(vararg permissions: String, crossinline callback: (Map<String, Boolean>) -> Unit) {
