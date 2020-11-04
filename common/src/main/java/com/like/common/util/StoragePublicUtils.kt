@@ -73,6 +73,8 @@ object StoragePublicUtils {
          * 如果启用了分区存储，集合只会显示您的应用创建的照片、视频和音频文件。
          * 如果分区存储不可用或未使用，集合将显示所有类型的媒体文件。
          *
+         * 如果要显示特定文件夹中的文件，请求 READ_EXTERNAL_STORAGE 权限，根据 MediaColumns.DATA 的值检索媒体文件，该值包含磁盘上的媒体项的绝对文件系统路径。
+         *
          * @param selection         查询条件
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
