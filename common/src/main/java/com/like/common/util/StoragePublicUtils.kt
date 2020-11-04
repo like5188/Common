@@ -47,7 +47,7 @@ import kotlin.coroutines.suspendCoroutine
  * 如果您需要与其他应用共享特定文件，请使用 FileProvider API。
  * 如果您需要向其他应用提供数据，可以使用内容提供器。借助内容提供器，您可以完全控制向其他应用提供的读取和写入访问权限。尽管您可以将内容提供器与任何存储媒介一起使用，但它们通常与数据库一起使用。
  *
- * 媒体共享：按照内容提供程序创建指南中的建议使用 content:// URI
+ * 媒体共享：按照内容提供程序创建指南中的建议使用 content:// URI。如需在搭载 Android 10 的设备上访问共享存储空间中的其他文件，建议您在应用的清单文件中将 requestLegacyExternalStorage 设置为 true 以停用分区存储。
  */
 object StoragePublicUtils {
 
