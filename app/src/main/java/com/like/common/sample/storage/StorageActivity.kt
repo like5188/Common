@@ -1,6 +1,5 @@
 package com.like.common.sample.storage
 
-import android.content.ContentValues
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -84,14 +83,11 @@ class StorageActivity : AppCompatActivity() {
     private var createdFileUri: Uri? = null
     fun createFile(view: View) {
         lifecycleScope.launch {
-            val values = ContentValues()
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "4.jpg")
-            values.put(MediaStore.MediaColumns.TITLE, "4.jpg")
-            values.put(MediaStore.MediaColumns.MIME_TYPE, StoragePublicUtils.MimeType._jpg.value)
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
-                    Uri.parse("content://media/external/images/media"),
-                    values
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    "7.jpg",
+                    "Pictures/like"
             )
             Logger.d(createdFileUri)
         }

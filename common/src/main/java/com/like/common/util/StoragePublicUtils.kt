@@ -53,42 +53,6 @@ object StoragePublicUtils {
 
     /**
      * MediaStore 是 android 系统提供的一个多媒体数据库，专门用于存放多媒体信息的，通过 ContentResolver.query() 获取 Cursor 即可对数据库进行操作。
-     * content://media/<volumeName>/<Uri路径>
-    ●Audio
-    ■  Internal: MediaStore.Audio.Media.INTERNAL_CONTENT_URI
-    content://media/internal/audio/media。
-    ■  External: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-    content://media/external/audio/media。
-    ■  可移动存储: MediaStore.Audio.Media.getContentUri
-    content://media/<volumeName>/audio/media。
-
-    ●  Video
-    ■    Internal: MediaStore.Video.Media.INTERNAL_CONTENT_URI
-    content://media/internal/video/media。
-    ■    External: MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-    content://media/external/video/media。
-    ■    可移动存储: MediaStore.Video.Media.getContentUri
-    content://media/<volumeName>/video/media。
-
-    ●  Image
-    ■    Internal: MediaStore.Images.Media.INTERNAL_CONTENT_URI
-    content://media/internal/images/media。
-    ■    External: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-    content://media/external/images/media。
-    ■    可移动存储: MediaStore.Images.Media.getContentUri
-    content://media/<volumeName>/images/media。
-
-    ●  File
-    ■    MediaStore. Files.Media.getContentUri
-    content://media/<volumeName>/file。
-
-    ●  Downloads
-    ■    Internal: MediaStore.Downloads.INTERNAL_CONTENT_URI
-    content://media/internal/downloads。
-    ■    External: MediaStore.Downloads.EXTERNAL_CONTENT_URI
-    content://media/external/downloads。
-    ■    可移动存储: MediaStore.Downloads.getContentUri
-    content://media/<volumeName>/downloads。
      *
      * MediaStore.Files: 共享的文件,包括多媒体和非多媒体信息
      * MediaStore.Image: 存放图片信息
@@ -244,16 +208,67 @@ object StoragePublicUtils {
 
         /**
          * 创建文件
+         *
+         * @param uri           content://media/<volumeName>/<Uri路径>
+         * 其中 volumeName 可以是：
+         * [android.provider.MediaStore.VOLUME_INTERNAL]
+         * [android.provider.MediaStore.VOLUME_EXTERNAL]
+         * [android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY]
+         * [android.provider.MediaStore.getExternalVolumeNames]
+         *
+        ●  Audio
+        ■  Internal: MediaStore.Audio.Media.INTERNAL_CONTENT_URI
+        content://media/internal/audio/media。
+        ■  External: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        content://media/external/audio/media。
+        ■  可移动存储: MediaStore.Audio.Media.getContentUri
+        content://media/<volumeName>/audio/media。
+
+        ●  Video
+        ■    Internal: MediaStore.Video.Media.INTERNAL_CONTENT_URI
+        content://media/internal/video/media。
+        ■    External: MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        content://media/external/video/media。
+        ■    可移动存储: MediaStore.Video.Media.getContentUri
+        content://media/<volumeName>/video/media。
+
+        ●  Image
+        ■    Internal: MediaStore.Images.Media.INTERNAL_CONTENT_URI
+        content://media/internal/images/media。
+        ■    External: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        content://media/external/images/media。
+        ■    可移动存储: MediaStore.Images.Media.getContentUri
+        content://media/<volumeName>/images/media。
+
+        ●  File
+        ■    MediaStore. Files.Media.getContentUri
+        content://media/<volumeName>/file。
+
+        ●  Downloads
+        ■    Internal: MediaStore.Downloads.INTERNAL_CONTENT_URI
+        content://media/internal/downloads。
+        ■    External: MediaStore.Downloads.EXTERNAL_CONTENT_URI
+        content://media/external/downloads。
+        ■    可移动存储: MediaStore.Downloads.getContentUri
+        content://media/<volumeName>/downloads。
+         * @param relativePath  相对路径。
+         * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
+         * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
+         * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
+         * Video：[DCIM, Movies]
+         * Image：[DCIM, Pictures]
+         * File：[Download, Documents]
+         * Downloads：[Download]
          */
-        @RequiresApi(Build.VERSION_CODES.Q)
         suspend fun createFile(context: Context, uri: Uri?, fileName: String, relativePath: String = ""): Uri? {
             uri ?: return null
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                return null
+            }
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
-                        if (relativePath.isNotEmpty()) {
-                            put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
-                        }
+                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
                         put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
                     }
                     context.applicationContext.contentResolver.insert(uri, values)
@@ -269,10 +284,11 @@ object StoragePublicUtils {
          *
          * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
          */
-        @RequiresApi(Build.VERSION_CODES.Q)
         suspend fun createFile(context: Context, uri: Uri?, fileName: String, relativePath: String = "", onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
             uri ?: return null
-
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                return null
+            }
             return withContext(Dispatchers.IO) {
                 try {
                     // Add a media item that other apps shouldn't see until the item is
@@ -280,9 +296,7 @@ object StoragePublicUtils {
                     val resolver = context.applicationContext.contentResolver
 
                     val values = ContentValues().apply {
-                        if (relativePath.isNotEmpty()) {
-                            put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
-                        }
+                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
                         put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
                         put(MediaStore.Audio.Media.IS_PENDING, 1)
                     }
