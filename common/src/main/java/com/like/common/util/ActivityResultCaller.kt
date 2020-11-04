@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -20,19 +19,17 @@ val ActivityResultCaller.context: Context
         }
     }
 
-inline fun <reified T : Activity> ActivityResultCaller.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (ActivityResult) -> Unit) {
+suspend inline fun <reified T : Activity> ActivityResultCaller.startActivityForResult(vararg params: Pair<String, Any?>): Intent? = suspendCoroutine { cont ->
     val intent = context.createIntent<T>(*params)
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        callback(it)
+        cont.resume(
+                if (it.resultCode == Activity.RESULT_OK) {
+                    it.data
+                } else {
+                    null
+                }
+        )
     }.launch(intent)
-}
-
-inline fun <reified T : Activity> ActivityResultCaller.startActivityForResultOk(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
-    startActivityForResult<T>(*params) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            callback(it.data)
-        }
-    }
 }
 
 suspend fun ActivityResultCaller.requestPermission(permission: String): Boolean = suspendCoroutine { cont ->
@@ -41,19 +38,8 @@ suspend fun ActivityResultCaller.requestPermission(permission: String): Boolean 
     }.launch(permission)
 }
 
-inline fun ActivityResultCaller.requestPermissions(vararg permissions: String, crossinline callback: (Map<String, Boolean>) -> Unit) {
+suspend fun ActivityResultCaller.requestPermissions(vararg permissions: String): Boolean = suspendCoroutine { cont ->
     registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        callback(it)
+        cont.resume(it.values.all { it })
     }.launch(permissions)
-}
-
-/**
- * 所有权限都被同意
- */
-inline fun ActivityResultCaller.requestPermissionsGranted(vararg permissions: String, crossinline callback: () -> Unit) {
-    requestPermissions(*permissions) {
-        if (it.values.all { it }) {
-            callback()
-        }
-    }
 }
