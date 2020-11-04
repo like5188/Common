@@ -25,9 +25,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun openDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("openDocument：${StoragePublicUtils.SAFHelper.openDocument(
-                    this@StorageActivity)}"
-            )
+            Logger.d("openDocument：${StoragePublicUtils.SAFHelper.openDocument(this@StorageActivity)}")
         }
     }
 
