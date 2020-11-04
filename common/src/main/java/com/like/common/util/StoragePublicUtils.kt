@@ -41,7 +41,7 @@ import kotlin.coroutines.suspendCoroutine
  * 应用卸载后，文件不会删除。其他应用可以访问，但需要 READ_EXTERNAL_STORAGE 权限
  *
  * 1、媒体文件：MediaStore API
- *      api<29（Android10）：通过 Environment.getExternalStorageDirectory() 方式访问自己应用或者其它应用的文件(需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />)。
+ *      api<29（Android10）：访问自己应用或者其它应用的文件(需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />)。
  *      api>=29：
  *      1、访问自己应用新建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio、MediaStore.Downloads)。(不需要申请存储权限)
  *          为什么这里是新建的文件？
