@@ -65,6 +65,11 @@ import kotlin.coroutines.suspendCoroutine
  *      与其他应用共享媒体文件	            在所有 Android 版本中均使用相同的方法。
  *      与特定应用共享媒体文件	            在所有 Android 版本中均使用相同的方法。
  *      使用直接文件路径访问代码或库中的文件	在 Android 11 中，请使用一种方法。在 Android 10 中，请停用分区存储并改用适用于 Android 9 及更低版本的方法。
+ * 2、处理非媒体文件
+ *      打开文档文件	                    在所有 Android 版本中均使用相同的方法。
+ *      从旧版存储位置迁移现有文件	        请尽可能将文件迁移到分区存储。在 Android 10 中，请根据需要停用分区存储。
+ *      与其他应用共享内容	                在所有 Android 版本中均使用相同的方法。
+ *      缓存非媒体文件	                    在所有 Android 版本中均使用相同的方法。
  */
 object StoragePublicUtils {
 
