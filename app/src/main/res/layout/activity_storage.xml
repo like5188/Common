@@ -37,6 +37,13 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="captureImage"
+            android:text="captureImage"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="openFile"
             android:text="openFile"
             android:textAllCaps="false" />

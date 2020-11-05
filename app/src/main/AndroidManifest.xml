@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:appComponentFactory">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,8 +46,9 @@
             android:theme="@style/translucent" />
         <activity android:name=".zxing.ZXingActivity" />
         <activity android:name=".autowired.AutoWiredActivity" />
-        <activity android:name=".activitytest.LaunchModeActivity1"
-            android:launchMode="singleTask"/>
+        <activity
+            android:name=".activitytest.LaunchModeActivity1"
+            android:launchMode="singleTask" />
         <activity android:name=".activitytest.LaunchModeActivity2" />
         <activity android:name=".activitytest.LaunchModeActivity3" />
         <activity android:name=".fragmenttest.FragmentContainer" />

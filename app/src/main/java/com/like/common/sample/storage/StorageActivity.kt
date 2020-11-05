@@ -2,6 +2,7 @@ package com.like.common.sample.storage
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -10,8 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
+import com.like.common.util.StoragePrivateUtils
 import com.like.common.util.StoragePublicUtils
+import com.like.common.util.UriUtils
 import kotlinx.coroutines.launch
+import java.io.File
 
 class StorageActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -47,6 +51,14 @@ class StorageActivity : AppCompatActivity() {
     fun deleteDocument(view: View) {
         lifecycleScope.launch {
             Logger.d("deleteDocument：${StoragePublicUtils.SAFHelper.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
+        }
+    }
+
+    fun captureImage(view: View) {
+        lifecycleScope.launch {
+            val file = File(StoragePrivateUtils.ExternalStorageHelper.getExternalFilesDir(this@StorageActivity, Environment.DIRECTORY_PICTURES), "2.jpg")
+            val imageUri = UriUtils.getUriByFile(this@StorageActivity, file)
+            Logger.e(StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, imageUri)?.data)
         }
     }
 

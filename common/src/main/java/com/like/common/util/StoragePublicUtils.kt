@@ -74,6 +74,18 @@ object StoragePublicUtils {
     object MediaStoreHelper {
 
         /**
+         * 拍照并存储在 outPutUri 中
+         */
+        suspend fun captureImage(activityResultCaller: ActivityResultCaller, outPutUri: Uri): Intent? {
+            if (!activityResultCaller.requestPermission(Manifest.permission.CAMERA)) {
+                return null
+            }
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutUri)
+            return activityResultCaller.startActivityForResult(intent)
+        }
+
+        /**
          * 使用系统选择器选择指定类型的文件
          */
         suspend fun openFile(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0): Intent? {
