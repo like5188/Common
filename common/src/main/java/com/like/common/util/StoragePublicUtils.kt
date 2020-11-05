@@ -8,6 +8,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -77,21 +78,26 @@ object StoragePublicUtils {
         /**
          * 拍照
          *
-         * @param outPutUri     存储照片的地方。
-         * @return
-         * 如果[outPutUri]不为 null，那么返回值无用，但是如果返回的 intent 不为 null，表示拍照成功返回，[outPutUri]参数则是照片的 Uri；
-         * 如果[outPutUri]为 null，那么返回拍照的缩略图，可以通过 intent.getParcelableExtra<Bitmap>("data") 方法获取。
+         * @param isThumbnail     表示返回值是否为缩略图
          */
-        suspend fun captureImage(activityResultCaller: ActivityResultCaller, outPutUri: Uri? = null): Intent? {
+        suspend fun captureImage(activityResultCaller: ActivityResultCaller, isThumbnail: Boolean = false): Bitmap? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
             if (!activityResultCaller.requestPermission(Manifest.permission.CAMERA)) {
                 return null
             }
+
+            val context = activityResultCaller.context
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (outPutUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutUri)
+            return if (isThumbnail) {
+                // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
+                activityResultCaller.startActivityForResult(intent)?.getParcelableExtra("data")
+            } else {
+                val imageUri = createFile(activityResultCaller, MediaStore.Images.Media.EXTERNAL_CONTENT_URI) ?: return null
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
+                activityResultCaller.startActivityForResult(intent) ?: return null
+                UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
             }
-            return activityResultCaller.startActivityForResult(intent)
         }
 
         /**
@@ -436,18 +442,24 @@ object StoragePublicUtils {
          * File：[Download, Documents]
          * Downloads：[Download]
          */
-        suspend fun createFile(context: Context, uri: Uri?, fileName: String, relativePath: String = ""): Uri? {
+        suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String = "", relativePath: String = ""): Uri? {
             uri ?: return null
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                return null
+                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    return null
+                }
             }
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
-                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && relativePath.isNotEmpty()) {
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        }
+                        if (fileName.isNotEmpty()) {
+                            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                        }
                     }
-                    context.applicationContext.contentResolver.insert(uri, values)
+                    activityResultCaller.context.applicationContext.contentResolver.insert(uri, values)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     null

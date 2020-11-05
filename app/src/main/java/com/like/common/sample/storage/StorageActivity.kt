@@ -1,7 +1,5 @@
 package com.like.common.sample.storage
 
-import android.content.ContentValues
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,9 +11,7 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
 import com.like.common.util.StoragePublicUtils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class StorageActivity : AppCompatActivity() {
@@ -57,23 +53,8 @@ class StorageActivity : AppCompatActivity() {
 
     fun captureImage(view: View) {
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val values = ContentValues().apply {
-                        put(MediaStore.MediaColumns.DISPLAY_NAME, "${System.currentTimeMillis()}.jpg")
-                    }
-                    applicationContext.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
-                }
-            }?.let { imageUri ->
-                Logger.d("imageUri=$imageUri")
-                StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, imageUri)?.let {
-                    contentResolver.openFileDescriptor(imageUri, "r", null).use { pfd ->
-                        mBinding.iv.setImageBitmap(BitmapFactory.decodeFileDescriptor(pfd?.fileDescriptor))
-                    }
-                }
+            StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, true)?.let {
+                mBinding.iv.setImageBitmap(it)
             }
         }
     }
