@@ -50,6 +50,12 @@ class StorageActivity : AppCompatActivity() {
         }
     }
 
+    fun openFile(view: View) {
+        lifecycleScope.launch {
+            Logger.e(StoragePublicUtils.MediaStoreHelper.openFile(this@StorageActivity, StoragePublicUtils.MimeType._jpg))
+        }
+    }
+
     fun getFiles(view: View) {
         lifecycleScope.launch {
             Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getFiles(this@StorageActivity))

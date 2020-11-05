@@ -74,6 +74,15 @@ object StoragePublicUtils {
     object MediaStoreHelper {
 
         /**
+         * 使用系统选择器选择指定类型的文件
+         */
+        suspend fun openFile(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0): Intent? {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = mimeType.value
+            return activityResultCaller.startActivityForResult(intent)
+        }
+
+        /**
          * 用户向应用授予对指定媒体文件组的写入访问权限的请求。
          *
          * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。

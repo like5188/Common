@@ -33,6 +33,18 @@ suspend inline fun <reified T : Activity> ActivityResultCaller.startActivityForR
     }.launch(intent)
 }
 
+suspend fun ActivityResultCaller.startActivityForResult(intent: Intent): Intent? = suspendCoroutine { cont ->
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        cont.resume(
+                if (it.resultCode == Activity.RESULT_OK) {
+                    it.data
+                } else {
+                    null
+                }
+        )
+    }.launch(intent)
+}
+
 suspend fun ActivityResultCaller.startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): Boolean = suspendCoroutine { cont ->
     registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
         cont.resume(it.resultCode == Activity.RESULT_OK)
