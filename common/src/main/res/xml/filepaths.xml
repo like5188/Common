@@ -5,13 +5,13 @@
     path：子目录。
 
     根目录：
-    root-path	        .
-    files-path	        Context.getFilesDir()
-    cache-path	        Context.getCacheDir()
-    external-path	    Environment.getExternalStorageDirectory()
-    external-files-path	Context.getExternalFilesDir(null)
-    external-cache-path	Context.getExternalCacheDir()
-    external-media-path	Context.getExternalMediaDirs()              this directory is only available on API 21+ devices.
+    root-path	            .
+    files-path	            Context.getFilesDir()
+    cache-path	            Context.getCacheDir()
+    external-path	        Environment.getExternalStorageDirectory()
+    external-files-path	    Context.getExternalFilesDir(null)
+    external-cache-path	    Context.getExternalCacheDir()
+    external-media-path	    Context.getExternalMediaDirs()              this directory is only available on API 21+ devices.
     -->
     <paths>
         <!--在android8.0以上的手机上，读取共享文件时，如apk更新的编程中，我们把apk下载后，要安装时，去读取这个apk文件就出现如下错误：Failed to find configured root that contains-->
