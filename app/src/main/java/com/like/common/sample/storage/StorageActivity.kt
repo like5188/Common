@@ -1,8 +1,9 @@
 package com.like.common.sample.storage
 
+import android.content.ContentValues
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
-import com.like.common.util.StoragePrivateUtils
 import com.like.common.util.StoragePublicUtils
-import com.like.common.util.UriUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
+import kotlinx.coroutines.withContext
+
 
 class StorageActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -56,10 +57,24 @@ class StorageActivity : AppCompatActivity() {
 
     fun captureImage(view: View) {
         lifecycleScope.launch {
-            val externalPicturesDir = StoragePrivateUtils.ExternalStorageHelper.getExternalFilesDir(this@StorageActivity, Environment.DIRECTORY_PICTURES)
-            val file = File(externalPicturesDir, "2.jpg")
-            val imageUri = UriUtils.getUriByFile(this@StorageActivity, file)
-            Logger.e(StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, imageUri))
+            withContext(Dispatchers.IO) {
+                try {
+                    val values = ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, "${System.currentTimeMillis()}.jpg")
+                    }
+                    applicationContext.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
+                }
+            }?.let { imageUri ->
+                Logger.d("imageUri=$imageUri")
+                StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, imageUri)?.let {
+                    contentResolver.openFileDescriptor(imageUri, "r", null).use { pfd ->
+                        mBinding.iv.setImageBitmap(BitmapFactory.decodeFileDescriptor(pfd?.fileDescriptor))
+                    }
+                }
+            }
         }
     }
 
@@ -105,7 +120,7 @@ class StorageActivity : AppCompatActivity() {
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    "18.jpg",
+                    "33.jpg",
                     "Pictures/like"
             )
             Logger.d(createdFileUri)

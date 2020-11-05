@@ -341,8 +341,8 @@ object StoragePublicUtils {
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
-                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
-                        put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     }
                     context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
                 } catch (e: Exception) {
@@ -444,8 +444,8 @@ object StoragePublicUtils {
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
-                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
-                        put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     }
                     context.applicationContext.contentResolver.insert(uri, values)
                 } catch (e: Exception) {
@@ -472,9 +472,9 @@ object StoragePublicUtils {
                     val resolver = context.applicationContext.contentResolver
 
                     val values = ContentValues().apply {
-                        put(MediaStore.Audio.Media.RELATIVE_PATH, relativePath)
-                        put(MediaStore.Audio.Media.DISPLAY_NAME, fileName)
-                        put(MediaStore.Audio.Media.IS_PENDING, 1)
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                        put(MediaStore.MediaColumns.IS_PENDING, 1)
                     }
 
                     resolver.insert(uri, values)?.also {
@@ -779,7 +779,6 @@ object StoragePublicUtils {
          *
          * @return  返回的 Uri 为文件的
          */
-        @RequiresApi(Build.VERSION_CODES.O)
         suspend fun createDocument(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: MimeType = MimeType._0, pickerInitialUri: Uri? = null): Uri? = suspendCoroutine { cont ->
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 cont.resume(null)
