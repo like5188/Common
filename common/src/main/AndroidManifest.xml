@@ -21,9 +21,10 @@
         android:requestLegacyExternalStorage="false"
         android:targetSandboxVersion="1"
         android:usesCleartextTraffic="true">
-        <!--authorities 路径 前面为包名，后面为fileprovider固定值，使用包名便于区分-->
+        <!--文件共享-->
+        <!--authorities URI 授权 前面为包名，后面为fileprovider固定值，使用包名便于区分-->
         <!--exported="false" 是否支持其它应用调用当前组件 ，要求为flase-->
-        <!--@xml/filepaths 在res目录下定义的filepaths.xml文件，名字可以自定义-->
+        <!--@xml/filepaths 在res目录的xml目录下定义的filepaths.xml文件，名字可以自定义-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
