@@ -74,9 +74,12 @@ object StoragePublicUtils {
     object MediaStoreHelper {
 
         /**
-         * 拍照并存储在 outPutUri 中
+         * 拍照
          *
-         * @param outPutUri     如果为 null，那么返回的是拍照的缩略图，可以通过 intent.getParcelableExtra<Bitmap>("data") 方法获取。
+         * @param outPutUri     存储照片的地方。
+         * @return
+         * 如果[outPutUri]不为 null，那么返回值无用，但是如果返回的 intent 不为 null，表示拍照成功返回，[outPutUri]参数则是照片的 Uri；
+         * 如果[outPutUri]为 null，那么返回拍照的缩略图，可以通过 intent.getParcelableExtra<Bitmap>("data") 方法获取。
          */
         suspend fun captureImage(activityResultCaller: ActivityResultCaller, outPutUri: Uri? = null): Intent? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
