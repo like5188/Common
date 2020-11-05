@@ -4,7 +4,7 @@
     name：指示 FileProvider 将路径段 name 添加到文件的内容 URI 中。
     path：子目录。
 
-    根目录：
+    根目录：                 代表的路径
     root-path	            .
     files-path	            Context.getFilesDir()
     cache-path	            Context.getCacheDir()
