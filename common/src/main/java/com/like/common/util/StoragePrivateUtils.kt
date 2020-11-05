@@ -139,7 +139,7 @@ object StoragePrivateUtils {
                 context.applicationContext.filesDir
 
         /**
-         * 获取Cache目录。存储缓存文件。注意：当设备的内部存储空间不足时，Android 可能会删除这些缓存文件以回收空间。因此，请在读取前检查缓存文件是否存在。
+         * 获取Cache目录。存储缓存文件。注意：如果系统的存储空间不足，则可能会在不发出警告的情况下删除您的缓存文件。因此，请在读取前检查缓存文件是否存在。
          *
          * @param context
          * @return /data/data(user/0)/packageName/cache
