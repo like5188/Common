@@ -75,14 +75,18 @@ object StoragePublicUtils {
 
         /**
          * 拍照并存储在 outPutUri 中
+         *
+         * @param outPutUri     如果为 null，那么返回的是拍照的缩略图，可以通过 intent.getParcelableExtra<Bitmap>("data") 方法获取。
          */
-        suspend fun captureImage(activityResultCaller: ActivityResultCaller, outPutUri: Uri): Intent? {
+        suspend fun captureImage(activityResultCaller: ActivityResultCaller, outPutUri: Uri? = null): Intent? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
             if (!activityResultCaller.requestPermission(Manifest.permission.CAMERA)) {
                 return null
             }
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutUri)
+            if (outPutUri != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, outPutUri)
+            }
             return activityResultCaller.startActivityForResult(intent)
         }
 

@@ -56,9 +56,10 @@ class StorageActivity : AppCompatActivity() {
 
     fun captureImage(view: View) {
         lifecycleScope.launch {
-            val file = File(StoragePrivateUtils.ExternalStorageHelper.getExternalFilesDir(this@StorageActivity, Environment.DIRECTORY_PICTURES), "2.jpg")
+            val externalPicturesDir = StoragePrivateUtils.ExternalStorageHelper.getExternalFilesDir(this@StorageActivity, Environment.DIRECTORY_PICTURES)
+            val file = File(externalPicturesDir, "2.jpg")
             val imageUri = UriUtils.getUriByFile(this@StorageActivity, file)
-            Logger.e(StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, imageUri)?.data)
+            Logger.e(StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, imageUri))
         }
     }
 
