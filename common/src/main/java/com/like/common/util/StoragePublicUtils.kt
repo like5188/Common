@@ -77,6 +77,7 @@ object StoragePublicUtils {
          * 拍照并存储在 outPutUri 中
          */
         suspend fun captureImage(activityResultCaller: ActivityResultCaller, outPutUri: Uri): Intent? {
+            // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
             if (!activityResultCaller.requestPermission(Manifest.permission.CAMERA)) {
                 return null
             }
