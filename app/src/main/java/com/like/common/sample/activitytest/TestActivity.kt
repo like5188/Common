@@ -101,7 +101,7 @@ class TestActivity : AppCompatActivity() {
         Log.v(TAG, "onSaveInstanceState")
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         // 触发条件：
         // 1、当不设置android:configChanges="orientation"时，横竖屏切换
