@@ -581,6 +581,15 @@ object StoragePublicUtils {
         }
 
         class FileEntity : MediaEntity() {
+            /**
+            int MEDIA_TYPE_NONE = 0;
+            int MEDIA_TYPE_IMAGE = 1;
+            int MEDIA_TYPE_AUDIO = 2;
+            int MEDIA_TYPE_VIDEO = 3;
+            int MEDIA_TYPE_PLAYLIST = 4;
+            int MEDIA_TYPE_SUBTITLE = 5;
+            int MEDIA_TYPE_DOCUMENT = 6;
+             */
             var mediaType: Int? = null
 
             companion object {
