@@ -123,10 +123,6 @@ object StoragePublicUtils {
                              selectionArgs: Array<String>? = null,
                              sortOrder: String? = null
         ): List<FileEntity> {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                return emptyList()
-            }
-
             if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
             }
@@ -134,7 +130,7 @@ object StoragePublicUtils {
             val files = mutableListOf<FileEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
-                val contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
+                val contentUri = MediaStore.Files.getContentUri("external")
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += FileEntity().apply { fill(context, cursor, contentUri) }
@@ -198,7 +194,7 @@ object StoragePublicUtils {
             val context = activityResultCaller.context
             val files = mutableListOf<ImageEntity>()
             withContext(Dispatchers.IO) {
-                val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection
+                val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection + ImageEntity.projectionQ
                 val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
@@ -229,7 +225,7 @@ object StoragePublicUtils {
             val context = activityResultCaller.context
             val files = mutableListOf<AudioEntity>()
             withContext(Dispatchers.IO) {
-                val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projectionR
+                val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projectionQ + AudioEntity.projectionR
                 val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
@@ -258,7 +254,7 @@ object StoragePublicUtils {
             val context = activityResultCaller.context
             val files = mutableListOf<VideoEntity>()
             withContext(Dispatchers.IO) {
-                val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection + VideoEntity.projectionR
+                val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection + VideoEntity.projectionQ + VideoEntity.projectionR
                 val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
@@ -559,11 +555,7 @@ object StoragePublicUtils {
             var displayName: String? = null
             var title: String? = null
             var mimeType: String? = null
-            var width: Int? = null
-            var height: Int? = null
             var dateAdded: Date? = null
-            var duration: Int? = null
-            var orientation: Int? = null
 
             companion object {
                 val projection = arrayOf(
@@ -571,15 +563,7 @@ object StoragePublicUtils {
                         MediaStore.MediaColumns.DISPLAY_NAME,
                         MediaStore.MediaColumns.TITLE,
                         MediaStore.MediaColumns.MIME_TYPE,
-                        MediaStore.MediaColumns.WIDTH,
-                        MediaStore.MediaColumns.HEIGHT,
                         MediaStore.MediaColumns.DATE_ADDED
-                )
-
-                @RequiresApi(Build.VERSION_CODES.Q)
-                val projectionQ = arrayOf(
-                        MediaStore.MediaColumns.DURATION,
-                        MediaStore.MediaColumns.ORIENTATION
                 )
             }
 
@@ -590,13 +574,7 @@ object StoragePublicUtils {
                     this@MediaEntity.displayName = getStringOrNull(getColumnIndexOrThrow(projection[1]))
                     this@MediaEntity.title = getStringOrNull(getColumnIndexOrThrow(projection[2]))
                     this@MediaEntity.mimeType = getStringOrNull(getColumnIndexOrThrow(projection[3]))
-                    this@MediaEntity.width = getIntOrNull(getColumnIndexOrThrow(projection[4]))
-                    this@MediaEntity.height = getIntOrNull(getColumnIndexOrThrow(projection[5]))
-                    this@MediaEntity.dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[6]))))
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        this@MediaEntity.duration = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
-                        this@MediaEntity.orientation = getIntOrNull(getColumnIndexOrThrow(projectionQ[1]))
-                    }
+                    this@MediaEntity.dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[4]))))
                 }
             }
 
@@ -612,7 +590,9 @@ object StoragePublicUtils {
             }
 
             override fun toString(): String {
-                return "FileEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, mediaType=$mediaType)"
+                return "FileEntity(id=$id, uri=$uri, " +
+                        "size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, " +
+                        "mediaType=$mediaType)"
             }
 
             override fun fill(context: Context, cursor: Cursor, uri: Uri) {
@@ -625,43 +605,70 @@ object StoragePublicUtils {
 
         class ImageEntity : MediaEntity() {
             var description: String? = null
+            var width: Int? = null
+            var height: Int? = null
             var latitude: Float? = null
             var longitude: Float? = null
+            var orientation: Int? = null
 
             companion object {
                 val projection = arrayOf(
                         MediaStore.Images.ImageColumns.DESCRIPTION,
+                        MediaStore.Images.ImageColumns.WIDTH,
+                        MediaStore.Images.ImageColumns.HEIGHT,
                         MediaStore.Images.ImageColumns.LATITUDE,
-                        MediaStore.Images.ImageColumns.LONGITUDE
+                        MediaStore.Images.ImageColumns.LONGITUDE,
+                )
+
+                @RequiresApi(Build.VERSION_CODES.Q)
+                val projectionQ = arrayOf(
+                        MediaStore.Images.ImageColumns.ORIENTATION
                 )
             }
 
             override fun toString(): String {
-                return "ImageEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, description=$description, latitude=$latitude, longitude=$longitude)"
+                return "ImageEntity(id=$id, uri=$uri, " +
+                        "size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, " +
+                        "description=$description, width=$width, height=$height, orientation=$orientation, latitude=$latitude, longitude=$longitude)"
             }
 
             override fun fill(context: Context, cursor: Cursor, uri: Uri) {
                 super.fill(context, cursor, uri)
                 with(cursor) {
                     this@ImageEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Environment.isExternalStorageLegacy()) {
-                        this@ImageEntity.latitude = getFloatOrNull(getColumnIndexOrThrow(projection[1]))
-                        this@ImageEntity.longitude = getFloatOrNull(getColumnIndexOrThrow(projection[2]))
+                    this@ImageEntity.width = getIntOrNull(getColumnIndexOrThrow(MediaEntity.projection[1]))
+                    this@ImageEntity.height = getIntOrNull(getColumnIndexOrThrow(MediaEntity.projection[2]))
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        this@ImageEntity.orientation = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
+                        if (Environment.isExternalStorageLegacy()) {
+                            // 如果没有开启分区存储
+                            this@ImageEntity.latitude = getFloatOrNull(getColumnIndexOrThrow(projection[3]))
+                            this@ImageEntity.longitude = getFloatOrNull(getColumnIndexOrThrow(projection[4]))
+                        } else {
+                            // 如果开启了分区存储，以下面的方式来获取位置信息。
+                            val array = UriUtils.getLatLongFromImageUri(context, uri)
+                            this@ImageEntity.latitude = array?.get(0)
+                            this@ImageEntity.longitude = array?.get(1)
+                        }
                     } else {
-                        // 如果开启了分区存储，以下面的方式来获取位置信息。
-                        val array = UriUtils.getLatLongFromImageUri(context, uri)
-                        this@ImageEntity.latitude = array?.get(0)
-                        this@ImageEntity.longitude = array?.get(1)
+                        this@ImageEntity.latitude = getFloatOrNull(getColumnIndexOrThrow(projection[3]))
+                        this@ImageEntity.longitude = getFloatOrNull(getColumnIndexOrThrow(projection[4]))
                     }
                 }
             }
         }
 
         class AudioEntity : MediaEntity() {
+            var duration: Int? = null
             var artist: String? = null
             var album: String? = null
 
             companion object {
+                @RequiresApi(Build.VERSION_CODES.Q)
+                val projectionQ = arrayOf(
+                        MediaStore.Audio.AudioColumns.DURATION,
+                )
+
                 @RequiresApi(Build.VERSION_CODES.R)
                 val projectionR = arrayOf(
                         MediaStore.Audio.AudioColumns.ARTIST,
@@ -670,12 +677,17 @@ object StoragePublicUtils {
             }
 
             override fun toString(): String {
-                return "AudioEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album)"
+                return "AudioEntity(id=$id, uri=$uri, " +
+                        "size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, " +
+                        "duration=$duration, artist=$artist, album=$album)"
             }
 
             override fun fill(context: Context, cursor: Cursor, uri: Uri) {
                 super.fill(context, cursor, uri)
                 with(cursor) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        this@AudioEntity.duration = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         this@AudioEntity.artist = getStringOrNull(getColumnIndexOrThrow(projectionR[0]))
                         this@AudioEntity.album = getStringOrNull(getColumnIndexOrThrow(projectionR[1]))
@@ -686,12 +698,22 @@ object StoragePublicUtils {
 
         class VideoEntity : MediaEntity() {
             var description: String? = null
+            var width: Int? = null
+            var height: Int? = null
+            var duration: Int? = null
             var artist: String? = null
             var album: String? = null
 
             companion object {
                 val projection = arrayOf(
-                        MediaStore.Video.VideoColumns.DESCRIPTION
+                        MediaStore.Video.VideoColumns.DESCRIPTION,
+                        MediaStore.Video.VideoColumns.WIDTH,
+                        MediaStore.Video.VideoColumns.HEIGHT
+                )
+
+                @RequiresApi(Build.VERSION_CODES.Q)
+                val projectionQ = arrayOf(
+                        MediaStore.Video.VideoColumns.DURATION,
                 )
 
                 @RequiresApi(Build.VERSION_CODES.R)
@@ -702,13 +724,20 @@ object StoragePublicUtils {
             }
 
             override fun toString(): String {
-                return "VideoEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, artist=$artist, album=$album,  description=$description)"
+                return "VideoEntity(id=$id, uri=$uri, " +
+                        "size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, " +
+                        "description=$description, width=$width, height=$height, duration=$duration, artist=$artist, album=$album)"
             }
 
             override fun fill(context: Context, cursor: Cursor, uri: Uri) {
                 super.fill(context, cursor, uri)
                 with(cursor) {
                     this@VideoEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+                    this@VideoEntity.width = getIntOrNull(getColumnIndexOrThrow(MediaEntity.projection[1]))
+                    this@VideoEntity.height = getIntOrNull(getColumnIndexOrThrow(MediaEntity.projection[2]))
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        this@VideoEntity.duration = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         this@VideoEntity.artist = getStringOrNull(getColumnIndexOrThrow(projectionR[0]))
                         this@VideoEntity.album = getStringOrNull(getColumnIndexOrThrow(projectionR[1]))
@@ -728,7 +757,9 @@ object StoragePublicUtils {
             }
 
             override fun toString(): String {
-                return "DownloadEntity(id=$id, uri=$uri, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, width=$width, height=$height, duration=$duration, orientation=$orientation, dateAdded=$dateAdded, downloadUri=$downloadUri)"
+                return "DownloadEntity(id=$id, uri=$uri, " +
+                        "size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, " +
+                        "downloadUri=$downloadUri)"
             }
 
             override fun fill(context: Context, cursor: Cursor, uri: Uri) {
