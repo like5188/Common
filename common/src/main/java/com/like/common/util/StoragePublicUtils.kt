@@ -601,7 +601,17 @@ object StoragePublicUtils {
             override fun toString(): String {
                 return "FileEntity(id=$id, uri=$uri, " +
                         "size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, " +
-                        "mediaType=$mediaType)"
+                        "mediaType=${getMediaTypeString()})"
+            }
+
+            private fun getMediaTypeString(): String = when (mediaType) {
+                1 -> "image"
+                2 -> "audio"
+                3 -> "video"
+                4 -> "playlist"
+                5 -> "subtitle"
+                6 -> "document"
+                else -> "none"
             }
 
             override fun fill(context: Context, cursor: Cursor, uri: Uri) {
