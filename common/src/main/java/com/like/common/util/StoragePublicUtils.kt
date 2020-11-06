@@ -436,13 +436,16 @@ object StoragePublicUtils {
          */
         suspend fun deleteFile(activityResultCaller: ActivityResultCaller, uri: Uri?): Boolean {
             uri ?: return false
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return false
+            when {
+                Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
+                    if (!createDeleteRequest(activityResultCaller, listOf(uri))) {
+                        return false
+                    }
                 }
-            } else {
-                if (!createDeleteRequest(activityResultCaller, listOf(uri))) {
-                    return false
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
+                    if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        return false
+                    }
                 }
             }
             return withContext(Dispatchers.IO) {

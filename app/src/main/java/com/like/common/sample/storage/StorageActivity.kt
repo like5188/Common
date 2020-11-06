@@ -103,7 +103,7 @@ class StorageActivity : AppCompatActivity() {
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
                     uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    displayName = "13.png",
+                    displayName = "21.png",
                     relativePath = "Pictures/like"
             ) {
                 FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
@@ -119,7 +119,7 @@ class StorageActivity : AppCompatActivity() {
             Logger.d(StoragePublicUtils.MediaStoreHelper.updateFile(
                     this@StorageActivity,
                     createdFileUri,
-                    displayName = "14.png",
+                    displayName = "22.png",
                     relativePath = Environment.DIRECTORY_PICTURES
             ))
         }
