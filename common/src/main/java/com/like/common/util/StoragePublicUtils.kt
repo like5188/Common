@@ -327,6 +327,12 @@ object StoragePublicUtils {
          */
         suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, displayName: String, relativePath: String, onWrite: ((ParcelFileDescriptor?) -> Unit)? = null): Uri? {
             uri ?: return null
+            if (displayName.isEmpty()) {
+                return null
+            }
+            if (relativePath.isEmpty()) {
+                return null
+            }
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                     if (!createWriteRequest(activityResultCaller, listOf(uri))) {
@@ -341,12 +347,6 @@ object StoragePublicUtils {
                         return null
                     }
                 }
-            }
-            if (displayName.isEmpty()) {
-                return null
-            }
-            if (relativePath.isEmpty()) {
-                return null
             }
             val resolver = activityResultCaller.context.applicationContext.contentResolver
             return withContext(Dispatchers.IO) {
