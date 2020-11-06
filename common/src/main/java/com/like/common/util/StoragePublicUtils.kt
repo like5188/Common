@@ -76,6 +76,7 @@ object StoragePublicUtils {
 
         /**
          * 拍照
+         * 照片存储位置：/storage/emulated/0/Pictures
          *
          * @param isThumbnail     表示返回值是否为缩略图
          */
@@ -91,7 +92,8 @@ object StoragePublicUtils {
                 // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
                 activityResultCaller.startActivityForResult(intent)?.getParcelableExtra("data")
             } else {
-                val imageUri = createFile(activityResultCaller, MediaStore.Images.Media.EXTERNAL_CONTENT_URI) ?: return null
+                val imageUri = createFile(activityResultCaller, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, System.currentTimeMillis().toString(), Environment.DIRECTORY_PICTURES)
+                        ?: return null
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
                 activityResultCaller.startActivityForResult(intent) ?: return null
@@ -312,8 +314,8 @@ object StoragePublicUtils {
         content://media/external/downloads。
         ■    可移动存储: MediaStore.Downloads.getContentUri
         content://media/<volumeName>/downloads。
-         * @param fileName      文件名称。后缀会根据目录自动创建。如果为空，则会自动创建。
-         * @param relativePath  相对路径。比如"Pictures/like"。要求>=android 10
+         * @param displayName   文件名称。
+         * @param relativePath  相对路径。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
          * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
          * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
          * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
@@ -323,34 +325,44 @@ object StoragePublicUtils {
          * Downloads：[Download]
          * @param onWrite      写入数据的操作
          */
-        suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String = "", relativePath: String = "", onWrite: ((ParcelFileDescriptor?) -> Unit)? = null): Uri? {
+        suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, displayName: String, relativePath: String, onWrite: ((ParcelFileDescriptor?) -> Unit)? = null): Uri? {
             uri ?: return null
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return null
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                    if (!createWriteRequest(activityResultCaller, listOf(uri))) {
+                        return null
+                    }
                 }
-            } else {
-                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
-                    return null
+                Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
+
                 }
+                else -> {
+                    if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        return null
+                    }
+                }
+            }
+            if (displayName.isEmpty()) {
+                return null
+            }
+            if (relativePath.isEmpty()) {
+                return null
             }
             val resolver = activityResultCaller.context.applicationContext.contentResolver
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            if (relativePath.isNotEmpty()) {
-                                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                            }
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                            put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                             if (onWrite != null) {
                                 // 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。
                                 // 在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。
                                 // 如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
                                 put(MediaStore.MediaColumns.IS_PENDING, 1)
                             }
-                        }
-                        if (fileName.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                        } else {
+                            put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/$relativePath/$displayName")
                         }
                     }
 
@@ -393,11 +405,17 @@ object StoragePublicUtils {
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && relativePath.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        }
-                        if (fileName.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            if (relativePath.isNotEmpty()) {
+                                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                            }
+                            if (fileName.isNotEmpty()) {
+                                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                            }
+                        } else {
+                            if (relativePath.isNotEmpty() && fileName.isNotEmpty()) {
+                                put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/$relativePath/$fileName")
+                            }
                         }
                     }
                     activityResultCaller.context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0

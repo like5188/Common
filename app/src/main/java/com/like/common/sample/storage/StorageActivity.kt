@@ -2,6 +2,7 @@ package com.like.common.sample.storage
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -101,9 +102,9 @@ class StorageActivity : AppCompatActivity() {
         lifecycleScope.launch {
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                    "1.3gp",
-                    relativePath = "Pictures/like"
+                    uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    displayName = "45.png",
+                    relativePath = Environment.DIRECTORY_DCIM
             ) {
                 FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
                     it.write("0123456789")
