@@ -1,7 +1,6 @@
 package com.like.common.util
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
@@ -14,7 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-val ActivityResultCaller.context: Context
+val ActivityResultCaller.context: Activity
     get() {
         return when (this) {
             is ComponentActivity -> this

@@ -1,7 +1,6 @@
 package com.like.common.util
 
 import android.Manifest
-import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.ContentValues
@@ -80,7 +79,7 @@ object StoragePublicUtils {
          *
          * @param isThumbnail     表示返回值是否为缩略图
          */
-        suspend fun captureImage(activityResultCaller: ActivityResultCaller, isThumbnail: Boolean = false): Bitmap? {
+        suspend fun takePhoto(activityResultCaller: ActivityResultCaller, isThumbnail: Boolean = false): Bitmap? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
             if (!activityResultCaller.requestPermission(Manifest.permission.CAMERA)) {
                 return null
@@ -103,58 +102,10 @@ object StoragePublicUtils {
         /**
          * 使用系统选择器选择指定类型的文件
          */
-        suspend fun openFile(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0): Intent? {
+        suspend fun selectFile(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0): Intent? {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = mimeType.value
             return activityResultCaller.startActivityForResult(intent)
-        }
-
-        /**
-         * 用户向应用授予对指定媒体文件组的写入访问权限的请求。
-         *
-         * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
-         */
-        @RequiresApi(Build.VERSION_CODES.R)
-        suspend fun createWriteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>): Boolean {
-            val pendingIntent = MediaStore.createWriteRequest(activityResultCaller.context.applicationContext.contentResolver, uris)
-            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
-            // Launch a system prompt requesting user permission for the operation.
-            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
-        }
-
-        /**
-         * 用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
-         */
-        @RequiresApi(Build.VERSION_CODES.R)
-        suspend fun createDeleteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>): Boolean {
-            val pendingIntent = MediaStore.createDeleteRequest(activityResultCaller.context.applicationContext.contentResolver, uris)
-            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
-            // Launch a system prompt requesting user permission for the operation.
-            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
-        }
-
-        /**
-         * 用户将指定的媒体文件放入设备垃圾箱的请求。垃圾箱中的内容会在系统定义的时间段后被永久删除。
-         *
-         * @param isTrashed     注意：如果您的应用是设备 OEM 的预安装图库应用，您可以将文件放入垃圾箱而不显示对话框。如需执行该操作，请直接将 IS_TRASHED 设置为 1。及把参数设置为 true
-         */
-        @RequiresApi(Build.VERSION_CODES.R)
-        suspend fun createTrashRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>, isTrashed: Boolean): Boolean {
-            val pendingIntent = MediaStore.createTrashRequest(activityResultCaller.context.applicationContext.contentResolver, uris, isTrashed)
-            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
-            // Launch a system prompt requesting user permission for the operation.
-            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
-        }
-
-        /**
-         * 用户将设备上指定的媒体文件标记为“收藏”的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为“收藏”。
-         */
-        @RequiresApi(Build.VERSION_CODES.R)
-        suspend fun createFavoriteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>, isFavorite: Boolean): Boolean {
-            val pendingIntent = MediaStore.createFavoriteRequest(activityResultCaller.context.applicationContext.contentResolver, uris, isFavorite)
-            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
-            // Launch a system prompt requesting user permission for the operation.
-            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
         }
 
         /**
@@ -187,6 +138,39 @@ object StoragePublicUtils {
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += FileEntity().apply { fill(context, cursor, contentUri) }
+                    }
+                }
+            }
+            return files
+        }
+
+        /**
+         * 存储在 Download/ 目录中。在搭载 Android 10（API 级别 29）及更高版本的设备上，这些文件存储在 MediaStore.Downloads 表格中。此表格在 Android 9（API 级别 28）及更低版本中不可用。
+         *
+         * @param selection         查询条件
+         * @param selectionArgs     查询条件填充值
+         * @param sortOrder         排序依据
+         */
+        suspend fun getDownloads(activityResultCaller: ActivityResultCaller,
+                                 selection: String? = null,
+                                 selectionArgs: Array<String>? = null,
+                                 sortOrder: String? = null
+        ): List<DownloadEntity> {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                return emptyList()
+            }
+
+            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return emptyList()
+            }
+            val context = activityResultCaller.context
+            val files = mutableListOf<DownloadEntity>()
+            withContext(Dispatchers.IO) {
+                val projection = BaseEntity.projection + MediaEntity.projection + DownloadEntity.projectionQ
+                val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        files += DownloadEntity().apply { fill(context, cursor, contentUri) }
                     }
                 }
             }
@@ -286,89 +270,6 @@ object StoragePublicUtils {
         }
 
         /**
-         * 存储在 Download/ 目录中。在搭载 Android 10（API 级别 29）及更高版本的设备上，这些文件存储在 MediaStore.Downloads 表格中。此表格在 Android 9（API 级别 28）及更低版本中不可用。
-         *
-         * @param selection         查询条件
-         * @param selectionArgs     查询条件填充值
-         * @param sortOrder         排序依据
-         */
-        suspend fun getDownloads(activityResultCaller: ActivityResultCaller,
-                                 selection: String? = null,
-                                 selectionArgs: Array<String>? = null,
-                                 sortOrder: String? = null
-        ): List<DownloadEntity> {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                return emptyList()
-            }
-
-            if (!activityResultCaller.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                return emptyList()
-            }
-            val context = activityResultCaller.context
-            val files = mutableListOf<DownloadEntity>()
-            withContext(Dispatchers.IO) {
-                val projection = BaseEntity.projection + MediaEntity.projection + DownloadEntity.projectionQ
-                val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                    while (cursor.moveToNext()) {
-                        files += DownloadEntity().apply { fill(context, cursor, contentUri) }
-                    }
-                }
-            }
-            return files
-        }
-
-        /**
-         * 更新自己创建的文件。也可以通过更改 MediaColumns.RELATIVE_PATH 在磁盘上移动文件。
-         */
-        suspend fun updateFile(context: Context, uri: Uri?, fileName: String, relativePath: String = "", selection: String? = null, selectionArgs: Array<String>? = null): Boolean {
-            uri ?: return false
-            return withContext(Dispatchers.IO) {
-                try {
-                    val values = ContentValues().apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && relativePath.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        }
-                        if (fileName.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                        }
-                    }
-                    context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    false
-                }
-            }
-        }
-
-        /**
-         * 更新其他应用的媒体文件
-         *
-         * 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限
-         */
-        suspend fun updateFile(activity: Activity, uri: Uri?, onWrite: (ParcelFileDescriptor?) -> Unit) {
-            uri ?: return
-            withContext(Dispatchers.IO) {
-                try {
-                    activity.applicationContext.contentResolver.openFileDescriptor(uri, "w")?.use { pfd ->
-                        onWrite(pfd)
-                    }
-                } catch (securityException: SecurityException) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        val recoverableSecurityException = securityException as? RecoverableSecurityException
-                                ?: throw RuntimeException(securityException.message, securityException)
-
-                        recoverableSecurityException.userAction.actionIntent.intentSender?.let {
-                            activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
-                        }
-                    } else {
-                        throw RuntimeException(securityException.message, securityException)
-                    }
-                }
-            }
-        }
-
-        /**
          * 创建文件
          *
          * @param uri           content://media/<volumeName>/<Uri路径>
@@ -424,8 +325,12 @@ object StoragePublicUtils {
          */
         suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String = "", relativePath: String = ""): Uri? {
             uri ?: return null
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    return null
+                }
+            } else {
+                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
                     return null
                 }
             }
@@ -452,13 +357,22 @@ object StoragePublicUtils {
          *
          * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
          */
-        suspend fun createFile(context: Context, uri: Uri?, fileName: String, relativePath: String = "", onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
+        suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String, relativePath: String = "", onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
             uri ?: return null
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    return null
+                }
+            } else {
+                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
+                    return null
+                }
+            }
             return withContext(Dispatchers.IO) {
                 try {
                     // Add a media item that other apps shouldn't see until the item is
                     // fully written to the media store.
-                    val resolver = context.applicationContext.contentResolver
+                    val resolver = activityResultCaller.context.applicationContext.contentResolver
 
                     val values = ContentValues().apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -493,24 +407,156 @@ object StoragePublicUtils {
         }
 
         /**
-         * 删除文件
-         *
-         * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
+         * 更新数据库中的文件信息。也可以通过更改 MediaColumns.RELATIVE_PATH 在磁盘上移动文件。
          */
-        suspend fun deleteFile(activity: Activity, uri: Uri?): Boolean {
+        suspend fun updateFileInfo(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String, relativePath: String = "", selection: String? = null, selectionArgs: Array<String>? = null): Boolean {
             uri ?: return false
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    return false
+                }
+            } else {
+                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
+                    return false
+                }
+            }
             return withContext(Dispatchers.IO) {
                 try {
-                    activity.applicationContext.contentResolver.delete(uri, null, null) > 0
+                    val values = ContentValues().apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && relativePath.isNotEmpty()) {
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        }
+                        if (fileName.isNotEmpty()) {
+                            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                        }
+                    }
+                    activityResultCaller.context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
                 } catch (securityException: SecurityException) {
+                    // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
+                    // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                            activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                            activityResultCaller.context.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                         }
                     }
                     false
                 }
             }
+        }
+
+        /**
+         * 更新文件内容
+         *
+         * 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限
+         */
+        suspend fun updateFileContent(activityResultCaller: ActivityResultCaller, uri: Uri?, onWrite: (ParcelFileDescriptor?) -> Unit): Boolean {
+            uri ?: return false
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    return false
+                }
+            } else {
+                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
+                    return false
+                }
+            }
+            return withContext(Dispatchers.IO) {
+                try {
+                    activityResultCaller.context.applicationContext.contentResolver.openFileDescriptor(uri, "w")?.use { pfd ->
+                        onWrite(pfd)
+                    }
+                    true
+                } catch (securityException: SecurityException) {
+                    // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
+                    // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
+                            activityResultCaller.context.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        }
+                    }
+                    false
+                }
+            }
+        }
+
+        /**
+         * 删除文件
+         *
+         * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
+         */
+        suspend fun deleteFile(activityResultCaller: ActivityResultCaller, uri: Uri?): Boolean {
+            uri ?: return false
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    return false
+                }
+            } else {
+                if (!createDeleteRequest(activityResultCaller, listOf(uri))) {
+                    return false
+                }
+            }
+            return withContext(Dispatchers.IO) {
+                try {
+                    activityResultCaller.context.applicationContext.contentResolver.delete(uri, null, null) > 0
+                } catch (securityException: SecurityException) {
+                    // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
+                    // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
+                            activityResultCaller.context.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        }
+                    }
+                    false
+                }
+            }
+        }
+
+        /**
+         * 用户向应用授予对指定媒体文件组的写入访问权限的请求。
+         *
+         * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        private suspend fun createWriteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>): Boolean {
+            val pendingIntent = MediaStore.createWriteRequest(activityResultCaller.context.applicationContext.contentResolver, uris)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
+
+        /**
+         * 用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        private suspend fun createDeleteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>): Boolean {
+            val pendingIntent = MediaStore.createDeleteRequest(activityResultCaller.context.applicationContext.contentResolver, uris)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
+
+        /**
+         * 用户将指定的媒体文件放入设备垃圾箱的请求。垃圾箱中的内容会在系统定义的时间段后被永久删除。
+         *
+         * @param isTrashed     注意：如果您的应用是设备 OEM 的预安装图库应用，您可以将文件放入垃圾箱而不显示对话框。如需执行该操作，请直接将 IS_TRASHED 设置为 1。及把参数设置为 true
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        private suspend fun createTrashRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>, isTrashed: Boolean): Boolean {
+            val pendingIntent = MediaStore.createTrashRequest(activityResultCaller.context.applicationContext.contentResolver, uris, isTrashed)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
+        }
+
+        /**
+         * 用户将设备上指定的媒体文件标记为“收藏”的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为“收藏”。
+         */
+        @RequiresApi(Build.VERSION_CODES.R)
+        private suspend fun createFavoriteRequest(activityResultCaller: ActivityResultCaller, uris: List<Uri>, isFavorite: Boolean): Boolean {
+            val pendingIntent = MediaStore.createFavoriteRequest(activityResultCaller.context.applicationContext.contentResolver, uris, isFavorite)
+            val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
+            // Launch a system prompt requesting user permission for the operation.
+            return activityResultCaller.startIntentSenderForResult(intentSenderRequest)
         }
 
         open class BaseEntity {

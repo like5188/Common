@@ -53,7 +53,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun captureImage(view: View) {
         lifecycleScope.launch {
-            StoragePublicUtils.MediaStoreHelper.captureImage(this@StorageActivity, true)?.let {
+            StoragePublicUtils.MediaStoreHelper.takePhoto(this@StorageActivity, true)?.let {
                 mBinding.iv.setImageBitmap(it)
             }
         }
@@ -61,7 +61,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun openFile(view: View) {
         lifecycleScope.launch {
-            Logger.e(StoragePublicUtils.MediaStoreHelper.openFile(this@StorageActivity, StoragePublicUtils.MimeType._jpg))
+            Logger.e(StoragePublicUtils.MediaStoreHelper.selectFile(this@StorageActivity, StoragePublicUtils.MimeType._jpg))
         }
     }
 
