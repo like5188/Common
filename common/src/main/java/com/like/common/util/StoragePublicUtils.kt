@@ -271,6 +271,7 @@ object StoragePublicUtils {
 
         /**
          * 创建文件
+         * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
          *
          * @param uri           content://media/<volumeName>/<Uri路径>
          * 其中 volumeName 可以是：
@@ -303,8 +304,9 @@ object StoragePublicUtils {
         ■    可移动存储: MediaStore.Images.Media.getContentUri
         content://media/<volumeName>/images/media。
 
+        下面两种非媒体文件请使用 SAF 操作
         ●  File
-        ■    MediaStore. Files.Media.getContentUri
+        ■    MediaStore.Files.Media.getContentUri
         content://media/<volumeName>/file。
 
         ●  Downloads
@@ -314,7 +316,8 @@ object StoragePublicUtils {
         content://media/external/downloads。
         ■    可移动存储: MediaStore.Downloads.getContentUri
         content://media/<volumeName>/downloads。
-         * @param relativePath  相对路径。
+         * @param fileName      文件名称。后缀会根据目录自动创建。如果为空，则会自动创建。
+         * @param relativePath  相对路径。比如"Pictures/like"。要求>=android 10
          * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
          * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
          * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
@@ -322,42 +325,9 @@ object StoragePublicUtils {
          * Image：[DCIM, Pictures]
          * File：[Download, Documents]
          * Downloads：[Download]
+         * @param onWrite      写入数据的操作
          */
-        suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String = "", relativePath: String = ""): Uri? {
-            uri ?: return null
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return null
-                }
-            } else {
-                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
-                    return null
-                }
-            }
-            return withContext(Dispatchers.IO) {
-                try {
-                    val values = ContentValues().apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && relativePath.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        }
-                        if (fileName.isNotEmpty()) {
-                            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                        }
-                    }
-                    activityResultCaller.context.applicationContext.contentResolver.insert(uri, values)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
-                }
-            }
-        }
-
-        /**
-         * 创建文件并写入数据
-         *
-         * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
-         */
-        suspend fun createFileAndWriteData(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String, relativePath: String = "", onWrite: (ParcelFileDescriptor?) -> Unit): Uri? {
+        suspend fun createFile(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String = "", relativePath: String = "", onWrite: ((ParcelFileDescriptor?) -> Unit)? = null): Uri? {
             uri ?: return null
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -379,7 +349,9 @@ object StoragePublicUtils {
                             if (relativePath.isNotEmpty()) {
                                 put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                             }
-                            put(MediaStore.MediaColumns.IS_PENDING, 1)
+                            if (onWrite != null) {
+                                put(MediaStore.MediaColumns.IS_PENDING, 1)
+                            }
                         }
                         if (fileName.isNotEmpty()) {
                             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
@@ -387,17 +359,19 @@ object StoragePublicUtils {
                     }
 
                     resolver.insert(uri, values)?.also {
-                        resolver.openFileDescriptor(it, "w", null).use { pfd ->
-                            // Write data into the pending audio file.
-                            onWrite(pfd)
+                        if (onWrite != null) {
+                            resolver.openFileDescriptor(it, "w", null).use { pfd ->
+                                // Write data into the pending audio file.
+                                onWrite(pfd)
+                            }
+                            // Now that we're finished, release the "pending" status, and allow other apps
+                            // to play the audio track.
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                values.clear()
+                                values.put(MediaStore.Audio.Media.IS_PENDING, 0)
+                                resolver.update(it, values, null, null)
+                            }
                         }
-                        // Now that we're finished, release the "pending" status, and allow other apps
-                        // to play the audio track.
-                        values.clear()
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            values.put(MediaStore.Audio.Media.IS_PENDING, 0)
-                        }
-                        resolver.update(it, values, null, null)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()

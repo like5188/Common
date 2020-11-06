@@ -12,6 +12,7 @@ import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
 import com.like.common.util.StoragePublicUtils
 import kotlinx.coroutines.launch
+import java.io.FileOutputStream
 
 
 class StorageActivity : AppCompatActivity() {
@@ -100,10 +101,14 @@ class StorageActivity : AppCompatActivity() {
         lifecycleScope.launch {
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    "33.jpg",
-                    "Pictures/like"
-            )
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                    "1.3gp",
+                    relativePath = "Pictures/like"
+            ) {
+                FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
+                    it.write("0123456789")
+                }
+            }
             Logger.d(createdFileUri)
         }
     }
