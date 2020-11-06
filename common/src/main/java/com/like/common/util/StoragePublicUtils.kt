@@ -334,12 +334,9 @@ object StoragePublicUtils {
                     return null
                 }
             }
+            val resolver = activityResultCaller.context.applicationContext.contentResolver
             return withContext(Dispatchers.IO) {
                 try {
-                    // Add a media item that other apps shouldn't see until the item is
-                    // fully written to the media store.
-                    val resolver = activityResultCaller.context.applicationContext.contentResolver
-
                     val values = ContentValues().apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             if (relativePath.isNotEmpty()) {
@@ -419,8 +416,6 @@ object StoragePublicUtils {
 
         /**
          * 更新文件内容
-         *
-         * 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限
          */
         suspend fun updateFileContent(activityResultCaller: ActivityResultCaller, uri: Uri?, onWrite: (ParcelFileDescriptor?) -> Unit): Boolean {
             uri ?: return false
