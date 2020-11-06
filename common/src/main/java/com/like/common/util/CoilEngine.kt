@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toBitmap
 import coil.load
-import coil.request.GetRequest
 import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
 import com.like.common.R

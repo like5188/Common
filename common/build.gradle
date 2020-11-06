@@ -58,10 +58,10 @@ dependencies {
     api "org.koin:koin-androidx-viewmodel:2.1.6"
 
     // coil图片加载库
-    api 'io.coil-kt:coil:0.12.0'
-    api 'io.coil-kt:coil-gif:0.12.0'
-    api 'io.coil-kt:coil-svg:0.12.0'
-    api 'io.coil-kt:coil-video:0.12.0'
+    api 'io.coil-kt:coil:1.0.0'
+    api 'io.coil-kt:coil-gif:1.0.0'
+    api 'io.coil-kt:coil-svg:1.0.0'
+    api 'io.coil-kt:coil-video:1.0.0'
 
     // room
     api 'androidx.room:room-runtime:2.2.5'
