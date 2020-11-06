@@ -103,14 +103,25 @@ class StorageActivity : AppCompatActivity() {
             createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
                     this@StorageActivity,
                     uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    displayName = "45.png",
-                    relativePath = Environment.DIRECTORY_DCIM
+                    displayName = "13.png",
+                    relativePath = "Pictures/like"
             ) {
                 FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
                     it.write("0123456789")
                 }
             }
             Logger.d(createdFileUri)
+        }
+    }
+
+    fun updateFileInfo(view: View) {
+        lifecycleScope.launch {
+            Logger.d(StoragePublicUtils.MediaStoreHelper.updateFile(
+                    this@StorageActivity,
+                    createdFileUri,
+                    displayName = "14.png",
+                    relativePath = Environment.DIRECTORY_PICTURES
+            ))
         }
     }
 

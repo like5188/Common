@@ -314,7 +314,7 @@ object StoragePublicUtils {
         content://media/external/downloads。
         ■    可移动存储: MediaStore.Downloads.getContentUri
         content://media/<volumeName>/downloads。
-         * @param displayName   文件名称。
+         * @param displayName   文件名称。如果是 android10 以下，则必须要有后缀。android10 及以上版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会变成".png.jpg"
          * @param relativePath  相对路径。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
          * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
          * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
@@ -334,15 +334,12 @@ object StoragePublicUtils {
                 return null
             }
             when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
                     if (!createWriteRequest(activityResultCaller, listOf(uri))) {
                         return null
                     }
                 }
-                Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
-
-                }
-                else -> {
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
                     if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         return null
                     }
@@ -389,69 +386,36 @@ object StoragePublicUtils {
         }
 
         /**
-         * 更新数据库中的文件信息。也可以通过更改 MediaColumns.RELATIVE_PATH 在磁盘上移动文件。
+         * 更新文件。
+         *
+         * @param relativePath  相对路径，>= android10 有效，用于移动文件。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
          */
-        suspend fun updateFileInfo(activityResultCaller: ActivityResultCaller, uri: Uri?, fileName: String, relativePath: String = "", selection: String? = null, selectionArgs: Array<String>? = null): Boolean {
+        suspend fun updateFile(activityResultCaller: ActivityResultCaller, uri: Uri?, displayName: String, relativePath: String = "", selection: String? = null, selectionArgs: Array<String>? = null): Boolean {
             uri ?: return false
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return false
+            if (displayName.isEmpty()) {
+                return false
+            }
+            when {
+                Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
+                    if (!createWriteRequest(activityResultCaller, listOf(uri))) {
+                        return false
+                    }
                 }
-            } else {
-                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
-                    return false
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
+                    if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        return false
+                    }
                 }
             }
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            if (relativePath.isNotEmpty()) {
-                                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                            }
-                            if (fileName.isNotEmpty()) {
-                                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                            }
-                        } else {
-                            if (relativePath.isNotEmpty() && fileName.isNotEmpty()) {
-                                put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/$relativePath/$fileName")
-                            }
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                         }
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                     }
                     activityResultCaller.context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
-                } catch (securityException: SecurityException) {
-                    // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
-                    // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                            activityResultCaller.context.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
-                        }
-                    }
-                    false
-                }
-            }
-        }
-
-        /**
-         * 更新文件内容
-         */
-        suspend fun updateFileContent(activityResultCaller: ActivityResultCaller, uri: Uri?, onWrite: (ParcelFileDescriptor?) -> Unit): Boolean {
-            uri ?: return false
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                if (!activityResultCaller.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return false
-                }
-            } else {
-                if (!createWriteRequest(activityResultCaller, listOf(uri))) {
-                    return false
-                }
-            }
-            return withContext(Dispatchers.IO) {
-                try {
-                    activityResultCaller.context.applicationContext.contentResolver.openFileDescriptor(uri, "w")?.use { pfd ->
-                        onWrite(pfd)
-                    }
-                    true
                 } catch (securityException: SecurityException) {
                     // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                     // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
