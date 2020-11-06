@@ -69,10 +69,6 @@ object StoragePrivateUtils {
      *
      * /data/data(user/0)/packageName/xxx
      *
-     * 设置项的 Clear Data 和 Clear cache 两个选项，这两个都是清空应用的缓存数据，具体区别如下：
-     *     1、Clear Data清理的是外部存储中的应用私有目录下的file文件夹
-     *     2、Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
-     *
      * 注意:自 API 级别 17 以来，常量 MODE_WORLD_READABLE 和 MODE_WORLD_WRITEABLE 已被弃用。
      * 从 Android N (7.0) 开始，使用这些常量将会导致引发 SecurityException。
      * 这意味着，面向 Android N 和更高版本的应用无法按名称共享私有文件，尝试共享“file://”URI 将会导致引发 FileUriExposedException。
@@ -167,6 +163,10 @@ object StoragePrivateUtils {
      * 文件访问方式与之前Android版本一致，可以通过File path获取资源。
      * 注意：无法保证可以访问这些目录中的文件，例如从设备中取出可移除的 SD 卡后，就无法访问其中的文件。如果应用的功能取决于这些文件，应改为将文件存储在内部存储空间中。
      * Android 10（API 级别 29）及更高版本为目标平台的应用在默认情况下被授予了对外部存储空间的分区访问权限（即分区存储）。启用分区存储后，应用将无法访问属于其他应用的私有目录。
+     *
+     * 设置项的 Clear Data 和 Clear cache 两个选项，这两个都是清空应用的缓存数据，具体区别如下：
+     *     1、Clear Data清理的是外部存储中的应用私有目录下的file文件夹
+     *     2、Clear Cache清理的是外部存储中的应用私有目录下的cache文件夹
      */
     object ExternalStorageHelper {
 
