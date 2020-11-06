@@ -350,6 +350,9 @@ object StoragePublicUtils {
                                 put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                             }
                             if (onWrite != null) {
+                                // 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。
+                                // 在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。
+                                // 如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
                                 put(MediaStore.MediaColumns.IS_PENDING, 1)
                             }
                         }
@@ -361,11 +364,11 @@ object StoragePublicUtils {
                     resolver.insert(uri, values)?.also {
                         if (onWrite != null) {
                             resolver.openFileDescriptor(it, "w", null).use { pfd ->
-                                // Write data into the pending audio file.
+                                // Write data into the pending file.
                                 onWrite(pfd)
                             }
                             // Now that we're finished, release the "pending" status, and allow other apps
-                            // to play the audio track.
+                            // to use.
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 values.clear()
                                 values.put(MediaStore.Audio.Media.IS_PENDING, 0)
