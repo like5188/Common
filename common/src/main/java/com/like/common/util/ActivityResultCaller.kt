@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +37,7 @@ suspend inline fun <reified T : Activity> ActivityResultCaller.startActivityForR
     return startActivityForResult(intent)
 }
 
+@MainThread
 inline fun <reified T : Activity> ActivityResultCaller.startActivityForResult(vararg params: Pair<String, Any?>, crossinline callback: (Intent?) -> Unit) {
     val intent = context.createIntent<T>(*params)
     startActivityForResult(intent, callback)
@@ -49,6 +51,7 @@ suspend fun ActivityResultCaller.startActivityForResult(intent: Intent): Intent?
     }
 }
 
+@MainThread
 inline fun ActivityResultCaller.startActivityForResult(intent: Intent, crossinline callback: (Intent?) -> Unit) {
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         callback(if (it.resultCode == Activity.RESULT_OK) {
@@ -67,6 +70,7 @@ suspend fun ActivityResultCaller.startIntentSenderForResult(intentSenderRequest:
     }
 }
 
+@MainThread
 inline fun ActivityResultCaller.startIntentSenderForResult(intentSenderRequest: IntentSenderRequest, crossinline callback: (Boolean) -> Unit) {
     registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
         callback(it.resultCode == Activity.RESULT_OK)
@@ -81,6 +85,7 @@ suspend fun ActivityResultCaller.requestPermission(permission: String): Boolean 
     }
 }
 
+@MainThread
 inline fun ActivityResultCaller.requestPermission(permission: String, crossinline callback: (Boolean) -> Unit) {
     registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         callback(it)
@@ -95,6 +100,7 @@ suspend fun ActivityResultCaller.requestPermissions(vararg permissions: String):
     }
 }
 
+@MainThread
 inline fun ActivityResultCaller.requestPermissions(vararg permissions: String, crossinline callback: (Boolean) -> Unit) {
     registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         callback(it.values.all { it })
