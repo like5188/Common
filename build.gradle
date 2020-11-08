@@ -1,7 +1,7 @@
 // buildscript中的声明是gradle脚本自身需要使用的资源。可以声明的资源包括依赖项、第三方插件、maven仓库地址等
 buildscript {
     // ext是自定义属性，通常用于统一管理所有第三方插件的版本号
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.4.10'
     // 顾名思义就是仓库的意思啦，而jcenter()、maven()和google()就是托管第三方插件的平台
     repositories {
         google()
@@ -9,7 +9,7 @@ buildscript {
     }
     // 当然配置了仓库还不够，我们还需要在dependencies{}里面的配置里，把需要配置的依赖用classpath配置上，因为这个dependencies在buildscript{}里面，所以代表的是Gradle需要的插件。
     dependencies {
-        classpath "com.android.tools.build:gradle:3.6.4"
+        classpath "com.android.tools.build:gradle:4.1.0"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
 
@@ -22,6 +22,7 @@ buildscript {
 // 而子项目可以配置自己的repositories以获取自己独需的依赖包。
 allprojects {
     repositories {
+//        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         google()
         jcenter()
         maven { url "https://jitpack.io" }

@@ -135,7 +135,7 @@ object StoragePublicUtils {
                 val contentUri = MediaStore.Files.getContentUri("external")
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
-                        files += FileEntity().apply { fill(context, cursor, contentUri) }
+                        files += FileEntity().apply { fill(activityResultCaller, cursor, contentUri) }
                     }
                 }
             }
@@ -168,7 +168,7 @@ object StoragePublicUtils {
                 val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
-                        files += DownloadEntity().apply { fill(context, cursor, contentUri) }
+                        files += DownloadEntity().apply { fill(activityResultCaller, cursor, contentUri) }
                     }
                 }
             }
@@ -201,7 +201,7 @@ object StoragePublicUtils {
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += ImageEntity().apply {
-                            fill(context, cursor, contentUri)
+                            fill(activityResultCaller, cursor, contentUri)
                         }
                     }
                 }
@@ -231,7 +231,7 @@ object StoragePublicUtils {
                 val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
-                        files += AudioEntity().apply { fill(context, cursor, contentUri) }
+                        files += AudioEntity().apply { fill(activityResultCaller, cursor, contentUri) }
                     }
                 }
             }
@@ -260,7 +260,7 @@ object StoragePublicUtils {
                 val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                 context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
-                        files += VideoEntity().apply { fill(context, cursor, contentUri) }
+                        files += VideoEntity().apply { fill(activityResultCaller, cursor, contentUri) }
                     }
                 }
             }
@@ -522,7 +522,7 @@ object StoragePublicUtils {
                 )
             }
 
-            open fun fill(context: Context, cursor: Cursor, uri: Uri) {
+            open suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
                 with(cursor) {
                     this@BaseEntity.id = getLongOrNull(getColumnIndexOrThrow(projection[0]))
                     this@BaseEntity.uri = ContentUris.withAppendedId(uri, id ?: -1L)
@@ -547,8 +547,8 @@ object StoragePublicUtils {
                 )
             }
 
-            override fun fill(context: Context, cursor: Cursor, uri: Uri) {
-                super.fill(context, cursor, uri)
+            override suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
+                super.fill(activityResultCaller, cursor, uri)
                 with(cursor) {
                     this@MediaEntity.size = getIntOrNull(getColumnIndexOrThrow(projection[0]))
                     this@MediaEntity.displayName = getStringOrNull(getColumnIndexOrThrow(projection[1]))
@@ -594,8 +594,8 @@ object StoragePublicUtils {
                 else -> "none"
             }
 
-            override fun fill(context: Context, cursor: Cursor, uri: Uri) {
-                super.fill(context, cursor, uri)
+            override suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
+                super.fill(activityResultCaller, cursor, uri)
                 with(cursor) {
                     this@FileEntity.mediaType = getIntOrNull(getColumnIndex(projection[0]))
                 }
@@ -631,8 +631,8 @@ object StoragePublicUtils {
                         "description=$description, width=$width, height=$height, orientation=$orientation, latitude=$latitude, longitude=$longitude)"
             }
 
-            override fun fill(context: Context, cursor: Cursor, uri: Uri) {
-                super.fill(context, cursor, uri)
+            override suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
+                super.fill(activityResultCaller, cursor, uri)
                 with(cursor) {
                     this@ImageEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
                     this@ImageEntity.width = getIntOrNull(getColumnIndexOrThrow(MediaEntity.projection[1]))
@@ -645,9 +645,13 @@ object StoragePublicUtils {
                             this@ImageEntity.longitude = getFloatOrNull(getColumnIndexOrThrow(projection[4]))
                         } else {
                             // 如果开启了分区存储，以下面的方式来获取位置信息。
-                            val array = UriUtils.getLatLongFromImageUri(context, uri)
-                            this@ImageEntity.latitude = array?.get(0)
-                            this@ImageEntity.longitude = array?.get(1)
+                            withContext(Dispatchers.Main) {
+                                if (activityResultCaller.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)) {
+                                    val array = UriUtils.getLatLongFromImageUri(activityResultCaller.context, uri)
+                                    this@ImageEntity.latitude = array?.get(0)
+                                    this@ImageEntity.longitude = array?.get(1)
+                                }
+                            }
                         }
                     } else {
                         this@ImageEntity.latitude = getFloatOrNull(getColumnIndexOrThrow(projection[3]))
@@ -681,8 +685,8 @@ object StoragePublicUtils {
                         "duration=$duration, artist=$artist, album=$album)"
             }
 
-            override fun fill(context: Context, cursor: Cursor, uri: Uri) {
-                super.fill(context, cursor, uri)
+            override suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
+                super.fill(activityResultCaller, cursor, uri)
                 with(cursor) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         this@AudioEntity.duration = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
@@ -728,8 +732,8 @@ object StoragePublicUtils {
                         "description=$description, width=$width, height=$height, duration=$duration, artist=$artist, album=$album)"
             }
 
-            override fun fill(context: Context, cursor: Cursor, uri: Uri) {
-                super.fill(context, cursor, uri)
+            override suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
+                super.fill(activityResultCaller, cursor, uri)
                 with(cursor) {
                     this@VideoEntity.description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
                     this@VideoEntity.width = getIntOrNull(getColumnIndexOrThrow(MediaEntity.projection[1]))
@@ -761,8 +765,8 @@ object StoragePublicUtils {
                         "downloadUri=$downloadUri)"
             }
 
-            override fun fill(context: Context, cursor: Cursor, uri: Uri) {
-                super.fill(context, cursor, uri)
+            override suspend fun fill(activityResultCaller: ActivityResultCaller, cursor: Cursor, uri: Uri) {
+                super.fill(activityResultCaller, cursor, uri)
                 with(cursor) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         this@DownloadEntity.downloadUri = getStringOrNull(getColumnIndexOrThrow(projectionQ[0]))
