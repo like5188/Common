@@ -107,14 +107,14 @@ dependencies {
     // websocket
     api 'org.java-websocket:Java-WebSocket:1.4.1'
 
-    api 'com.github.like5188:DataSource:0.1.3'
-    api 'com.github.like5188.RecyclerView:core:0.1.7'
-    api 'com.github.like5188.RecyclerView:ui:0.1.7'
-    api 'com.github.like5188.RecyclerView:ext:0.1.7'
-    api 'com.github.like5188.Retrofit:core:0.1.4'
-    api 'com.github.like5188.Retrofit:common:0.1.4'
-    api 'com.github.like5188.Retrofit:download:0.1.4'
-    api 'com.github.like5188.Retrofit:upload:0.1.4'
+    api 'com.github.like5188:DataSource:0.1.4'
+    api 'com.github.like5188.RecyclerView:core:0.1.8'
+    api 'com.github.like5188.RecyclerView:ui:0.1.8'
+    api 'com.github.like5188.RecyclerView:ext:0.1.8'
+    api 'com.github.like5188.Retrofit:core:0.1.5'
+    api 'com.github.like5188.Retrofit:common:0.1.5'
+    api 'com.github.like5188.Retrofit:download:0.1.5'
+    api 'com.github.like5188.Retrofit:upload:0.1.5'
 
     // coroutines
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9'
