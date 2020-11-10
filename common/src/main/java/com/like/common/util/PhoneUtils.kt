@@ -2,12 +2,15 @@ package com.like.common.util
 
 import android.content.Context
 import android.os.Build
+import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import androidx.activity.result.ActivityResultCaller
 
 object PhoneUtils {
 
     private fun getWindowManager(context: Context?) = context?.applicationContext?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+    private fun getTelephonyManager(context: Context?) = context?.applicationContext?.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
 
     /**
      * android系统版本
@@ -104,4 +107,20 @@ object PhoneUtils {
         return 0
     }
 
+    /**
+     * 获取电话号码
+     */
+    suspend fun getPhoneNumber(activityResultCaller: ActivityResultCaller): String? {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activityResultCaller.requestPermission(android.Manifest.permission.READ_PHONE_NUMBERS)
+        } else {
+            activityResultCaller.requestPermission(android.Manifest.permission.READ_PHONE_STATE)
+        }
+        if (permission) {
+            getTelephonyManager(activityResultCaller.context)?.let {
+                return it.line1Number
+            }
+        }
+        return null
+    }
 }

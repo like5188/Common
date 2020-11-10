@@ -91,6 +91,9 @@ class MainActivity : AppCompatActivity() {
                         Logger.w("搜索成功：$it")
                     }
         }
+        lifecycleScope.launch {
+            Logger.e(PhoneUtils.getPhoneNumber(this@MainActivity))
+        }
     }
 
     private fun initCustomTitlebar() {

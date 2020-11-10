@@ -87,7 +87,7 @@ object StoragePublicUtils {
             }
 
             val context = activityResultCaller.context
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
             return if (isThumbnail) {
                 // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
                 activityResultCaller.startActivityForResult(intent)?.getParcelableExtra("data")
