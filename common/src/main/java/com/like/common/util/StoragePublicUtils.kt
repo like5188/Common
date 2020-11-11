@@ -49,7 +49,7 @@ import kotlin.coroutines.suspendCoroutine
  *              但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
  *      2、访问其他应用创建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio需要申请 READ_EXTERNAL_STORAGE 存储权限；MediaStore.Downloads则应使用 SAF)
  * 注意：如果您不希望媒体扫描程序发现您的文件，请在特定于应用的目录中添加名为 .nomedia 的空文件（请注意文件名中的句点前缀）。这可以防止媒体扫描程序读取您的媒体文件并通过 MediaStore API 将它们提供给其他应用。
- * 2、其它文件：Storage Access Framework (不需要申请存储权限) Android 4.4（API 级别 19）引入。
+ * 2、其它文件：Storage Access Framework (不需要申请存储权限) Android 4.4（API 级别 19）引入，由系统选择器来操作文件。
  *
  * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在私有目录
  *
