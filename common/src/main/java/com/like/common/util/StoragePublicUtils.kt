@@ -793,6 +793,8 @@ object StoragePublicUtils {
         /**
          * 选择单个文件
          *
+         * 注意：在Android 11上，无法从以下目录中选择单独的文件。Android/data/ 目录及其所有子目录。Android/obb/ 目录及其所有子目录。
+         *
          * @param pickerInitialUri      文件选择器中初始显示的文件夹。默认为 null，会显示 Downloads 目录。
          * 可以设置其它目录，比如：Uri.parse("content://com.android.externalstorage.documents/document/primary:Pictures%2flike")
          * 固定格式：content://com.android.externalstorage.documents/document/primary
