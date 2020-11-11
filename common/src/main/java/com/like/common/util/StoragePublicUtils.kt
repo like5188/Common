@@ -795,24 +795,22 @@ object StoragePublicUtils {
          *
          * 注意：在Android 11上，无法从以下目录中选择单独的文件。Android/data/ 目录及其所有子目录。Android/obb/ 目录及其所有子目录。
          *
-         * @param pickerInitialUri      文件选择器中初始显示的文件夹。默认为 null，会显示 Downloads 目录。
+         * @param pickerInitialUri      文件选择器中初始显示的文件夹。默认为 null，会显示 Downloads 目录。api 26 以上有效。
          * 可以设置其它目录，比如：Uri.parse("content://com.android.externalstorage.documents/document/primary:Pictures%2flike")
          * 固定格式：content://com.android.externalstorage.documents/document/primary
          * :Pictures 代表下面的 Pictures 文件夹，当然如果再想得到下一级文件夹 like 还需要:既 :Pictures%2flike
          * @return  返回的 Uri 为文件的
          */
         suspend fun openDocument(activityResultCaller: ActivityResultCaller, mimeType: MimeType = MimeType._0, pickerInitialUri: Uri? = null): Uri? = suspendCoroutine { cont ->
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                cont.resume(null)
-                return@suspendCoroutine
-            }
             //通过系统的文件浏览器选择一个文件
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             //筛选，只显示可以“打开”的结果，如文件(而不是联系人或时区列表)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             //过滤只显示指定类型文件
             intent.type = mimeType.value
-            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+            }
             activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 cont.resume(it?.data?.data)
             }.launch(intent)
@@ -826,14 +824,16 @@ object StoragePublicUtils {
          * @return  返回文件夹 DocumentFile
          */
         suspend fun openDocumentTree(activityResultCaller: ActivityResultCaller, pickerInitialUri: Uri? = null): DocumentFile? = suspendCoroutine { cont ->
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 cont.resume(null)
                 return@suspendCoroutine
             }
             //通过系统的文件浏览器选择一个文件
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+            }
             activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 val treeUri = it?.data?.data
                 val documentFile = if (treeUri == null) {
@@ -853,16 +853,14 @@ object StoragePublicUtils {
          * @return  返回的 Uri 为文件的
          */
         suspend fun createDocument(activityResultCaller: ActivityResultCaller, fileName: String, mimeType: MimeType = MimeType._0, pickerInitialUri: Uri? = null): Uri? = suspendCoroutine { cont ->
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                cont.resume(null)
-                return@suspendCoroutine
-            }
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
             // Filter to only show results that can be "opened", such as a file (as opposed to a list of contacts or timezones).
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = mimeType.value// 文件类型
             intent.putExtra(Intent.EXTRA_TITLE, fileName)// 文件名称
-            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
+            }
             activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 cont.resume(it?.data?.data)
             }.launch(intent)
@@ -921,8 +919,7 @@ object StoragePublicUtils {
          */
         @Throws(IOException::class)
         fun getInputStreamForVirtualFile(context: Context, uri: Uri, mimeTypeFilter: String): InputStream? {
-            val openableMimeTypes: Array<String>? =
-                    context.applicationContext.contentResolver.getStreamTypes(uri, mimeTypeFilter)
+            val openableMimeTypes: Array<String>? = context.applicationContext.contentResolver.getStreamTypes(uri, mimeTypeFilter)
 
             return if (openableMimeTypes?.isNotEmpty() == true) {
                 context.applicationContext.contentResolver
