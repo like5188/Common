@@ -793,7 +793,11 @@ object StoragePublicUtils {
         /**
          * 选择单个文件
          *
-         * 注意：在Android 11上，无法从以下目录中选择单独的文件。Android/data/ 目录及其所有子目录。Android/obb/ 目录及其所有子目录。
+         * 注意：
+         *  1 在Android 11上，无法从以下目录中选择单独的文件。Android/data/ 目录及其所有子目录。Android/obb/ 目录及其所有子目录。
+         *  2 ACTION_OPEN_DOCUMENT 并非用于替代 ACTION_GET_CONTENT。您应使用的 intent 取决于应用的需要：
+         *      如果您只想让应用读取/导入数据，请使用 ACTION_GET_CONTENT。使用此方法时，应用会导入数据（如图片文件）的副本。
+         *      如果您想让应用获得对文档提供程序所拥有文档的长期、持续访问权限，请使用 ACTION_OPEN_DOCUMENT。例如，照片编辑应用可让用户编辑存储在文档提供程序中的图片。
          *
          * @param pickerInitialUri      文件选择器中初始显示的文件夹。默认为 null，会显示 Downloads 目录。api 26 以上有效。
          * 可以设置其它目录，比如：Uri.parse("content://com.android.externalstorage.documents/document/primary:Pictures%2flike")
