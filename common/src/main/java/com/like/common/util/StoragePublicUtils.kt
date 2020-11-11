@@ -647,7 +647,7 @@ object StoragePublicUtils {
                             // 如果开启了分区存储，以下面的方式来获取位置信息。
                             withContext(Dispatchers.Main) {
                                 if (activityResultCaller.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)) {
-                                    val array = UriUtils.getLatLongFromImageUri(activityResultCaller.context, uri)
+                                    val array = UriUtils.getLatLongFromImageUri(activityResultCaller.context, this@ImageEntity.uri)
                                     this@ImageEntity.latitude = array?.get(0)
                                     this@ImageEntity.longitude = array?.get(1)
                                 }
