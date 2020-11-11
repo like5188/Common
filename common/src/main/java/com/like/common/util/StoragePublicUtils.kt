@@ -791,7 +791,7 @@ object StoragePublicUtils {
     object SAFHelper {
 
         /**
-         * 选择单个文件
+         * 打开文档或文件
          *
          * 注意：
          *  1 在Android 11上，无法从以下目录中选择单独的文件。Android/data/ 目录及其所有子目录。Android/obb/ 目录及其所有子目录。
@@ -821,7 +821,7 @@ object StoragePublicUtils {
         }
 
         /**
-         * 选择文件夹
+         * 授予对目录内容的访问权限
          *
          * 注意：在Android 11上，无法通过SAF选择External Storage根目录、Downloads目录以及App专属目录(Android/data、Android/obb)
          *
@@ -850,7 +850,7 @@ object StoragePublicUtils {
         }
 
         /**
-         * 创建文件
+         * 创建新文件
          *
          * 注意：ACTION_CREATE_DOCUMENT 无法覆盖现有文件。如果您的应用尝试保存同名文件，系统会在文件名的末尾附加一个数字并将其包含在一对括号中。
          *
