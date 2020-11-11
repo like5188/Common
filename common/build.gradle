@@ -82,7 +82,7 @@ dependencies {
     api 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // 图片选择器
-    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.8'
+    api 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.9'
 
     // 日期时间格式化工具
     api 'net.danlew:android.joda:2.10.1.2'

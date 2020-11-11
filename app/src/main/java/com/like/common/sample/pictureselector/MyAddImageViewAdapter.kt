@@ -21,6 +21,7 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.listener.OnResultCallbackListener
+import java.io.File
 
 class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView: RecyclerView, @DrawableRes addImageResId: Int)
     : BaseAddImageViewAdapter(recyclerView, AddInfo(addImageResId), 9) {
@@ -94,7 +95,7 @@ class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView
             }
             is AddImageViewInfo -> {// 添加的图片
                 val binding = holder.binding as ViewImageBinding
-                binding.iv.load(item.compressImagePath)
+                binding.iv.load(File(item.compressImagePath))
                 binding.tv.text = item.des
                 binding.root.setOnLongClickListener {
                     // 显示删除按钮
