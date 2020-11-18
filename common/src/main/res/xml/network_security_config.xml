@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-
+    <!--强制使用 http 明文传输-->
+    <base-config cleartextTrafficPermitted="true" />
     <domain-config cleartextTrafficPermitted="true">
-        <!--解决AndroidVideoCache库在android9.0以上无法缓存的bug-->
+        <!--解除对指定网址的限制。解决videocache库在android9.0以上无法缓存的bug-->
         <domain includeSubdomains="true">127.0.0.1</domain>
-
     </domain-config>
-
 </network-security-config>
