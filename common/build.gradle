@@ -107,6 +107,9 @@ dependencies {
     // websocket
     api 'org.java-websocket:Java-WebSocket:1.4.1'
 
+    // toast
+    api 'com.hjq:toast:8.8'
+
     api 'com.github.like5188:DataSource:0.1.4'
     api 'com.github.like5188.RecyclerView:core:0.1.8'
     api 'com.github.like5188.RecyclerView:ui:0.1.8'

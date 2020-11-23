@@ -4,12 +4,15 @@ import android.app.Activity
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
+import com.hjq.toast.ToastUtils
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.util.*
 
 /**
- * 集成了 [koin] 依赖注入框架，对 [Activity] 进行了管理
+ * 1、集成了 [koin] 依赖注入框架
+ * 2、对 [Activity] 进行了管理
+ * 3、初始化 ToastUtils
  */
 open class BaseApplication : Application() {
     companion object {
@@ -52,6 +55,7 @@ open class BaseApplication : Application() {
         }
         sInstance = this
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+        ToastUtils.init(this)
     }
 
     override fun onTerminate() {
