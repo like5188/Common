@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import com.hjq.toast.ToastUtils
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.autowired.AutoWiredActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
@@ -115,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     private fun initDefaultTitlebar() {
         mBinding.titlebar.Default().apply {
             showNavigation(R.drawable.icon_back) {
-                shortToastCenter("返回")
+                ToastUtils.show("返回")
             }
 
             showTitle("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
@@ -125,7 +126,7 @@ class MainActivity : AppCompatActivity() {
 
             CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
-                setOnClickListener { shortToastCenter("菜单0") }
+                setOnClickListener { ToastUtils.show("菜单0") }
                 setTitle("菜单0", Color.BLACK, 12f)
                 setMessageCount("0", Color.WHITE, 10, Color.RED)
                 setMargin(20, 10, 0, 10)
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity() {
             }
             CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
-                setOnClickListener { shortToastCenter("菜单1") }
+                setOnClickListener { ToastUtils.show("菜单1") }
                 setTitle("菜单1", Color.BLACK, 12f)
                 setMessageCount("1", Color.WHITE, 10, Color.RED)
                 setMargin(0, 10, 20, 10)
@@ -149,26 +150,26 @@ class MainActivity : AppCompatActivity() {
         mBinding.toolbar.setTitleTextColor(Color.WHITE)
         mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
         mBinding.toolbar.setNavigationOnClickListener {
-            shortToastCenter("返回")
+            ToastUtils.show("返回")
         }
         mBinding.toolbar.inflateMenu(R.menu.origin_toolbar_right_menu_main)
         mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
         mBinding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_0 -> {
-                    shortToastCenter("消息")
+                    ToastUtils.show("消息")
                 }
                 R.id.action_1 -> {
-                    shortToastCenter("添加")
+                    ToastUtils.show("添加")
                 }
                 R.id.action_2 -> {
-                    shortToastCenter("编辑")
+                    ToastUtils.show("编辑")
                 }
                 R.id.action_3 -> {
-                    shortToastCenter("删除")
+                    ToastUtils.show("删除")
                 }
                 R.id.action_4 -> {
-                    shortToastCenter("查看")
+                    ToastUtils.show("查看")
                 }
             }
             true
@@ -186,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         mBinding.toolbar.addView(customNavigationView.getView(), 0)
         customNavigationView.setIcon(R.drawable.icon_back)
         customNavigationView.setTitle("返回")
-        customNavigationView.setOnClickListener { shortToastCenter("返回") }
+        customNavigationView.setOnClickListener { ToastUtils.show("返回") }
         customNavigationView.setMargin(42, 10, 20, 10)
         customNavigationView.setContentPadding(0, 0, 30, 0)
         customNavigationView.setMessageCount("99+", Color.WHITE, 10, Color.RED)
@@ -197,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 ?.getCustomViewManager()
                 ?.apply {
                     setIcon(R.drawable.icon_back)
-                    setOnClickListener { shortToastCenter("菜单0") }
+                    setOnClickListener { ToastUtils.show("菜单0") }
                     setTitle("菜单0", Color.BLACK, 12f)
                     setMessageCount("0", Color.WHITE, 10, Color.RED)
                     setMargin(0, 10, 0, 10)
@@ -207,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                 ?.getCustomViewManager()
                 ?.apply {
                     setIcon(R.drawable.icon_back)
-                    setOnClickListener { shortToastCenter("菜单1") }
+                    setOnClickListener { ToastUtils.show("菜单1") }
                     setTitle("菜单1", Color.BLACK, 12f)
                     setMessageCount("1", Color.WHITE, 10, Color.RED)
                     setMargin(0, 10, 0, 10)
@@ -222,10 +223,10 @@ class MainActivity : AppCompatActivity() {
             viewMarqueeBinding.tv1.text = data.first
             viewMarqueeBinding.tv2.text = data.second
             viewMarqueeBinding.tv1.setOnClickListener {
-                shortToastCenter(data.first)
+                ToastUtils.show(data.first)
             }
             viewMarqueeBinding.tv2.setOnClickListener {
-                shortToastCenter(data.second)
+                ToastUtils.show(data.second)
             }
             view_flipper.addView(viewMarqueeBinding.root)
         }
