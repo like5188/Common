@@ -6,7 +6,6 @@ import com.like.datasource.RequestType
 import com.like.datasource.Result
 import com.like.datasource.ResultReport
 import com.like.recyclerview.adapter.BaseAdapter
-import com.like.recyclerview.listener.OnItemClickListener
 import com.like.recyclerview.model.*
 import com.like.recyclerview.ui.DefaultEmptyItem
 import com.like.recyclerview.ui.DefaultErrorItem
@@ -67,19 +66,18 @@ internal fun <ResultType> Result<ResultType>.progress(
             }
         }
     }
-    return update(newResultReportFlow)
+    return updateResultReportFlow(newResultReportFlow)
 }
 
 /**
  * 绑定 [androidx.recyclerview.widget.RecyclerView]
- * 功能包括：Item数据的添加、空视图、错误视图、往后加载更多视图、往前加载更多视图、点击监听
+ * 功能包括：Item数据的添加、空视图、错误视图、往后加载更多视图、往前加载更多视图
  *
  * @param transform         从 [ResultType] 中获取 List<ValueInList>? 类型的数据用于 RecyclerView 处理。
  * @param emptyItem         数据为空时显示的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultEmptyItem]
  * @param errorItem         失败时显示的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultErrorItem]
  * @param loadMoreFooter    往后加载更多的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultLoadMoreFooter]
  * @param loadMoreHeader    往前加载更多的视图。[com.like.recyclerview.ui]库中默认实现了：[DefaultLoadMoreHeader]
- * @param listener          item点击监听
  */
 internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.recyclerView(
         adapter: BaseAdapter,
@@ -87,8 +85,7 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
         emptyItem: IEmptyItem? = null,
         errorItem: IErrorItem? = null,
         loadMoreFooter: ILoadMoreFooter? = null,
-        loadMoreHeader: ILoadMoreHeader? = null,
-        listener: OnItemClickListener? = null
+        loadMoreHeader: ILoadMoreHeader? = null
 ): Result<ResultType> {
     val newResultReportFlow = resultReportFlow.onEach { resultReport ->
         val state = resultReport.state
@@ -100,9 +97,6 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
                     emptyItem?.let {
                         adapter.mAdapterDataManager.setEmptyItem(emptyItem)
                     }
-                    listener?.let {
-                        adapter.removeOnItemClickListener(listener)
-                    }
                 } else {
                     adapter.mAdapterDataManager.clearAndAddAll(list)
                     loadMoreFooter?.let {
@@ -113,9 +107,6 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
                         loadMoreHeader.onLoading()
                         adapter.mAdapterDataManager.addHeaderToStart(loadMoreHeader)
                     }
-                    listener?.let {
-                        adapter.addOnItemClickListener(listener)
-                    }
                 }
             }
             type is RequestType.Initial && state is RequestState.Failed -> {
@@ -124,9 +115,6 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
                         errorItem.errorMessage = state.throwable.message ?: "unknown error"
                     }
                     adapter.mAdapterDataManager.setErrorItem(errorItem)
-                }
-                listener?.let {
-                    adapter.removeOnItemClickListener(listener)
                 }
             }
             type is RequestType.After && state is RequestState.Success -> {
@@ -161,9 +149,9 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
             }
         }
     }
-    return update(newResultReportFlow)
+    return updateResultReportFlow(newResultReportFlow)
 }
 
-private fun <ResultType> Result<ResultType>.update(newResultReportFlow: Flow<ResultReport<ResultType>>): Result<ResultType> {
+private fun <ResultType> Result<ResultType>.updateResultReportFlow(newResultReportFlow: Flow<ResultReport<ResultType>>): Result<ResultType> {
     return Result(newResultReportFlow, initial, refresh, retry, loadAfter, loadBefore)
 }
