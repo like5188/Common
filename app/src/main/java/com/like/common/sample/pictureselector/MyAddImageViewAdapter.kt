@@ -40,7 +40,8 @@ class MyAddImageViewAdapter(private val activity: FragmentActivity, recyclerView
         (it as AddImageViewInfo).localMedia
     }
 
-    override fun bindOtherVariable(holder: CommonViewHolder, position: Int, item: IRecyclerViewItem?) {
+    override fun onBindViewHolder(holder: CommonViewHolder, position: Int, item: IRecyclerViewItem?) {
+        super.onBindViewHolder(holder, position, item)
         when (item) {
             is AddInfo -> {// +号图片
                 val binding = holder.binding as ViewAddImageBinding
