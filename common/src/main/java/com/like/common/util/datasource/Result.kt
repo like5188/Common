@@ -1,5 +1,6 @@
 package com.like.common.util.datasource
 
+import com.google.gson.JsonParseException
 import com.like.common.util.map
 import com.like.datasource.RequestState
 import com.like.datasource.RequestType
@@ -14,8 +15,25 @@ import com.like.recyclerview.ui.DefaultLoadMoreHeader
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import org.json.JSONException
+import retrofit2.HttpException
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import javax.net.ssl.SSLHandshakeException
 
 //[com.like.datasource.Result] 扩展功能。
+
+/**
+ * 获取自定义的错误消息，用于显示给用户看。
+ */
+fun Throwable?.getCustomErrorMessage() =
+        when (this) {
+            is HttpException, is ConnectException, is SocketTimeoutException,
+            is UnknownHostException, is JsonParseException, is JSONException,
+            is SSLHandshakeException -> "无法连接到服务器"
+            else -> "请求失败，${this?.message ?: "unknown error"}"
+        }
 
 /**
  * 开始搜集数据。
@@ -32,7 +50,7 @@ suspend fun <ResultType> Result<ResultType>.collect(
         val type = resultReport.type
         when (state) {
             is RequestState.Failed -> {
-                onFailed?.invoke(type, state.throwable)
+                onFailed?.invoke(type, Throwable(state.throwable.getCustomErrorMessage(), state.throwable.cause))
             }
             is RequestState.Success<ResultType> -> {
                 onSuccess?.invoke(type, state.data)
@@ -112,7 +130,7 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
             type is RequestType.Initial && state is RequestState.Failed -> {
                 errorItem?.let {
                     if (errorItem.errorMessage.isEmpty()) {
-                        errorItem.errorMessage = state.throwable.message ?: "unknown error"
+                        errorItem.errorMessage = state.throwable.getCustomErrorMessage()
                     }
                     adapter.mAdapterDataManager.setErrorItem(errorItem)
                 }
