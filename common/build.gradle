@@ -111,9 +111,9 @@ dependencies {
     api 'com.hjq:toast:8.8'
 
     api 'com.github.like5188:DataSource:0.1.4'
-    api 'com.github.like5188.RecyclerView:core:0.2.0'
-    api 'com.github.like5188.RecyclerView:ui:0.2.0'
-    api 'com.github.like5188.RecyclerView:ext:0.2.0'
+    api 'com.github.like5188.RecyclerView:core:0.2.1'
+    api 'com.github.like5188.RecyclerView:ui:0.2.1'
+    api 'com.github.like5188.RecyclerView:ext:0.2.1'
     api 'com.github.like5188.Retrofit:core:0.1.5'
     api 'com.github.like5188.Retrofit:common:0.1.5'
     api 'com.github.like5188.Retrofit:download:0.1.5'

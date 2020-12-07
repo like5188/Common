@@ -111,9 +111,7 @@ internal fun <ResultType, ValueInList : IRecyclerViewItem> Result<ResultType>.re
             }
             type is RequestType.Initial && state is RequestState.Failed -> {
                 errorItem?.let {
-                    if (errorItem.errorMessage.isEmpty()) {
-                        errorItem.errorMessage = state.throwable.message ?: "unknown error"
-                    }
+                    errorItem.throwable = state.throwable
                     adapter.mAdapterDataManager.setErrorItem(errorItem)
                 }
             }
