@@ -1,6 +1,5 @@
 package com.like.common.util.datasource
 
-import android.graphics.Color
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
@@ -41,7 +40,6 @@ suspend fun <ResultType> Result<ResultType>.collectWithProgress(
         onFailed: ((RequestType, Throwable) -> Unit)? = null,
         onSuccess: ((RequestType, ResultType) -> Unit)? = null
 ) {
-    swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.RED, Color.YELLOW)
     swipeRefreshLayout.setOnRefreshListener {
         refresh()
     }
