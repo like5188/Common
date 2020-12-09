@@ -7,6 +7,9 @@ import kotlin.reflect.KProperty
 
 /**
  * Serializable类型数据序列化工具类。
+ *
+ * Serializable 是 Java 原生序列化的方式，主要通过 ObjectInputStream 和 ObjectOutputStream 来实现对象序列化和反序列化，
+ * 但是在整个过程中用到了大量的反射和临时变量，会频繁的触发 GC，序列化的性能会非常差，但是实现方式非常简单，ObjectInputStream 和 ObjectOutputStream 源码里有很多反射的地方。
  */
 class SerializableUtils private constructor() {
     private lateinit var serializeDir: String
