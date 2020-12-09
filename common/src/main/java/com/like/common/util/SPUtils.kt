@@ -7,6 +7,12 @@ import kotlin.reflect.KProperty
 
 /**
  * SharedPreferences存储工具类。
+ *
+ * 通过 getXXX() 方法获取数据，可能会导致主线程阻塞
+ * 不能保证类型安全
+ * 加载的数据会一直留在内存中，浪费内存
+ * apply() 方法虽然是异步的，可能会发生 ANR，在 8.0 之前和 8.0 之后实现各不相同
+ * apply() 方法无法获取到操作成功或者失败的结果
  */
 class SPUtils private constructor() {
     private lateinit var prefs: SharedPreferences
