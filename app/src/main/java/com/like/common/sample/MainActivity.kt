@@ -235,7 +235,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun gotoFragmentContainer(view: View) {
-        startActivity<FragmentContainer>()
+        FragmentContainer.start()
     }
 
     fun gotoStorageActivity(view: View) {
