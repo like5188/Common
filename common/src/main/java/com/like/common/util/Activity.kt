@@ -9,7 +9,7 @@ import android.content.Context
  */
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
     val intent = createIntent<T>(*params)
-    if (this is Application) {
+    if (this !is Activity) {
         intent.newTask()
     }
     startActivity(intent)
