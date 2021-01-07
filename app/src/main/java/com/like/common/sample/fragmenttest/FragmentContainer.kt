@@ -4,17 +4,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import com.like.common.base.BaseApplication
-import com.like.common.base.addFragments
-import com.like.common.base.showFragment
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityFragmentContainerBinding
+import com.like.common.util.ApplicationHolder
 import com.like.common.util.startActivity
 
 class FragmentContainer : FragmentActivity() {
     companion object{
         fun start() {
-            BaseApplication.sInstance.startActivity<FragmentContainer>()
+            ApplicationHolder.application.startActivity<FragmentContainer>()
         }
     }
     private val mBinding by lazy {

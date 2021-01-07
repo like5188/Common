@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.like.common.base.BaseApplication
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityLaunchmode1Binding
 
@@ -13,7 +12,7 @@ import com.like.common.sample.databinding.ActivityLaunchmode1Binding
  * 查看activity栈信息用命令：adb shell dumpsys activity
  */
 class LaunchModeActivity1 : AppCompatActivity() {
-    private val mBinding: ActivityLaunchmode1Binding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityLaunchmode1Binding>(this, R.layout.activity_launchmode1)
     }
 

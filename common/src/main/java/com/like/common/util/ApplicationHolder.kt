@@ -1,26 +1,22 @@
-package com.like.common.base
+package com.like.common.util
 
 import android.app.Activity
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
-import com.hjq.toast.ToastUtils
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
 import java.util.*
 
 /**
- * 1、集成了 [koin] 依赖注入框架
- * 2、对 [Activity] 进行了管理
- * 3、初始化 ToastUtils
+ * 持有 [Application] 实例，并对 [Activity] 进行了管理。
+ *
+ * 使用步骤：
+ * 1、在 [Application] 的 onCreate 方法中调用 [onCreate] 方法。
+ * 2、在 [Application] 的 onTerminate 方法中调用 [onTerminate] 方法。
  */
-open class BaseApplication : Application() {
-    companion object {
-        lateinit var sInstance: BaseApplication
-    }
-
+object ApplicationHolder {
+    lateinit var application: Application
     private val activities = Collections.synchronizedList(mutableListOf<Activity>())
-    private val activityLifecycleCallbacks = object : ActivityLifecycleCallbacks {
+    private val activityLifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
         override fun onActivityPaused(activity: Activity) {
         }
 
@@ -46,30 +42,14 @@ open class BaseApplication : Application() {
 
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        // start Koin!
-        startKoin {
-            // Android context
-            androidContext(this@BaseApplication)
-        }
-        sInstance = this
-        registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
-        ToastUtils.init(this)
+    fun onCreate(application: Application) {
+        ApplicationHolder.application = application
+        application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks)
-    }
-
-    /**
-     * 退出整个app
-     */
-    fun exitApp() {
-        // 关闭所有界面，避免后一句代码执行后，如果栈中还有界面，会重启进程并启动下一个界面，导致不能彻底退出应用。
-        finishAllActivities()
-        System.exit(0)
+    fun onTerminate() {
+        activities.clear()
+        application.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks)
     }
 
     /**
@@ -106,9 +86,18 @@ open class BaseApplication : Application() {
     fun getAllActivities(): List<Activity> = activities
 
     /**
+     * 退出整个app
+     */
+    fun exitApp() {
+        // 关闭所有界面，避免后一句代码执行后，如果栈中还有界面，会重启进程并启动下一个界面，导致不能彻底退出应用。
+        finishAllActivities()
+        System.exit(0)
+    }
+
+    /**
      * 这里参考https://www.cnblogs.com/zhujiabin/p/6874508.html
      */
     fun isDebug(): Boolean {
-        return applicationInfo != null && (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        return application.applicationInfo != null && (application.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
     }
 }
