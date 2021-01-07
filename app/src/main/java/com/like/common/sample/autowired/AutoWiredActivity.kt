@@ -3,14 +3,15 @@ package com.like.common.sample.autowired
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import com.like.common.base.BaseAutoWiredActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.like.common.util.AutoWired
 import com.like.common.util.Logger
+import com.like.common.util.injectForIntentExtras
 
 /**
  * Activity 相关的测试
  */
-class AutoWiredActivity : BaseAutoWiredActivity() {
+class AutoWiredActivity : AppCompatActivity() {
     // 测试正确
     @AutoWired
     private var param1: Int? = null
@@ -33,6 +34,7 @@ class AutoWiredActivity : BaseAutoWiredActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injectForIntentExtras()
         Logger.d("param1=$param1")
         Logger.d("param2=$param2")
         Logger.d("param3=$param3")

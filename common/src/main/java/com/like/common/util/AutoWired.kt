@@ -16,6 +16,10 @@ annotation class AutoWired
  * private var param4: Int? = null
  * @AutoWired
  * private var param5: List<P>? = null
+ * override fun onCreate(savedInstanceState: Bundle?) {
+ *     super.onCreate(savedInstanceState)
+ *     injectForIntentExtras()
+ * }
  *
  * 注意：
  * 1、[android.content.Intent]中传递的参数的key必须和字段名一致。
