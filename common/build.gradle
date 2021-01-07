@@ -114,10 +114,6 @@ dependencies {
     api 'com.github.like5188.RecyclerView:core:0.2.1'
     api 'com.github.like5188.RecyclerView:ui:0.2.1'
     api 'com.github.like5188.RecyclerView:ext:0.2.1'
-    api 'com.github.like5188.Retrofit:core:0.1.5'
-    api 'com.github.like5188.Retrofit:common:0.1.5'
-    api 'com.github.like5188.Retrofit:download:0.1.5'
-    api 'com.github.like5188.Retrofit:upload:0.1.5'
 
     // Preferences DataStore
     api('androidx.datastore:datastore-preferences:1.0.0-alpha05') {
