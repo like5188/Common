@@ -5,7 +5,7 @@
 最新版本|[![Download](https://jitpack.io/v/like5188/Common.svg)](https://jitpack.io/#like5188/Common)
 
 ## 功能介绍
-1、base包中提供了 BaseAutoWiredActivity、BaseLazyFragment、BaseDialogFragment、BaseApplication 四个基类。
+1、base包中提供了 BaseLazyFragment、BaseDialogFragment。
 
 2、提供了很多常用工具类、自定义View。
 
