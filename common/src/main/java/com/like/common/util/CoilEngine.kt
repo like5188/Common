@@ -2,6 +2,8 @@ package com.like.common.util
 
 import android.content.Context
 import android.graphics.PointF
+import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import androidx.core.graphics.drawable.toBitmap
@@ -25,6 +27,30 @@ import java.io.File
  * @describe：Glide加载引擎
  */
 class CoilEngine private constructor() : ImageEngine {
+    private fun getFileIfExists(context: Context, url: String): File? {
+        val filePath = try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                UriUtils.getFilePathByUri(context, Uri.parse(url))
+            } else {
+                url
+            }
+        } catch (e: Exception) {
+            null
+        }
+        if (filePath.isNullOrEmpty()) {
+            return null
+        }
+        try {
+            val file = File(filePath)
+            if (file.exists()) {
+                return file
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     /**
      * 加载图片
      *
@@ -33,7 +59,8 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView
      */
     override fun loadImage(context: Context, url: String, imageView: ImageView) {
-        imageView.load(File(url))
+        val file = getFileIfExists(context, url) ?: return
+        imageView.load(file)
     }
 
     /**
@@ -47,8 +74,9 @@ class CoilEngine private constructor() : ImageEngine {
      * @param callback      网络图片加载回调监听
      */
     override fun loadImage(context: Context, url: String, imageView: ImageView, longImageView: SubsamplingScaleImageView, callback: OnImageCompleteCallback) {
+        val file = getFileIfExists(context, url) ?: return
         val request = ImageRequest.Builder(context.applicationContext)
-                .data(url)
+                .data(file)
                 .target(
                         onStart = {
                             callback.onShowLoading()
@@ -103,7 +131,8 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView 承载图片ImageView
      */
     override fun loadFolderImage(context: Context, url: String, imageView: ImageView) {
-        imageView.load(File(url)) {
+        val file = getFileIfExists(context, url) ?: return
+        imageView.load(file) {
             crossfade(true)
             placeholder(R.drawable.picture_image_placeholder)
             size(180, 180)
@@ -119,7 +148,8 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView 承载图片ImageView
      */
     override fun loadAsGifImage(context: Context, url: String, imageView: ImageView) {
-        imageView.load(File(url), CoilImageLoaderFactory.createGifImageLoader(context))
+        val file = getFileIfExists(context, url) ?: return
+        imageView.load(file, CoilImageLoaderFactory.createGifImageLoader(context))
     }
 
     /**
@@ -130,7 +160,8 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView 承载图片ImageView
      */
     override fun loadGridImage(context: Context, url: String, imageView: ImageView) {
-        imageView.load(File(url)) {
+        val file = getFileIfExists(context, url) ?: return
+        imageView.load(file) {
             crossfade(true)
             placeholder(R.drawable.picture_image_placeholder)
             size(200, 200)
