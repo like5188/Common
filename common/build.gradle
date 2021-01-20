@@ -63,11 +63,6 @@ dependencies {
     api 'io.coil-kt:coil-svg:1.0.0'
     api 'io.coil-kt:coil-video:1.0.0'
 
-    // room
-    api 'androidx.room:room-runtime:2.2.5'
-    api 'androidx.room:room-ktx:2.2.5'// room 对协程的支持：suspend
-//    kapt 'androidx.room:room-compiler:2.2.5'
-
     // work
     api 'androidx.work:work-runtime-ktx:2.4.0'// workmanager 对协程的支持：suspend
 
@@ -110,7 +105,7 @@ dependencies {
     // toast
     api 'com.hjq:toast:8.8'
 
-    api 'com.github.like5188:DataSource:0.1.5'
+    api 'com.github.like5188:DataSource:0.1.6'
     api 'com.github.like5188.RecyclerView:core:0.2.1'
     api 'com.github.like5188.RecyclerView:ui:0.2.1'
     api 'com.github.like5188.RecyclerView:ext:0.2.1'
