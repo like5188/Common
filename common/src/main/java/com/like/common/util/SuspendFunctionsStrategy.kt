@@ -12,12 +12,14 @@ import java.util.concurrent.CountDownLatch
  * ②、只要有一个 Error，则抛出异常。
  */
 @Throws(Exception::class)
-suspend fun <ResultType> List<suspend () -> ResultType>.successIfAllSuccess(): List<ResultType> = coroutineScope {
-    if (this@successIfAllSuccess.size < 2) {
+suspend fun <ResultType> successIfAllSuccess(
+        vararg suspendFunctions: suspend () -> ResultType
+): List<ResultType> = coroutineScope {
+    if (suspendFunctions.size < 2) {
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
     val result = mutableListOf<ResultType>()
-    this@successIfAllSuccess.map {
+    suspendFunctions.map {
         this.async(Dispatchers.IO) {
             it()
         }
@@ -35,14 +37,16 @@ suspend fun <ResultType> List<suspend () -> ResultType>.successIfAllSuccess(): L
  * ②、全部为 Error，则抛出第一个异常。
  */
 @Throws(Exception::class)
-suspend fun <ResultType> List<suspend () -> ResultType>.successIfOneSuccess(): List<ResultType> = supervisorScope {
-    if (this@successIfOneSuccess.size < 2) {
+suspend fun <ResultType> successIfOneSuccess(
+        vararg suspendFunctions: suspend () -> ResultType
+): List<ResultType> = supervisorScope {
+    if (suspendFunctions.size < 2) {
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
     val result = mutableListOf<ResultType>()
-    val totalExceptionTimes = CountDownLatch(this@successIfOneSuccess.size)
+    val totalExceptionTimes = CountDownLatch(suspendFunctions.size)
     var firstException: Throwable? = null
-    this@successIfOneSuccess.map {
+    suspendFunctions.map {
         this.async(Dispatchers.IO) {
             it()
         }
