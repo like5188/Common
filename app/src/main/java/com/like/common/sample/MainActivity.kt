@@ -28,7 +28,6 @@ import com.like.common.sample.fragmenttest.FragmentContainer
 import com.like.common.sample.image.ImageActivity
 import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
-import com.like.common.sample.pictureselector.PictureSelectorActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.storage.StorageActivity
 import com.like.common.sample.zxing.ZXingActivity
@@ -266,10 +265,6 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoImageActivity(view: View) {
         startActivity(Intent(this, ImageActivity::class.java))
-    }
-
-    fun gotoPictureSelectorActivity(view: View) {
-        startActivity(Intent(this, PictureSelectorActivity::class.java))
     }
 
     fun gotoDragViewTestActivity(view: View) {

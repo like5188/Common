@@ -166,13 +166,6 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:onClick="gotoPictureSelectorActivity"
-                    android:text="启动PictureSelector界面"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:onClick="gotoDragViewTestActivity"
                     android:text="启动DragView界面"
                     android:textAllCaps="false" />

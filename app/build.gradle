@@ -141,9 +141,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.github.like5188.RecyclerView:core:0.2.1'
-    implementation 'com.github.like5188.RecyclerView:ui:0.2.1'
-    implementation 'com.github.like5188.RecyclerView:ext:0.2.1'
     implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'// 身份证识别
 
     implementation project(':common')
