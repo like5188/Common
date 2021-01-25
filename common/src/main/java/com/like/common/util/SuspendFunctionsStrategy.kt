@@ -1,7 +1,5 @@
 package com.like.common.util
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.supervisorScope
 import java.util.concurrent.CountDownLatch
