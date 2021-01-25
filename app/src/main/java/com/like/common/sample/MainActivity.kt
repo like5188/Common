@@ -34,14 +34,12 @@ import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlin.RuntimeException
 import com.like.common.util.Logger
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -247,36 +245,35 @@ class MainActivity : AppCompatActivity() {
 //        return "b"
     }
 
+    private suspend fun test() = coroutineScope {
+        val a = launch {
+            Logger.d("1")
+            delay(100)
+            throw RuntimeException("test error")
+        }
+        try {
+            a.join()
+        } catch (e: Exception) {
+            Logger.w("3 $e")
+        }
+        val b = launch {
+            Logger.d("4")
+            delay(200)
+            Logger.d("5")
+        }
+        try {
+            b.join()
+        } catch (e: Exception) {
+            Logger.w("6 $e")
+        }
+    }
+
     fun coroutineTest(view: View) {
         lifecycleScope.launch {
-//            val startTime = System.currentTimeMillis()
-//            Logger.printCollection(successIfAllSuccess(::a, ::b))
-//            Logger.w("耗时：${System.currentTimeMillis() - startTime}")
             try {
-                coroutineScope {
-                    try {
-                        val child1 = launch {
-                            Logger.d("Child1 is started")
-                            delay(100)
-                            throw ArithmeticException("Child1 error")
-                        }
-                        child1.join()
-                    } catch (e: Exception) {
-                        Logger.d("Child1: $e")
-                    }
-                    try {
-                        val child2 = launch {
-                            Logger.d("Child2 is started")
-                            delay(1000)
-                            Logger.d("Child2 is finished")
-                        }
-                        child2.join()
-                    } catch (e: Exception) {
-                        Logger.d("Child2: $e")
-                    }
-                }
+                test()
             } catch (e: Exception) {
-                Logger.d("Parent: $e")
+                Logger.w("7 $e")
             }
         }
     }
