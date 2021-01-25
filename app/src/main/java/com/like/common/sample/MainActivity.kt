@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.RuntimeException
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -231,6 +232,26 @@ class MainActivity : AppCompatActivity() {
         }
         view_flipper.flipInterval = 3000
         view_flipper.startFlipping()
+    }
+
+    private suspend fun a(): String {
+        delay(2000)
+//        throw RuntimeException("a error")
+        return "a"
+    }
+
+    private suspend fun b(): String {
+        delay(1000)
+        throw RuntimeException("b error")
+//        return "b"
+    }
+
+    fun coroutineTest(view: View) {
+        lifecycleScope.launch {
+            val startTime = System.currentTimeMillis()
+            Logger.printCollection(successIfAllSuccess(::a, ::b))
+            Logger.w("耗时：${System.currentTimeMillis() - startTime}")
+        }
     }
 
     fun gotoFragmentContainer(view: View) {
