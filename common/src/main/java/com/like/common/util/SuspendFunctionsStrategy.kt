@@ -1,8 +1,17 @@
 package com.like.common.util
 
 import kotlinx.coroutines.*
-import java.util.concurrent.CountDownLatch
 
+/**
+ * 在 launch 中，异常一旦发生就会立马被抛出 。因此，你可以使用 try/catch 包裹会发生异常的代码。
+ *
+ * 当 async 在根协程 (CoroutineScope 实例或者 supervisorJob 的直接子协程) 使用时，异常不会被自动抛出，而是直到你调用 .await() 时才抛出。
+ *
+ * CoroutineExceptionHandler:
+ * 如果满足以下要求，异常将会被捕获：
+ * 何时：是被可以自动抛异常的协程抛出的（launch，而不是 async）
+ * 何地：在 CoroutineScope 或者根协程的协程上下文中（CoroutineScope 的直接子协程或者 supervisorScope）
+ */
 /**
  * 合并多个 suspend 方法：
  * ①、全部为 Success，则按顺序组合所有成功的结果并返回。
@@ -29,7 +38,7 @@ suspend fun <ResultType> successIfAllSuccess(
 /**
  * 合并多个 suspend 方法：
  * ①、只要有一个 Success，则按顺序组合所有成功的结果并返回。
- * ②、全部为 Error，则抛出第一个异常。
+ * ②、全部为 Error，则抛出异常。
  */
 @Throws(Exception::class)
 suspend fun <ResultType> successIfOneSuccess(
@@ -39,8 +48,7 @@ suspend fun <ResultType> successIfOneSuccess(
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
     val result = mutableListOf<ResultType>()
-    val totalExceptionTimes = CountDownLatch(suspendFunctions.size)
-    var firstException: Throwable? = null
+    var exception: Throwable? = null
     suspendFunctions.map {
         async(Dispatchers.IO) {
             it()
@@ -49,14 +57,17 @@ suspend fun <ResultType> successIfOneSuccess(
         try {
             result.add(deferred.await())
         } catch (e: Exception) {
-            if (firstException == null) {
-                firstException = e
+            if (exception == null) {
+                exception = e
+            } else {
+                exception?.addSuppressed(e)
             }
-            totalExceptionTimes.countDown()
         }
     }
-    if (totalExceptionTimes.count == 0L) {//全部失败
-        throw firstException ?: RuntimeException("all suspend functions execute error")
+    exception?.let {
+        if (it.suppressed.size + 1 == suspendFunctions.size) {//全部失败
+            throw exception!!
+        }
     }
     result
 }
