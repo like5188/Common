@@ -19,14 +19,8 @@ suspend fun <ResultType> successIfAllSuccess(
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
     val result = mutableListOf<ResultType>()
-    suspendFunctions.map {
-        this.async(Dispatchers.IO) {
-            it()
-        }
-    }.forEach { deferred ->
-        deferred.await()?.let {
-            result.add(it)
-        }
+    suspendFunctions.forEach {
+        result.add(it())
     }
     result
 }
@@ -46,15 +40,9 @@ suspend fun <ResultType> successIfOneSuccess(
     val result = mutableListOf<ResultType>()
     val totalExceptionTimes = CountDownLatch(suspendFunctions.size)
     var firstException: Throwable? = null
-    suspendFunctions.map {
-        this.async(Dispatchers.IO) {
-            it()
-        }
-    }.forEach { deferred ->
+    suspendFunctions.forEach {
         try {
-            deferred.await()?.let {
-                result.add(it)
-            }
+            result.add(it())
         } catch (e: Exception) {
             if (firstException == null) {
                 firstException = e
