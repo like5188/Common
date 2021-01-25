@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -35,12 +34,14 @@ import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.RuntimeException
+import com.like.common.util.Logger
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTick(time: Long) {
-                Log.w("TimerTextView", "time=$time time/1000=${time / 1000}")
+                Logger.w("TimerTextView", "time=$time time/1000=${time / 1000}")
                 mBinding.timerTextView.text = "剩余 ${time / 1000} 秒"
             }
 
@@ -248,9 +249,35 @@ class MainActivity : AppCompatActivity() {
 
     fun coroutineTest(view: View) {
         lifecycleScope.launch {
-            val startTime = System.currentTimeMillis()
-            Logger.printCollection(successIfAllSuccess(::a, ::b))
-            Logger.w("耗时：${System.currentTimeMillis() - startTime}")
+//            val startTime = System.currentTimeMillis()
+//            Logger.printCollection(successIfAllSuccess(::a, ::b))
+//            Logger.w("耗时：${System.currentTimeMillis() - startTime}")
+            try {
+                coroutineScope {
+                    try {
+                        val child1 = launch {
+                            Logger.d("Child1 is started")
+                            delay(100)
+                            throw ArithmeticException("Child1 error")
+                        }
+                        child1.join()
+                    } catch (e: Exception) {
+                        Logger.d("Child1: $e")
+                    }
+                    try {
+                        val child2 = launch {
+                            Logger.d("Child2 is started")
+                            delay(1000)
+                            Logger.d("Child2 is finished")
+                        }
+                        child2.join()
+                    } catch (e: Exception) {
+                        Logger.d("Child2: $e")
+                    }
+                }
+            } catch (e: Exception) {
+                Logger.d("Parent: $e")
+            }
         }
     }
 
