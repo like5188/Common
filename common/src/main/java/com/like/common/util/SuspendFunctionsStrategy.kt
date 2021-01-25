@@ -1,7 +1,6 @@
 package com.like.common.util
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.*
 import java.util.concurrent.CountDownLatch
 
 /**
@@ -17,8 +16,12 @@ suspend fun <ResultType> successIfAllSuccess(
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
     val result = mutableListOf<ResultType>()
-    suspendFunctions.forEach {
-        result.add(it())
+    suspendFunctions.map {
+        async(Dispatchers.IO) {
+            it()
+        }
+    }.forEach { deferred ->
+        result.add(deferred.await())
     }
     result
 }
@@ -38,9 +41,13 @@ suspend fun <ResultType> successIfOneSuccess(
     val result = mutableListOf<ResultType>()
     val totalExceptionTimes = CountDownLatch(suspendFunctions.size)
     var firstException: Throwable? = null
-    suspendFunctions.forEach {
+    suspendFunctions.map {
+        async(Dispatchers.IO) {
+            it()
+        }
+    }.forEach { deferred ->
         try {
-            result.add(it())
+            result.add(deferred.await())
         } catch (e: Exception) {
             if (firstException == null) {
                 firstException = e
