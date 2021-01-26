@@ -37,7 +37,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlin.RuntimeException
 import com.like.common.util.Logger
 import kotlinx.coroutines.*
 
@@ -231,51 +230,6 @@ class MainActivity : AppCompatActivity() {
         }
         view_flipper.flipInterval = 3000
         view_flipper.startFlipping()
-    }
-
-    private suspend fun a(): String {
-        delay(2000)
-//        throw RuntimeException("a error")
-        return "a"
-    }
-
-    private suspend fun b(): String {
-        delay(1000)
-        throw RuntimeException("b error")
-//        return "b"
-    }
-
-    private suspend fun test() = coroutineScope {
-        val a = launch {
-            Logger.d("1")
-            delay(100)
-            throw RuntimeException("test error")
-        }
-        try {
-            a.join()
-        } catch (e: Exception) {
-            Logger.w("3 $e")
-        }
-        val b = launch {
-            Logger.d("4")
-            delay(200)
-            Logger.d("5")
-        }
-        try {
-            b.join()
-        } catch (e: Exception) {
-            Logger.w("6 $e")
-        }
-    }
-
-    fun coroutineTest(view: View) {
-        lifecycleScope.launch {
-            try {
-                test()
-            } catch (e: Exception) {
-                Logger.w("7 $e")
-            }
-        }
     }
 
     fun gotoFragmentContainer(view: View) {
