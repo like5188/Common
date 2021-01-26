@@ -25,8 +25,8 @@ class ExampleUnitTest {
 
     private suspend fun b(): String {
         delay(100)
-//        throw RuntimeException("b error")
-        return "b"
+        throw RuntimeException("b error")
+//        return "b"
     }
 
 }
