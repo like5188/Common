@@ -5,10 +5,12 @@ import kotlinx.coroutines.*
 /**
  * [launch]：未捕获异常，自动传播，直到根协程。
  * [async]：向用户暴露异常。会捕获所有异常并将其表示在结果 [Deferred] 对象中，用户最终通过 [await] 来消费异常。
+ * [coroutineScope]：它的子协程会把异常委托给其父协程，这样一直向上直到根协程。
+ * [supervisorScope]：它的子协程不会将异常传播到其父协程，需要自己处理。
+ *
  * [CoroutineExceptionHandler]：
  * 1、只针对 [launch]。
- * 2、当使用 [coroutineScope] 时：用于根协程。
- * 当使用 [supervisorScope] 时：由于它的子协程不会将异常传播到其父协程，所以可用 [CoroutineExceptionHandler] 处理自身异常。
+ * 2、[coroutineScope]的根协程中，或者[supervisorScope]的子协程中。
  */
 /**
  * 合并多个 suspend 方法：
