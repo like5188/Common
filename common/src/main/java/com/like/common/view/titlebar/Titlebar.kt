@@ -23,7 +23,7 @@ import com.like.common.util.DimensionUtils
  * 定义了三个容器：左边、右边、中间。
  * 根据情况重新measure、layout了各部分，保证中间部分始终居中，并且不会因为内容太多而遮挡左边部分或者右边部分，保证不会出现各部分交叉的情况。
  */
-class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+open class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     companion object {
         private const val DEFAULT_CENTER_GRAVITY = 1
     }
