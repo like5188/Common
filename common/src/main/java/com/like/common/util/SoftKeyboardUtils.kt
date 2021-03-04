@@ -47,14 +47,15 @@ object SoftKeyboardUtils {
      * @param view The currently focused view, which would like to receive soft keyboard input.
      */
     fun show(view: View) {
+        view.requestFocus()
         getInputMethodManager(view.context).showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     /**
      * 隐藏键盘
      */
-    fun hide(activity: Activity) {
-        getInputMethodManager(activity).hideSoftInputFromWindow(activity.window.decorView.windowToken, InputMethodManager.SHOW_IMPLICIT)
+    fun hide(view: View) {
+        getInputMethodManager(view.context).hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**
