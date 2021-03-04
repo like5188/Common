@@ -103,13 +103,6 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:onClick="coroutineTest"
-                    android:text="coroutine测试"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:onClick="gotoStorageActivity"
                     android:text="Storage测试"
                     android:textAllCaps="false" />

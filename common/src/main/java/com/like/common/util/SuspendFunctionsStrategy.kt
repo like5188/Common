@@ -3,14 +3,14 @@ package com.like.common.util
 import kotlinx.coroutines.*
 
 /**
- * 在 launch 中，异常一旦发生就会立马被抛出 。因此，你可以使用 try/catch 包裹会发生异常的代码。
+ * [launch]：未捕获异常，自动传播，直到根协程。
+ * [async]：向用户暴露异常。会捕获所有异常并将其表示在结果 [Deferred] 对象中，用户最终通过 [await] 来消费异常。
+ * [coroutineScope]：它的子协程会把异常委托给其父协程，这样一直向上直到根协程。
+ * [supervisorScope]：它的子协程不会将异常传播到其父协程，需要自己处理。
  *
- * 当 async 在根协程 (CoroutineScope 实例或者 supervisorJob 的直接子协程) 使用时，异常不会被自动抛出，而是直到你调用 .await() 时才抛出。
- *
- * CoroutineExceptionHandler:
- * 如果满足以下要求，异常将会被捕获：
- * 何时：是被可以自动抛异常的协程抛出的（launch，而不是 async）
- * 何地：在 CoroutineScope 或者根协程的协程上下文中（CoroutineScope 的直接子协程或者 supervisorScope）
+ * [CoroutineExceptionHandler]：
+ * 1、只针对 [launch]。
+ * 2、[coroutineScope]的根协程中，或者[supervisorScope]的子协程中。
  */
 /**
  * 合并多个 suspend 方法：

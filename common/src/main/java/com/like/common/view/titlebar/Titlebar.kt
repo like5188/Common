@@ -32,7 +32,7 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         LayoutInflater.from(context)
     }
     private val mBinding: TitlebarBinding by lazy {
-        DataBindingUtil.inflate<TitlebarBinding>(mLayoutInflater, R.layout.titlebar, this, true)
+        DataBindingUtil.inflate(mLayoutInflater, R.layout.titlebar, this, true)
     }
 
     /**
