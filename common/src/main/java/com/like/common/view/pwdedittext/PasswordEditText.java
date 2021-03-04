@@ -13,7 +13,7 @@ import android.widget.FrameLayout;
 
 import com.like.common.R;
 import com.like.common.util.DimensionUtils;
-import com.like.common.util.InputSoftKeybordUtils;
+import com.like.common.util.SoftKeyboardUtils;
 import com.like.common.view.pwdedittext.style.IStyle;
 import com.like.common.view.pwdedittext.style.WholeStyle;
 import com.like.common.view.pwdedittext.textshap.CircleShape;
@@ -43,7 +43,7 @@ public class PasswordEditText extends FrameLayout {
         initPasswordView();
         setOnClickListener(v -> {
             // 显示软键盘
-            InputSoftKeybordUtils.showInputSoftKeybord(v.getContext(), mEditText);
+            SoftKeyboardUtils.INSTANCE.show(mEditText);
         });
     }
 
