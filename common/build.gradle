@@ -81,6 +81,8 @@ dependencies {
         exclude group: "androidx.arch.core"
         exclude group: "androidx.collection"
         exclude group: "androidx.lifecycle"
+        exclude group: "androidx.activity"
+        exclude group: "androidx.fragment"
     }
 
     // coil图片加载库
