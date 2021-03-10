@@ -55,7 +55,7 @@ dependencies {
     api 'androidx.palette:palette:1.0.0'
 
     // koin依赖注入库
-    api "org.koin:koin-androidx-viewmodel:2.1.6"
+    api "org.koin:koin-androidx-viewmodel:2.2.2"
 
     // coil图片加载库
     api('io.coil-kt:coil:1.0.0') {
