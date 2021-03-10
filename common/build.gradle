@@ -96,7 +96,11 @@ dependencies {
     }
 
     // work
-    api 'androidx.work:work-runtime-ktx:2.4.0'// workmanager 对协程的支持：suspend
+    api('androidx.work:work-runtime-ktx:2.4.0') {// workmanager 对协程的支持：suspend
+        exclude group: 'androidx.annotation'
+        exclude group: "androidx.arch.core"
+        exclude group: "androidx.lifecycle"
+    }
 
     // zxing。（zxing 3.4.0：要求最低api等级为24）
     api 'com.google.zxing:core:3.3.3'
