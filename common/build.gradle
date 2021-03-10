@@ -167,6 +167,7 @@ dependencies {
     // ViewModel 对协程的支持：viewModelScope
     api('androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0') {
         exclude group: 'androidx.annotation'
+        exclude group: 'androidx.lifecycle'
     }
 //    // Annotation processor
 //    kapt 'androidx.lifecycle:lifecycle-compiler:2.2.0'
