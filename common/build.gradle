@@ -54,8 +54,8 @@ dependencies {
     // 调色板
     api 'androidx.palette:palette:1.0.0'
 
-    // koin依赖注入库
-    api "org.koin:koin-androidx-viewmodel:2.2.2"
+    // koin依赖注入库。如果升级到2.2.2版本，那么此库引入的androidx.activity:activity库会和activity-ktx冲突
+    api "org.koin:koin-androidx-viewmodel:2.1.6"
 
     // coil图片加载库
     api 'io.coil-kt:coil:1.0.0'
