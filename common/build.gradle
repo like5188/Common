@@ -74,7 +74,12 @@ dependencies {
     api 'androidx.palette:palette:1.0.0'
 
     // koin依赖注入库
-    api "org.koin:koin-androidx-viewmodel:2.2.2"
+    api("org.koin:koin-androidx-viewmodel:2.2.2") {
+        exclude group: 'androidx.annotation'
+        exclude group: "androidx.arch.core"
+        exclude group: "androidx.collection"
+        exclude group: "androidx.lifecycle"
+    }
 
     // coil图片加载库
     api('io.coil-kt:coil:1.0.0') {
