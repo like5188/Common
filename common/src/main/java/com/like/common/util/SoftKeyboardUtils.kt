@@ -5,7 +5,8 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.fragment.app.FragmentActivity
+import android.widget.EditText
+import java.util.concurrent.atomic.AtomicBoolean
 
 object SoftKeyboardUtils {
 
@@ -18,37 +19,22 @@ object SoftKeyboardUtils {
      *
      * @param onStatusChangedListener   软键盘显示隐藏回调。true：显示；false：隐藏；
      */
-    fun setOnStatusChangedListener(activity: FragmentActivity, onStatusChangedListener: (Boolean) -> Unit) {
-        val decorView = activity.window.decorView//activity的根视图
-        var decorViewVisibleHeight = 0//纪录根视图的显示高度
-        decorView.viewTreeObserver.addOnGlobalLayoutListener {
-            //获取当前根视图在屏幕上显示的大小
-            val r = Rect()
-            decorView.getWindowVisibleDisplayFrame(r)
-            val visibleHeight = r.height()
-
-            when {
-                decorViewVisibleHeight == 0 -> decorViewVisibleHeight = visibleHeight
-                decorViewVisibleHeight - visibleHeight > 200 -> {//根视图显示高度变小超过200，可以看作软键盘显示了
-                    onStatusChangedListener(true)
-                    decorViewVisibleHeight = visibleHeight
-                }
-                visibleHeight - decorViewVisibleHeight > 200 -> {//根视图显示高度变大超过200，可以看作软键盘隐藏了
-                    onStatusChangedListener(false)
-                    decorViewVisibleHeight = visibleHeight
-                }
+    fun setOnStatusChangedListener(activity: Activity, onStatusChangedListener: (Boolean) -> Unit) {
+        val isShown = AtomicBoolean(false)//纪录根视图的显示高度
+        activity.window.decorView.viewTreeObserver.addOnGlobalLayoutListener {
+            val isShowing = isShowing(activity)
+            if (isShown.compareAndSet(!isShowing, isShowing)) {
+                onStatusChangedListener(isShowing)
             }
         }
     }
 
     /**
      * 显示键盘
-     *
-     * @param view The currently focused view, which would like to receive soft keyboard input.
      */
-    fun show(view: View) {
-        view.requestFocus()
-        getInputMethodManager(view.context).showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    fun show(editText: EditText) {
+        editText.requestFocus()
+        getInputMethodManager(editText.context).showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
     /**
@@ -59,16 +45,31 @@ object SoftKeyboardUtils {
     }
 
     /**
+     * 隐藏键盘
+     */
+    fun hide(activity: Activity) {
+        activity.currentFocus?.let {
+            hide(it)
+        }
+    }
+
+    /**
      * 判断软键盘是否弹出
      */
-    fun isShowing(view: View): Boolean {
-        val imm: InputMethodManager = getInputMethodManager(view.context)
-        return if (imm.hideSoftInputFromWindow(view.windowToken, 0)) {
-            imm.showSoftInput(view, 0)
-            true
-        } else {
-            false
-        }
+    fun isShowing(activity: Activity): Boolean {
+        return getSoftKeyboardHeight(activity) > 0
+    }
+
+    /**
+     * 获取软键盘高度。
+     * 注意：需要在软键盘弹出后获取
+     */
+    fun getSoftKeyboardHeight(activity: Activity): Int {
+        val decorView = activity.window.decorView
+        val r = Rect()
+        decorView.getWindowVisibleDisplayFrame(r)
+        val displayHeight: Int = r.bottom - r.top
+        return decorView.height - displayHeight - StatusBarUtils.getStatusBarHeight(activity)
     }
 
 }
