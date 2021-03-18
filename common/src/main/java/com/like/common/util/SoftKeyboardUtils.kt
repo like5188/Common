@@ -34,7 +34,10 @@ object SoftKeyboardUtils {
      */
     fun show(editText: EditText) {
         editText.requestFocus()
-        getInputMethodManager(editText.context).showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        getInputMethodManager(editText.context).showSoftInput(
+                editText,
+                InputMethodManager.SHOW_IMPLICIT
+        )
     }
 
     /**
@@ -66,10 +69,30 @@ object SoftKeyboardUtils {
      */
     fun getSoftKeyboardHeight(activity: Activity): Int {
         val decorView = activity.window.decorView
+        val screenHeight = decorView.height
+        val statusBarHeight = getStatusBarHeight(activity)
+        val navigationBarHeight = getNavigationBarHeight(activity)
         val r = Rect()
-        decorView.getWindowVisibleDisplayFrame(r)
+        decorView.getWindowVisibleDisplayFrame(r)//可见的内容区域
         val displayHeight: Int = r.bottom - r.top
-        return decorView.height - displayHeight - StatusBarUtils.getStatusBarHeight(activity)
+        return screenHeight - statusBarHeight - navigationBarHeight - displayHeight
     }
 
+    /**
+     * 获得状态栏高度
+     */
+    fun getStatusBarHeight(context: Context): Int {
+        val resources = context.applicationContext.resources
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
+    }
+
+    /**
+     * 获取底部导航栏高度
+     */
+    fun getNavigationBarHeight(context: Context): Int {
+        val resources = context.applicationContext.resources
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
+    }
 }
