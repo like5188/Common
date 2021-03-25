@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.like.common.R;
-import com.like.common.util.DimensionUtils;
 import com.like.common.util.SoftKeyboardUtils;
 import com.like.common.view.pwdedittext.style.IStyle;
 import com.like.common.view.pwdedittext.style.WholeStyle;
@@ -76,13 +75,13 @@ public class PasswordEditText extends FrameLayout {
      * 设置PasswordView
      */
     private void initPasswordView() {
-        mPasswordView.setStyle(new WholeStyle(true, DimensionUtils.dp2px(getContext(), 3f), new CircleShape()))
-                .setFontSize(DimensionUtils.sp2px(getContext(), 10f))
+        mPasswordView.setStyle(new WholeStyle(true, 3, new CircleShape()))
+                .setFontSize(10)
                 .setFontColor(Color.BLACK)
                 .setRectColor(Color.LTGRAY)
                 .setPwdLength(mPwdLength)
-                .setTextPaddingTop(DimensionUtils.dp2px(getContext(), 15f))
-                .setTextPaddingBottom(DimensionUtils.dp2px(getContext(), 15f));
+                .setTextPaddingTop(15)
+                .setTextPaddingBottom(15);
     }
 
     /**
@@ -137,7 +136,7 @@ public class PasswordEditText extends FrameLayout {
      * @param paddingTop 单位dp
      */
     public void setTextPaddingTop(int paddingTop) {
-        mPasswordView.setTextPaddingTop(DimensionUtils.dp2px(getContext(), paddingTop));
+        mPasswordView.setTextPaddingTop(paddingTop);
     }
 
     /**
@@ -146,7 +145,7 @@ public class PasswordEditText extends FrameLayout {
      * @param paddingBottom 单位dp
      */
     public void setTextPaddingBottom(int paddingBottom) {
-        mPasswordView.setTextPaddingBottom(DimensionUtils.dp2px(getContext(), paddingBottom));
+        mPasswordView.setTextPaddingBottom(paddingBottom);
     }
 
     public interface OnInputFinishListener {

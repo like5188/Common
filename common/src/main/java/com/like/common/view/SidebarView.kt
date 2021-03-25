@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
-import com.like.common.util.DimensionUtils
 import com.like.common.util.onPreDrawListener
 
 /**
@@ -39,8 +38,8 @@ class SidebarView(context: Context, attrs: AttributeSet?) : View(context, attrs)
      * @param selectedTextColor             选中的文本颜色
      * @param normalBackgroundColor         正常状态下的背景色，默认透明
      * @param touchBackgroundColor          触摸状态下的背景色，默认透明
-     * @param textGap                       文本之间的间隙大小，默认0dp，<=0表示充满整个SidebarView。
-     * @param textSize                      文本大小，默认14sp
+     * @param textGap                       文本之间的间隙大小，默认0px，<=0表示充满整个SidebarView。
+     * @param textSize                      文本大小，默认14px
      * @param selectedTextChangedListener   选中文本改变的监听，默认null
      */
     @JvmOverloads
@@ -59,8 +58,8 @@ class SidebarView(context: Context, attrs: AttributeSet?) : View(context, attrs)
         this.normalTextColor = normalTextColor
         this.touchTextColor = touchTextColor
         this.selectedTextColor = selectedTextColor
-        this.textGap = DimensionUtils.px2dp(context, textGap.toFloat())
-        this.textSize = DimensionUtils.px2sp(context, textSize.toFloat())
+        this.textGap = textGap
+        this.textSize = textSize
         this.selectedTextChangedListener = selectedTextChangedListener
         paint = Paint().apply {
             this.textSize = textSize.toFloat()

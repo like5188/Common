@@ -54,15 +54,12 @@ inline fun TextView.setSpan(content: String, positions: IntArray, @ColorRes colo
 /**
  * @param drawableOrientation   在[TextView]上调用 drawableStart、drawableTop、drawableEnd、drawableBottom 的标记。
  * 分别对应：1、2、3、4
- * @param width                 图片宽度，dp
- * @param height                图片高度，dp
+ * @param width                 图片宽度
+ * @param height                图片高度
  */
-fun TextView.setDrawable(drawableOrientation: Int, @DrawableRes resId: Int, width: Float, height: Float) {
+fun TextView.setDrawable(drawableOrientation: Int, @DrawableRes resId: Int, width: Int, height: Int) {
     val drawable = this.resources.getDrawable(resId)
-    drawable.setBounds(0, 0,
-            DimensionUtils.dp2px(this.context, width),
-            DimensionUtils.dp2px(this.context, height)
-    )// 这里使用了setCompoundDrawables()方法，必须设置图片大小
+    drawable.setBounds(0, 0, width, height)// 这里使用了setCompoundDrawables()方法，必须设置图片大小
     when (drawableOrientation) {
         1 -> {
             this.setCompoundDrawables(drawable, null, null, null)

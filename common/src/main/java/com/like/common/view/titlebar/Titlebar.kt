@@ -15,7 +15,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.like.common.R
 import com.like.common.databinding.TitlebarBinding
-import com.like.common.util.DimensionUtils
 
 /**
  * 标题栏封装
@@ -335,13 +334,13 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         /**
          * 显示分割线
          *
-         * @param height        分割线高度，dp。默认为0.5dp。如果设置为小于等于0，表示隐藏分割线。
+         * @param height        分割线高度。默认为1px。如果设置为小于等于0，表示隐藏分割线。
          * @param color         背景颜色。默认为null，表示不设置，保持原样。
          */
-        fun showDivider(height: Float = 0.5f, @ColorInt color: Int? = null) {
+        fun showDivider(height: Int = 1, @ColorInt color: Int? = null) {
             if (height > 0) {
                 mBinding.divider.visibility = View.VISIBLE
-                mBinding.divider.layoutParams.height = DimensionUtils.dp2px(context, height)
+                mBinding.divider.layoutParams.height = height
                 if (color != null) {
                     mBinding.divider.setBackgroundColor(color)
                 }
@@ -351,10 +350,10 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
         }
 
         /**
-         * 设置标题栏的宽度。dp
+         * 设置标题栏的宽度
          */
-        fun setTitleWidth(width: Float) {
-            mBinding.tvTitle.layoutParams.width = DimensionUtils.dp2px(context, width)
+        fun setTitleWidth(width: Int) {
+            mBinding.tvTitle.layoutParams.width = width
         }
 
         fun setBackgroundColor(@ColorInt color: Int) {

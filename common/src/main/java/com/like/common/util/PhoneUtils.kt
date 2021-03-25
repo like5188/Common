@@ -45,18 +45,6 @@ object PhoneUtils {
     }
 
     /**
-     * 屏幕宽度（DP）
-     */
-    fun getScreenWidthDpi(context: Context): Int {
-        getWindowManager(context)?.let {
-            val metric = DisplayMetrics()
-            it.defaultDisplay.getMetrics(metric)
-            return DimensionUtils.px2dp(context, metric.widthPixels.toFloat())
-        }
-        return 0
-    }
-
-    /**
      * 屏幕高度（像素）
      */
     fun getScreenHeight(context: Context): Int {
@@ -64,18 +52,6 @@ object PhoneUtils {
             val metric = DisplayMetrics()
             it.defaultDisplay.getMetrics(metric)
             return metric.heightPixels
-        }
-        return 0
-    }
-
-    /**
-     * 屏幕高度（DP）
-     */
-    fun getScreenHeightDpi(context: Context): Int {
-        getWindowManager(context)?.let {
-            val metric = DisplayMetrics()
-            it.defaultDisplay.getMetrics(metric)
-            return DimensionUtils.px2dp(context, metric.heightPixels.toFloat())
         }
         return 0
     }
