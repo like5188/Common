@@ -1,16 +1,18 @@
 package com.like.common.sample.activitytest
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest3Binding
+import com.like.common.util.startActivity
 
 /**
  * 透明的 Activity
  */
 class TestActivity3 : AppCompatActivity() {
-    private val mBinding: ActivityTest3Binding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityTest3Binding>(this, R.layout.activity_test3)
     }
 
@@ -19,4 +21,9 @@ class TestActivity3 : AppCompatActivity() {
         mBinding
     }
 
+    companion object {
+        fun start(context: Context) {
+            context.startActivity<TestActivity3>()
+        }
+    }
 }

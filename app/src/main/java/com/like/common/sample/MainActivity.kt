@@ -118,9 +118,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             showTitle("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
-            setTitleWidth(100f)
+            setTitleWidth(100.dp)
 
-            showDivider(1f, Color.GREEN)
+            showDivider(1.dp, Color.GREEN)
 
             CustomViewManager(this@MainActivity).apply {
                 setIcon(R.drawable.icon_back)
