@@ -122,11 +122,11 @@ class TestActivity : AppCompatActivity() {
     }
 
     fun click1(view: View) {
-        TestActivity1.start(startActivityForResultLauncher, "like123")
+        TestActivity1.start(startActivityForResultLauncher, "like123", this)
     }
 
     fun click2(view: View) {
-        TestActivity2.start()
+        TestActivity2.start(this)
     }
 
     fun click3(view: View) {

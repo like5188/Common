@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest3Binding
+import com.like.common.util.ApplicationHolder
 import com.like.common.util.createIntent
 
 /**
@@ -22,9 +23,10 @@ class TestActivity3 : AppCompatActivity() {
     }
 
     companion object {
-        fun start(context: Context) {
-            val intent = context.createIntent<TestActivity3>()
-            context.startActivity(intent)
+        fun start(context: Context? = null) {
+            val ctx = context ?: ApplicationHolder.application
+            val intent = ctx.createIntent<TestActivity3>()
+            ctx.startActivity(intent)
         }
     }
 }

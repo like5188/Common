@@ -1,5 +1,6 @@
 package com.like.common.sample.activitytest
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -22,9 +23,10 @@ class TestActivity2 : AppCompatActivity() {
     }
 
     companion object {
-        fun start() {
-            val intent = ApplicationHolder.application.createIntent<TestActivity2>()
-            ApplicationHolder.application.startActivity(intent)
+        fun start(context: Context? = null) {
+            val ctx = context ?: ApplicationHolder.application
+            val intent = ctx.createIntent<TestActivity2>()
+            ctx.startActivity(intent)
         }
     }
 }
