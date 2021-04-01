@@ -1,5 +1,6 @@
 package com.like.common.sample.fragmenttest
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -7,14 +8,17 @@ import androidx.fragment.app.FragmentActivity
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityFragmentContainerBinding
 import com.like.common.util.ApplicationHolder
-import com.like.common.util.startActivity
+import com.like.common.util.createIntent
 
 class FragmentContainer : FragmentActivity() {
-    companion object{
-        fun start() {
-            ApplicationHolder.application.startActivity<FragmentContainer>()
+    companion object {
+        fun start(context: Context? = null) {
+            val ctx = context ?: ApplicationHolder.application
+            val intent = ctx.createIntent<FragmentContainer>()
+            ctx.startActivity(intent)
         }
     }
+
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityFragmentContainerBinding>(this, R.layout.activity_fragment_container)
     }
