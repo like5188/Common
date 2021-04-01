@@ -237,17 +237,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun gotoStorageActivity(view: View) {
-        startActivity<StorageActivity>()
+        startActivity(Intent(this, StorageActivity::class.java))
     }
 
     fun gotoAutoWiredActivity(view: View) {
-        startActivity<AutoWiredActivity>(
+        val intent = createIntent<AutoWiredActivity>(
                 "param1" to 1,
                 "param2" to null,
                 "param" to "3",
                 "param4" to 4,
                 "param5" to listOf(AutoWiredActivity.P("5"), AutoWiredActivity.P("6"))
         )
+        startActivity(intent)
     }
 
     fun gotoZXingActivity(view: View) {
