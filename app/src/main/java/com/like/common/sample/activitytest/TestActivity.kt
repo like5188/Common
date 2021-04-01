@@ -11,10 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
-import com.like.common.util.Logger
-import com.like.common.util.createIntent
-import com.like.common.util.fillIntentArguments
-import com.like.common.util.startActivityForResult
+import com.like.common.util.*
 
 /**
  * Activity 相关的测试
@@ -120,14 +117,12 @@ class TestActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            Logger.e(it.data?.getStringExtra("name"))
-        }
+    private val startActivityForResultLauncher = startActivityForResultLauncher {
+        Logger.e(it?.getStringExtra("name"))
     }
 
     fun click1(view: View) {
-        TestActivity1.start(activityResultLauncher, "like123")
+        TestActivity1.start(startActivityForResultLauncher, "like123")
     }
 
     fun click2(view: View) {

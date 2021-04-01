@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest2Binding
 import com.like.common.util.ApplicationHolder
-import com.like.common.util.startActivity
+import com.like.common.util.createIntent
 
 /**
  * 窗口模式的 Activity
@@ -23,7 +23,8 @@ class TestActivity2 : AppCompatActivity() {
 
     companion object {
         fun start() {
-            ApplicationHolder.application.startActivity<TestActivity2>()
+            val intent = ApplicationHolder.application.createIntent<TestActivity2>()
+            ApplicationHolder.application.startActivity(intent)
         }
     }
 }

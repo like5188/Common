@@ -1,5 +1,6 @@
 package com.like.common.util
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,6 +10,7 @@ import java.io.Serializable
 
 inline fun <reified T : Any> Context.createIntent(vararg params: Pair<String, Any?>): Intent {
     val intent = Intent(this, T::class.java)
+    if (this !is Activity) intent.newTask()
     if (params.isNotEmpty()) intent.fillIntentArguments(params)
     return intent
 }
