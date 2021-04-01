@@ -153,5 +153,7 @@ dependencies {
 
     implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'// 身份证识别
 
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+
     implementation project(':common')
 }
