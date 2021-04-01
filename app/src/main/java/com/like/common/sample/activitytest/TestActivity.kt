@@ -128,7 +128,6 @@ class TestActivity : AppCompatActivity() {
 
     fun click1(view: View) {
         TestActivity1.start(activityResultLauncher, "like123")
-//        activityResultLauncher.launch(TestActivity1.intent(this, "like444"))
     }
 
     fun click2(view: View) {

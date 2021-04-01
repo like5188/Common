@@ -35,14 +35,6 @@ class TestActivity1 : AppCompatActivity() {
     }
 
     companion object {
-        fun intent(context: Context, name: String?): Intent {
-            return context.createIntent<TestActivity1>("name" to name)
-        }
-
-        fun start(context: Context, launcher: ActivityResultLauncher<Intent>, name: String?) {
-            launcher.launch(context.createIntent<TestActivity1>("name" to name))
-        }
-
         fun start(launcher: ActivityResultLauncher<Intent>, name: String?) {
             launcher.launch(ApplicationHolder.application.createIntent<TestActivity1>("name" to name))
         }
