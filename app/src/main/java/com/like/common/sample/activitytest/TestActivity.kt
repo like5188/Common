@@ -117,12 +117,14 @@ class TestActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private val startActivityForResultLauncher = startActivityForResultLauncher {
-        Logger.e(it?.getStringExtra("name"))
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            Logger.e(it?.data?.getStringExtra("name"))
+        }
     }
 
     fun click1(view: View) {
-        TestActivity1.start(startActivityForResultLauncher, "like123", this)
+        TestActivity1.start(launcher, "like123", this)
     }
 
     fun click2(view: View) {
