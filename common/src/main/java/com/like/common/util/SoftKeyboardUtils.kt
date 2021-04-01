@@ -10,10 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 object SoftKeyboardUtils {
 
-    private fun getInputMethodManager(context: Context): InputMethodManager {
-        return context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    }
-
     /**
      * 软键盘显示隐藏监听
      *
@@ -34,7 +30,7 @@ object SoftKeyboardUtils {
      */
     fun show(editText: EditText) {
         editText.requestFocus()
-        getInputMethodManager(editText.context).showSoftInput(
+        editText.context.inputMethodManager.showSoftInput(
                 editText,
                 InputMethodManager.SHOW_IMPLICIT
         )
@@ -44,7 +40,7 @@ object SoftKeyboardUtils {
      * 隐藏键盘
      */
     fun hide(view: View) {
-        getInputMethodManager(view.context).hideSoftInputFromWindow(view.windowToken, 0)
+        view.context.inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**

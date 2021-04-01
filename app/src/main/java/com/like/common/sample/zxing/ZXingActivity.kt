@@ -3,34 +3,31 @@ package com.like.common.sample.zxing
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
 import com.like.common.util.ZXingUtils
-import com.like.common.util.requestPermission
-import kotlinx.coroutines.launch
 
 class ZXingActivity : AppCompatActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityZxingBinding>(this, R.layout.activity_zxing)
     }
+    private val launcher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this@ZXingActivity, heightWidthRatio = 1f))
+//            mBinding.sv.setEnableZXing(true)
+//            mBinding.sv.setEnableZBar(true)
+        mBinding.sv.setEnableIdCard(true)
+        mBinding.sv.setCallback { result ->
+            mBinding.tvScanResult.text = result.toString()
+            mBinding.sv.restartPreviewAfterDelay(2000)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            if (requestPermission(android.Manifest.permission.CAMERA)) {
-                mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this@ZXingActivity, heightWidthRatio = 1f))
-//            mBinding.sv.setEnableZXing(true)
-//            mBinding.sv.setEnableZBar(true)
-                mBinding.sv.setEnableIdCard(true)
-                mBinding.sv.setCallback { result ->
-                    mBinding.tvScanResult.text = result.toString()
-                    mBinding.sv.restartPreviewAfterDelay(2000)
-                }
-            }
-        }
+        launcher.launch(android.Manifest.permission.CAMERA)
     }
 
     override fun onResume() {

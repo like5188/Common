@@ -14,9 +14,9 @@ object VibrateUtils {
     @RequiresPermission(android.Manifest.permission.VIBRATE)
     fun vibrate(context: Context, milliseconds: Long) {
         // 获取系统震动服务
-        val vib = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (vib.hasVibrator()) {
-            vib.vibrate(milliseconds)
+        val vibrator = context.vibrator
+        if (vibrator.hasVibrator()) {
+            vibrator.vibrate(milliseconds)
         }
     }
 }

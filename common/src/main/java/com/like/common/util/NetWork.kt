@@ -7,13 +7,11 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.provider.Settings
 
-fun Context.getConnectivityManager(): ConnectivityManager? = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-
 /**
  * 网络是否可用
  */
 fun Context.isInternetAvailable(): Boolean {
-    val cm = getConnectivityManager() ?: return false
+    val cm = connectivityManager
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         cm.getNetworkCapabilities(cm.activeNetwork)?.run {
             when {
@@ -33,7 +31,7 @@ fun Context.isInternetAvailable(): Boolean {
  * wifi 是否连接
  */
 fun Context.isWiFiConnected(): Boolean {
-    val cm = getConnectivityManager() ?: return false
+    val cm = connectivityManager
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         cm.getNetworkCapabilities(cm.activeNetwork)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
     } else {

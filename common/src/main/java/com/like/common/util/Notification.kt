@@ -3,9 +3,7 @@ package com.like.common.util
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
-import android.app.NotificationManager
 import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -22,7 +20,7 @@ import android.provider.Settings
  */
 fun Context.createNotificationChannelGroups(groups: List<NotificationChannelGroup>) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        getNotificationManager()?.createNotificationChannelGroups(groups)
+        notificationManager.createNotificationChannelGroups(groups)
     }
 }
 
@@ -31,13 +29,13 @@ fun Context.createNotificationChannelGroups(groups: List<NotificationChannelGrou
  */
 fun Context.deleteNotificationChannelGroup(groupId: String) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        getNotificationManager()?.deleteNotificationChannelGroup(groupId)
+        notificationManager.deleteNotificationChannelGroup(groupId)
     }
 }
 
 fun Context.getNotificationChannelGroup(groupId: String): NotificationChannelGroup? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        getNotificationManager()?.getNotificationChannelGroup(groupId)
+        notificationManager.getNotificationChannelGroup(groupId)
     } else {
         null
     }
@@ -45,7 +43,7 @@ fun Context.getNotificationChannelGroup(groupId: String): NotificationChannelGro
 
 fun Context.getNotificationChannelGroups(): List<NotificationChannelGroup>? {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        getNotificationManager()?.notificationChannelGroups
+        notificationManager.notificationChannelGroups
     } else {
         null
     }
@@ -60,7 +58,7 @@ fun Context.getNotificationChannelGroups(): List<NotificationChannelGroup>? {
  */
 fun Context.createNotificationChannel(channel: NotificationChannel) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        getNotificationManager()?.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(channel)
     }
 }
 
@@ -72,7 +70,7 @@ fun Context.createNotificationChannel(channel: NotificationChannel) {
  */
 fun Context.deleteNotificationChannel(channelId: String) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        getNotificationManager()?.deleteNotificationChannel(channelId)
+        notificationManager.deleteNotificationChannel(channelId)
     }
 }
 
@@ -81,14 +79,14 @@ fun Context.deleteNotificationChannel(channelId: String) {
  */
 fun Context.getNotificationChannel(channelId: String): NotificationChannel? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getNotificationManager()?.getNotificationChannel(channelId)
+            notificationManager.getNotificationChannel(channelId)
         } else {
             null
         }
 
 fun Context.getNotificationChannels(): List<NotificationChannel>? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getNotificationManager()?.notificationChannels
+            notificationManager.notificationChannels
         } else {
             null
         }
@@ -100,21 +98,21 @@ fun Context.getNotificationChannels(): List<NotificationChannel>? =
  * @param notification      通知
  */
 fun Context.notifyNotification(notificationId: Int, notification: Notification) {
-    getNotificationManager()?.notify(notificationId, notification)
+    notificationManager.notify(notificationId, notification)
 }
 
 /**
  * 取消通知
  */
 fun Context.cancelNotification(notificationId: Int) {
-    getNotificationManager()?.cancel(notificationId)
+    notificationManager.cancel(notificationId)
 }
 
 /**
  * 取消所有通知
  */
 fun Context.cancelAllNotifications() {
-    getNotificationManager()?.cancelAll()
+    notificationManager.cancelAll()
 }
 
 /**
@@ -128,6 +126,3 @@ fun Context.gotoChannelNotificationSetting(channelId: String) {
         startActivity(intent)
     }
 }
-
-fun Context.getNotificationManager() =
-        applicationContext.getSystemService(NOTIFICATION_SERVICE) as? NotificationManager

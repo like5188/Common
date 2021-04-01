@@ -2,15 +2,9 @@ package com.like.common.util
 
 import android.content.Context
 import android.os.Build
-import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
-import android.view.WindowManager
-import androidx.activity.result.ActivityResultCaller
 
 object PhoneUtils {
-
-    private fun getWindowManager(context: Context?) = context?.applicationContext?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
-    private fun getTelephonyManager(context: Context?) = context?.applicationContext?.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
 
     /**
      * android系统版本
@@ -36,24 +30,18 @@ object PhoneUtils {
      * 屏幕宽度（像素）
      */
     fun getScreenWidth(context: Context): Int {
-        getWindowManager(context)?.let {
-            val metric = DisplayMetrics()
-            it.defaultDisplay.getMetrics(metric)
-            return metric.widthPixels
-        }
-        return 0
+        val metric = DisplayMetrics()
+        context.windowManager.defaultDisplay.getMetrics(metric)
+        return metric.widthPixels
     }
 
     /**
      * 屏幕高度（像素）
      */
     fun getScreenHeight(context: Context): Int {
-        getWindowManager(context)?.let {
-            val metric = DisplayMetrics()
-            it.defaultDisplay.getMetrics(metric)
-            return metric.heightPixels
-        }
-        return 0
+        val metric = DisplayMetrics()
+        context.windowManager.defaultDisplay.getMetrics(metric)
+        return metric.heightPixels
     }
 
     /**
@@ -63,40 +51,18 @@ object PhoneUtils {
      * Res：     mdpi    hdpi    xhdpi   xxhdpi    xxxhdpi
      */
     fun getDensity(context: Context): Float {
-        getWindowManager(context)?.let {
-            val metric = DisplayMetrics()
-            it.defaultDisplay.getMetrics(metric)
-            return metric.density
-        }
-        return 0f
+        val metric = DisplayMetrics()
+        context.windowManager.defaultDisplay.getMetrics(metric)
+        return metric.density
     }
 
     /**
      * 屏幕密度DPI
      */
     fun getDensityDpi(context: Context): Int {
-        getWindowManager(context)?.let {
-            val metric = DisplayMetrics()
-            it.defaultDisplay.getMetrics(metric)
-            return metric.densityDpi
-        }
-        return 0
+        val metric = DisplayMetrics()
+        context.windowManager.defaultDisplay.getMetrics(metric)
+        return metric.densityDpi
     }
 
-    /**
-     * 获取电话号码
-     */
-    suspend fun getPhoneNumber(activityResultCaller: ActivityResultCaller): String? {
-        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activityResultCaller.requestPermission(android.Manifest.permission.READ_PHONE_NUMBERS)
-        } else {
-            activityResultCaller.requestPermission(android.Manifest.permission.READ_PHONE_STATE)
-        }
-        if (permission) {
-            getTelephonyManager(activityResultCaller.context)?.let {
-                return it.line1Number
-            }
-        }
-        return null
-    }
 }

@@ -15,7 +15,6 @@ import kotlin.system.exitProcess
  * app相关工具类
  */
 object AppUtils {
-    private fun getActivityManager(context: Context?) = context?.applicationContext?.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
 
     /**
      * 版本名称
@@ -71,7 +70,7 @@ object AppUtils {
      * @return 是否存在
      */
     fun isRunForeground(context: Context?, packageName: String = context?.packageName ?: ""): Boolean =
-            getActivityManager(context)?.runningAppProcesses?.any {
+            context?.activityManager?.runningAppProcesses?.any {
                 it.processName == packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
             } ?: false
 
@@ -83,7 +82,7 @@ object AppUtils {
      * @return 是否存在
      */
     fun isRunBackground(context: Context?, packageName: String = context?.packageName ?: ""): Boolean =
-            getActivityManager(context)?.runningAppProcesses?.any {
+            context?.activityManager?.runningAppProcesses?.any {
                 it.processName == packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND
             } ?: false
 
@@ -95,9 +94,8 @@ object AppUtils {
      * @return
      */
     fun isServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
-        val am = getActivityManager(context) ?: return false
-        val runningServices = am.getRunningServices(Integer.MAX_VALUE)// 参数表示需要获取的正在运行的服务数量，这里我们取最大值
-        if (runningServices != null && !runningServices.isEmpty()) {
+        val runningServices = context.activityManager.getRunningServices(Integer.MAX_VALUE)// 参数表示需要获取的正在运行的服务数量，这里我们取最大值
+        if (runningServices != null && runningServices.isNotEmpty()) {
             for (r in runningServices) {
                 // 添加Uid验证, 防止服务重名, 当前服务无法启动
                 if (getUid(context) == r.uid) {
@@ -121,12 +119,10 @@ object AppUtils {
             return -1
         }
 
-        val pid = android.os.Process.myPid()
-        val am = getActivityManager(context) ?: return -1
-        val runningAppProcesses = am.runningAppProcesses
+        val runningAppProcesses = context.activityManager.runningAppProcesses
         if (runningAppProcesses != null && runningAppProcesses.isNotEmpty()) {
             for (processInfo in runningAppProcesses) {
-                if (processInfo.pid == pid) {
+                if (processInfo.pid == android.os.Process.myPid()) {
                     return processInfo.uid
                 }
             }
@@ -167,11 +163,9 @@ object AppUtils {
      * @return 进程名称
      */
     fun getProcessName(context: Context): String {
-        val pid = android.os.Process.myPid()
-        val manager = getActivityManager(context) ?: return ""
-        manager.runningAppProcesses.apply {
+        context.activityManager.runningAppProcesses.apply {
             for (processInfo in this) {
-                if (processInfo.pid == pid) {
+                if (processInfo.pid == android.os.Process.myPid()) {
                     return processInfo.processName
                 }
             }
