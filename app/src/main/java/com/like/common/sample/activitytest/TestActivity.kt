@@ -1,12 +1,10 @@
 package com.like.common.sample.activitytest
 
-import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
@@ -117,14 +115,11 @@ class TestActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            Logger.e(it?.data?.getStringExtra("name"))
-        }
-    }
-
+    private val startActivityForResult = ActivityResultWrapper.StartActivityForResult(this)
     fun click1(view: View) {
-        TestActivity1.start(launcher, "like123", this)
+        TestActivity1.start(startActivityForResult, "like123") {
+            Logger.e(it?.getStringExtra("name"))
+        }
     }
 
     fun click2(view: View) {

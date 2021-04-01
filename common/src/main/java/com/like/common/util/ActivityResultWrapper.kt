@@ -12,7 +12,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-object ActivityResult {
+object ActivityResultWrapper {
     class RequestPermission(val activity: ComponentActivity) {
         private var continuation: Continuation<Boolean>? = null
         private var callback: ((Boolean) -> Unit)? = null
@@ -71,6 +71,9 @@ object ActivityResult {
             continuation?.resume(intent)
         }
 
+        suspend inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>): Intent? =
+                startActivityForResult(activity.createIntent<T>(*params))
+
         suspend fun startActivityForResult(intent: Intent): Intent? = withContext(Dispatchers.Main) {
             suspendCoroutine {
                 continuation = it
@@ -79,10 +82,16 @@ object ActivityResult {
         }
 
         @MainThread
+        inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>, noinline callback: (Intent?) -> Unit) {
+            startActivityForResult(activity.createIntent<T>(*params), callback)
+        }
+
+        @MainThread
         fun startActivityForResult(intent: Intent, callback: (Intent?) -> Unit) {
             this.callback = callback
             launcher.launch(intent)
         }
+
     }
 
     class StartIntentSenderForResult(val activity: ComponentActivity) {

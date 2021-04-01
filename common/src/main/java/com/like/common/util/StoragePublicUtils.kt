@@ -1,7 +1,6 @@
 package com.like.common.util
 
 import android.Manifest
-import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -13,26 +12,17 @@ import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.BaseColumns
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
-import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
 import java.sql.Date
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
@@ -82,26 +72,26 @@ object StoragePublicUtils {
          */
         suspend fun takePhoto(
                 context: Context,
-                requestPermission: ActivityResult.RequestPermission,
-                startActivityForResult: ActivityResult.StartActivityForResult,
-                startIntentSenderForResult: ActivityResult.StartIntentSenderForResult,
+                requestPermissionWrapper: ActivityResultWrapper.RequestPermission,
+                startActivityForResultWrapper: ActivityResultWrapper.StartActivityForResult,
+                startIntentSenderForResultWrapper: ActivityResultWrapper.StartIntentSenderForResult,
                 isThumbnail: Boolean = false
         ): Bitmap? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
-            if (!requestPermission.requestPermission(Manifest.permission.CAMERA)) {
+            if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
                 return null
             }
 
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
             return if (isThumbnail) {
                 // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
-                startActivityForResult.startActivityForResult(intent)?.getParcelableExtra("data")
+                startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
             } else {
-                val imageUri = createFile(context, requestPermission, startIntentSenderForResult, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, System.currentTimeMillis().toString(), Environment.DIRECTORY_PICTURES)
+                val imageUri = createFile(context, requestPermissionWrapper, startIntentSenderForResultWrapper, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, System.currentTimeMillis().toString(), Environment.DIRECTORY_PICTURES)
                         ?: return null
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
-                startActivityForResult.startActivityForResult(intent) ?: return null
+                startActivityForResultWrapper.startActivityForResult(intent) ?: return null
                 UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
             }
         }
@@ -332,8 +322,8 @@ object StoragePublicUtils {
          */
         suspend fun createFile(
                 context: Context,
-                requestPermission: ActivityResult.RequestPermission,
-                startIntentSenderForResult: ActivityResult.StartIntentSenderForResult,
+                requestPermissionWrapper: ActivityResultWrapper.RequestPermission,
+                startIntentSenderForResultWrapper: ActivityResultWrapper.StartIntentSenderForResult,
                 uri: Uri?,
                 displayName: String,
                 relativePath: String,
@@ -348,12 +338,12 @@ object StoragePublicUtils {
             }
             when {
                 Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                    if (!createWriteRequest(context, startIntentSenderForResult, listOf(uri))) {
+                    if (!createWriteRequest(context, startIntentSenderForResultWrapper, listOf(uri))) {
                         return null
                     }
                 }
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
-                    if (!requestPermission.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (!requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         return null
                     }
                 }
@@ -483,11 +473,11 @@ object StoragePublicUtils {
          * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        private suspend fun createWriteRequest(context: Context, startIntentSenderForResult: ActivityResult.StartIntentSenderForResult, uris: List<Uri>): Boolean {
+        private suspend fun createWriteRequest(context: Context, startIntentSenderForResultWrapper: ActivityResultWrapper.StartIntentSenderForResult, uris: List<Uri>): Boolean {
             val pendingIntent = MediaStore.createWriteRequest(context.applicationContext.contentResolver, uris)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
-            return startIntentSenderForResult.startIntentSenderForResult(intentSenderRequest)
+            return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
         }
 
 //        /**

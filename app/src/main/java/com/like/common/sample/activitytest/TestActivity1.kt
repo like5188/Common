@@ -1,16 +1,16 @@
 package com.like.common.sample.activitytest
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest1Binding
-import com.like.common.util.*
+import com.like.common.util.ActivityResultWrapper
+import com.like.common.util.AutoWired
+import com.like.common.util.injectForIntentExtras
 
 /**
  * 正常的 Activity
@@ -35,10 +35,8 @@ class TestActivity1 : AppCompatActivity() {
     }
 
     companion object {
-        fun start(launcher: ActivityResultLauncher<Intent>, name: String?, context: Context? = null) {
-            val ctx = context ?: ApplicationHolder.application
-            val intent = ctx.createIntent<TestActivity1>("name" to name)
-            launcher.launch(intent)
+        fun start(startActivityForResultWrapper: ActivityResultWrapper.StartActivityForResult, name: String?, callback: (Intent?) -> Unit) {
+            startActivityForResultWrapper.startActivityForResult<TestActivity1>("name" to name, callback = callback)
         }
     }
 }

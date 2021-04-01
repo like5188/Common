@@ -2,19 +2,15 @@ package com.like.common.sample.storage
 
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
-import com.like.common.util.ActivityResult
-import com.like.common.util.Logger
+import com.like.common.util.ActivityResultWrapper
 import com.like.common.util.StoragePublicUtils
 import kotlinx.coroutines.launch
-import java.io.FileOutputStream
 
 
 class StorageActivity : AppCompatActivity() {
@@ -22,9 +18,9 @@ class StorageActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityStorageBinding>(this, R.layout.activity_storage)
     }
 
-    private val requestPermission = ActivityResult.RequestPermission(this)
-    private val startActivityForResult = ActivityResult.StartActivityForResult(this)
-    private val startIntentSenderForResult = ActivityResult.StartIntentSenderForResult(this)
+    private val requestPermission = ActivityResultWrapper.RequestPermission(this)
+    private val startActivityForResult = ActivityResultWrapper.StartActivityForResult(this)
+    private val startIntentSenderForResult = ActivityResultWrapper.StartIntentSenderForResult(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
