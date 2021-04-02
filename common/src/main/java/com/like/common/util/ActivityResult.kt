@@ -33,7 +33,7 @@ val ActivityResultCaller.lifecycleOwner: LifecycleOwner
         }
     }
 
-class StartActivityForResultWrapper(private val caller: ActivityResultCaller) {
+class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     val context = caller.context
     val lifecycleOwner = caller.lifecycleOwner
     private var continuation: Continuation<Intent?>? = null
@@ -71,7 +71,7 @@ class StartActivityForResultWrapper(private val caller: ActivityResultCaller) {
 
 }
 
-class RequestPermissionWrapper(private val caller: ActivityResultCaller) {
+class RequestPermissionWrapper(caller: ActivityResultCaller) {
     val context = caller.context
     val lifecycleOwner = caller.lifecycleOwner
     private var continuation: Continuation<Boolean>? = null
@@ -95,7 +95,7 @@ class RequestPermissionWrapper(private val caller: ActivityResultCaller) {
     }
 }
 
-class RequestMultiplePermissionsWrapper(private val caller: ActivityResultCaller) {
+class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
     val context = caller.context
     val lifecycleOwner = caller.lifecycleOwner
     private var continuation: Continuation<Boolean>? = null
@@ -120,7 +120,7 @@ class RequestMultiplePermissionsWrapper(private val caller: ActivityResultCaller
     }
 }
 
-class StartIntentSenderForResultWrapper(private val caller: ActivityResultCaller) {
+class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     val context = caller.context
     val lifecycleOwner = caller.lifecycleOwner
     private var continuation: Continuation<Boolean>? = null
