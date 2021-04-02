@@ -8,6 +8,7 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest3Binding
 import com.like.common.util.ApplicationHolder
 import com.like.common.util.createIntent
+import com.like.common.util.startActivity
 
 /**
  * 透明的 Activity
@@ -25,8 +26,7 @@ class TestActivity3 : AppCompatActivity() {
     companion object {
         fun start(context: Context? = null) {
             val ctx = context ?: ApplicationHolder.application
-            val intent = ctx.createIntent<TestActivity3>()
-            ctx.startActivity(intent)
+            ctx.startActivity<TestActivity3>()
         }
     }
 }

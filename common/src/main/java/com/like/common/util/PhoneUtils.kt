@@ -77,7 +77,7 @@ object PhoneUtils {
             requestPermissionWrapper.requestPermission(android.Manifest.permission.READ_PHONE_STATE)
         }
         return if (permission) {
-            requestPermissionWrapper.context.telephonyManager.line1Number
+            requestPermissionWrapper.activity.applicationContext.telephonyManager.line1Number
         } else {
             null
         }

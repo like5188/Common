@@ -87,7 +87,7 @@ object StoragePublicUtils {
                 return null
             }
 
-            val context = requestPermissionWrapper.context
+            val context = requestPermissionWrapper.activity.applicationContext
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
             return if (isThumbnail) {
                 // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
@@ -129,12 +129,12 @@ object StoragePublicUtils {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
             }
-            val context = requestPermissionWrapper.context
+            val context = requestPermissionWrapper.activity.applicationContext
             val files = mutableListOf<FileEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + FileEntity.projection
                 val contentUri = MediaStore.Files.getContentUri("external")
-                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += FileEntity().apply { fill(requestPermissionWrapper, cursor, contentUri) }
                     }
@@ -162,12 +162,12 @@ object StoragePublicUtils {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
             }
-            val context = requestPermissionWrapper.context
+            val context = requestPermissionWrapper.activity.applicationContext
             val files = mutableListOf<DownloadEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + DownloadEntity.projectionQ
                 val contentUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += DownloadEntity().apply { fill(requestPermissionWrapper, cursor, contentUri) }
                     }
@@ -194,12 +194,12 @@ object StoragePublicUtils {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
             }
-            val context = requestPermissionWrapper.context
+            val context = requestPermissionWrapper.activity.applicationContext
             val files = mutableListOf<ImageEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + ImageEntity.projection + ImageEntity.projectionQ
                 val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += ImageEntity().apply {
                             fill(requestPermissionWrapper, cursor, contentUri)
@@ -225,12 +225,12 @@ object StoragePublicUtils {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
             }
-            val context = requestPermissionWrapper.context
+            val context = requestPermissionWrapper.activity.applicationContext
             val files = mutableListOf<AudioEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + AudioEntity.projectionQ + AudioEntity.projectionR
                 val contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += AudioEntity().apply { fill(requestPermissionWrapper, cursor, contentUri) }
                     }
@@ -254,12 +254,12 @@ object StoragePublicUtils {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
             }
-            val context = requestPermissionWrapper.context
+            val context = requestPermissionWrapper.activity.applicationContext
             val files = mutableListOf<VideoEntity>()
             withContext(Dispatchers.IO) {
                 val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection + VideoEntity.projectionQ + VideoEntity.projectionR
                 val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                context.applicationContext.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+                context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
                         files += VideoEntity().apply { fill(requestPermissionWrapper, cursor, contentUri) }
                     }
@@ -354,7 +354,7 @@ object StoragePublicUtils {
                     }
                 }
             }
-            val resolver = requestPermissionWrapper.context.applicationContext.contentResolver
+            val resolver = requestPermissionWrapper.activity.applicationContext.contentResolver
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
@@ -424,13 +424,13 @@ object StoragePublicUtils {
                         }
                         put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                     }
-                    requestPermissionWrapper.context.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
+                    requestPermissionWrapper.activity.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
                 } catch (securityException: SecurityException) {
                     // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                     // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                            requestPermissionWrapper.context.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                            requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                         }
                     }
                     false
@@ -459,13 +459,13 @@ object StoragePublicUtils {
             }
             return withContext(Dispatchers.IO) {
                 try {
-                    startIntentSenderForResultWrapper.context.applicationContext.contentResolver.delete(uri, null, null) > 0
+                    startIntentSenderForResultWrapper.activity.applicationContext.contentResolver.delete(uri, null, null) > 0
                 } catch (securityException: SecurityException) {
                     // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                     // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                            startIntentSenderForResultWrapper.context.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                            startIntentSenderForResultWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                         }
                     }
                     false
@@ -480,7 +480,7 @@ object StoragePublicUtils {
          */
         @RequiresApi(Build.VERSION_CODES.R)
         private suspend fun createWriteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>): Boolean {
-            val pendingIntent = MediaStore.createWriteRequest(startIntentSenderForResultWrapper.context.applicationContext.contentResolver, uris)
+            val pendingIntent = MediaStore.createWriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -491,7 +491,7 @@ object StoragePublicUtils {
          */
         @RequiresApi(Build.VERSION_CODES.R)
         private suspend fun createDeleteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>): Boolean {
-            val pendingIntent = MediaStore.createDeleteRequest(startIntentSenderForResultWrapper.context.applicationContext.contentResolver, uris)
+            val pendingIntent = MediaStore.createDeleteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -504,7 +504,7 @@ object StoragePublicUtils {
          */
         @RequiresApi(Build.VERSION_CODES.R)
         private suspend fun createTrashRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>, isTrashed: Boolean): Boolean {
-            val pendingIntent = MediaStore.createTrashRequest(startIntentSenderForResultWrapper.context.applicationContext.contentResolver, uris, isTrashed)
+            val pendingIntent = MediaStore.createTrashRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris, isTrashed)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -515,7 +515,7 @@ object StoragePublicUtils {
          */
         @RequiresApi(Build.VERSION_CODES.R)
         private suspend fun createFavoriteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>, isFavorite: Boolean): Boolean {
-            val pendingIntent = MediaStore.createFavoriteRequest(startIntentSenderForResultWrapper.context.applicationContext.contentResolver, uris, isFavorite)
+            val pendingIntent = MediaStore.createFavoriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris, isFavorite)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -656,7 +656,7 @@ object StoragePublicUtils {
                             // 如果开启了分区存储，以下面的方式来获取位置信息。
                             withContext(Dispatchers.Main) {
                                 if (requestPermissionWrapper.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)) {
-                                    val array = UriUtils.getLatLongFromImageUri(requestPermissionWrapper.context, this@ImageEntity.uri)
+                                    val array = UriUtils.getLatLongFromImageUri(requestPermissionWrapper.activity.applicationContext, this@ImageEntity.uri)
                                     this@ImageEntity.latitude = array?.get(0)
                                     this@ImageEntity.longitude = array?.get(1)
                                 }
@@ -845,7 +845,7 @@ object StoragePublicUtils {
                 intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
             }
             val treeUri = startActivityForResultWrapper.startActivityForResult(intent)?.data ?: return null
-            return DocumentFile.fromTreeUri(startActivityForResultWrapper.context, treeUri)
+            return DocumentFile.fromTreeUri(startActivityForResultWrapper.activity.applicationContext, treeUri)
         }
 
         /**
