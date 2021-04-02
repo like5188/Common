@@ -1,5 +1,6 @@
 package com.like.common.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.DisplayMetrics
@@ -65,4 +66,20 @@ object PhoneUtils {
         return metric.densityDpi
     }
 
+    /**
+     * 获取电话号码
+     */
+    @SuppressLint("MissingPermission")
+    suspend fun getPhoneNumber(requestPermissionWrapper: RequestPermissionWrapper): String? {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requestPermissionWrapper.requestPermission(android.Manifest.permission.READ_PHONE_NUMBERS)
+        } else {
+            requestPermissionWrapper.requestPermission(android.Manifest.permission.READ_PHONE_STATE)
+        }
+        return if (permission) {
+            requestPermissionWrapper.context.telephonyManager.line1Number
+        } else {
+            null
+        }
+    }
 }

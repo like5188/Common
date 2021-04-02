@@ -90,9 +90,9 @@ class MainActivity : AppCompatActivity() {
                         Logger.w("搜索成功：$it")
                     }
         }
-//        lifecycleScope.launch {
-//            Logger.e(PhoneUtils.getPhoneNumber(this@MainActivity))
-//        }
+        lifecycleScope.launch {
+            Logger.e("本机电话号码：${PhoneUtils.getPhoneNumber(RequestPermissionWrapper(this@MainActivity))}")
+        }
     }
 
     private fun initCustomTitlebar() {
