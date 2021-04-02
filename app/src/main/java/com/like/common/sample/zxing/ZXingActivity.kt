@@ -8,26 +8,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
+import com.like.common.util.RequestPermissionWrapper
 import com.like.common.util.ZXingUtils
 
 class ZXingActivity : AppCompatActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityZxingBinding>(this, R.layout.activity_zxing)
     }
-    private val launcher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this@ZXingActivity, heightWidthRatio = 1f))
-//            mBinding.sv.setEnableZXing(true)
-//            mBinding.sv.setEnableZBar(true)
-        mBinding.sv.setEnableIdCard(true)
-        mBinding.sv.setCallback { result ->
-            mBinding.tvScanResult.text = result.toString()
-            mBinding.sv.restartPreviewAfterDelay(2000)
-        }
-    }
+    private val requestPermissionWrapper = RequestPermissionWrapper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        launcher.launch(android.Manifest.permission.CAMERA)
+        requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
+            if (!it) return@requestPermission
+            mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this@ZXingActivity, heightWidthRatio = 1f))
+//            mBinding.sv.setEnableZXing(true)
+//            mBinding.sv.setEnableZBar(true)
+            mBinding.sv.setEnableIdCard(true)
+            mBinding.sv.setCallback { result ->
+                mBinding.tvScanResult.text = result.toString()
+                mBinding.sv.restartPreviewAfterDelay(2000)
+            }
+        }
     }
 
     override fun onResume() {
