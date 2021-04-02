@@ -108,4 +108,4 @@ dependencies {
 }
 
 // 引用脚本插件，其实这不能算一个插件，它只是一个脚本。应用脚本插件，其实就是把这个脚本加载进来，和二进制插件不同的是它使用的是from关键字.后面紧跟的坫一个脚本文件，可以是本地的，也可以是网络存在的
-apply from: rootProject.file('./gradle-mvn-push.gradle')
+apply from: rootProject.file('./publish-jetpack.gradle')
