@@ -8,19 +8,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
-import com.like.common.util.ActivityResultWrapper
-import com.like.common.util.StoragePublicUtils
+import com.like.common.util.*
 import kotlinx.coroutines.launch
-
 
 class StorageActivity : AppCompatActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityStorageBinding>(this, R.layout.activity_storage)
     }
 
-    private val requestPermission = ActivityResultWrapper.RequestPermission(this)
-    private val startActivityForResult = ActivityResultWrapper.StartActivityForResult(this)
-    private val startIntentSenderForResult = ActivityResultWrapper.StartIntentSenderForResult(this)
+    private val requestPermissionWrapper = RequestPermissionWrapper(this)
+    private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
+    private val startIntentSenderForResultWrapper = StartIntentSenderForResultWrapper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +55,9 @@ class StorageActivity : AppCompatActivity() {
     fun takePhoto(view: View) {
         lifecycleScope.launch {
             StoragePublicUtils.MediaStoreHelper.takePhoto(
-                    this@StorageActivity,
-                    requestPermission,
-                    startActivityForResult,
-                    startIntentSenderForResult,
+                    requestPermissionWrapper,
+                    startActivityForResultWrapper,
+                    startIntentSenderForResultWrapper,
                     false
             )?.let {
                 mBinding.iv.setImageBitmap(it)

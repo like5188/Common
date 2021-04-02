@@ -115,9 +115,9 @@ class TestActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private val startActivityForResult = ActivityResultWrapper.StartActivityForResult(this)
+    private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
     fun click1(view: View) {
-        TestActivity1.start(startActivityForResult, "like123") {
+        TestActivity1.start(startActivityForResultWrapper, "like123") {
             Logger.e(it?.getStringExtra("name"))
         }
     }

@@ -71,10 +71,9 @@ object StoragePublicUtils {
          * @param isThumbnail     表示返回值是否为缩略图
          */
         suspend fun takePhoto(
-                context: Context,
-                requestPermissionWrapper: ActivityResultWrapper.RequestPermission,
-                startActivityForResultWrapper: ActivityResultWrapper.StartActivityForResult,
-                startIntentSenderForResultWrapper: ActivityResultWrapper.StartIntentSenderForResult,
+                requestPermissionWrapper: RequestPermissionWrapper,
+                startActivityForResultWrapper: StartActivityForResultWrapper,
+                startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
                 isThumbnail: Boolean = false
         ): Bitmap? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
@@ -82,16 +81,17 @@ object StoragePublicUtils {
                 return null
             }
 
+            val context = requestPermissionWrapper.context
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
             return if (isThumbnail) {
                 // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
                 startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
             } else {
-                val imageUri = createFile(context, requestPermissionWrapper, startIntentSenderForResultWrapper, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, System.currentTimeMillis().toString(), Environment.DIRECTORY_PICTURES)
+                val imageUri = createFile(requestPermissionWrapper, startIntentSenderForResultWrapper, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, System.currentTimeMillis().toString(), Environment.DIRECTORY_PICTURES)
                         ?: return null
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
-                startActivityForResultWrapper.startActivityForResult(intent) ?: return null
+                startActivityForResultWrapper.startActivityForResult(intent)
                 UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
             }
         }
@@ -321,9 +321,8 @@ object StoragePublicUtils {
          * @param onWrite      写入数据的操作
          */
         suspend fun createFile(
-                context: Context,
-                requestPermissionWrapper: ActivityResultWrapper.RequestPermission,
-                startIntentSenderForResultWrapper: ActivityResultWrapper.StartIntentSenderForResult,
+                requestPermissionWrapper: RequestPermissionWrapper,
+                startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
                 uri: Uri?,
                 displayName: String,
                 relativePath: String,
@@ -336,9 +335,10 @@ object StoragePublicUtils {
             if (relativePath.isEmpty()) {
                 return null
             }
+
             when {
                 Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                    if (!createWriteRequest(context, startIntentSenderForResultWrapper, listOf(uri))) {
+                    if (!createWriteRequest(startIntentSenderForResultWrapper, listOf(uri))) {
                         return null
                     }
                 }
@@ -348,7 +348,7 @@ object StoragePublicUtils {
                     }
                 }
             }
-            val resolver = context.applicationContext.contentResolver
+            val resolver = requestPermissionWrapper.context.applicationContext.contentResolver
             return withContext(Dispatchers.IO) {
                 try {
                     val values = ContentValues().apply {
@@ -473,7 +473,8 @@ object StoragePublicUtils {
          * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        private suspend fun createWriteRequest(context: Context, startIntentSenderForResultWrapper: ActivityResultWrapper.StartIntentSenderForResult, uris: List<Uri>): Boolean {
+        private suspend fun createWriteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>): Boolean {
+            val context = startIntentSenderForResultWrapper.context
             val pendingIntent = MediaStore.createWriteRequest(context.applicationContext.contentResolver, uris)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.

@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest1Binding
-import com.like.common.util.ActivityResultWrapper
 import com.like.common.util.AutoWired
+import com.like.common.util.StartActivityForResultWrapper
 import com.like.common.util.injectForIntentExtras
 
 /**
@@ -35,7 +35,7 @@ class TestActivity1 : AppCompatActivity() {
     }
 
     companion object {
-        fun start(startActivityForResultWrapper: ActivityResultWrapper.StartActivityForResult, name: String?, callback: (Intent?) -> Unit) {
+        fun start(startActivityForResultWrapper: StartActivityForResultWrapper, name: String?, callback: (Intent?) -> Unit) {
             startActivityForResultWrapper.startActivityForResult<TestActivity1>("name" to name, callback = callback)
         }
     }

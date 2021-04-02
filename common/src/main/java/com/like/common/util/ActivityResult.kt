@@ -15,6 +15,12 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+/**
+ * 对[ActivityResultCaller]进行包装，用于获取 ActivityResult。
+ * Author: like
+ * Date: 2021-04-02
+ */
+
 val ActivityResultCaller.context: Activity
     get() {
         return when (this) {
