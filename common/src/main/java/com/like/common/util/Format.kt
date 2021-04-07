@@ -1,5 +1,7 @@
 package com.like.common.util
 
+import java.text.DecimalFormat
+
 fun String?.toLongOrNull(): Long? {
     if (this.isNullOrEmpty()) {
         return null
@@ -88,37 +90,53 @@ fun String?.toFloatOrDefault(default: Float = 0f): Float {
     }
 }
 
-fun String?.toStringOrEmpty(suffix: String = ""): String {
-    if (this.isNullOrEmpty()) {
-        return ""
-    }
-    return "$this$suffix"
+fun String?.toStringOrEmpty(): String {
+    return this ?: ""
 }
 
-fun Int?.toStringOrEmpty(suffix: String = ""): String {
-    if (this == null) {
-        return ""
-    }
-    return "$this$suffix"
+fun Int?.toStringOrEmpty(): String {
+    return this?.toString() ?: ""
 }
 
-fun Double?.toStringOrEmpty(suffix: String = ""): String {
-    if (this == null) {
-        return ""
-    }
-    return "$this$suffix"
+fun Double?.toStringOrEmpty(): String {
+    return this?.toString() ?: ""
 }
 
-fun Float?.toStringOrEmpty(suffix: String = ""): String {
-    if (this == null) {
-        return ""
-    }
-    return "$this$suffix"
+fun Float?.toStringOrEmpty(): String {
+    return this?.toString() ?: ""
 }
 
-fun Long?.toStringOrEmpty(suffix: String = ""): String {
-    if (this == null) {
-        return ""
+fun Long?.toStringOrEmpty(): String {
+    return this?.toString() ?: ""
+}
+
+fun Float.maximumFractionDigits(maximumFractionDigits: Int): String {
+    return toDouble().maximumFractionDigits(maximumFractionDigits)
+}
+
+fun Float.fractionDigits(fractionDigits: Int): String {
+    return toDouble().fractionDigits(fractionDigits)
+}
+
+/**
+ * 取最大位数的小数，小数末尾的0会被去掉。
+ * @param maximumFractionDigits     最大小数位数
+ */
+fun Double.maximumFractionDigits(maximumFractionDigits: Int): String {
+    val sb = StringBuilder("#")
+    if (maximumFractionDigits > 0) {
+        sb.append(".")
+        (0 until maximumFractionDigits).forEach {
+            sb.append("#")
+        }
     }
-    return "$this$suffix"
+    return DecimalFormat(sb.toString()).format(this)
+}
+
+/**
+ * 取指定位数的小数，小数末尾的0会被保留。
+ * @param fractionDigits     小数位数
+ */
+fun Double.fractionDigits(fractionDigits: Int): String {
+    return String.format("%.${fractionDigits}f", this)
 }

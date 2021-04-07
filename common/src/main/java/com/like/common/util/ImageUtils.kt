@@ -1,6 +1,5 @@
 package com.like.common.util
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
@@ -23,7 +22,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-@SuppressLint("MissingPermission")
 @TargetApi(Build.VERSION_CODES.KITKAT)
 object ImageUtils {
     private val TAG = ImageUtils::class.java.simpleName
@@ -56,7 +54,6 @@ object ImageUtils {
     /**
      * Byte[]转换到Bitmap
      */
-    @JvmStatic
     fun bytes2Bitmap(bytes: ByteArray?): Bitmap? = if (bytes != null && bytes.isNotEmpty()) {
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     } else null
@@ -64,7 +61,6 @@ object ImageUtils {
     /**
      * Bitmap转换到Byte[]
      */
-    @JvmStatic
     fun bitmap2Bytes(bitmap: Bitmap?): ByteArray? {
         if (null == bitmap || bitmap.isRecycled) return null
 
@@ -78,31 +74,26 @@ object ImageUtils {
     /**
      * Base64后的image数据转换成byte[]
      */
-    @JvmStatic
     fun string2Bytes(imageBase64String: String): ByteArray = Base64.decode(imageBase64String, Base64.DEFAULT)
 
     /**
      * byte[]转换成Base64字符串
      */
-    @JvmStatic
     fun bytes2String(imageData: ByteArray?): String = Base64.encodeToString(imageData, Base64.DEFAULT)
 
     /**
      * Base64后的image数据转换成Bitmap
      */
-    @JvmStatic
     fun string2Bitmap(imageBase64String: String): Bitmap? = bytes2Bitmap(string2Bytes(imageBase64String))
 
     /**
      * byte[]转换成Base64字符串
      */
-    @JvmStatic
     fun bitmap2String(bitmap: Bitmap): String = bytes2String(bitmap2Bytes(bitmap))
 
     /**
      * 转换成带倒影的图片
      */
-    @JvmStatic
     fun getReflectionBitmapWithOrigin(bitmap: Bitmap): Bitmap {
         val reflectionGap = 4
         val w = bitmap.width
@@ -144,7 +135,6 @@ object ImageUtils {
      *
      * @param imageView
      */
-    @JvmStatic
     fun releaseImageViewResource(imageView: ImageView?) {
         imageView ?: return
         val drawable = imageView.drawable
@@ -170,7 +160,6 @@ object ImageUtils {
      * @param outFileMaxSize    压缩后的文件最大尺寸  单位:KB
      * @param outFile           压缩后的文件
      */
-    @JvmStatic
     fun compressByQualityAndStore(context: Context, bitmap: Bitmap?, outFileMaxSize: Int, outFile: File) {
         if (null == bitmap || bitmap.isRecycled || outFileMaxSize <= 0) return
         if (outFile.isDirectory) {
@@ -210,7 +199,6 @@ object ImageUtils {
      * @param reqHeight px
      * @return
      */
-    @JvmStatic
     fun scaleByOptions(context: Context, imagePath: String, reqWidth: Int, reqHeight: Int): Bitmap? {
         if (imagePath.isEmpty() || reqWidth <= 0 || reqHeight <= 0) return null
 
@@ -258,7 +246,6 @@ object ImageUtils {
      * @param bitmap
      * @param maxSize 所占内存的最大值。KB
      */
-    @JvmStatic
     fun scaleByMatrix(context: Context, bitmap: Bitmap?, maxSize: Int): Bitmap? {
         if (null == bitmap || bitmap.isRecycled || maxSize <= 0) return null
 
@@ -279,7 +266,6 @@ object ImageUtils {
      * @param reqHeight 目标的高度 px
      * @return
      */
-    @JvmStatic
     fun scaleByMatrix(context: Context, bitmap: Bitmap?, reqWidth: Int, reqHeight: Int): Bitmap? {
         if (null == bitmap || bitmap.isRecycled || reqWidth <= 0 || reqHeight <= 0) return null
 
@@ -293,7 +279,6 @@ object ImageUtils {
     /**
      * 旋转图片文件到正常角度
      */
-    @JvmStatic
     fun rotateBitmap(imagePath: String): Bitmap? {
         if (imagePath.isEmpty()) return null
         val bitmap = BitmapFactory.decodeFile(imagePath)
@@ -320,33 +305,22 @@ object ImageUtils {
         return bitmap
     }
 
-    @JvmStatic
-    fun getBitmapSizeMB(bitmap: Bitmap?): Double = DoubleFormatUtils.formatTwoDecimals(getBitmapSize(bitmap) / 1024 / 1024.0).toDouble()
+    fun getBitmapSizeMB(bitmap: Bitmap?): Double = getBitmapSize(bitmap) / 1024.0 / 1024.0
 
-    @JvmStatic
-    fun getBitmapSizeKB(bitmap: Bitmap?): Double = DoubleFormatUtils.formatTwoDecimals(getBitmapSize(bitmap) / 1024.0).toDouble()
+    fun getBitmapSizeKB(bitmap: Bitmap?): Double = getBitmapSize(bitmap) / 1024.0
 
     /**
      * 得到bitmap占用的内存大小
      */
-    @JvmStatic
     fun getBitmapSize(bitmap: Bitmap?): Int {
         if (null == bitmap || bitmap.isRecycled) return 0
         return bitmap.allocationByteCount
     }
 
     /**
-     * 把Bitmap存储到本地磁盘
-     */
-    @JvmStatic
-    fun store(bitmap: Bitmap, outFile: File) {
-        store(bitmap, outFile, 100)
-    }
-
-    /**
      * 把Bitmap按照指定quality压缩，并存储到本地磁盘
      */
-    private fun store(bitmap: Bitmap, outFile: File, quality: Int) {
+    fun store(bitmap: Bitmap, outFile: File, quality: Int = 100) {
         if (outFile.isDirectory) return
         try {
             if (!outFile.exists()) outFile.createNewFile()
@@ -364,7 +338,7 @@ object ImageUtils {
         } else {
             val file = File(context.externalCacheDir, "cache1.jpg")
             store(bitmap, file)
-            Log.v(TAG, "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            Log.v(TAG, "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileLengthKB(file)}KB ${getFileLengthMB(file)}MB")
             file.delete()
         }
     }
@@ -375,7 +349,7 @@ object ImageUtils {
         } else {
             val file = File(context.externalCacheDir, "cache2.jpg")
             store(bitmap, file)
-            Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileLengthKB(file)}KB ${getFileLengthMB(file)}MB")
             file.delete()
         }
     }
@@ -384,13 +358,13 @@ object ImageUtils {
         if (null == bitmap || bitmap.isRecycled) {
             Log.d(TAG, "缩略图：$bitmap")
         } else {
-            Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileSizeKB(file)}KB ${getFileSizeMB(file)}MB")
+            Log.w(TAG, "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap)}KB ${getBitmapSizeMB(bitmap)}MB，所占磁盘大小：${getFileLengthKB(file)}KB ${getFileLengthMB(file)}MB")
         }
     }
 
-    fun getFileSizeMB(file: File): Double = DoubleFormatUtils.formatTwoDecimals(file.length() / 1024 / 1024.0).toDouble()
+    fun getFileLengthMB(file: File): Double = file.length() / 1024.0 / 1024.0
 
-    fun getFileSizeKB(file: File): Double = DoubleFormatUtils.formatTwoDecimals(file.length() / 1024.0).toDouble()
+    fun getFileLengthKB(file: File): Double = file.length() / 1024.0
 
     /**
      * 根据视频网络地址获取第一帧图片
