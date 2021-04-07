@@ -1,7 +1,5 @@
 package com.like.common.util
 
-import java.util.*
-
 object RandomUtils {
     /**
      * 产生一个随机的字符串
@@ -12,18 +10,9 @@ object RandomUtils {
     fun getString(length: Int, base: String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"): String {
         val sb = StringBuilder()
         for (i in 0 until length) {
-            val index = getInt(base.length)
-            sb.append(base[index])
+            sb.append(base.random())
         }
         return sb.toString()
     }
-
-    /**
-     * 产生一个随机的整数。
-     *
-     * @param bound the upper bound (exclusive).  Must be positive.
-     * @throws IllegalArgumentException if bound is not positive
-     */
-    fun getInt(bound: Int): Int = Random().nextInt(bound)
 
 }

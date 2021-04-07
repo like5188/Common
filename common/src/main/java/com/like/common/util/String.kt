@@ -3,16 +3,6 @@ package com.like.common.util
 import java.util.regex.Pattern
 
 /**
- * 删除字符串最后一个字符
- */
-fun String?.deleteLast(): String? {
-    if (this.isNullOrEmpty()) {
-        return this
-    }
-    return this.substring(0, this.length - 1)
-}
-
-/**
  * 字符串是否包含中文汉字
  */
 fun String?.containsChinese(): Boolean {
