@@ -82,4 +82,7 @@ open class LogFragment : BaseLazyFragment() {
         super.onHiddenChanged(hidden)
     }
 
+    override fun onLazyLoadData() {
+        Log.i(TAG, "onLazyLoadData")
+    }
 }
