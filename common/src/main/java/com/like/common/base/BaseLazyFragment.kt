@@ -1,11 +1,9 @@
 package com.like.common.base
 
-import android.util.Log
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Lifecycle
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -18,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 注1:与 ViewPager 一起使用</br>
  * 1、传统方式（废弃）</br>
  * 使用 [androidx.viewpager.widget.ViewPager] + [androidx.fragment.app.FragmentPagerAdapter]</br>
- * 此时 Fragment 的显示隐藏是由 [FragmentPagerAdapter] 调用的 [setUserVisibleHint] 方法。</br>
+ * 此时 Fragment 的显示隐藏是由 [androidx.fragment.app.FragmentPagerAdapter] 调用的 [setUserVisibleHint] 方法。</br>
  *
  * 2、新的方式</br>
  * 使用 [androidx.viewpager2.widget.ViewPager2] + [androidx.viewpager2.adapter.FragmentStateAdapter]</br>
@@ -51,9 +49,7 @@ abstract class BaseLazyFragment : Fragment() {
     /**
      * 需要延迟加载数据的操作放到这里
      */
-    protected open fun onLazyLoadData() {
-        Log.d(javaClass.simpleName, "onLazyLoadData")
-    }
+    abstract fun onLazyLoadData()
 }
 
 /**
