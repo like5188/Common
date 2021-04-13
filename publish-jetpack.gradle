@@ -1,24 +1,24 @@
-//发布到maven仓库的gradle配置。使用方式，在模块的gradle文件中加入：apply from: rootProject.file('./publish-maven.gradle')
-apply plugin: 'maven-publish'
-
-def group_id = "com.github.like5188"
-
-// Because the components are created only during the afterEvaluate phase, you must
-// configure your publications using the afterEvaluate() lifecycle method.
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.release
-                // 可以省略，默认为工程名称。
-                groupId = group_id
-                // 可以省略，默认为模块名称。
-//                artifactId = ""
-                // 不能省略
-                version = android.defaultConfig.versionName
-            }
-        }
-    }
-}
+////发布到maven仓库的gradle配置。使用方式，在模块的gradle文件中加入：apply from: rootProject.file('./publish-maven.gradle')
+//apply plugin: 'maven-publish'
+//
+//def group_id = "com.github.like5188"
+//
+//// Because the components are created only during the afterEvaluate phase, you must
+//// configure your publications using the afterEvaluate() lifecycle method.
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            // Creates a Maven publication called "release".
+//            release(MavenPublication) {
+//                // Applies the component for the release build variant.
+//                from components.release
+//                // 可以省略，默认为工程名称。
+//                groupId = group_id
+//                // 可以省略，默认为模块名称。
+////                artifactId = ""
+//                // 不能省略
+//                version = android.defaultConfig.versionName
+//            }
+//        }
+//    }
+//}
