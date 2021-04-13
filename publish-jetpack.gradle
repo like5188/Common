@@ -1,24 +1,34 @@
-////发布到maven仓库的gradle配置。使用方式，在模块的gradle文件中加入：apply from: rootProject.file('./publish-maven.gradle')
-//apply plugin: 'maven-publish'
-//
-//def group_id = "com.github.like5188"
-//
-//// Because the components are created only during the afterEvaluate phase, you must
-//// configure your publications using the afterEvaluate() lifecycle method.
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            // Creates a Maven publication called "release".
-//            release(MavenPublication) {
-//                // Applies the component for the release build variant.
-//                from components.release
-//                // 可以省略，默认为工程名称。
-//                groupId = group_id
-//                // 可以省略，默认为模块名称。
-////                artifactId = ""
-//                // 不能省略
-//                version = android.defaultConfig.versionName
-//            }
-//        }
-//    }
-//}
+//----------------------上传jitPack-----------------------
+group = 'com.github.like5188'// 上传jitPack
+apply plugin: 'com.github.dcendents.android-maven'// 上传jitPack
+
+// 指定编码
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+if (project.getPlugins().hasPlugin('com.android.application') ||
+        project.getPlugins().hasPlugin('com.android.library')) {
+    // 打包源码
+    task androidSourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+    // 制作文档(Javadoc)
+    task androidJavadocs(type: Javadoc) {
+        failOnError false
+        source = android.sourceSets.main.java.sourceFiles
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += configurations.compile
+    }
+    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+        classifier = 'javadoc'
+        from androidJavadocs.destinationDir
+    }
+    artifacts {
+        archives androidSourcesJar
+        archives androidJavadocsJar
+    }
+}
+
+//----------------------上传jitPack完毕-----------------------
