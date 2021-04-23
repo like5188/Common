@@ -19,10 +19,10 @@ class ExitAnimationManager(
 
     override fun fillAnimatorSet(animatorSet: AnimatorSet) {
         animatorSet.duration = mDuration
-        animatorSet.play(ObjectAnimator.ofFloat(mDragView, "childrenTranslationX", mDragView.getChildrenTranslationX(), mDragInfo.getInitTranslationX(mDragView)))
-                .with(ObjectAnimator.ofFloat(mDragView, "childrenTranslationY", mDragView.getChildrenTranslationY(), mDragInfo.getInitTranslationY(mDragView)))
-                .with(ObjectAnimator.ofFloat(mDragView, "childrenScale", mDragView.getChildrenScale(), mDragInfo.getInitScaleX(mDragView)))
-                .with(ObjectAnimator.ofInt(mDragView, "backgroundAlpha", mDragView.getBackgroundAlpha(), 0))
+        animatorSet.play(ObjectAnimator.ofFloat(mDragView, "childrenTranslationX", mDragView.childrenTranslationX, mDragInfo.getInitTranslationX(mDragView)))
+                .with(ObjectAnimator.ofFloat(mDragView, "childrenTranslationY", mDragView.childrenTranslationY, mDragInfo.getInitTranslationY(mDragView)))
+                .with(ObjectAnimator.ofFloat(mDragView, "childrenScale", mDragView.childrenScale, mDragInfo.getInitScaleX(mDragView)))
+                .with(ObjectAnimator.ofInt(mDragView, "backgroundAlpha", mDragView.backgroundAlpha, 0))
         animatorSet.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 val activity = mDragView.context

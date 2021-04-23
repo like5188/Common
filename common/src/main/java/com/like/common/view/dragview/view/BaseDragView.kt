@@ -46,15 +46,21 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
 
     private var mMaxTranslationY = 0f// 允许y方向滑动的最大值，超过就会退出界面
     private var mMinScale = 0f// 允许的最小缩放系数
-
-    private var mBackgroundAlpha = 255// 背景透明度
-    private var mChildrenTranslationX = 0f// 所有孩子的 TranslationX
-    private var mChildrenTranslationY = 0f// 所有孩子的 TranslationY
-    private var mChildrenScale = 1f// 所有孩子的 scale
     private var mDownX = 0f// 按下时的x，用于计算 TranslationX
     private var mDownY = 0f// 按下时的y，用于计算 TranslationY
     private var mLastX = 0f// 上次的x，用于计算 dx
     private var mLastY = 0f// 上次的y，用于计算 dy
+
+    var childrenTranslationX = 0f// 所有孩子的 TranslationX
+    var childrenTranslationY = 0f// 所有孩子的 TranslationY
+    var childrenScale = 1f// 所有孩子的 scale
+    var backgroundAlpha = 255
+        // 背景透明度
+        set(value) {
+            field = value
+            // 因为动画播放是把这个属性放在最后，所以我们也在这里更新界面
+            update(childrenTranslationX, childrenTranslationY, childrenScale, value)
+        }
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -100,15 +106,15 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {
-                mChildrenTranslationX = event.x - mDownX
-                mChildrenTranslationY = event.y - mDownY
-                mChildrenScale = calcCanvasScaleByCanvasTranslationY(mChildrenTranslationY)
-                mBackgroundAlpha = calcCanvasBackgroundAlphaByCanvasTranslationY(mChildrenTranslationY)
-                update(mChildrenTranslationX, mChildrenTranslationY, mChildrenScale, mBackgroundAlpha)
+                childrenTranslationX = event.x - mDownX
+                childrenTranslationY = event.y - mDownY
+                childrenScale = calcCanvasScaleByCanvasTranslationY(childrenTranslationY)
+                backgroundAlpha = calcCanvasBackgroundAlphaByCanvasTranslationY(childrenTranslationY)
+                update(childrenTranslationX, childrenTranslationY, childrenScale, backgroundAlpha)
             }
             MotionEvent.ACTION_UP -> {
                 // 拖动
-                if (mChildrenTranslationY > mMaxTranslationY) {
+                if (childrenTranslationY > mMaxTranslationY) {
                     exitAnimation()
                 } else {
                     restoreAnimation()
@@ -117,32 +123,6 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
         }
         return true
     }
-
-    fun setChildrenTranslationX(translationX: Float) {
-        mChildrenTranslationX = translationX
-    }
-
-    fun getChildrenTranslationX() = mChildrenTranslationX
-
-    fun setChildrenTranslationY(translationY: Float) {
-        mChildrenTranslationY = translationY
-    }
-
-    fun getChildrenTranslationY() = mChildrenTranslationY
-
-    fun setChildrenScale(scale: Float) {
-        mChildrenScale = scale
-    }
-
-    fun getChildrenScale() = mChildrenScale
-
-    fun setBackgroundAlpha(backgroundAlpha: Int) {
-        mBackgroundAlpha = backgroundAlpha
-        // 因为动画播放是把这个属性放在最后，所以我们也在这里更新界面
-        update(mChildrenTranslationX, mChildrenTranslationY, mChildrenScale, mBackgroundAlpha)
-    }
-
-    fun getBackgroundAlpha() = mBackgroundAlpha
 
     /**
      * 当手指拖动时，更新界面
