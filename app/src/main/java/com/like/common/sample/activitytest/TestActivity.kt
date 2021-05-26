@@ -1,15 +1,21 @@
 package com.like.common.sample.activitytest
 
+import android.Manifest
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
-import com.like.common.util.*
+import com.like.common.util.Logger
+import com.like.common.util.RequestPermissionWrapper
+import com.like.common.util.StartActivityForResultWrapper
+import java.io.File
+import java.io.IOException
 
 /**
  * Activity 相关的测试
@@ -116,9 +122,28 @@ class TestActivity : AppCompatActivity() {
     }
 
     private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
+    private val requestPermissionWrapper = RequestPermissionWrapper(this)
     fun click1(view: View) {
-        TestActivity1.start(startActivityForResultWrapper, "like123") {
-            Logger.e(it?.getStringExtra("name"))
+//        TestActivity1.start(startActivityForResultWrapper, "like123") {
+//            Logger.e(it?.getStringExtra("name"))
+//        }
+        requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+            Logger.e(it)
+            try {
+                try {
+                    val dir = File(Environment.getExternalStorageState())
+                    dir.mkdirs()
+                    val file = File(dir, "1.txt")
+                    Logger.e(file.absolutePath)
+                    file.createNewFile()
+                    file.writeText("111")
+                    Logger.e(file.readText())
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
