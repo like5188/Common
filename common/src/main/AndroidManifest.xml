@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="29" />
 
     <!--application标签中的三个配置是为了解决videocache库在android9.0以上无法缓存的bug-->
     <!--参考https://blog.csdn.net/qq_25017839/article/details/89948220-->
