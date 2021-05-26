@@ -92,7 +92,7 @@ dependencies {
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
     // livedata 对协程的支持：liveData{}
-    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
     // Activity 或 Fragment 对协程的支持：lifecycleScope
     api 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
     // ViewModel 对协程的支持：viewModelScope

@@ -54,55 +54,70 @@ abstract class BaseLazyFragment : Fragment() {
 
 /**
  * 添加 Fragment
- * @param containerViewId   装载 Fragment 的容器id
+ * @param containerViewId   装载 Fragment 的容器 id
  * @param showPosition      默认显示的角标
- * @param fragments         需要添加到的fragment
+ * @param fragments         需要添加的 fragment
  */
 fun Fragment.addFragments(
-        @IdRes containerViewId: Int,
-        showPosition: Int = 0,
-        vararg fragments: Fragment
+    @IdRes containerViewId: Int,
+    showPosition: Int = 0,
+    vararg fragments: Fragment
 ) {
     addFragments(containerViewId, showPosition, childFragmentManager, *fragments)
 }
 
 /**
- * 显示目标fragment，并隐藏其他fragment
+ * 显示目标 [fragment]，并隐藏其他 fragment
  */
 fun Fragment.showFragment(fragment: Fragment) {
     showFragment(childFragmentManager, fragment)
 }
 
 /**
+ * 移除目标 [fragment]
+ */
+fun Fragment.removeFragment(fragment: Fragment) {
+    removeFragment(childFragmentManager, fragment)
+}
+
+/**
  * 添加 Fragment
  * @param containerViewId   装载 Fragment 的容器id
  * @param showPosition      默认显示的角标
- * @param fragments         需要添加到的fragment
+ * @param fragments         需要添加到的 fragment
  */
 fun FragmentActivity.addFragments(
-        @IdRes containerViewId: Int,
-        showPosition: Int = 0,
-        vararg fragments: Fragment
+    @IdRes containerViewId: Int,
+    showPosition: Int = 0,
+    vararg fragments: Fragment
 ) {
     addFragments(containerViewId, showPosition, supportFragmentManager, *fragments)
 }
 
 /**
- * 显示目标fragment，并隐藏其他fragment
+ * 显示目标 [fragment]，并隐藏其他 fragment
  */
 fun FragmentActivity.showFragment(fragment: Fragment) {
     showFragment(supportFragmentManager, fragment)
 }
 
 /**
+ * 移除目标 [fragment]
+ */
+fun FragmentActivity.removeFragment(fragment: Fragment) {
+    removeFragment(supportFragmentManager, fragment)
+}
+
+/**
  * 添加 [fragments] ，并默认显示位置 [showPosition] 位置的 [Fragment]，并设置其最大 Lifecycle 为 [Lifecycle.State.RESUMED]，
  * 其他隐藏的 [Fragment]，设置其最大 Lifecycle 为 [Lifecycle.State.STARTED]
+ * 注意：会根据 [fragment.javaClass.name] 作为 tag 来避免重复添加。
  */
 private fun addFragments(
-        @IdRes containerViewId: Int,
-        showPosition: Int,
-        fragmentManager: FragmentManager,
-        vararg fragments: Fragment
+    @IdRes containerViewId: Int,
+    showPosition: Int,
+    fragmentManager: FragmentManager,
+    vararg fragments: Fragment
 ) {
     if (fragments.isEmpty()) {
         return
@@ -110,12 +125,16 @@ private fun addFragments(
     fragmentManager.beginTransaction().apply {
         for (index in fragments.indices) {
             val fragment = fragments[index]
-            add(containerViewId, fragment, fragment.javaClass.name)
-            if (showPosition == index) {
-                setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
-            } else {
-                hide(fragment)
-                setMaxLifecycle(fragment, Lifecycle.State.STARTED)
+            val tag = fragment.javaClass.name
+            // 防止重复添加
+            if (fragmentManager.findFragmentByTag(tag) == null) {
+                add(containerViewId, fragment, tag)
+                if (showPosition == index) {
+                    setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
+                } else {
+                    hide(fragment)
+                    setMaxLifecycle(fragment, Lifecycle.State.STARTED)
+                }
             }
         }
     }.commit()
@@ -131,12 +150,20 @@ private fun showFragment(fragmentManager: FragmentManager, showFragment: Fragmen
         setMaxLifecycle(showFragment, Lifecycle.State.RESUMED)
 
         //获取其中所有的fragment,其他的fragment进行隐藏
-        val fragments = fragmentManager.fragments
-        for (fragment in fragments) {
+        for (fragment in fragmentManager.fragments) {
             if (fragment != showFragment) {
                 hide(fragment)
                 setMaxLifecycle(fragment, Lifecycle.State.STARTED)
             }
         }
+    }.commit()
+}
+
+/**
+ * 移除目标 [fragment]
+ */
+private fun removeFragment(fragmentManager: FragmentManager, fragment: Fragment) {
+    fragmentManager.beginTransaction().apply {
+        remove(fragment)
     }.commit()
 }
