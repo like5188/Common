@@ -3,6 +3,7 @@ package com.like.common.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.DisplayMetrics
 import android.view.WindowInsets
 
 object PhoneUtils {
@@ -28,9 +29,9 @@ object PhoneUtils {
     fun getSdkVersion() = Build.VERSION.SDK_INT
 
     /**
-     * app可用的屏幕宽度（像素）
+     * app显示区域的宽度（像素）（不包含状态栏等系统装饰元素）
      */
-    fun getDisplayScreenWidth(context: Context): Int =
+    fun getDisplayWidth(context: Context): Int =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val metrics = context.windowManager.currentWindowMetrics
             val insets = metrics.windowInsets.getInsetsIgnoringVisibility(
@@ -42,9 +43,9 @@ object PhoneUtils {
         }
 
     /**
-     * app可用的屏幕高度（像素）
+     * app显示区域的高度（像素）（不包含状态栏等系统装饰元素）
      */
-    fun getDisplayScreenHeight(context: Context): Int =
+    fun getDisplayHeight(context: Context): Int =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val metrics = context.windowManager.currentWindowMetrics
             val insets = metrics.windowInsets.getInsetsIgnoringVisibility(
@@ -53,6 +54,30 @@ object PhoneUtils {
             metrics.bounds.height() - (insets.top + insets.bottom)
         } else {
             context.resources.displayMetrics.heightPixels
+        }
+
+    /**
+     * 屏幕宽度（像素）（包含状态栏等系统装饰元素）
+     */
+    fun getScreenWidth(context: Context): Int =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.windowManager.currentWindowMetrics.bounds.width()
+        } else {
+            val displayMetrics = DisplayMetrics()
+            context.windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+            displayMetrics.widthPixels
+        }
+
+    /**
+     * 屏幕高度（像素）（包含状态栏等系统装饰元素）
+     */
+    fun getScreenHeight(context: Context): Int =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.windowManager.currentWindowMetrics.bounds.height()
+        } else {
+            val displayMetrics = DisplayMetrics()
+            context.windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+            displayMetrics.heightPixels
         }
 
     /**
@@ -67,6 +92,11 @@ object PhoneUtils {
      * 屏幕密度DPI
      */
     fun getDensityDpi(context: Context): Int = context.resources.displayMetrics.densityDpi
+
+    /**
+     * 缩放密度DPI
+     */
+    fun getScaledDensity(context: Context): Float = context.resources.displayMetrics.scaledDensity
 
     /**
      * 获取电话号码

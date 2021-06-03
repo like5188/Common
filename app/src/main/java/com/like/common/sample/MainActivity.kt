@@ -92,10 +92,13 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             Logger.w(
                 "phoneNumber=${PhoneUtils.getPhoneNumber(RequestPermissionWrapper(this@MainActivity))} " +
-                        "displayScreenWidth=${PhoneUtils.getDisplayScreenWidth(this@MainActivity)} " +
-                        "displayScreenHeight=${PhoneUtils.getDisplayScreenHeight(this@MainActivity)} " +
+                        "screenWidth=${PhoneUtils.getScreenWidth(this@MainActivity)} " +
+                        "screenHeight=${PhoneUtils.getScreenHeight(this@MainActivity)} " +
+                        "displayScreenWidth=${PhoneUtils.getDisplayWidth(this@MainActivity)} " +
+                        "displayScreenHeight=${PhoneUtils.getDisplayHeight(this@MainActivity)} " +
                         "density=${PhoneUtils.getDensity(this@MainActivity)} " +
-                        "densityDpi=${PhoneUtils.getDensityDpi(this@MainActivity)}"
+                        "densityDpi=${PhoneUtils.getDensityDpi(this@MainActivity)} " +
+                        "scaledDensity=${PhoneUtils.getScaledDensity(this@MainActivity)}"
             )
         }
     }
