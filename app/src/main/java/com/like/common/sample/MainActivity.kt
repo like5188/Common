@@ -34,11 +34,10 @@ import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import com.like.common.util.Logger
-import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -79,19 +78,25 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             mBinding.etSearch.search()
-                    .filter {
-                        !it.isNullOrEmpty() && it.length > 3
-                    }
-                    .map {
-                        delay(1000)
-                        "search $it"
-                    }
-                    .collect {
-                        Logger.w("搜索成功：$it")
-                    }
+                .filter {
+                    !it.isNullOrEmpty() && it.length > 3
+                }
+                .map {
+                    delay(1000)
+                    "search $it"
+                }
+                .collect {
+                    Logger.w("搜索成功：$it")
+                }
         }
         lifecycleScope.launch {
-            Logger.e("本机电话号码：${PhoneUtils.getPhoneNumber(RequestPermissionWrapper(this@MainActivity))}")
+            Logger.w(
+                "phoneNumber=${PhoneUtils.getPhoneNumber(RequestPermissionWrapper(this@MainActivity))} " +
+                        "displayScreenWidth=${PhoneUtils.getDisplayScreenWidth(this@MainActivity)} " +
+                        "displayScreenHeight=${PhoneUtils.getDisplayScreenHeight(this@MainActivity)} " +
+                        "density=${PhoneUtils.getDensity(this@MainActivity)} " +
+                        "densityDpi=${PhoneUtils.getDensityDpi(this@MainActivity)}"
+            )
         }
     }
 
@@ -193,25 +198,25 @@ class MainActivity : AppCompatActivity() {
         mBinding.toolbar.inflateMenu(R.menu.custom_toolbar_right_menu_main)
         mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
         (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_0)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener { ToastUtils.show("菜单0") }
-                    setTitle("菜单0", Color.BLACK, 12f)
-                    setMessageCount("0", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
+            ?.getCustomViewManager()
+            ?.apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener { ToastUtils.show("菜单0") }
+                setTitle("菜单0", Color.BLACK, 12f)
+                setMessageCount("0", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+            }
         (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_1)) as? CustomActionProvider)
-                ?.getCustomViewManager()
-                ?.apply {
-                    setIcon(R.drawable.icon_back)
-                    setOnClickListener { ToastUtils.show("菜单1") }
-                    setTitle("菜单1", Color.BLACK, 12f)
-                    setMessageCount("1", Color.WHITE, 10, Color.RED)
-                    setMargin(0, 10, 0, 10)
-                    setContentPadding(30, 0, 30, 0)
-                }
+            ?.getCustomViewManager()
+            ?.apply {
+                setIcon(R.drawable.icon_back)
+                setOnClickListener { ToastUtils.show("菜单1") }
+                setTitle("菜单1", Color.BLACK, 12f)
+                setMessageCount("1", Color.WHITE, 10, Color.RED)
+                setMargin(0, 10, 0, 10)
+                setContentPadding(30, 0, 30, 0)
+            }
     }
 
     private fun initMarqueeView() {
@@ -242,11 +247,11 @@ class MainActivity : AppCompatActivity() {
 
     fun gotoAutoWiredActivity(view: View) {
         val intent = createIntent<AutoWiredActivity>(
-                "param1" to 1,
-                "param2" to null,
-                "param" to "3",
-                "param4" to 4,
-                "param5" to listOf(AutoWiredActivity.P("5"), AutoWiredActivity.P("6"))
+            "param1" to 1,
+            "param2" to null,
+            "param" to "3",
+            "param4" to 4,
+            "param5" to listOf(AutoWiredActivity.P("5"), AutoWiredActivity.P("6"))
         )
         startActivity(intent)
     }
