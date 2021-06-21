@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-//        initDefaultTitlebar()
-        initCustomTitlebar()
+        initDefaultTitlebar()
+//        initCustomTitlebar()
 //        initOriginToolBar()
         initCustomToolbar()
         SPUtils.getInstance().init(this)
@@ -125,8 +125,8 @@ class MainActivity : AppCompatActivity() {
                 ToastUtils.show("返回")
             }
 
-            showTitle("哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈")
-            setTitleWidth(100.dp)
+            showTitle("哈哈哈哈哈")
+//            setTitleWidth(100.dp)
 
             showDivider(1.dp, Color.GREEN)
 

@@ -12,7 +12,7 @@
             android:id="@+id/titlebar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:center_gravity="left" />
+            app:center_gravity="center_horizontal" />
 
         <ScrollView
             android:layout_width="match_parent"

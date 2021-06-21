@@ -105,43 +105,6 @@ class Titlebar(context: Context, attrs: AttributeSet) : LinearLayout(context, at
                 }
             }
         }
-
-        measureLeft(widthMeasureSpec, heightMeasureSpec)
-        measureCenter(widthMeasureSpec, heightMeasureSpec)
-        measureRight(widthMeasureSpec, heightMeasureSpec)
-    }
-
-    private fun measureLeft(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (!mNeedUpdateLeft) return
-        // 重新计算width
-        val newWidth = mLeftRight - mLeftLeft
-        // 高度不变
-        val newHeight = mBinding.leftContainer.measuredHeight
-        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
-        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
-        mBinding.leftContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-    }
-
-    private fun measureCenter(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (!mNeedUpdateCenter) return
-        // 重新计算width
-        val newWidth = mCenterRight - mCenterLeft
-        // 高度不变
-        val newHeight = mBinding.centerContainer.measuredHeight
-        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
-        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
-        mBinding.centerContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
-    }
-
-    private fun measureRight(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (!mNeedUpdateRight) return
-        // 重新计算width
-        val newWidth = mRightRight - mRightLeft
-        // 高度不变
-        val newHeight = mBinding.rightContainer.measuredHeight
-        val childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, newWidth)
-        val childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, newHeight)
-        mBinding.rightContainer.measure(childWidthMeasureSpec, childHeightMeasureSpec)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
