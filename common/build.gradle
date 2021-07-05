@@ -21,7 +21,7 @@ android {
             consumerProguardFiles file('.').listFiles(new FilenameFilter() {
                 @Override
                 boolean accept(File file, String s) {
-                    return file.extension == "pro"
+                    return s.endsWith('.pro')
                 }
             })
         }
@@ -97,6 +97,8 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
     // ViewModel 对协程的支持：viewModelScope
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
+    // 通过标签直接生成shape，无需再写shape.xml
+    api 'com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.2'
 
     // Preferences DataStore
     implementation('androidx.datastore:datastore-preferences:1.0.0-alpha05') {
