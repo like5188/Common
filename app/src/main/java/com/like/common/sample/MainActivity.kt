@@ -33,7 +33,6 @@ import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
 import com.like.common.view.TimerTextView
 import com.like.common.view.titlebar.CustomViewManager
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -234,10 +233,10 @@ class MainActivity : AppCompatActivity() {
             viewMarqueeBinding.tv2.setOnClickListener {
                 ToastUtils.show(data.second)
             }
-            view_flipper.addView(viewMarqueeBinding.root)
+            mBinding.viewFlipper.addView(viewMarqueeBinding.root)
         }
-        view_flipper.flipInterval = 3000
-        view_flipper.startFlipping()
+        mBinding.viewFlipper.flipInterval = 3000
+        mBinding.viewFlipper.startFlipping()
     }
 
     fun gotoFragmentContainer(view: View) {
