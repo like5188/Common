@@ -88,15 +88,6 @@ dependencies {
     api 'org.java-websocket:Java-WebSocket:1.4.1'
     // toast
     api 'com.hjq:toast:8.8'
-    // coroutines
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
-    // livedata 对协程的支持：liveData{}
-    api 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
-    // Activity 或 Fragment 对协程的支持：lifecycleScope
-    api 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
-    // ViewModel 对协程的支持：viewModelScope
-    api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
 
     // Preferences DataStore
     implementation('androidx.datastore:datastore-preferences:1.0.0-alpha05') {
