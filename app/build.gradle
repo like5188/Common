@@ -63,12 +63,6 @@ android {
         // storeType签名证书类型，
         // keyAlias签名证书中秘钥别名，
         // keyPassword签名证书中改密钥的密码。
-        debug {
-            storeFile file("../like.jks")
-            storePassword "like5488"
-            keyAlias "like"
-            keyPassword "like5488"
-        }
         release {
             storeFile file("../like.jks")
             storePassword "like5488"
@@ -96,14 +90,6 @@ android {
      * multiDexKeepProguard：指定混淆文件编译进主Dex文件中
      */
     buildTypes {
-        debug {
-            minifyEnabled false
-            zipAlignEnabled false
-            shrinkResources false
-            debuggable true
-            signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
         release {
             minifyEnabled true
             zipAlignEnabled true
