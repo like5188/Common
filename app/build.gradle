@@ -1,3 +1,8 @@
+import com.like.dependencies.AndroidX
+import com.like.dependencies.Google
+import com.like.dependencies.Kotlin
+import com.like.dependencies.ThirdPart
+
 apply plugin: 'com.android.application'// 提供了Android 编译、测试、打包等等的所有task。
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -138,6 +143,19 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation(Google.material)
+    implementation(Google.flexbox)
+    implementation(AndroidX.viewpager2)
+    implementation(AndroidX.activity_ktx)
+    implementation(AndroidX.Lifecycle.runtime_ktx)
+    implementation(Kotlin.Coroutines.core)
+    implementation(Kotlin.Coroutines.android)
+    implementation(ThirdPart.toast)
+    implementation(ThirdPart.koin_androidx_viewmodel)
+    implementation(ThirdPart.Coil.coil)
+    implementation(ThirdPart.PhotoView)
+    implementation(ThirdPart.Scanner.Scanner)
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
     implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'// 身份证识别

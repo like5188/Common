@@ -57,15 +57,9 @@ dependencies {
     implementation(ThirdPart.Android_PickerView)
     implementation(ThirdPart.videocache)
     implementation(ThirdPart.PhotoView)
-    implementation(ThirdPart.toast)
     implementation(ThirdPart.Coil.coil)
     implementation(ThirdPart.Coil.gif)
     implementation(ThirdPart.Coil.svg)
     implementation(ThirdPart.Coil.video)
     implementation(ThirdPart.Scanner.Scanner)
-    implementation(Kotlin.Coroutines.core)
-    implementation(Kotlin.Coroutines.android)
-//    // coroutines
-//    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
-//    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 }
