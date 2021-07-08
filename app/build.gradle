@@ -1,13 +1,10 @@
-import com.like.dependencies.AndroidX
-import com.like.dependencies.BuildVersion
-import com.like.dependencies.Google
-import com.like.dependencies.Kotlin
-import com.like.dependencies.Testing
-import com.like.dependencies.ThirdPart
-
-apply plugin: 'com.android.application'// 提供了Android 编译、测试、打包等等的所有task。
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id("com.android.application")// 提供了Android 编译、测试、打包等等的所有task。
+    id("kotlin-android")
+    id("kotlin-kapt")
+    // 应用此插件后,可以执行gradle checkDependencyUpdates 或 gradle cDU 检查依赖最新版本
+    id("name.remal.check-dependency-updates") version "1.4.0"
+}
 
 // 是Android插件提供的一个扩展类型，可以让我们自定义Android Gradle工程，是Android Gradle工程配置的唯一入口。
 android {
@@ -20,7 +17,7 @@ android {
     // 2、它会有最新的一些编译警告、编译错误提示，这样可以避免弃用的API，并且为使用新的API做好准备；
     // 3、当我们的项目有其他第三方sdk或者supperLib时，compileSdkVersion低于这些库的编译版本时就无法编译打包。
     // 注意:如果使用 Support Library ，那么使用最新发布的 Support Library 就需要使用最新的 SDK 编译。
-    compileSdkVersion BuildVersion.compileSdkVersion
+    compileSdkVersion 30
 
     // defaultConfig就是程序的默认配置，注意，如果在AndroidMainfest.xml里面定义了与这里相同的属性，会以这里的为主。
     // 默认的配置，它是一个ProductFlavor。ProductFlavor允许我们根据不同的情况同时生成多个不同的apk包。
@@ -33,18 +30,18 @@ android {
         // 如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用
         // 请记住：你所使用的库，如 Support Library 或 Google Play services，可能有他们自己的 minSdkVersion 。你的应用设置的
         // minSdkVersion 必需大于等于这些库的 minSdkVersion 。
-        minSdkVersion BuildVersion.minSdkVersion
+        minSdkVersion 19
         // 代表着目标版本，在编译的时候会将该版本的api编译进apk中。
         // 建议设置为最新的版本最好，因为不需要让系统对app进行前向兼容了，提高了性能，同时也可以使用高版本的一些新特性。
         // 决定了Android系统的运行版本，是 Android 提供向前兼容的主要依据
         // 比如说我设置了targetSdkVersion=22，那么运行在23的手机上，不会有任何问题，只是不能享受23的新功能。即由系统自动向下兼容了，因为23的手机上包含低于它的api。
         // 比如说我设置了targetSdkVersion=22，那么运行在21的手机上，会有问题，因为开发使用的22的api，在21上根本没有，所以需要在代码中判断版本进行兼容，如：if(targetSdkVersion<22){}。
-        targetSdkVersion BuildVersion.targetSdkVersion
+        targetSdkVersion 30
         // 表明我们的app应用内部版本号，一般用于控制app升级，当然我在使用的bugly自动升级能不能接受到升级推送就是基于这个。
         versionCode 1
         // 表明我们的app应用的版本名称，一般是发布的时候写在app上告诉用户的
         versionName "1.0"
-        testInstrumentationRunner Testing.AndroidX.testInstrumentationRunner
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // 用于配置该BuildType是否启用自动拆分多个Dex的功能。一般用程序中代码太多，超过了65535个方法的时候。
         // 配置了 multiDexEnabled true 后，会自动添加引用：androidx.multidex:multidex:2.0.0 和 androidx.multidex:multidex-instrumentation:2.0.0
@@ -123,26 +120,26 @@ android {
 // 定义了当前项目需要依赖的其他库。
 dependencies {
     // gradlew app:dependencies --configuration releaseCompileClasspath 查看依赖树
-    implementation("com.github.like5188:Dependencies:0.2.1")
     // 这样配置之后本地libs文件夹下的扩展名为jar的都会被依赖，非常方便。
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation(Testing.Java.junit)
-    androidTestImplementation(Testing.AndroidX.junit)
-    androidTestImplementation(Testing.AndroidX.espresso_core)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
-    implementation(Google.material)
-    implementation(Google.flexbox)
-    implementation(AndroidX.viewpager2)
-    implementation(AndroidX.activity_ktx)
-    implementation(AndroidX.Lifecycle.runtime_ktx)
-    implementation(Kotlin.Coroutines.core)
-    implementation(Kotlin.Coroutines.android)
-    implementation(ThirdPart.toast)
-    implementation(ThirdPart.koin_androidx_viewmodel)
-    implementation(ThirdPart.Coil.coil)
-    implementation(ThirdPart.photoView)
-    implementation(ThirdPart.Scanner.scanner)
-    implementation(ThirdPart.Scanner.idCardLib)
-    debugImplementation(ThirdPart.leakcanary_android)
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android:flexbox:2.0.1")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("androidx.activity:activity-ktx:1.2.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+    implementation("com.github.getActivity:ToastUtils:9.5")
+    implementation("org.koin:koin-androidx-viewmodel:2.2.2")
+    implementation("io.coil-kt:coil:1.2.2")
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation("com.shouzhong:Scanner:1.1.3")
+    implementation("com.shouzhong:ScannerIdCardLib:1.0.4")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
+
     implementation project(':common')
 }

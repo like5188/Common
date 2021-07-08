@@ -1,24 +1,19 @@
-import com.like.dependencies.AndroidX
-import com.like.dependencies.BuildVersion
-import com.like.dependencies.Google
-import com.like.dependencies.Testing
-import com.like.dependencies.ThirdPart
-
-// 引用二进制插件，二进制插件一般都是被打包在一个jar里独立发布的
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id("com.android.library")// 引用二进制插件，二进制插件一般都是被打包在一个jar里独立发布的
+    id("kotlin-android")
+    id("kotlin-kapt")
+}
 
 android {
-    compileSdkVersion BuildVersion.compileSdkVersion
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion BuildVersion.minSdkVersion
-        targetSdkVersion BuildVersion.targetSdkVersion
+        minSdkVersion 19
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner Testing.AndroidX.testInstrumentationRunner
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -48,19 +43,19 @@ android {
 }
 
 dependencies {
-    implementation("com.github.like5188:Dependencies:0.2.1")
-    implementation(Google.material)
-    implementation(Google.flexbox)
-    implementation(Google.zxing)
-    implementation(AndroidX.palette_ktx)
-    implementation(ThirdPart.koin_androidx_viewmodel)
-    implementation(ThirdPart.pictureselector)
-    implementation(ThirdPart.android_PickerView)
-    implementation(ThirdPart.videocache)
-    implementation(ThirdPart.photoView)
-    implementation(ThirdPart.Coil.coil)
-    implementation(ThirdPart.Coil.gif)
-    implementation(ThirdPart.Coil.svg)
-    implementation(ThirdPart.Coil.video)
-    implementation(ThirdPart.Scanner.scanner)
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android:flexbox:2.0.1")
+    implementation("com.google.zxing:core:3.3.3")// zxing 3.4.0：要求最低api等级为24
+    implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("org.koin:koin-androidx-viewmodel:2.2.2")
+// koin 依赖注入库。如果升级到 2.2.2 版本，那么此库引入的 androidx.activity:activity 库会和 activity-ktx 冲突
+    implementation("io.github.lucksiege:pictureselector:v2.7.3-rc03")
+    implementation("com.contrarywind:Android-PickerView:4.1.9")// 选择器
+    implementation("com.danikula:videocache:2.7.1")// VideoView 视频边播放边缓存
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation("io.coil-kt:coil:1.2.2")
+    implementation("io.coil-kt:coil-gif:1.2.2")
+    implementation("io.coil-kt:coil-svg:1.2.2")
+    implementation("io.coil-kt:coil-video:1.2.2")
+    implementation("com.shouzhong:Scanner:1.1.3")
 }
