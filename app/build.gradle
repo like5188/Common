@@ -2,8 +2,6 @@ plugins {
     id("com.android.application")// 提供了Android 编译、测试、打包等等的所有task。
     id("kotlin-android")
     id("kotlin-kapt")
-    // 应用此插件后,可以执行gradle checkDependencyUpdates 或 gradle cDU 检查依赖最新版本
-    id("name.remal.check-dependency-updates") version "1.4.0"
 }
 
 // 是Android插件提供的一个扩展类型，可以让我们自定义Android Gradle工程，是Android Gradle工程配置的唯一入口。
