@@ -1,5 +1,7 @@
 import com.like.dependencies.AndroidX
+import com.like.dependencies.BuildVersion
 import com.like.dependencies.Google
+import com.like.dependencies.Testing
 import com.like.dependencies.ThirdPart
 
 // 引用二进制插件，二进制插件一般都是被打包在一个jar里独立发布的
@@ -8,15 +10,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion BuildVersion.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 30
+        minSdkVersion BuildVersion.minSdkVersion
+        targetSdkVersion BuildVersion.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner Testing.AndroidX.testInstrumentationRunner
     }
 
     buildTypes {
@@ -46,19 +48,19 @@ android {
 }
 
 dependencies {
-    implementation("com.github.like5188:Dependencies:0.2.0")
+    implementation("com.github.like5188:Dependencies:0.2.1")
     implementation(Google.material)
     implementation(Google.flexbox)
     implementation(Google.zxing)
     implementation(AndroidX.palette_ktx)
     implementation(ThirdPart.koin_androidx_viewmodel)
     implementation(ThirdPart.pictureselector)
-    implementation(ThirdPart.Android_PickerView)
+    implementation(ThirdPart.android_PickerView)
     implementation(ThirdPart.videocache)
-    implementation(ThirdPart.PhotoView)
+    implementation(ThirdPart.photoView)
     implementation(ThirdPart.Coil.coil)
     implementation(ThirdPart.Coil.gif)
     implementation(ThirdPart.Coil.svg)
     implementation(ThirdPart.Coil.video)
-    implementation(ThirdPart.Scanner.Scanner)
+    implementation(ThirdPart.Scanner.scanner)
 }
