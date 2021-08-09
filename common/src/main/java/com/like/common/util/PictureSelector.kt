@@ -109,48 +109,52 @@ suspend fun Fragment.selectPhoto(): Pair<String, String>? = PictureSelector.crea
 private suspend fun PictureSelector.selectPhoto(): Pair<String, String>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectPhoto.openGallery(PictureMimeType.ofImage())
-                .imageEngine(CoilEngine.instance)
-                .selectionMode(PictureConfig.SINGLE)
-                .isCompress(true)//是否压缩
-                .compressQuality(100)
-                .minimumCompressSize(1024)// 小于多少kb的图片不压缩
-                .forResult(object : OnResultCallbackListener<LocalMedia> {
-                    override fun onResult(result: MutableList<LocalMedia>?) {
-                        printLocalMediaList(result)//打印结果
-                        if (result.isNullOrEmpty()) {
-                            continuation.resume(null)
-                            return
-                        }
-                        //压缩文件路径
-                        val compressPath = result[0].compressPath
-                        if (compressPath.isNullOrEmpty()) {
-                            continuation.resume(null)
-                            return
-                        }
-                        val originPath = result[0].path
-                        val androidQToPath = result[0].androidQToPath
-                        //上传文件路径
-                        val uploadPath = when {
-                            !androidQToPath.isNullOrEmpty() -> androidQToPath
-                            !originPath.isNullOrEmpty() -> originPath
-                            else -> compressPath
-                        }
-                        continuation.resume(Pair(compressPath, uploadPath))
-                    }
-
-                    override fun onCancel() {
+            .imageEngine(CoilEngine.instance)
+            .selectionMode(PictureConfig.SINGLE)
+            .isCompress(true)//是否压缩
+            .compressQuality(100)
+            .minimumCompressSize(1024)// 小于多少kb的图片不压缩
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: MutableList<LocalMedia>?) {
+                    result.print()//打印结果
+                    if (result.isNullOrEmpty()) {
                         continuation.resume(null)
+                        return
                     }
+                    val media: LocalMedia = result[0]
+                    //压缩文件路径
+                    val compressPath = media.compressPath
+                    if (compressPath.isNullOrEmpty()) {
+                        continuation.resume(null)
+                        return
+                    }
+                    //上传文件路径
+                    val uploadPath = media.getUploadPath()
+                    continuation.resume(Pair(compressPath, uploadPath))
+                }
 
-                })
+                override fun onCancel() {
+                    continuation.resume(null)
+                }
+
+            })
     }
 }
 
 /**
- * 打印日志
+ * 获取上传文件路径
  */
-private fun printLocalMediaList(list: MutableList<LocalMedia>?) {
-    if (list.isNullOrEmpty()) return
+fun LocalMedia.getUploadPath() = when {
+    !androidQToPath.isNullOrEmpty() -> androidQToPath
+    !path.isNullOrEmpty() -> path
+    else -> compressPath
+}
+
+/**
+ * 打印 LocalMedia 列表
+ */
+fun List<LocalMedia>?.print() {
+    if (this.isNullOrEmpty()) return
     // 例如 LocalMedia 里面返回五种path
     // 1.media.getPath(); 为原图path
     // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
@@ -158,7 +162,7 @@ private fun printLocalMediaList(list: MutableList<LocalMedia>?) {
     // 4.media.getOriginalPath()); media.isOriginal());为true时此字段才有值
     // 5.media.getAndroidQToPath();为Android Q版本特有返回的字段，此字段有值就用来做上传使用
     // 如果同时开启裁剪和压缩，则取压缩路径为准因为是先裁剪后压缩
-    for (media in list) {
+    for (media in this) {
         Logger.i("是否压缩:" + media.isCompressed)
         Logger.i("压缩:" + media.compressPath)
         Logger.i("原图:" + media.path)
