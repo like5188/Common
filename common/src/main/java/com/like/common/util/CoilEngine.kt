@@ -2,15 +2,14 @@ package com.like.common.util
 
 import android.content.Context
 import android.graphics.PointF
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.os.Build
 import android.view.View
 import android.widget.ImageView
-import androidx.core.graphics.drawable.toBitmap
 import coil.load
-import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
 import com.like.common.R
+import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.engine.ImageEngine
 import com.luck.picture.lib.listener.OnImageCompleteCallback
 import com.luck.picture.lib.tools.MediaUtils
@@ -27,29 +26,6 @@ import java.io.File
  * @describe：Glide加载引擎
  */
 class CoilEngine private constructor() : ImageEngine {
-    private fun getFileIfExists(context: Context, url: String): File? {
-        val filePath = try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                UriUtils.getFilePathByUri(context, Uri.parse(url))
-            } else {
-                url
-            }
-        } catch (e: Exception) {
-            null
-        }
-        if (filePath.isNullOrEmpty()) {
-            return null
-        }
-        try {
-            val file = File(filePath)
-            if (file.exists()) {
-                return file
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
 
     /**
      * 加载图片
@@ -59,8 +35,7 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView
      */
     override fun loadImage(context: Context, url: String, imageView: ImageView) {
-        val file = getFileIfExists(context, url) ?: return
-        imageView.load(file)
+        imageView.load(getUriByUrl(url))
     }
 
     /**
@@ -71,41 +46,45 @@ class CoilEngine private constructor() : ImageEngine {
      * @param url
      * @param imageView
      * @param longImageView
-     * @param callback      网络图片加载回调监听
+     * @param callback      网络图片加载回调监听 {link after version 2.5.1 Please use the #OnImageCompleteCallback#}
      */
-    override fun loadImage(context: Context, url: String, imageView: ImageView, longImageView: SubsamplingScaleImageView, callback: OnImageCompleteCallback) {
-        val file = getFileIfExists(context, url) ?: return
-        val request = ImageRequest.Builder(context.applicationContext)
-                .data(file)
-                .target(
-                        onStart = {
-                            callback.onShowLoading()
-                        },
-                        onError = {
-                            callback.onHideLoading()
-                        },
-                        onSuccess = {
-                            callback.onHideLoading()
-                            val resource = it.toBitmap()
-                            val eqLongImage = MediaUtils.isLongImg(resource.width, resource.height)
-                            longImageView.visibility = if (eqLongImage) View.VISIBLE else View.GONE
-                            imageView.visibility = if (eqLongImage) View.GONE else View.VISIBLE
-                            if (eqLongImage) {
-                                // 加载长图
-                                longImageView.isQuickScaleEnabled = true
-                                longImageView.isZoomEnabled = true
-                                longImageView.isPanEnabled = true
-                                longImageView.setDoubleTapZoomDuration(100)
-                                longImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
-                                longImageView.setDoubleTapZoomDpi(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
-                                longImageView.setImage(ImageSource.bitmap(resource), ImageViewState(0f, PointF(0f, 0f), 0))
-                            } else {
-                                // 普通图片
-                                imageView.setImageBitmap(resource)
-                            }
-                        })
-                .build()
-        CoilImageLoaderFactory.createImageLoader(context).enqueue(request)
+    override fun loadImage(
+        context: Context,
+        url: String,
+        imageView: ImageView,
+        longImageView: SubsamplingScaleImageView,
+        callback: OnImageCompleteCallback
+    ) {
+        imageView.load(getUriByUrl(url)) {
+            target(
+                onStart = {
+                    callback.onShowLoading()
+                },
+                onError = {
+                    callback.onHideLoading()
+                },
+                onSuccess = {
+                    callback.onHideLoading()
+                    val eqLongImage = MediaUtils.isLongImg(it.intrinsicWidth, it.intrinsicHeight)
+                    longImageView.visibility = if (eqLongImage) View.VISIBLE else View.GONE
+                    imageView.visibility = if (eqLongImage) View.GONE else View.VISIBLE
+                    if (eqLongImage) {
+                        // 加载长图
+                        with(longImageView) {
+                            isQuickScaleEnabled = true
+                            isZoomEnabled = true
+                            isPanEnabled = true
+                            setDoubleTapZoomDuration(100)
+                            setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP)
+                            setDoubleTapZoomDpi(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER)
+                            setImage(ImageSource.bitmap((it as BitmapDrawable).bitmap), ImageViewState(0f, PointF(0f, 0f), 0))
+                        }
+                    } else {
+                        // 普通图片
+                        imageView.load(it)
+                    }
+                })
+        }
     }
 
     /**
@@ -118,9 +97,11 @@ class CoilEngine private constructor() : ImageEngine {
      * @param longImageView
      * @ 已废弃
      */
-    override fun loadImage(context: Context, url: String,
-                           imageView: ImageView,
-                           longImageView: SubsamplingScaleImageView) {
+    override fun loadImage(
+        context: Context, url: String,
+        imageView: ImageView,
+        longImageView: SubsamplingScaleImageView
+    ) {
     }
 
     /**
@@ -131,11 +112,10 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView 承载图片ImageView
      */
     override fun loadFolderImage(context: Context, url: String, imageView: ImageView) {
-        val file = getFileIfExists(context, url) ?: return
-        imageView.load(file) {
+        imageView.load(getUriByUrl(url)) {
+            size(180, 180)
             crossfade(true)
             placeholder(R.drawable.picture_image_placeholder)
-            size(180, 180)
             transformations(RoundedCornersTransformation(8f))
         }
     }
@@ -148,8 +128,7 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView 承载图片ImageView
      */
     override fun loadAsGifImage(context: Context, url: String, imageView: ImageView) {
-        val file = getFileIfExists(context, url) ?: return
-        imageView.load(file, CoilImageLoaderFactory.createGifImageLoader(context))
+        imageView.load(getUriByUrl(url), CoilImageLoaderFactory.createGifImageLoader(context))
     }
 
     /**
@@ -160,25 +139,26 @@ class CoilEngine private constructor() : ImageEngine {
      * @param imageView 承载图片ImageView
      */
     override fun loadGridImage(context: Context, url: String, imageView: ImageView) {
-        val file = getFileIfExists(context, url) ?: return
-        imageView.load(file) {
+        imageView.load(getUriByUrl(url)) {
             crossfade(true)
             placeholder(R.drawable.picture_image_placeholder)
             size(200, 200)
         }
     }
 
-    companion object {
-        private var instance: CoilEngine? = null
-        fun create(): CoilEngine? {
-            if (null == instance) {
-                synchronized(CoilEngine::class.java) {
-                    if (null == instance) {
-                        instance = CoilEngine()
-                    }
-                }
+    private fun getUriByUrl(url: String): Uri? {
+        return try {
+            if (PictureMimeType.isContent(url) || url.startsWith("http") || url.startsWith("https")) {
+                Uri.parse(url)
+            } else {
+                Uri.fromFile(File(url))
             }
-            return instance
+        } catch (e: Exception) {
+            null
         }
+    }
+
+    companion object {
+        val instance: CoilEngine by lazy(LazyThreadSafetyMode.SYNCHRONIZED) { CoilEngine() }
     }
 }

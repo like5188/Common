@@ -109,7 +109,7 @@ suspend fun Fragment.selectPhoto(): Pair<String, String>? = PictureSelector.crea
 private suspend fun PictureSelector.selectPhoto(): Pair<String, String>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectPhoto.openGallery(PictureMimeType.ofImage())
-                .imageEngine(CoilEngine.create())
+                .imageEngine(CoilEngine.instance)
                 .selectionMode(PictureConfig.SINGLE)
                 .isCompress(true)//是否压缩
                 .compressQuality(100)
