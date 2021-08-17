@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.hjq.toast.ToastUtils
 import com.like.common.sample.activitytest.TestActivity
+import com.like.common.sample.anim.AnimActivity
 import com.like.common.sample.autowired.AutoWiredActivity
 import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
@@ -237,6 +238,10 @@ class MainActivity : AppCompatActivity() {
         }
         mBinding.viewFlipper.flipInterval = 3000
         mBinding.viewFlipper.startFlipping()
+    }
+
+    fun gotoAnimActivity(view: View) {
+        startActivity(Intent(this, AnimActivity::class.java))
     }
 
     fun gotoFragmentContainer(view: View) {
