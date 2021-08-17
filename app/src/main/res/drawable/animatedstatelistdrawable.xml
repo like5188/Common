@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/off"
+        android:drawable="@drawable/icon_play_flag"
+        android:state_pressed="false" />
+    <item
+        android:id="@+id/on"
+        android:drawable="@drawable/icon_back"
+        android:state_pressed="true" />
+    <transition
+        android:fromId="@id/off"
+        android:toId="@id/on">
+        <animation-list>
+            <item
+                android:drawable="@drawable/image_0"
+                android:duration="300" />
+            <item
+                android:drawable="@drawable/image_1"
+                android:duration="300" />
+            <item
+                android:drawable="@drawable/image_2"
+                android:duration="300" />
+            <item
+                android:drawable="@drawable/image_top"
+                android:duration="300" />
+        </animation-list>
+    </transition>
+</animated-selector>

@@ -12,6 +12,7 @@
             android:onClick="add"
             android:stateListAnimator="@xml/state_list_animator_scale"
             android:text="添加视图"
+            android:background="@drawable/animatedstatelistdrawable"
             android:textAllCaps="false" />
 
         <LinearLayout
