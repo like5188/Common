@@ -10,6 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="add"
+            android:stateListAnimator="@xml/state_list_animator_scale"
             android:text="添加视图"
             android:textAllCaps="false" />
 
