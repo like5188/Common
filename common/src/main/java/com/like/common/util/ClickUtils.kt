@@ -9,25 +9,25 @@ import android.view.View
 
 object ClickUtils {
     /**
-     * 设置点击监听，连击一定次数后触发clickListener
+     * 设置多次点击监听，连击一定次数后触发clickListener
      *
      * @param clickTimes    点击次数
      * @param view
      * @param clickListener
      */
-    fun addOnClickListener(clickTimes: Int, view: View, clickListener: View.OnClickListener) {
-        addOnClickListener(500, clickTimes, view, clickListener)
+    fun setOnMultiClicksListener(clickTimes: Int, view: View, clickListener: View.OnClickListener) {
+        setOnMultiClicksListener(500, clickTimes, view, clickListener)
     }
 
     /**
-     * 设置点击监听，连击一定次数后触发clickListener
+     * 设置多次点击监听，连击一定次数后触发clickListener
      *
      * @param interval      两次点击的时间间隔
      * @param clickTimes    点击次数
      * @param view
      * @param clickListener
      */
-    fun addOnClickListener(interval: Long, clickTimes: Int, view: View, clickListener: View.OnClickListener) {
+    fun setOnMultiClicksListener(interval: Long, clickTimes: Int, view: View, clickListener: View.OnClickListener) {
         view.setOnClickListener(object : View.OnClickListener {
             var firstTime: Long = 0
             var count: Int = 0
