@@ -31,12 +31,14 @@ object DragViewManager {
             val location = IntArray(2)
             it.originImageView.getLocationOnScreen(location)
             list.add(
-                    DragInfo(location[0].toFloat(),
-                            location[1].toFloat(),
-                            it.originImageView.width.toFloat(),
-                            it.originImageView.height.toFloat(),
-                            thumbnailUrl = it.thumbnailUrl,
-                            imageUrl = it.url)
+                DragInfo(
+                    location[0].toFloat(),
+                    location[1].toFloat(),
+                    it.originImageView.width.toFloat(),
+                    it.originImageView.height.toFloat(),
+                    thumbUrl = it.thumbnailUrl,
+                    url = it.url
+                )
             )
         }
 
@@ -58,13 +60,16 @@ object DragViewManager {
         val location = IntArray(2)
         data.originImageView.getLocationOnScreen(location)
         val intent = Intent(activity, DragVideoViewActivity::class.java)
-        intent.putExtra(DragVideoViewActivity.KEY_DATA_FOR_PREVIEW_VIDEO,
-                DragInfo(originLeft = location[0].toFloat(),
-                        originTop = location[1].toFloat(),
-                        originWidth = data.originImageView.width.toFloat(),
-                        originHeight = data.originImageView.height.toFloat(),
-                        thumbnailUrl = data.thumbnailUrl,
-                        videoUrl = data.url)
+        intent.putExtra(
+            DragVideoViewActivity.KEY_DATA_FOR_PREVIEW_VIDEO,
+            DragInfo(
+                originLeft = location[0].toFloat(),
+                originTop = location[1].toFloat(),
+                originWidth = data.originImageView.width.toFloat(),
+                originHeight = data.originImageView.height.toFloat(),
+                thumbUrl = data.thumbnailUrl,
+                url = data.url
+            )
         )
         activity.startActivity(intent)
         activity.overridePendingTransition(0, 0)

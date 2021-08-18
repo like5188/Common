@@ -23,7 +23,7 @@ class CustomPhotoView(context: Context, info: DragInfo, enterAnimation: Boolean 
 
     init {
         onPreDrawListener {
-            show(info.imageUrl, info.thumbnailUrl)
+            show(info.url, info.thumbUrl)
             if (enterAnimation) {
                 enterAnimation()
             }

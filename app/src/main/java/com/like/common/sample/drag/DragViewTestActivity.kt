@@ -35,13 +35,11 @@ class DragViewTestActivity : AppCompatActivity() {
     private val imageUrl0: String by lazy { "https://mall02.sogoucdn.com/image/2019/06/11/20190611141139_6405.jpg" }
     private val imageUrl1: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611143329_6412.jpg" }
     private val imageUrl2: String by lazy { "https://mall01.sogoucdn.com/image/2019/06/11/20190611141659_6407.jpg" }
-    // https://flv2.bn.netease.com/videolib1/1811/26/OqJAZ893T/HD/OqJAZ893T-mobile.mp4 此视频格式在 Android 4.4 的机器上无法播放
-    private val videoUrl: String by lazy { "https://flv2.bn.netease.com/videolib1/1811/26/OqJAZ893T/HD/OqJAZ893T-mobile.mp4" }
-//    private val videoUrl: String by lazy { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" }
+    private val videoUrl: String by lazy { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" }
     private val videoImageUrl: String by lazy { "https://mall03.sogoucdn.com/image/2019/06/11/20190611142939_6410.jpg" }
 
     private val mBinding: ActivityDragphotoviewBinding by lazy {
-        DataBindingUtil.setContentView<ActivityDragphotoviewBinding>(this, R.layout.activity_dragphotoview)
+        DataBindingUtil.setContentView(this, R.layout.activity_dragphotoview)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

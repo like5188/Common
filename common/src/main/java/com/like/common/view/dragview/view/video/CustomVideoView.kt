@@ -42,7 +42,7 @@ class CustomVideoView(context: Context, info: DragInfo) : BaseDragView(context, 
 
     init {
         onPreDrawListener {
-            play(info.videoUrl, info.thumbnailUrl)
+            play(info.url, info.thumbUrl)
             enterAnimation()
         }
     }
