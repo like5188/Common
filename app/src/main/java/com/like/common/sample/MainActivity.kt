@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding
         initOriginToolBar()
-        initCustomToolbar()
+        initCustomMenuToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
         mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initCustomToolbar() {
+    private fun initCustomMenuToolbar() {
         mBinding.toolbar2.setBackgroundColor(Color.WHITE)
         with(mBinding.tvTitle) {
             text = "Custom Toolbar"
