@@ -1,9 +1,7 @@
 package com.like.common.view;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.widget.VideoView;
 
 /**
@@ -29,13 +27,4 @@ public class MyVideoView extends VideoView {
         setMeasuredDimension(width, height);
     }
 
-    @Override
-    public void setOnPreparedListener(MediaPlayer.OnPreparedListener l) {
-        super.setOnPreparedListener(l);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return super.onKeyDown(keyCode, event);
-    }
 }
