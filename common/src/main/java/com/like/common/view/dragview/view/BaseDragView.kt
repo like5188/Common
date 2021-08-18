@@ -167,7 +167,7 @@ abstract class BaseDragView(context: Context, private val mSelectedDragInfo: Dra
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mMaxTranslationY = measuredHeight / 4f
-        mMinScale = mSelectedDragInfo.originWidth / measuredWidth
+        mMinScale = mSelectedDragInfo.originRect.width() / measuredWidth.toFloat()
     }
 
     protected fun enterAnimation() {

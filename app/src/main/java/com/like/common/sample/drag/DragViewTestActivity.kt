@@ -86,9 +86,9 @@ class DragViewTestActivity : AppCompatActivity() {
                 DragViewManager.previewImage(
                         this,
                         listOf(
-                                DragViewManager.DragInfoTemp(mBinding.iv0, thumbnailUrl = imageUrl0, url = originImageUrl0),
-                                DragViewManager.DragInfoTemp(mBinding.iv1, thumbnailUrl = imageUrl1, url = originImageUrl1),
-                                DragViewManager.DragInfoTemp(mBinding.iv2, thumbnailUrl = imageUrl2, url = originImageUrl2)
+                                DragViewManager.DragInfoTemp(mBinding.iv0, thumbUrl = imageUrl0, url = originImageUrl0),
+                                DragViewManager.DragInfoTemp(mBinding.iv1, thumbUrl = imageUrl1, url = originImageUrl1),
+                                DragViewManager.DragInfoTemp(mBinding.iv2, thumbUrl = imageUrl2, url = originImageUrl2)
                         ),
                         when (view.id) {
                             R.id.iv_0 -> 0
@@ -101,7 +101,7 @@ class DragViewTestActivity : AppCompatActivity() {
             R.id.rl_video -> {
                 DragViewManager.previewVideo(
                         this,
-                        DragViewManager.DragInfoTemp(mBinding.iv3, thumbnailUrl = videoImageUrl, url = videoUrl)
+                        DragViewManager.DragInfoTemp(mBinding.iv3, thumbUrl = videoImageUrl, url = videoUrl)
                 )
             }
         }

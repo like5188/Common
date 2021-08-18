@@ -2,6 +2,7 @@ package com.like.common.view.dragview
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Rect
 import android.widget.ImageView
 import com.like.common.view.dragview.activity.DragPhotoViewActivity
 import com.like.common.view.dragview.activity.DragVideoViewActivity
@@ -10,10 +11,6 @@ import java.util.*
 
 /**
  * 预览图片、视频，并可以拖动。仿微信朋友圈效果
- *
- * view.getLocationInWindow(location);// 获取在当前窗口内的绝对坐标
- * view.getLocationOnScreen(location);// 获取在整个屏幕内的绝对坐标(包括了通知栏)
- * location [0]--->x坐标,location [1]--->y坐标
  */
 object DragViewManager {
 
@@ -28,18 +25,9 @@ object DragViewManager {
         val list = ArrayList<DragInfo>()
 
         data.forEach {
-            val location = IntArray(2)
-            it.originImageView.getLocationOnScreen(location)
-            list.add(
-                DragInfo(
-                    location[0].toFloat(),
-                    location[1].toFloat(),
-                    it.originImageView.width.toFloat(),
-                    it.originImageView.height.toFloat(),
-                    thumbUrl = it.thumbnailUrl,
-                    url = it.url
-                )
-            )
+            val rect = Rect()
+            it.originImageView.getGlobalVisibleRect(rect)
+            list.add(DragInfo(rect, it.thumbUrl, it.url))
         }
 
         val intent = Intent(activity, DragPhotoViewActivity::class.java)
@@ -57,28 +45,21 @@ object DragViewManager {
      * @param data
      */
     fun previewVideo(activity: Activity, data: DragInfoTemp) {
-        val location = IntArray(2)
-        data.originImageView.getLocationOnScreen(location)
+        val rect = Rect()
+        data.originImageView.getGlobalVisibleRect(rect)
         val intent = Intent(activity, DragVideoViewActivity::class.java)
         intent.putExtra(
             DragVideoViewActivity.KEY_DATA_FOR_PREVIEW_VIDEO,
-            DragInfo(
-                originLeft = location[0].toFloat(),
-                originTop = location[1].toFloat(),
-                originWidth = data.originImageView.width.toFloat(),
-                originHeight = data.originImageView.height.toFloat(),
-                thumbUrl = data.thumbnailUrl,
-                url = data.url
-            )
+            DragInfo(rect, data.thumbUrl, data.url)
         )
         activity.startActivity(intent)
         activity.overridePendingTransition(0, 0)
     }
 
     /**
-     * @param originImageView   原始的显示缩略图的ImageView
-     * @param thumbnailUrl      缩略图的url
-     * @param url               原图或者视频的url
+     * @param originImageView   原始的显示缩略图的 ImageView
+     * @param thumbUrl          缩略图的 url
+     * @param url               原图或者视频的 url
      */
-    data class DragInfoTemp(val originImageView: ImageView, val thumbnailUrl: String, val url: String)
+    data class DragInfoTemp(val originImageView: ImageView, val thumbUrl: String, val url: String)
 }

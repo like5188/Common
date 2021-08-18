@@ -1,54 +1,43 @@
 package com.like.common.view.dragview.entity
 
+import android.graphics.Rect
 import android.os.Parcel
 import android.os.Parcelable
 import android.view.View
 
 /**
- * @param originLeft        原始imageview的left
- * @param originTop         原始imageview的top
- * @param originWidth       原始imageview的width
- * @param originHeight      原始imageview的height
- * @param thumbUrl          缩略图的url
- * @param url               原图、视频url
+ * @param originRect        原始 imageview 的 RectF
+ * @param thumbUrl          缩略图的 url
+ * @param url               原图或者视频的 url
  */
-class DragInfo(
-    val originLeft: Float,
-    val originTop: Float,
-    val originWidth: Float,
-    val originHeight: Float,
+data class DragInfo(
+    val originRect: Rect,
     val thumbUrl: String = "",
     val url: String = ""
 ) : Parcelable {
 
-    fun getInitScaleX(view: View) = originWidth / view.width.toFloat()
+    fun getInitScaleX(view: View) = originRect.width() / view.width.toFloat()
 
-    fun getInitScaleY(view: View) = originHeight / view.height.toFloat()
+    fun getInitScaleY(view: View) = originRect.height() / view.height.toFloat()
 
     fun getInitTranslationX(view: View): Float {
-        val originCenterX: Float = originLeft + originWidth / 2
+        val originCenterX: Float = originRect.left + originRect.width() / 2f
         return originCenterX - view.width / 2
     }
 
     fun getInitTranslationY(view: View): Float {
-        val originCenterY: Float = originTop + originHeight / 2
+        val originCenterY: Float = originRect.top + originRect.height() / 2f
         return originCenterY - view.height / 2
     }
 
     constructor(parcel: Parcel) : this(
-        parcel.readFloat(),
-        parcel.readFloat(),
-        parcel.readFloat(),
-        parcel.readFloat(),
+        parcel.readParcelable<Rect>(Rect::class.java.classLoader)!!,
         parcel.readString() ?: "",
         parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeFloat(originLeft)
-        parcel.writeFloat(originTop)
-        parcel.writeFloat(originWidth)
-        parcel.writeFloat(originHeight)
+        parcel.writeParcelable(originRect, flags)
         parcel.writeString(thumbUrl)
         parcel.writeString(url)
     }
