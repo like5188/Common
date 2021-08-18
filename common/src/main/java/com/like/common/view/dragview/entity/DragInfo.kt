@@ -3,7 +3,6 @@ package com.like.common.view.dragview.entity
 import android.graphics.Rect
 import android.os.Parcel
 import android.os.Parcelable
-import android.view.View
 
 /**
  * @param originRect        原始 imageview 的 RectF
@@ -15,20 +14,6 @@ data class DragInfo(
     val thumbUrl: String = "",
     val url: String = ""
 ) : Parcelable {
-
-    fun getInitScaleX(view: View) = originRect.width() / view.width.toFloat()
-
-    fun getInitScaleY(view: View) = originRect.height() / view.height.toFloat()
-
-    fun getInitTranslationX(view: View): Float {
-        val originCenterX: Float = originRect.left + originRect.width() / 2f
-        return originCenterX - view.width / 2
-    }
-
-    fun getInitTranslationY(view: View): Float {
-        val originCenterY: Float = originRect.top + originRect.height() / 2f
-        return originCenterY - view.height / 2
-    }
 
     constructor(parcel: Parcel) : this(
         parcel.readParcelable<Rect>(Rect::class.java.classLoader)!!,
@@ -55,6 +40,5 @@ data class DragInfo(
             return arrayOfNulls(size)
         }
     }
-
 
 }
