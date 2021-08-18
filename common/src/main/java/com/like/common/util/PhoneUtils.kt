@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowInsets
+import androidx.appcompat.app.AppCompatActivity
 
 object PhoneUtils {
 
@@ -113,6 +114,23 @@ object PhoneUtils {
         } else {
             null
         }
+    }
+
+    suspend fun print(activity: AppCompatActivity) {
+        Logger.d(
+            "androidSystemVersion=${getAndroidSystemVersion()} " +
+                    "phoneBrand=${getPhoneBrand()} " +
+                    "PhoneModel=${getPhoneModel()} " +
+                    "SdkVersion=${getSdkVersion()} " +
+                    "screenWidth=${getScreenWidth(activity)} " +
+                    "screenHeight=${getScreenHeight(activity)} " +
+                    "displayScreenWidth=${getDisplayWidth(activity)} " +
+                    "displayScreenHeight=${getDisplayHeight(activity)} " +
+                    "density=${getDensity(activity)} " +
+                    "densityDpi=${getDensityDpi(activity)} " +
+                    "scaledDensity=${getScaledDensity(activity)} " +
+                    "phoneNumber=${getPhoneNumber(RequestPermissionWrapper(activity))}"
+        )
     }
 
 }
