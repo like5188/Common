@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     private fun initCustomTitlebar() {
         mBinding.titlebar.Custom().apply {
             val customViewManager = CustomViewManager(this@MainActivity)
-            customViewManager.setTitle("哈哈哈哈啊哈")
+            customViewManager.setTitle("Custom Titlebar")
             setLeftView(customViewManager.getView())
 
             val centerBinding = setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                 ToastUtils.show("返回")
             }
 
-            showTitle("哈哈哈哈哈")
+            showTitle("Default Titlebar")
 //            setTitleWidth(100.dp)
 
             showDivider(1.dp, Color.GREEN)
@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initOriginToolBar() {
-        mBinding.toolbar.title = "哈哈哈哈哈哈哈哈哈哈的的"
+        mBinding.toolbar.title = "Origin ToolBar"
         mBinding.toolbar.setTitleTextColor(Color.WHITE)
         mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
         mBinding.toolbar.setNavigationOnClickListener {
@@ -184,10 +184,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCustomToolbar() {
         mBinding.toolbar.setBackgroundColor(Color.WHITE)
-        mBinding.tvTitle.text = "title1title1title1title1"
+        mBinding.tvTitle.text = "Custom Toolbar"
         mBinding.tvTitle.textSize = 18f
         mBinding.tvTitle.setTextColor(Color.BLACK)
-        (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.START
+        (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.CENTER
 
         val customNavigationView = CustomViewManager(this)
         mBinding.toolbar.addView(customNavigationView.getView(), 0)

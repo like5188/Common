@@ -99,12 +99,14 @@
                     android:id="@+id/et_search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="gotoAnimActivity"
                     android:text="动画测试"
                     android:textAllCaps="false" />
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
