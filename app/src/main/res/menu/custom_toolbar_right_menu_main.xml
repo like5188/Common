@@ -12,14 +12,14 @@
         android:id="@+id/action_0"
         android:icon="@drawable/dialog_close"
         android:title="菜单0"
-        app:actionProviderClass="com.like.common.sample.CustomActionProvider"
+        app:actionProviderClass="com.like.common.view.toolbar.CustomToolbarMenuActionProvider"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_1"
         android:icon="@drawable/download_pause"
         android:title="菜单1"
-        app:actionProviderClass="com.like.common.sample.CustomActionProvider"
+        app:actionProviderClass="com.like.common.view.toolbar.CustomToolbarMenuActionProvider"
         app:showAsAction="always" />
 
 </menu>

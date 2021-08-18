@@ -20,7 +20,6 @@ import com.like.common.sample.checkradio.CheckAndRadioActivity
 import com.like.common.sample.coroutines.CoroutinesActivity
 import com.like.common.sample.databinding.ActivityMainBinding
 import com.like.common.sample.databinding.ViewMarqueeBinding
-import com.like.common.sample.databinding.ViewTitlebarButtonBinding
 import com.like.common.sample.dialog.DialogActivity
 import com.like.common.sample.drag.DragViewTestActivity
 import com.like.common.sample.flexbox.FlexBoxActivity
@@ -33,7 +32,8 @@ import com.like.common.sample.storage.StorageActivity
 import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
 import com.like.common.view.TimerTextView
-import com.like.common.view.titlebar.CustomViewManager
+import com.like.common.view.toolbar.CustomToolbarMenu
+import com.like.common.view.toolbar.CustomToolbarMenuActionProvider
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -47,9 +47,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
-        initDefaultTitlebar()
-//        initCustomTitlebar()
-//        initOriginToolBar()
+        initOriginToolBar()
         initCustomToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
@@ -103,64 +101,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initCustomTitlebar() {
-        mBinding.titlebar.Custom().apply {
-            val customViewManager = CustomViewManager(this@MainActivity)
-            customViewManager.setTitle("Custom Titlebar")
-            setLeftView(customViewManager.getView())
-
-            val centerBinding = setCenterView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
-            centerBinding.tv1.text = "111111111111111"
-            centerBinding.tv2.text = "2"
-
-            val rightBinding = setRightView(R.layout.view_titlebar_button) as ViewTitlebarButtonBinding
-            rightBinding.tv1.text = "11111111111111111111"
-            rightBinding.tv2.text = "222"
-        }
-    }
-
-    private fun initDefaultTitlebar() {
-        mBinding.titlebar.Default().apply {
-            showNavigation(R.drawable.icon_back) {
-                ToastUtils.show("返回")
-            }
-
-            showTitle("Default Titlebar")
-//            setTitleWidth(100.dp)
-
-            showDivider(1.dp, Color.GREEN)
-
-            CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener { ToastUtils.show("菜单0") }
-                setTitle("菜单0", Color.BLACK, 12f)
-                setMessageCount("0", Color.WHITE, 10, Color.RED)
-                setMargin(20, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-                addMenu(getView())
-            }
-            CustomViewManager(this@MainActivity).apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener { ToastUtils.show("菜单1") }
-                setTitle("菜单1", Color.BLACK, 12f)
-                setMessageCount("1", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 20, 10)
-                setContentPadding(30, 0, 30, 0)
-                addMenu(getView())
-            }
-        }
-    }
-
     private fun initOriginToolBar() {
-        mBinding.toolbar.title = "Origin ToolBar"
-        mBinding.toolbar.setTitleTextColor(Color.WHITE)
-        mBinding.toolbar.setNavigationIcon(R.drawable.icon_back)
-        mBinding.toolbar.setNavigationOnClickListener {
+        mBinding.toolbar1.title = "Origin ToolBar"
+        mBinding.toolbar1.setTitleTextColor(Color.WHITE)
+        mBinding.toolbar1.setNavigationIcon(R.drawable.icon_back)
+        mBinding.toolbar1.setNavigationOnClickListener {
             ToastUtils.show("返回")
         }
-        mBinding.toolbar.inflateMenu(R.menu.origin_toolbar_right_menu_main)
-        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
-        mBinding.toolbar.setOnMenuItemClickListener {
+        mBinding.toolbar1.inflateMenu(R.menu.origin_toolbar_right_menu_main)
+        mBinding.toolbar1.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
+        mBinding.toolbar1.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_0 -> {
                     ToastUtils.show("消息")
@@ -183,43 +133,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCustomToolbar() {
-        mBinding.toolbar.setBackgroundColor(Color.WHITE)
-        mBinding.tvTitle.text = "Custom Toolbar"
-        mBinding.tvTitle.textSize = 18f
-        mBinding.tvTitle.setTextColor(Color.BLACK)
-        (mBinding.tvTitle.layoutParams as Toolbar.LayoutParams).gravity = Gravity.CENTER
+        mBinding.toolbar2.setBackgroundColor(Color.WHITE)
+        with(mBinding.tvTitle) {
+            text = "Custom Toolbar"
+            textSize = 18f
+            setTextColor(Color.BLACK)
+            (layoutParams as Toolbar.LayoutParams).gravity = Gravity.CENTER
+        }
 
-        val customNavigationView = CustomViewManager(this)
-        mBinding.toolbar.addView(customNavigationView.getView(), 0)
-        customNavigationView.setIcon(R.drawable.icon_back)
-        customNavigationView.setTitle("返回")
-        customNavigationView.setOnClickListener { ToastUtils.show("返回") }
-        customNavigationView.setMargin(42, 10, 20, 10)
-        customNavigationView.setContentPadding(0, 0, 30, 0)
-        customNavigationView.setMessageCount("99+", Color.WHITE, 10, Color.RED)
+        with(CustomToolbarMenu(this)) {
+            mBinding.toolbar2.addView(getView(), 0)
+            setIcon(R.drawable.icon_back)
+            setText("返回")
+            setOnClickListener { ToastUtils.show("返回") }
+            setMargin(42, 10, 20, 10)
+            setContentPadding(0, 0, 30, 0)
+            setMessageCount("99+", Color.WHITE, 10, Color.RED)
+        }
 
-        mBinding.toolbar.inflateMenu(R.menu.custom_toolbar_right_menu_main)
-        mBinding.toolbar.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_0)) as? CustomActionProvider)
-            ?.getCustomViewManager()
-            ?.apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener { ToastUtils.show("菜单0") }
-                setTitle("菜单0", Color.BLACK, 12f)
-                setMessageCount("0", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-            }
-        (MenuItemCompat.getActionProvider(mBinding.toolbar.menu.findItem(R.id.action_1)) as? CustomActionProvider)
-            ?.getCustomViewManager()
-            ?.apply {
-                setIcon(R.drawable.icon_back)
-                setOnClickListener { ToastUtils.show("菜单1") }
-                setTitle("菜单1", Color.BLACK, 12f)
-                setMessageCount("1", Color.WHITE, 10, Color.RED)
-                setMargin(0, 10, 0, 10)
-                setContentPadding(30, 0, 30, 0)
-            }
+        mBinding.toolbar2.inflateMenu(R.menu.custom_toolbar_right_menu_main)
+        mBinding.toolbar2.overflowIcon = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.icon_0))
+        (MenuItemCompat.getActionProvider(mBinding.toolbar2.menu.findItem(R.id.action_0)) as? CustomToolbarMenuActionProvider)?.apply {
+            setIcon(R.drawable.icon_back)
+            setOnClickListener { ToastUtils.show("菜单0") }
+            setText("菜单0", Color.BLACK, 12f)
+            setMessageCount("0", Color.WHITE, 10, Color.RED)
+            setMargin(0, 10, 0, 10)
+            setContentPadding(30, 0, 30, 0)
+        }
+        (MenuItemCompat.getActionProvider(mBinding.toolbar2.menu.findItem(R.id.action_1)) as? CustomToolbarMenuActionProvider)?.apply {
+            setIcon(R.drawable.icon_back)
+            setOnClickListener { ToastUtils.show("菜单1") }
+            setText("菜单1", Color.BLACK, 12f)
+            setMessageCount("1", Color.WHITE, 10, Color.RED)
+            setMargin(0, 10, 0, 10)
+            setContentPadding(30, 0, 30, 0)
+        }
     }
 
     private fun initMarqueeView() {

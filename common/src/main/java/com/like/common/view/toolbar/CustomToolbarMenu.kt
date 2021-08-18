@@ -1,4 +1,4 @@
-package com.like.common.view.titlebar
+package com.like.common.view.toolbar
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -14,20 +14,21 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import com.like.common.R
-import com.like.common.databinding.TitlebarCustomViewBinding
+import com.like.common.databinding.ViewCustomToolbarMenuBinding
 import com.like.common.util.onPreDrawListener
 import com.like.common.view.badgeview.BadgeViewManager
 
 /**
- * 用于标题栏中的自定义按钮管理类。
- * 此按钮视图包括图标、文本、消息数三个元素。
+ * 自定义的 Toolbar 菜单视图。
+ * 此视图包括图标、文本、消息数三个元素。
  */
-class CustomViewManager(context: Context) {
-    private val mBinding by lazy {
-        DataBindingUtil.inflate<TitlebarCustomViewBinding>(
-                LayoutInflater.from(context),
-                R.layout.titlebar_custom_view,
-                null, false)
+class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
+    private val mBinding: ViewCustomToolbarMenuBinding by lazy {
+        DataBindingUtil.inflate(
+            LayoutInflater.from(context),
+            R.layout.view_custom_toolbar_menu,
+            null, false
+        )
     }
     private val mBadgeViewHelper: BadgeViewManager by lazy {
         BadgeViewManager(context, mBinding.cl)
@@ -38,7 +39,7 @@ class CustomViewManager(context: Context) {
         setMargin(0, 0, 0, 0)
     }
 
-    fun getView(): View = mBinding.root
+    override fun getView(): View = mBinding.root
 
     /**
      * 设置自定义视图的内容的 padding
@@ -46,20 +47,20 @@ class CustomViewManager(context: Context) {
      * 自定义视图的root为第一层，那么真正的内容在第二层显示，
      * 这里其实是设置第二层的margin，用于配合[com.like.common.view.badgeview.BadgeView]来显示消息并调整其位置
      */
-    fun setContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
+    override fun setContentPadding(left: Int, top: Int, right: Int, bottom: Int) {
         mBinding.cl.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT)
-                .apply {
-                    leftMargin = left
-                    topMargin = top
-                    rightMargin = right
-                    bottomMargin = bottom
-                }
+            .apply {
+                leftMargin = left
+                topMargin = top
+                rightMargin = right
+                bottomMargin = bottom
+            }
     }
 
     /**
      * 设置自定义视图的 margin
      */
-    fun setMargin(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0) {
+    override fun setMargin(left: Int, top: Int, right: Int, bottom: Int) {
         mBinding.root.onPreDrawListener {
             mBinding.root.layoutParams = when (mBinding.root.layoutParams) {
                 is Toolbar.LayoutParams -> {// 如果是Toolbar中的NavigationView：Toolbar.LayoutParams
@@ -97,7 +98,7 @@ class CustomViewManager(context: Context) {
      *
      * @param clickListener     点击监听。默认为null，表示取消监听。
      */
-    fun setOnClickListener(clickListener: View.OnClickListener? = null) {
+    override fun setOnClickListener(clickListener: View.OnClickListener?) {
         mBinding.root.setOnClickListener(clickListener)
     }
 
@@ -108,7 +109,7 @@ class CustomViewManager(context: Context) {
      * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
      * @param textSize          文本字体大小。默认为null，表示不设置，保持原样。
      */
-    fun setTitle(title: String, @ColorInt textColor: Int? = null, textSize: Float? = null) {
+    override fun setText(title: String, @ColorInt textColor: Int?, textSize: Float?) {
         if (title.isEmpty()) {
             mBinding.tvTitle.visibility = View.GONE
             mBinding.tvTitle.text = ""
@@ -124,7 +125,7 @@ class CustomViewManager(context: Context) {
         }
     }
 
-    fun getTitle(): String {
+    override fun getText(): String {
         return mBinding.tvTitle.text.toString()
     }
 
@@ -133,7 +134,7 @@ class CustomViewManager(context: Context) {
      *
      * @param iconResId         图标资源id。如果设置为0，表示去掉图标。
      */
-    fun setIcon(@DrawableRes iconResId: Int) {
+    override fun setIcon(@DrawableRes iconResId: Int) {
         if (iconResId == 0) {
             mBinding.iv.visibility = View.GONE
             mBinding.iv.setImageDrawable(null)
@@ -151,14 +152,20 @@ class CustomViewManager(context: Context) {
      * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
      * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
      */
-    fun setMessageCount(messageCount: String, @ColorInt textColor: Int? = null, textSize: Int? = null, @ColorInt backgroundColor: Int? = null) {
+    override fun setMessageCount(
+        messageCount: String,
+        @ColorInt textColor: Int?,
+        textSize: Int?,
+        @ColorInt backgroundColor: Int?
+    ) {
         mBadgeViewHelper.setMessageCount(messageCount, textColor, textSize, backgroundColor)
     }
 
     /**
      * 获取显示的消息数
      */
-    fun getMessageCount(): String {
+    override fun getMessageCount(): String {
         return mBadgeViewHelper.getMessageCount()
     }
-} 
+
+}
