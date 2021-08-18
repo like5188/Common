@@ -2,6 +2,7 @@ package com.like.common.view.dragview.animation
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.view.animation.DecelerateInterpolator
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
 
@@ -16,6 +17,7 @@ class EnterAnimationManager(
 
     override fun fillAnimatorSet(animatorSet: AnimatorSet) {
         animatorSet.duration = mDuration
+        animatorSet.interpolator = DecelerateInterpolator()
         animatorSet.play(ObjectAnimator.ofFloat(mDragView, "childrenTranslationX", mDragInfo.getInitTranslationX(mDragView), 0f))
                 .with(ObjectAnimator.ofFloat(mDragView, "childrenTranslationY", mDragInfo.getInitTranslationY(mDragView), 0f))
                 .with(ObjectAnimator.ofFloat(mDragView, "childrenScale", mDragInfo.getInitScaleX(mDragView), 1f))

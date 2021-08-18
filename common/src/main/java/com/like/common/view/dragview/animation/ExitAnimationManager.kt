@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.view.animation.DecelerateInterpolator
 import com.like.common.view.dragview.entity.DragInfo
 import com.like.common.view.dragview.view.BaseDragView
 import com.like.common.view.dragview.activity.BaseDragViewActivity
@@ -19,6 +20,7 @@ class ExitAnimationManager(
 
     override fun fillAnimatorSet(animatorSet: AnimatorSet) {
         animatorSet.duration = mDuration
+        animatorSet.interpolator = DecelerateInterpolator()
         animatorSet.play(ObjectAnimator.ofFloat(mDragView, "childrenTranslationX", mDragView.childrenTranslationX, mDragInfo.getInitTranslationX(mDragView)))
                 .with(ObjectAnimator.ofFloat(mDragView, "childrenTranslationY", mDragView.childrenTranslationY, mDragInfo.getInitTranslationY(mDragView)))
                 .with(ObjectAnimator.ofFloat(mDragView, "childrenScale", mDragView.childrenScale, mDragInfo.getInitScaleX(mDragView)))
