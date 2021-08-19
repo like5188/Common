@@ -7,16 +7,12 @@ import androidx.databinding.ObservableBoolean
  */
 class CheckManager<T> {
     private val all = mutableMapOf<T, ObservableBoolean>()
-    private val checkedSet = mutableSetOf<T>()
-    private val uncheckedSet = mutableSetOf<T>()
 
     fun add(t: T) {
-        uncheckedSet.add(t)
         all[t] = ObservableBoolean()
     }
 
     fun addAll(list: List<T>) {
-        uncheckedSet.addAll(list)
         for (t in list) {
             all[t] = ObservableBoolean()
         }
@@ -24,78 +20,55 @@ class CheckManager<T> {
 
     fun remove(t: T) {
         all.remove(t)
-        checkedSet.remove(t)
-        uncheckedSet.remove(t)
     }
 
     fun removeAll(list: List<T>) {
         for (t in list) {
             all.remove(t)
         }
-        checkedSet.removeAll(list)
-        uncheckedSet.removeAll(list)
     }
 
     fun clear() {
         all.clear()
-        checkedSet.clear()
-        uncheckedSet.clear()
     }
 
     /**
      * 选中或者取消选中。没有选中就选中，选中了就取消选中
      */
     fun check(t: T) {
-        if (uncheckedSet.contains(t)) {// 没有选中就选中
-            uncheckedSet.remove(t)
-            checkedSet.add(t)
-            all[t]?.set(true)
-        } else if (checkedSet.contains(t)) {// 选中了就取消选中
-            checkedSet.remove(t)
-            uncheckedSet.add(t)
-            all[t]?.set(false)
-        }
+        val checked = all[t] ?: return
+        checked.set(!checked.get())
     }
 
     /**
      * 全选
      */
     fun checkAll() {
-        for (t in uncheckedSet) {
-            all[t]?.set(true)
+        all.forEach {
+            if (!it.value.get()) {
+                it.value.set(true)
+            }
         }
-        checkedSet.addAll(uncheckedSet)
-        uncheckedSet.clear()
     }
 
     /**
      * 取消已经选中的
      */
     fun uncheckAll() {
-        for (t in checkedSet) {
-            all[t]?.set(false)
+        all.forEach {
+            if (it.value.get()) {
+                it.value.set(false)
+            }
         }
-        uncheckedSet.addAll(checkedSet)
-        checkedSet.clear()
     }
 
     /**
      * 反选
      */
     fun invertSelection() {
-        for (t in checkedSet) {
-            all[t]?.set(false)
+        all.forEach {
+            it.value.set(!it.value.get())
         }
-        for (t in uncheckedSet) {
-            all[t]?.set(true)
-        }
-
-        val temp = mutableListOf<T>()
-        temp.addAll(checkedSet)
-        checkedSet.clear()
-        checkedSet.addAll(uncheckedSet)
-        uncheckedSet.clear()
-        uncheckedSet.addAll(temp)
     }
 
     /**
@@ -106,10 +79,15 @@ class CheckManager<T> {
     }
 
     fun getChecked(): Set<T> {
-        return checkedSet
+        return all.filter {
+            it.value.get()
+        }.keys
     }
 
     fun getUnchecked(): Set<T> {
-        return uncheckedSet
+        return all.filter {
+            !it.value.get()
+        }.keys
     }
+
 }

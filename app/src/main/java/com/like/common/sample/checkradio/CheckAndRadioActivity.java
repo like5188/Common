@@ -2,6 +2,8 @@ package com.like.common.sample.checkradio;
 
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.like.common.sample.R;
@@ -11,6 +13,8 @@ import com.like.common.util.RadioManager;
 
 public class CheckAndRadioActivity extends AppCompatActivity {
     private ActivityCheckAndRadioBinding mBinding;
+    CheckManager<Integer> checkManager = new CheckManager<>();
+    RadioManager<Integer> radioManager = new RadioManager<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +25,6 @@ public class CheckAndRadioActivity extends AppCompatActivity {
     }
 
     private void initRadio() {
-        RadioManager<Integer> radioManager = new RadioManager<>();
         radioManager.check(-1);
         mBinding.setSelectedId(radioManager.getCurChecked());
         mBinding.radio0.setOnClickListener(view -> radioManager.check(0));
@@ -33,7 +36,6 @@ public class CheckAndRadioActivity extends AppCompatActivity {
     }
 
     private void initCheck() {
-        CheckManager<Integer> checkManager = new CheckManager<>();
         for (int i = 0; i < 6; i++) {
             checkManager.add(i);
         }
@@ -49,5 +51,17 @@ public class CheckAndRadioActivity extends AppCompatActivity {
         mBinding.check3.setOnClickListener(view -> checkManager.check(3));
         mBinding.check4.setOnClickListener(view -> checkManager.check(4));
         mBinding.check5.setOnClickListener(view -> checkManager.check(5));
+    }
+
+    public void checkAll(View view) {
+        checkManager.checkAll();
+    }
+
+    public void uncheckAll(View view) {
+        checkManager.uncheckAll();
+    }
+
+    public void invertSelection(View view) {
+        checkManager.invertSelection();
     }
 }
