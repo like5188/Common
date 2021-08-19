@@ -7,8 +7,8 @@ import androidx.databinding.ObservableBoolean
  */
 class CheckManager<T> {
     private val all = mutableMapOf<T, ObservableBoolean>()
-    private var checkedSet = mutableSetOf<T>()
-    private var uncheckedSet = mutableSetOf<T>()
+    private val checkedSet = mutableSetOf<T>()
+    private val uncheckedSet = mutableSetOf<T>()
 
     fun add(t: T) {
         uncheckedSet.add(t)
@@ -22,13 +22,13 @@ class CheckManager<T> {
         }
     }
 
-    fun delete(t: T) {
+    fun remove(t: T) {
         all.remove(t)
         checkedSet.remove(t)
         uncheckedSet.remove(t)
     }
 
-    fun deleteAll(list: List<T>) {
+    fun removeAll(list: List<T>) {
         for (t in list) {
             all.remove(t)
         }

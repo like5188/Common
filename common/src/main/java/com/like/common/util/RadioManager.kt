@@ -14,7 +14,7 @@ class RadioManager<T> {
         mCurChecked.set(t)
     }
 
-    fun delete(t: T) {
+    fun remove(t: T) {
         if (mPreChecked.get() == t) {
             mPreChecked.set(null)
         }
