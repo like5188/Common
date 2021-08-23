@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.*
+import com.like.common.util.storage.StoragePublicUtils
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 
@@ -124,7 +125,8 @@ class StorageActivity : AppCompatActivity() {
 
     fun updateFileInfo(view: View) {
         lifecycleScope.launch {
-            Logger.d(StoragePublicUtils.MediaStoreHelper.updateFile(
+            Logger.d(
+                StoragePublicUtils.MediaStoreHelper.updateFile(
                     requestPermissionWrapper,
                     startIntentSenderForResultWrapper,
                     createdFileUri,

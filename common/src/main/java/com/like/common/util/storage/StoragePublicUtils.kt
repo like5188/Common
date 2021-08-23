@@ -1,4 +1,4 @@
-package com.like.common.util
+package com.like.common.util.storage
 
 import android.Manifest
 import android.app.RecoverableSecurityException
@@ -22,6 +22,10 @@ import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import androidx.documentfile.provider.DocumentFile
+import com.like.common.util.RequestPermissionWrapper
+import com.like.common.util.StartActivityForResultWrapper
+import com.like.common.util.StartIntentSenderForResultWrapper
+import com.like.common.util.UriUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
@@ -78,10 +82,10 @@ object StoragePublicUtils {
          * @param isThumbnail     表示返回值是否为缩略图
          */
         suspend fun takePhoto(
-                requestPermissionWrapper: RequestPermissionWrapper,
-                startActivityForResultWrapper: StartActivityForResultWrapper,
-                startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
-                isThumbnail: Boolean = false
+            requestPermissionWrapper: RequestPermissionWrapper,
+            startActivityForResultWrapper: StartActivityForResultWrapper,
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            isThumbnail: Boolean = false
         ): Bitmap? {
             // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
@@ -328,12 +332,12 @@ object StoragePublicUtils {
          * @param onWrite      写入数据的操作
          */
         suspend fun createFile(
-                requestPermissionWrapper: RequestPermissionWrapper,
-                startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
-                uri: Uri?,
-                displayName: String,
-                relativePath: String,
-                onWrite: ((ParcelFileDescriptor?) -> Unit)? = null
+            requestPermissionWrapper: RequestPermissionWrapper,
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uri: Uri?,
+            displayName: String,
+            relativePath: String,
+            onWrite: ((ParcelFileDescriptor?) -> Unit)? = null
         ): Uri? {
             uri ?: return null
             if (displayName.isEmpty()) {
@@ -657,7 +661,10 @@ object StoragePublicUtils {
                             // 如果开启了分区存储，以下面的方式来获取位置信息。
                             withContext(Dispatchers.Main) {
                                 if (requestPermissionWrapper.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)) {
-                                    val array = UriUtils.getLatLongFromImageUri(requestPermissionWrapper.activity.applicationContext, this@ImageEntity.uri)
+                                    val array = UriUtils.getLatLongFromImageUri(
+                                        requestPermissionWrapper.activity.applicationContext,
+                                        this@ImageEntity.uri
+                                    )
                                     this@ImageEntity.latitude = array?.get(0)
                                     this@ImageEntity.longitude = array?.get(1)
                                 }

@@ -1,4 +1,4 @@
-package com.like.common.util
+package com.like.common.util.storage
 
 import android.content.Context
 import android.os.Build

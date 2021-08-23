@@ -11,7 +11,7 @@ import coil.load
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityImageBinding
 import com.like.common.util.ImageUtils
-import com.like.common.util.StoragePrivateUtils
+import com.like.common.util.storage.StoragePrivateUtils
 import kotlinx.coroutines.launch
 import java.io.File
 
