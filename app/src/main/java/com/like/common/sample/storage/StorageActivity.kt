@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.*
-import com.like.common.util.storage.StoragePublicUtils
+import com.like.common.util.storage.outer.StoragePublicUtils
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 

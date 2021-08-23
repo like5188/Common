@@ -1,4 +1,4 @@
-package com.like.common.util.storage
+package com.like.common.util.storage.outer
 
 import android.Manifest
 import android.app.RecoverableSecurityException

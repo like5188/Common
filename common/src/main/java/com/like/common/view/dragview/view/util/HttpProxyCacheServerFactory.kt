@@ -2,7 +2,7 @@ package com.like.common.view.dragview.view.util
 
 import android.content.Context
 import com.danikula.videocache.HttpProxyCacheServer
-import com.like.common.util.storage.StoragePrivateUtils
+import com.like.common.util.storage.inner.StoragePrivateUtils
 
 /**
  * 使用com.danikula:videocache:2.7.1来缓存VideoView适配时需要的代理类工厂
