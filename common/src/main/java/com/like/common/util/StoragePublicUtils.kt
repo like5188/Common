@@ -31,6 +31,7 @@ import java.sql.Date
 import java.util.concurrent.TimeUnit
 
 /**
+ * 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
  * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
  *
  * 外部存储公共目录：/storage/emulated/(0/1/...)/xxx
