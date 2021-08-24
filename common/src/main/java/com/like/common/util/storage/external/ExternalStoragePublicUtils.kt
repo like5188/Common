@@ -42,14 +42,16 @@ import java.util.concurrent.TimeUnit
  * 其中 xxx 对应：媒体文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio)、其它文件(MediaStore.Downloads)
  *
  * 权限：
- * Android10以下：需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
- * Android10以上：访问其它应用或者自己的旧版本应用的“媒体文件”时需要申请 READ_EXTERNAL_STORAGE 权限。
- *      当以 Android 10 或更高版本为目标平台的应用启用了分区存储时，系统会将每个媒体文件归因于一个应用，这决定了应用在未请求任何存储权限时可以访问的文件。每个文件只能归因于一个应用。因此，如果您的应用创建的媒体文件存储在照片、视频或音频文件媒体集合中，应用便可以访问该文件。
- *      但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
- * WRITE_EXTERNAL_STORAGE 权限在 android11 里面已被废弃。
- * 所有文件访问权限：像文件管理操作或备份和还原操作等需要访问大量的文件，通过执行以下操作，这些应用可以获得” 所有文件访问权限”：
- * 声明 MANAGE_EXTERNAL_STORAGE 权限
- * 将用户引导至系统设置页面，在该页面上，用户可以对应用启用授予所有文件的管理权限选项
+ * 媒体文件：
+ *      Android10以下：需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+ *      Android10以上：访问其它应用或者自己的旧版本应用的“媒体文件”时需要申请 READ_EXTERNAL_STORAGE 权限。
+ *          当以 Android 10 或更高版本为目标平台的应用启用了分区存储时，系统会将每个媒体文件归因于一个应用，这决定了应用在未请求任何存储权限时可以访问的文件。每个文件只能归因于一个应用。因此，如果您的应用创建的媒体文件存储在照片、视频或音频文件媒体集合中，应用便可以访问该文件。
+ *          但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
+ *      WRITE_EXTERNAL_STORAGE 权限在 android11 里面已被废弃。
+ *      所有文件访问权限：像文件管理操作或备份和还原操作等需要访问大量的文件，通过执行以下操作，这些应用可以获得” 所有文件访问权限”：
+ *      声明 MANAGE_EXTERNAL_STORAGE 权限
+ *      将用户引导至系统设置页面，在该页面上，用户可以对应用启用授予所有文件的管理权限选项
+ * 其它文件：不需要申请存储权限。
  *
  * 访问方式：
  * 1、媒体文件：MediaStore API
@@ -77,6 +79,7 @@ object ExternalStoragePublicUtils {
      * MediaStore.Video: 存放视频信息
      * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
      *
+     * 执行批量操作需要的权限
      * createWriteRequest (ContentResolver, Collection)	用户向应用授予对指定媒体文件组的写入访问权限的请求。
      * createFavoriteRequest (ContentResolver, Collection, boolean)	用户将设备上指定的媒体文件标记为 “收藏” 的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为 “收藏”。
      * createTrashRequest (ContentResolver, Collection, boolean)	用户将指定的媒体文件放入设备垃圾箱的请求。垃圾箱中的内容在特定时间段（默认为 7 天）后会永久删除。
