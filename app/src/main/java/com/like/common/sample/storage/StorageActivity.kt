@@ -46,13 +46,19 @@ class StorageActivity : AppCompatActivity() {
 
     fun createDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("createDocument：${ExternalStoragePublicUtils.SAFHelper.createDocument(startActivityForResultWrapper, "123.jpg", ExternalStoragePublicUtils.MimeType._jpg)}")
+            Logger.d("createDocument：${ExternalStoragePublicUtils.SAFHelper.createDocument(startActivityForResultWrapper, "123.jpg", ExternalStoragePublicUtils.SAFHelper.MimeType._jpg)}")
         }
     }
 
     fun deleteDocument(view: View) {
         lifecycleScope.launch {
             Logger.d("deleteDocument：${ExternalStoragePublicUtils.SAFHelper.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
+        }
+    }
+
+    fun selectFile(view: View) {
+        lifecycleScope.launch {
+            Logger.e(ExternalStoragePublicUtils.SAFHelper.selectFile(startActivityForResultWrapper, ExternalStoragePublicUtils.SAFHelper.MimeType._jpg))
         }
     }
 
@@ -66,12 +72,6 @@ class StorageActivity : AppCompatActivity() {
             )?.let {
                 mBinding.iv.setImageBitmap(it)
             }
-        }
-    }
-
-    fun selectFile(view: View) {
-        lifecycleScope.launch {
-            Logger.e(ExternalStoragePublicUtils.MediaStoreHelper.selectFile(startActivityForResultWrapper, ExternalStoragePublicUtils.MimeType._jpg))
         }
     }
 
