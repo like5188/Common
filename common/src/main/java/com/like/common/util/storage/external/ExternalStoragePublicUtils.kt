@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit
  * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
  * 外部存储公共目录：应用卸载后，文件不会删除。
  * /storage/emulated/(0/1/...)/xxx
+ * 其中 xxx 对应：媒体文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio)、其它文件(MediaStore.Downloads)
  *
  * 权限：
  * Android10以下：需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
@@ -48,10 +49,10 @@ import java.util.concurrent.TimeUnit
  * WRITE_EXTERNAL_STORAGE 权限在 android11 里面已被废弃。
  *
  * 访问方式：
- * 1、媒体文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio)：MediaStore API
+ * 1、媒体文件：MediaStore API
  *      Android11：可以使用文件直接路径去访问媒体，但是应用的性能会略有下降，还是推荐使用 MediaStore API。
  * 注意：如果您不希望媒体扫描程序发现您的文件，请在特定于应用的目录中添加名为 .nomedia 的空文件（请注意文件名中的句点前缀）。这可以防止媒体扫描程序读取您的媒体文件并通过 MediaStore API 将它们提供给其他应用。
- * 2、其它文件(MediaStore.Downloads)：Storage Access Framework (不需要申请存储权限) Android 4.4（API 级别 19）引入，由用户自己通过系统选择器来操作文件。
+ * 2、其它文件：Storage Access Framework (不需要申请存储权限) Android 4.4（API 级别 19）引入，由用户自己通过系统选择器来操作文件。
  *
  * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在私有目录
  *
