@@ -417,7 +417,7 @@ object ExternalStoragePublicUtils {
                             // to use.
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 values.clear()
-                                values.put(MediaStore.Audio.Media.IS_PENDING, 0)
+                                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
                                 resolver.update(it, values, null, null)
                             }
                         }
