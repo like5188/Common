@@ -977,6 +977,10 @@ object ExternalStoragePublicUtils {
         /**
          * 是否虚拟文件
          *
+         * 在较早的 Android 版本中，您的应用可以使用存储访问框架来允许用户从他们的云存储帐户中选择文件，如 Google Drive。
+         * 但是，不能表示没有直接字节码表示的文件；每个文件都必须提供一个输入流。
+         * Android 7.0 在存储访问框架中添加了虚拟文件的概念。
+         *
          * 注意：由于应用无法使用 openInputStream() 方法直接打开虚拟文件，因此在创建包含 ACTION_OPEN_DOCUMENT 或 ACTION_OPEN_DOCUMENT_TREE 操作的 intent 时，请勿使用 CATEGORY_OPENABLE 类别。
          */
         @RequiresApi(Build.VERSION_CODES.N)
