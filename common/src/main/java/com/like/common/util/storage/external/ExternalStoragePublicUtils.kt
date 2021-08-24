@@ -85,7 +85,7 @@ object ExternalStoragePublicUtils {
      * MediaStore.Video: 存放视频信息
      * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
      *
-     * 执行批量操作需要的权限
+     * 执行批量操作需要的权限(在 Android 10 中，应用在对MediaStore的每一个文件请求编辑或删除时都必须一个个地得到用户的确认。而在 Android 11 中，应用可以一次请求修改或者删除多个媒体文件。)
      * createWriteRequest (ContentResolver, Collection)	用户向应用授予对指定媒体文件组的写入访问权限的请求。
      * createFavoriteRequest (ContentResolver, Collection, boolean)	用户将设备上指定的媒体文件标记为 “收藏” 的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为 “收藏”。
      * createTrashRequest (ContentResolver, Collection, boolean)	用户将指定的媒体文件放入设备垃圾箱的请求。垃圾箱中的内容在特定时间段（默认为 7 天）后会永久删除。
