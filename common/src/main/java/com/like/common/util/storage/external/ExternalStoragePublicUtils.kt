@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit
  *              当以 Android 10 或更高版本为目标平台的应用启用了分区存储时，系统会将每个媒体文件归因于一个应用，这决定了应用在未请求任何存储权限时可以访问的文件。每个文件只能归因于一个应用。因此，如果您的应用创建的媒体文件存储在照片、视频或音频文件媒体集合中，应用便可以访问该文件。
  *              但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
  *      2、访问其他应用创建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio需要申请 READ_EXTERNAL_STORAGE 存储权限；MediaStore.Downloads则应使用 SAF)
+ *      3、(更新：Android11为目标平台时，可以使用文件直接路径去访问媒体，这是在Android10上没有的，应用的性能会略有下降，还是推荐使用MediaStore )
  * 注意：如果您不希望媒体扫描程序发现您的文件，请在特定于应用的目录中添加名为 .nomedia 的空文件（请注意文件名中的句点前缀）。这可以防止媒体扫描程序读取您的媒体文件并通过 MediaStore API 将它们提供给其他应用。
  * 2、其它文件：Storage Access Framework (不需要申请存储权限) Android 4.4（API 级别 19）引入，由系统选择器来操作文件。
  *
