@@ -8,7 +8,7 @@ import java.io.File
 /**
  * 内部存储目录操作应用专属文件的工具类。
  * 内部存储：属于应用的私有存储区域，空间小，其它应用不可访问，卸载应用后，系统会移除这些目录中存储的文件。
- * system/、vendor/、/data/data(user/0)/packageName/xxx 等等
+ * /data/data(user/0)/packageName/xxx
  *
  * 权限：不需要申请存储权限。
  *
