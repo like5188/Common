@@ -73,6 +73,12 @@ object ExternalStoragePublicUtils {
      * MediaStore.Audio: 存放音频信息
      * MediaStore.Video: 存放视频信息
      * 每个内部类中都又包含了 Media、Thumbnails、MediaColumns(ImageColumns、AudioColumns、VideoColumns)，分别提供了媒体信息，缩略信息和 操作字段。
+     *
+     * createWriteRequest (ContentResolver, Collection)	用户向应用授予对指定媒体文件组的写入访问权限的请求。
+     * createFavoriteRequest (ContentResolver, Collection, boolean)	用户将设备上指定的媒体文件标记为 “收藏” 的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为 “收藏”。
+     * createTrashRequest (ContentResolver, Collection, boolean)	用户将指定的媒体文件放入设备垃圾箱的请求。垃圾箱中的内容在特定时间段（默认为 7 天）后会永久删除。
+     * createDeleteRequest (ContentResolver, Collection)	用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
+     * 系统在调用以上任何一个方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新或删除指定的媒体文件。
      */
     object MediaStoreHelper {
 
