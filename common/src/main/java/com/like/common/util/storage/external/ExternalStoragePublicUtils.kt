@@ -194,6 +194,7 @@ object ExternalStoragePublicUtils {
          * （包括照片和屏幕截图），存储在 DCIM/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Images 表格中。
          *
          * 您需要在应用的清单中声明 ACCESS_MEDIA_LOCATION 权限，然后在运行时请求此权限，应用才能从照片中检索未编辑的 Exif 元数据。
+         * 用户在 Settings UI 里看不到这个权限，但是它属于运行时权限，所以必须要在 Manifest 里声明该权限，并在运行时同时请求该权限和读取外部存储权限
          * 一些照片在其 Exif 元数据中包含位置信息，以便用户查看照片的拍摄地点。但是，由于此位置信息属于敏感信息，如果应用使用了分区存储，默认情况下 Android 10 会对应用隐藏此信息。
          *
          * @param selection         查询条件
