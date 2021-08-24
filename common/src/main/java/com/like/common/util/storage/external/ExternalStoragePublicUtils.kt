@@ -37,6 +37,8 @@ import java.util.concurrent.TimeUnit
 // 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
 /**
  * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
+ * 权限：访问不属于当前自己应用（自己的旧应用也不属于当前自己应用）的媒体文件时需要申请 READ_EXTERNAL_STORAGE 权限。
+ * WRITE_EXTERNAL_STORAGE 权限在 android11 里面已被废弃。
  *
  * 外部存储公共目录：/storage/emulated/(0/1/...)/xxx
  * 应用卸载后，文件不会删除。其他应用可以访问，但需要 READ_EXTERNAL_STORAGE 权限

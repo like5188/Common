@@ -7,7 +7,8 @@ import java.io.File
 
 // 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
 /**
- * 外部存储私有目录操作应用专属文件的工具类。（Android 4.4 以后不需要申请存储权限）
+ * 外部存储私有目录操作应用专属文件的工具类。
+ * 权限：Android 4.4 以后不需要申请存储权限。
  * 公共目录操作工具类为：[ExternalStoragePublicUtils]
  * /storage/emulated/(0/1/...)/Android/data/packageName/xxx
  *
