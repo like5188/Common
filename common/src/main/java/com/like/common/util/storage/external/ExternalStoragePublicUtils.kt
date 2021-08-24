@@ -865,7 +865,7 @@ object ExternalStoragePublicUtils {
      *
      * 主要角色成员包括：
      * 1、Document Provider 文件存储服务提供者。
-     * Document Provider让一个存储服务（比如Google Drive）可以对外以统一的形式展示自己所管理的文件，一个Document Provider代码上就是实现了DocumentsProvider.java的子类
+     *      Document Provider让一个存储服务（比如Google Drive）可以对外以统一的形式展示自己所管理的文件，一个Document Provider代码上就是实现了DocumentsProvider.java的子类
      * 2、DocumentsUI 文件存储选择器App
      */
     object SAFHelper {
