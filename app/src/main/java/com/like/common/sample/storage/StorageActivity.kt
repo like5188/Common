@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.*
-import com.like.common.util.storage.outer.StoragePublicUtils
+import com.like.common.util.storage.external.ExternalStoragePublicUtils
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
 
@@ -31,13 +31,13 @@ class StorageActivity : AppCompatActivity() {
 
     fun openDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("openDocument：${StoragePublicUtils.SAFHelper.openDocument(startActivityForResultWrapper)}")
+            Logger.d("openDocument：${ExternalStoragePublicUtils.SAFHelper.openDocument(startActivityForResultWrapper)}")
         }
     }
 
     fun openDocumentTree(view: View) {
         lifecycleScope.launch {
-            val documentFile = StoragePublicUtils.SAFHelper.openDocumentTree(startActivityForResultWrapper)
+            val documentFile = ExternalStoragePublicUtils.SAFHelper.openDocumentTree(startActivityForResultWrapper)
             documentFile?.listFiles()?.forEach {
                 Logger.d("openDocumentTree：${it?.uri}")
             }
@@ -46,19 +46,19 @@ class StorageActivity : AppCompatActivity() {
 
     fun createDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("createDocument：${StoragePublicUtils.SAFHelper.createDocument(startActivityForResultWrapper, "123.jpg", StoragePublicUtils.MimeType._jpg)}")
+            Logger.d("createDocument：${ExternalStoragePublicUtils.SAFHelper.createDocument(startActivityForResultWrapper, "123.jpg", ExternalStoragePublicUtils.MimeType._jpg)}")
         }
     }
 
     fun deleteDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("deleteDocument：${StoragePublicUtils.SAFHelper.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
+            Logger.d("deleteDocument：${ExternalStoragePublicUtils.SAFHelper.deleteDocument(this@StorageActivity, Uri.parse("content://com.android.providers.downloads.documents/document/1"))}")
         }
     }
 
     fun takePhoto(view: View) {
         lifecycleScope.launch {
-            StoragePublicUtils.MediaStoreHelper.takePhoto(
+            ExternalStoragePublicUtils.MediaStoreHelper.takePhoto(
                     requestPermissionWrapper,
                     startActivityForResultWrapper,
                     startIntentSenderForResultWrapper,
@@ -71,44 +71,44 @@ class StorageActivity : AppCompatActivity() {
 
     fun selectFile(view: View) {
         lifecycleScope.launch {
-            Logger.e(StoragePublicUtils.MediaStoreHelper.selectFile(startActivityForResultWrapper, StoragePublicUtils.MimeType._jpg))
+            Logger.e(ExternalStoragePublicUtils.MediaStoreHelper.selectFile(startActivityForResultWrapper, ExternalStoragePublicUtils.MimeType._jpg))
         }
     }
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getFiles(requestPermissionWrapper))
+            Logger.printCollection(ExternalStoragePublicUtils.MediaStoreHelper.getFiles(requestPermissionWrapper))
         }
     }
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getImages(requestPermissionWrapper))
+            Logger.printCollection(ExternalStoragePublicUtils.MediaStoreHelper.getImages(requestPermissionWrapper))
         }
     }
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getAudios(requestPermissionWrapper))
+            Logger.printCollection(ExternalStoragePublicUtils.MediaStoreHelper.getAudios(requestPermissionWrapper))
         }
     }
 
     fun getVideos(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getVideos(requestPermissionWrapper))
+            Logger.printCollection(ExternalStoragePublicUtils.MediaStoreHelper.getVideos(requestPermissionWrapper))
         }
     }
 
     fun getDownloads(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(StoragePublicUtils.MediaStoreHelper.getDownloads(requestPermissionWrapper))
+            Logger.printCollection(ExternalStoragePublicUtils.MediaStoreHelper.getDownloads(requestPermissionWrapper))
         }
     }
 
     private var createdFileUri: Uri? = null
     fun createFile(view: View) {
         lifecycleScope.launch {
-            createdFileUri = StoragePublicUtils.MediaStoreHelper.createFile(
+            createdFileUri = ExternalStoragePublicUtils.MediaStoreHelper.createFile(
                     requestPermissionWrapper,
                     startIntentSenderForResultWrapper,
                     uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -126,7 +126,7 @@ class StorageActivity : AppCompatActivity() {
     fun updateFileInfo(view: View) {
         lifecycleScope.launch {
             Logger.d(
-                StoragePublicUtils.MediaStoreHelper.updateFile(
+                ExternalStoragePublicUtils.MediaStoreHelper.updateFile(
                     requestPermissionWrapper,
                     startIntentSenderForResultWrapper,
                     createdFileUri,
@@ -138,7 +138,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun deleteFile(view: View) {
         lifecycleScope.launch {
-            Logger.d(StoragePublicUtils.MediaStoreHelper.deleteFile(requestPermissionWrapper, startIntentSenderForResultWrapper, createdFileUri))
+            Logger.d(ExternalStoragePublicUtils.MediaStoreHelper.deleteFile(requestPermissionWrapper, startIntentSenderForResultWrapper, createdFileUri))
         }
     }
 }

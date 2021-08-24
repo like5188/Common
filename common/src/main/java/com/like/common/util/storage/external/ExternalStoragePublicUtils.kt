@@ -1,4 +1,4 @@
-package com.like.common.util.storage.outer
+package com.like.common.util.storage.external
 
 import android.Manifest
 import android.app.RecoverableSecurityException
@@ -35,8 +35,9 @@ import java.sql.Date
 import java.util.concurrent.TimeUnit
 
 /**
- * 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
  * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
+ *
+ * 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
  *
  * 外部存储公共目录：/storage/emulated/(0/1/...)/xxx
  * 应用卸载后，文件不会删除。其他应用可以访问，但需要 READ_EXTERNAL_STORAGE 权限
@@ -62,7 +63,7 @@ import java.util.concurrent.TimeUnit
  *
  * Android 存储用例和最佳做法：https://developer.android.google.cn/training/data-storage/use-cases
  */
-object StoragePublicUtils {
+object ExternalStoragePublicUtils {
 
     /**
      * MediaStore 是 android 系统提供的一个多媒体数据库，专门用于存放多媒体信息的，通过 ContentResolver.query() 获取 Cursor 即可对数据库进行操作。
@@ -93,13 +94,20 @@ object StoragePublicUtils {
             }
 
             val context = requestPermissionWrapper.activity.applicationContext
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
+            val intent =
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
             return if (isThumbnail) {
                 // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
                 startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
             } else {
-                val imageUri = createFile(requestPermissionWrapper, startIntentSenderForResultWrapper, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, System.currentTimeMillis().toString(), Environment.DIRECTORY_PICTURES)
-                        ?: return null
+                val imageUri = createFile(
+                    requestPermissionWrapper,
+                    startIntentSenderForResultWrapper,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    System.currentTimeMillis().toString(),
+                    Environment.DIRECTORY_PICTURES
+                )
+                    ?: return null
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
                 // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
                 startActivityForResultWrapper.startActivityForResult(intent)
@@ -126,10 +134,11 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getFiles(requestPermissionWrapper: RequestPermissionWrapper,
-                             selection: String? = null,
-                             selectionArgs: Array<String>? = null,
-                             sortOrder: String? = null
+        suspend fun getFiles(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            selection: String? = null,
+            selectionArgs: Array<String>? = null,
+            sortOrder: String? = null
         ): List<FileEntity> {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
@@ -155,10 +164,11 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getDownloads(requestPermissionWrapper: RequestPermissionWrapper,
-                                 selection: String? = null,
-                                 selectionArgs: Array<String>? = null,
-                                 sortOrder: String? = null
+        suspend fun getDownloads(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            selection: String? = null,
+            selectionArgs: Array<String>? = null,
+            sortOrder: String? = null
         ): List<DownloadEntity> {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 return emptyList()
@@ -191,10 +201,11 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getImages(requestPermissionWrapper: RequestPermissionWrapper,
-                              selection: String? = null,
-                              selectionArgs: Array<String>? = null,
-                              sortOrder: String? = null
+        suspend fun getImages(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            selection: String? = null,
+            selectionArgs: Array<String>? = null,
+            sortOrder: String? = null
         ): List<ImageEntity> {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
@@ -222,10 +233,11 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getAudios(requestPermissionWrapper: RequestPermissionWrapper,
-                              selection: String? = null,
-                              selectionArgs: Array<String>? = null,
-                              sortOrder: String? = null
+        suspend fun getAudios(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            selection: String? = null,
+            selectionArgs: Array<String>? = null,
+            sortOrder: String? = null
         ): List<AudioEntity> {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
@@ -251,10 +263,11 @@ object StoragePublicUtils {
          * @param selectionArgs     查询条件填充值
          * @param sortOrder         排序依据
          */
-        suspend fun getVideos(requestPermissionWrapper: RequestPermissionWrapper,
-                              selection: String? = null,
-                              selectionArgs: Array<String>? = null,
-                              sortOrder: String? = null
+        suspend fun getVideos(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            selection: String? = null,
+            selectionArgs: Array<String>? = null,
+            sortOrder: String? = null
         ): List<VideoEntity> {
             if (!requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return emptyList()
@@ -262,7 +275,8 @@ object StoragePublicUtils {
             val context = requestPermissionWrapper.activity.applicationContext
             val files = mutableListOf<VideoEntity>()
             withContext(Dispatchers.IO) {
-                val projection = BaseEntity.projection + MediaEntity.projection + VideoEntity.projection + VideoEntity.projectionQ + VideoEntity.projectionR
+                val projection =
+                    BaseEntity.projection + MediaEntity.projection + VideoEntity.projection + VideoEntity.projectionQ + VideoEntity.projectionR
                 val contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                 context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
                     while (cursor.moveToNext()) {
@@ -373,7 +387,10 @@ object StoragePublicUtils {
                                 put(MediaStore.MediaColumns.IS_PENDING, 1)
                             }
                         } else {
-                            put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/$relativePath/$displayName")
+                            put(
+                                MediaStore.MediaColumns.DATA,
+                                "${Environment.getExternalStorageDirectory().path}/$relativePath/$displayName"
+                            )
                         }
                     }
 
@@ -404,7 +421,15 @@ object StoragePublicUtils {
          *
          * @param relativePath  相对路径，>= android10 有效，用于移动文件。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
          */
-        suspend fun updateFile(requestPermissionWrapper: RequestPermissionWrapper, startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uri: Uri?, displayName: String, relativePath: String = "", selection: String? = null, selectionArgs: Array<String>? = null): Boolean {
+        suspend fun updateFile(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uri: Uri?,
+            displayName: String,
+            relativePath: String = "",
+            selection: String? = null,
+            selectionArgs: Array<String>? = null
+        ): Boolean {
             uri ?: return false
             if (displayName.isEmpty()) {
                 return false
@@ -448,7 +473,11 @@ object StoragePublicUtils {
          *
          * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
          */
-        suspend fun deleteFile(requestPermissionWrapper: RequestPermissionWrapper, startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uri: Uri?): Boolean {
+        suspend fun deleteFile(
+            requestPermissionWrapper: RequestPermissionWrapper,
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uri: Uri?
+        ): Boolean {
             uri ?: return false
             when {
                 Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
@@ -484,8 +513,12 @@ object StoragePublicUtils {
          * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        private suspend fun createWriteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>): Boolean {
-            val pendingIntent = MediaStore.createWriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
+        private suspend fun createWriteRequest(
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uris: List<Uri>
+        ): Boolean {
+            val pendingIntent =
+                MediaStore.createWriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -495,8 +528,12 @@ object StoragePublicUtils {
          * 用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        private suspend fun createDeleteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>): Boolean {
-            val pendingIntent = MediaStore.createDeleteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
+        private suspend fun createDeleteRequest(
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uris: List<Uri>
+        ): Boolean {
+            val pendingIntent =
+                MediaStore.createDeleteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -508,8 +545,16 @@ object StoragePublicUtils {
          * @param isTrashed     注意：如果您的应用是设备 OEM 的预安装图库应用，您可以将文件放入垃圾箱而不显示对话框。如需执行该操作，请直接将 IS_TRASHED 设置为 1。及把参数设置为 true
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        private suspend fun createTrashRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>, isTrashed: Boolean): Boolean {
-            val pendingIntent = MediaStore.createTrashRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris, isTrashed)
+        private suspend fun createTrashRequest(
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uris: List<Uri>,
+            isTrashed: Boolean
+        ): Boolean {
+            val pendingIntent = MediaStore.createTrashRequest(
+                startIntentSenderForResultWrapper.activity.applicationContext.contentResolver,
+                uris,
+                isTrashed
+            )
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -519,8 +564,16 @@ object StoragePublicUtils {
          * 用户将设备上指定的媒体文件标记为“收藏”的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为“收藏”。
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        private suspend fun createFavoriteRequest(startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper, uris: List<Uri>, isFavorite: Boolean): Boolean {
-            val pendingIntent = MediaStore.createFavoriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris, isFavorite)
+        private suspend fun createFavoriteRequest(
+            startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+            uris: List<Uri>,
+            isFavorite: Boolean
+        ): Boolean {
+            val pendingIntent = MediaStore.createFavoriteRequest(
+                startIntentSenderForResultWrapper.activity.applicationContext.contentResolver,
+                uris,
+                isFavorite
+            )
             val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
             // Launch a system prompt requesting user permission for the operation.
             return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
@@ -532,7 +585,7 @@ object StoragePublicUtils {
 
             companion object {
                 val projection = arrayOf(
-                        BaseColumns._ID
+                    BaseColumns._ID
                 )
             }
 
@@ -553,11 +606,11 @@ object StoragePublicUtils {
 
             companion object {
                 val projection = arrayOf(
-                        MediaStore.MediaColumns.SIZE,
-                        MediaStore.MediaColumns.DISPLAY_NAME,
-                        MediaStore.MediaColumns.TITLE,
-                        MediaStore.MediaColumns.MIME_TYPE,
-                        MediaStore.MediaColumns.DATE_ADDED
+                    MediaStore.MediaColumns.SIZE,
+                    MediaStore.MediaColumns.DISPLAY_NAME,
+                    MediaStore.MediaColumns.TITLE,
+                    MediaStore.MediaColumns.MIME_TYPE,
+                    MediaStore.MediaColumns.DATE_ADDED
                 )
             }
 
@@ -588,7 +641,7 @@ object StoragePublicUtils {
 
             companion object {
                 val projection = arrayOf(
-                        MediaStore.Files.FileColumns.MEDIA_TYPE
+                    MediaStore.Files.FileColumns.MEDIA_TYPE
                 )
             }
 
@@ -626,16 +679,16 @@ object StoragePublicUtils {
 
             companion object {
                 val projection = arrayOf(
-                        MediaStore.Images.ImageColumns.DESCRIPTION,
-                        MediaStore.Images.ImageColumns.WIDTH,
-                        MediaStore.Images.ImageColumns.HEIGHT,
-                        MediaStore.Images.ImageColumns.LATITUDE,
-                        MediaStore.Images.ImageColumns.LONGITUDE,
+                    MediaStore.Images.ImageColumns.DESCRIPTION,
+                    MediaStore.Images.ImageColumns.WIDTH,
+                    MediaStore.Images.ImageColumns.HEIGHT,
+                    MediaStore.Images.ImageColumns.LATITUDE,
+                    MediaStore.Images.ImageColumns.LONGITUDE,
                 )
 
                 @RequiresApi(Build.VERSION_CODES.Q)
                 val projectionQ = arrayOf(
-                        MediaStore.Images.ImageColumns.ORIENTATION
+                    MediaStore.Images.ImageColumns.ORIENTATION
                 )
             }
 
@@ -686,13 +739,13 @@ object StoragePublicUtils {
             companion object {
                 @RequiresApi(Build.VERSION_CODES.Q)
                 val projectionQ = arrayOf(
-                        MediaStore.Audio.AudioColumns.DURATION,
+                    MediaStore.Audio.AudioColumns.DURATION,
                 )
 
                 @RequiresApi(Build.VERSION_CODES.R)
                 val projectionR = arrayOf(
-                        MediaStore.Audio.AudioColumns.ARTIST,
-                        MediaStore.Audio.AudioColumns.ALBUM
+                    MediaStore.Audio.AudioColumns.ARTIST,
+                    MediaStore.Audio.AudioColumns.ALBUM
                 )
             }
 
@@ -726,20 +779,20 @@ object StoragePublicUtils {
 
             companion object {
                 val projection = arrayOf(
-                        MediaStore.Video.VideoColumns.DESCRIPTION,
-                        MediaStore.Video.VideoColumns.WIDTH,
-                        MediaStore.Video.VideoColumns.HEIGHT
+                    MediaStore.Video.VideoColumns.DESCRIPTION,
+                    MediaStore.Video.VideoColumns.WIDTH,
+                    MediaStore.Video.VideoColumns.HEIGHT
                 )
 
                 @RequiresApi(Build.VERSION_CODES.Q)
                 val projectionQ = arrayOf(
-                        MediaStore.Video.VideoColumns.DURATION,
+                    MediaStore.Video.VideoColumns.DURATION,
                 )
 
                 @RequiresApi(Build.VERSION_CODES.R)
                 val projectionR = arrayOf(
-                        MediaStore.Video.VideoColumns.ARTIST,
-                        MediaStore.Video.VideoColumns.ALBUM
+                    MediaStore.Video.VideoColumns.ARTIST,
+                    MediaStore.Video.VideoColumns.ALBUM
                 )
             }
 
@@ -772,7 +825,7 @@ object StoragePublicUtils {
             companion object {
                 @RequiresApi(Build.VERSION_CODES.Q)
                 val projectionQ = arrayOf(
-                        MediaStore.DownloadColumns.DOWNLOAD_URI
+                    MediaStore.DownloadColumns.DOWNLOAD_URI
                 )
             }
 
@@ -822,7 +875,11 @@ object StoragePublicUtils {
          * :Pictures 代表下面的 Pictures 文件夹，当然如果再想得到下一级文件夹 like 还需要:既 :Pictures%2flike
          * @return  返回的 Uri 为文件的
          */
-        suspend fun openDocument(startActivityForResultWrapper: StartActivityForResultWrapper, mimeType: MimeType = MimeType._0, pickerInitialUri: Uri? = null): Uri? {
+        suspend fun openDocument(
+            startActivityForResultWrapper: StartActivityForResultWrapper,
+            mimeType: MimeType = MimeType._0,
+            pickerInitialUri: Uri? = null
+        ): Uri? {
             //通过系统的文件浏览器选择一个文件
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             //筛选，只显示可以“打开”的结果，如文件(而不是联系人或时区列表)
@@ -842,7 +899,10 @@ object StoragePublicUtils {
          *
          * @return  返回文件夹 DocumentFile
          */
-        suspend fun openDocumentTree(startActivityForResultWrapper: StartActivityForResultWrapper, pickerInitialUri: Uri? = null): DocumentFile? {
+        suspend fun openDocumentTree(
+            startActivityForResultWrapper: StartActivityForResultWrapper,
+            pickerInitialUri: Uri? = null
+        ): DocumentFile? {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 return null
             }
@@ -863,7 +923,12 @@ object StoragePublicUtils {
          *
          * @return  返回的 Uri 为文件的
          */
-        suspend fun createDocument(startActivityForResultWrapper: StartActivityForResultWrapper, fileName: String, mimeType: MimeType = MimeType._0, pickerInitialUri: Uri? = null): Uri? {
+        suspend fun createDocument(
+            startActivityForResultWrapper: StartActivityForResultWrapper,
+            fileName: String,
+            mimeType: MimeType = MimeType._0,
+            pickerInitialUri: Uri? = null
+        ): Uri? {
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
             // Filter to only show results that can be "opened", such as a file (as opposed to a list of contacts or timezones).
             intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -903,11 +968,11 @@ object StoragePublicUtils {
 
             return withContext(Dispatchers.IO) {
                 val cursor: Cursor? = context.applicationContext.contentResolver.query(
-                        uri,
-                        arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
-                        null,
-                        null,
-                        null
+                    uri,
+                    arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
+                    null,
+                    null,
+                    null
                 )
 
                 val flags: Int = cursor?.use {
@@ -932,8 +997,8 @@ object StoragePublicUtils {
 
             return if (openableMimeTypes?.isNotEmpty() == true) {
                 context.applicationContext.contentResolver
-                        .openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)
-                        ?.createInputStream()
+                    .openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)
+                    ?.createInputStream()
             } else {
                 throw FileNotFoundException()
             }

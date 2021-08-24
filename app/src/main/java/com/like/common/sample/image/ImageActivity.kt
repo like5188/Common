@@ -11,7 +11,7 @@ import coil.load
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityImageBinding
 import com.like.common.util.ImageUtils
-import com.like.common.util.storage.inner.StoragePrivateUtils
+import com.like.common.util.storage.internal.InternalStorageUtils
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -23,7 +23,7 @@ class ImageActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityImageBinding>(this, R.layout.activity_image)
     }
     private val file: File by lazy {
-        File(StoragePrivateUtils.InternalStorageHelper.getCacheDir(this), "cache3.jpg")
+        File(InternalStorageUtils.InternalStorageHelper.getCacheDir(this), "cache3.jpg")
     }
     private val bitmap: Bitmap by lazy {
         BitmapFactory.decodeFile(file.absolutePath)
@@ -67,7 +67,7 @@ class ImageActivity : AppCompatActivity() {
     fun quality(view: View) {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
-            val compressFile = File(StoragePrivateUtils.InternalStorageHelper.getCacheDir(this@ImageActivity), "cache2.jpg")
+            val compressFile = File(InternalStorageUtils.InternalStorageHelper.getCacheDir(this@ImageActivity), "cache2.jpg")
             ImageUtils.compressByQualityAndStore(this@ImageActivity, bitmap, 1000, compressFile)
             mBinding.ivCompress.load(BitmapFactory.decodeFile(compressFile.absolutePath))
         }
