@@ -6,13 +6,13 @@ import com.like.common.util.storage.util.StorageSizeUtils
 import java.io.File
 
 /**
- * 外部存储私有目录操作应用专属文件的工具类。（不需要申请存储权限）
+ * 外部存储私有目录操作应用专属文件的工具类。（Android 4.4 以后不需要申请存储权限）
  * 公共目录操作工具类为：[ExternalStoragePublicUtils]
  * /storage/emulated/(0/1/...)/Android/data/packageName/xxx
  *
  * 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
  *
- * 外部存储私有目录：卸载应用后，系统会移除这些目录中存储的文件。（Android 4.4 以后不需要申请存储权限）
+ * 外部存储私有目录：卸载应用后，系统会移除这些目录中存储的文件。
  *  注意：外部存储可以是外置SD卡 ，也可以是内置存储卡 的部分分区。 外部存储是可以全局访问的，分为公共目录和私有目录。
  *
  * 文件访问方式与之前Android版本一致，可以通过File path获取资源。
