@@ -113,7 +113,7 @@ class StorageActivity : AppCompatActivity() {
                     startIntentSenderForResultWrapper,
                     uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     displayName = "21.png",
-                    relativePath = "Pictures/like"
+                    relativePath = "${Environment.DIRECTORY_PICTURES}/like"
             ) {
                 FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
                     it.write("0123456789")
