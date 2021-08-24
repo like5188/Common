@@ -37,21 +37,19 @@ import java.util.concurrent.TimeUnit
 // 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
 /**
  * 外部存储公共目录操作媒体文件（图片、音频、视频）、其它文件（pdf、office、doc、txt、下载的文件等）的工具类。
- * 权限：访问不属于当前自己应用（自己的旧应用也不属于当前自己应用）的媒体文件时需要申请 READ_EXTERNAL_STORAGE 权限。
+ * 外部存储公共目录：应用卸载后，文件不会删除。
+ * /storage/emulated/(0/1/...)/xxx
+ *
+ * 权限：
+ * Android10以下：需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+ * Android10以上：访问其它应用或者自己的旧版本应用的 媒体文件 时需要申请 READ_EXTERNAL_STORAGE 权限。
+ *      当以 Android 10 或更高版本为目标平台的应用启用了分区存储时，系统会将每个媒体文件归因于一个应用，这决定了应用在未请求任何存储权限时可以访问的文件。每个文件只能归因于一个应用。因此，如果您的应用创建的媒体文件存储在照片、视频或音频文件媒体集合中，应用便可以访问该文件。
+ *      但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
  * WRITE_EXTERNAL_STORAGE 权限在 android11 里面已被废弃。
  *
- * 外部存储公共目录：/storage/emulated/(0/1/...)/xxx
- * 应用卸载后，文件不会删除。其他应用可以访问，但需要 READ_EXTERNAL_STORAGE 权限
- *
+ * 访问方式：
  * 1、媒体文件：MediaStore API
- *      api<29（Android10）：访问自己应用或者其它应用的文件(需要申请存储权限：<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />)。
- *      api>=29：
- *      1、访问自己应用新建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio、MediaStore.Downloads)。(不需要申请存储权限)
- *          为什么这里是新建的文件？
- *              当以 Android 10 或更高版本为目标平台的应用启用了分区存储时，系统会将每个媒体文件归因于一个应用，这决定了应用在未请求任何存储权限时可以访问的文件。每个文件只能归因于一个应用。因此，如果您的应用创建的媒体文件存储在照片、视频或音频文件媒体集合中，应用便可以访问该文件。
- *              但是，如果用户卸载并重新安装您的应用，您必须请求 READ_EXTERNAL_STORAGE 才能访问应用最初创建的文件。此权限请求是必需的，因为系统认为文件归因于以前安装的应用版本，而不是新安装的版本。
- *      2、访问其他应用创建的文件(MediaStore.Images、MediaStore.Video、MediaStore.Audio需要申请 READ_EXTERNAL_STORAGE 存储权限；MediaStore.Downloads则应使用 SAF)
- *      3、(更新：Android11为目标平台时，可以使用文件直接路径去访问媒体，这是在Android10上没有的，应用的性能会略有下降，还是推荐使用MediaStore )
+ *      Android11：可以使用文件直接路径去访问媒体，但是应用的性能会略有下降，还是推荐使用 MediaStore API。
  * 注意：如果您不希望媒体扫描程序发现您的文件，请在特定于应用的目录中添加名为 .nomedia 的空文件（请注意文件名中的句点前缀）。这可以防止媒体扫描程序读取您的媒体文件并通过 MediaStore API 将它们提供给其他应用。
  * 2、其它文件：Storage Access Framework (不需要申请存储权限) Android 4.4（API 级别 19）引入，由系统选择器来操作文件。
  *

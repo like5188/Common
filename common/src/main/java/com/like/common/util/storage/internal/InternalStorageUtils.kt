@@ -7,9 +7,12 @@ import java.io.File
 
 /**
  * 内部存储目录操作应用专属文件的工具类。
- * 权限：不需要申请存储权限。
  * 内部存储：属于应用的私有存储区域，空间小，其它应用不可访问，卸载应用后，系统会移除这些目录中存储的文件。
  * system/、vendor/、/data/data(user/0)/packageName/xxx 等等
+ *
+ * 权限：不需要申请存储权限。
+ *
+ * 访问方式：直接路径。
  *
  * 注意:自 API 级别 17 以来，常量 MODE_WORLD_READABLE 和 MODE_WORLD_WRITEABLE 已被弃用。
  * 从 Android N (7.0) 开始，使用这些常量将会导致引发 SecurityException。
