@@ -134,15 +134,6 @@ object ExternalStoragePublicUtils {
         }
 
         /**
-         * 使用系统选择器选择指定类型的文件
-         */
-        suspend fun selectFile(startActivityForResultWrapper: StartActivityForResultWrapper, mimeType: MimeType = MimeType._0): Intent? {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = mimeType.value
-            return startActivityForResultWrapper.startActivityForResult(intent)
-        }
-
-        /**
          * 如果启用了分区存储，集合只会显示您的应用创建的照片、视频和音频文件。
          * 如果分区存储不可用或未使用，集合将显示所有类型的媒体文件。
          *
@@ -878,6 +869,15 @@ object ExternalStoragePublicUtils {
      * 2、DocumentsUI 文件存储选择器App
      */
     object SAFHelper {
+
+        /**
+         * 使用系统选择器选择指定类型的文件
+         */
+        suspend fun selectFile(startActivityForResultWrapper: StartActivityForResultWrapper, mimeType: MimeType = MimeType._0): Intent? {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = mimeType.value
+            return startActivityForResultWrapper.startActivityForResult(intent)
+        }
 
         /**
          * 打开文档或文件
