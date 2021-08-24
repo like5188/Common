@@ -56,10 +56,9 @@ import java.util.concurrent.TimeUnit
  * 按照分区存储的规范，将用户数据(例如图片、视频、音频等)保存在公共目录，把应用数据保存在私有目录
  *
  * 如果您需要与其他应用共享单个文件或应用数据，可以使用 Android 提供的以下 API：
- * 如果您需要与其他应用共享特定文件，请使用 FileProvider API。
- * 如果您需要向其他应用提供数据，可以使用内容提供器。借助内容提供器，您可以完全控制向其他应用提供的读取和写入访问权限。尽管您可以将内容提供器与任何存储媒介一起使用，但它们通常与数据库一起使用。
- *
- * 媒体共享：按照内容提供程序创建指南中的建议使用 content:// URI。如需在搭载 Android 10 的设备上访问共享存储空间中的其他文件，建议您在应用的清单文件中将 requestLegacyExternalStorage 设置为 true 以停用分区存储。
+ *      如果您需要与其他应用共享特定文件，请使用 FileProvider API。
+ *      如果您需要向其他应用提供数据，可以使用内容提供器。借助内容提供器，您可以完全控制向其他应用提供的读取和写入访问权限。尽管您可以将内容提供器与任何存储媒介一起使用，但它们通常与数据库一起使用。
+ *      媒体共享：按照内容提供程序创建指南中的建议使用 content:// URI。如需在搭载 Android 10 的设备上访问共享存储空间中的其他文件，建议您在应用的清单文件中将 requestLegacyExternalStorage 设置为 true 以停用分区存储。
  *
  * Android 存储用例和最佳做法：https://developer.android.google.cn/training/data-storage/use-cases
  */
