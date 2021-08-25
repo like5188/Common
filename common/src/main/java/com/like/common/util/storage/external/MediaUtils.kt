@@ -95,8 +95,8 @@ object MediaUtils {
         }
 
         val context = requestPermissionWrapper.activity.applicationContext
-        val intent =
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE)//android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
+        //android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         return if (isThumbnail) {
             // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
             startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
@@ -107,8 +107,7 @@ object MediaUtils {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 System.currentTimeMillis().toString(),
                 Environment.DIRECTORY_PICTURES
-            )
-                ?: return null
+            ) ?: return null
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
             startActivityForResultWrapper.startActivityForResult(intent)
