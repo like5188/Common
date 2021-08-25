@@ -131,13 +131,12 @@ object MediaStoreUtils {
     ): List<FileEntity> {
         val files = mutableListOf<FileEntity>()
         withContext(Dispatchers.IO) {
-            val projection = FileEntity.getProjections()
-            val contentUri = FileEntity.getContentUri()
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += FileEntity().apply { fill(cursor, contentUri) }
+            context.contentResolver.query(FileEntity.getContentUri(), FileEntity.getProjections(), selection, selectionArgs, sortOrder)
+                ?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        files += FileEntity().apply { fill(cursor) }
+                    }
                 }
-            }
         }
         return files
     }
@@ -161,11 +160,15 @@ object MediaStoreUtils {
 
         val files = mutableListOf<DownloadEntity>()
         withContext(Dispatchers.IO) {
-            val projection = DownloadEntity.getProjections()
-            val contentUri = DownloadEntity.getContentUri()
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
+            context.contentResolver.query(
+                DownloadEntity.getContentUri(),
+                DownloadEntity.getProjections(),
+                selection,
+                selectionArgs,
+                sortOrder
+            )?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    files += DownloadEntity().apply { fill(cursor, contentUri) }
+                    files += DownloadEntity().apply { fill(cursor) }
                 }
             }
         }
@@ -193,15 +196,12 @@ object MediaStoreUtils {
     ): List<ImageEntity> {
         val files = mutableListOf<ImageEntity>()
         withContext(Dispatchers.IO) {
-            val projection = ImageEntity.getProjections()
-            val contentUri = ImageEntity.getContentUri()
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += ImageEntity().apply {
-                        fill(cursor, contentUri)
+            context.contentResolver.query(ImageEntity.getContentUri(), ImageEntity.getProjections(), selection, selectionArgs, sortOrder)
+                ?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        files += ImageEntity().apply { fill(cursor) }
                     }
                 }
-            }
         }
         return files
     }
@@ -221,13 +221,12 @@ object MediaStoreUtils {
     ): List<AudioEntity> {
         val files = mutableListOf<AudioEntity>()
         withContext(Dispatchers.IO) {
-            val projection = AudioEntity.getProjections()
-            val contentUri = AudioEntity.getContentUri()
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += AudioEntity().apply { fill(cursor, contentUri) }
+            context.contentResolver.query(AudioEntity.getContentUri(), AudioEntity.getProjections(), selection, selectionArgs, sortOrder)
+                ?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        files += AudioEntity().apply { fill(cursor) }
+                    }
                 }
-            }
         }
         return files
     }
@@ -248,13 +247,12 @@ object MediaStoreUtils {
     ): List<VideoEntity> {
         val files = mutableListOf<VideoEntity>()
         withContext(Dispatchers.IO) {
-            val projection = VideoEntity.getProjections()
-            val contentUri = VideoEntity.getContentUri()
-            context.contentResolver.query(contentUri, projection, selection, selectionArgs, sortOrder)?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += VideoEntity().apply { fill(cursor, contentUri) }
+            context.contentResolver.query(VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder)
+                ?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        files += VideoEntity().apply { fill(cursor) }
+                    }
                 }
-            }
         }
         return files
     }
@@ -563,10 +561,24 @@ object MediaStoreUtils {
             fun getProjections() = projection
         }
 
-        open suspend fun fill(cursor: Cursor, uri: Uri) {
+        open suspend fun fill(cursor: Cursor) {
             with(cursor) {
                 id = getLongOrNull(getColumnIndexOrThrow(projection[0]))
-                this@BaseEntity.uri = ContentUris.withAppendedId(uri, id ?: -1L)
+                uri = ContentUris.withAppendedId(
+                    when (this@BaseEntity) {
+                        is FileEntity -> FileEntity.getContentUri()
+                        is ImageEntity -> ImageEntity.getContentUri()
+                        is AudioEntity -> AudioEntity.getContentUri()
+                        is VideoEntity -> VideoEntity.getContentUri()
+                        is DownloadEntity -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            DownloadEntity.getContentUri()
+                        } else {
+                            throw RuntimeException("get uri error")
+                        }
+                        else -> throw RuntimeException("get uri error")
+                    },
+                    id ?: -1L
+                )
             }
         }
 
@@ -615,8 +627,8 @@ object MediaStoreUtils {
             fun getProjections() = BaseEntity.getProjections() + projection + projectionQ + projectionR
         }
 
-        override suspend fun fill(cursor: Cursor, uri: Uri) {
-            super.fill(cursor, uri)
+        override suspend fun fill(cursor: Cursor) {
+            super.fill(cursor)
             with(cursor) {
                 size = getIntOrNull(getColumnIndexOrThrow(projection[0]))
                 displayName = getStringOrNull(getColumnIndexOrThrow(projection[1]))
@@ -666,8 +678,8 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Files.getContentUri("external")
         }
 
-        override suspend fun fill(cursor: Cursor, uri: Uri) {
-            super.fill(cursor, uri)
+        override suspend fun fill(cursor: Cursor) {
+            super.fill(cursor)
             with(cursor) {
                 mediaType = getIntOrNull(getColumnIndex(projection[0]))
             }
@@ -708,8 +720,8 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
 
-        override suspend fun fill(cursor: Cursor, uri: Uri) {
-            super.fill(cursor, uri)
+        override suspend fun fill(cursor: Cursor) {
+            super.fill(cursor)
             with(cursor) {
                 description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
 
@@ -760,8 +772,8 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }
 
-        override suspend fun fill(cursor: Cursor, uri: Uri) {
-            super.fill(cursor, uri)
+        override suspend fun fill(cursor: Cursor) {
+            super.fill(cursor)
             with(cursor) {
                 description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
 
@@ -795,8 +807,8 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
         }
 
-        override suspend fun fill(cursor: Cursor, uri: Uri) {
-            super.fill(cursor, uri)
+        override suspend fun fill(cursor: Cursor) {
+            super.fill(cursor)
             with(cursor) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     downloadUri = getStringOrNull(getColumnIndexOrThrow(projectionQ[0]))
