@@ -122,12 +122,6 @@ class StorageActivity : AppCompatActivity() {
         }
     }
 
-    fun getDownloads(view: View) {
-        lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getDownloads(this@StorageActivity))
-        }
-    }
-
     private var createdFileUri: Uri? = null
     fun createFile(view: View) {
         lifecycleScope.launch {
