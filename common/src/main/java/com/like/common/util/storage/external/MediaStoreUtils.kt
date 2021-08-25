@@ -601,14 +601,14 @@ object MediaStoreUtils {
 
             @RequiresApi(Build.VERSION_CODES.Q)
             val projectionQ = arrayOf(
-                MediaStore.Images.ImageColumns.ORIENTATION,
-                MediaStore.Audio.AudioColumns.DURATION,
+                MediaStore.MediaColumns.ORIENTATION,
+                MediaStore.MediaColumns.DURATION,
             )
 
             @RequiresApi(Build.VERSION_CODES.R)
             val projectionR = arrayOf(
-                MediaStore.Audio.AudioColumns.ARTIST,
-                MediaStore.Audio.AudioColumns.ALBUM
+                MediaStore.MediaColumns.ARTIST,
+                MediaStore.MediaColumns.ALBUM
             )
 
             fun getProjections() = BaseEntity.getProjections() + projection + projectionQ + projectionR
@@ -738,7 +738,6 @@ object MediaStoreUtils {
 
     class AudioEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
-
             fun getProjections() = MediaEntity.getProjections()
 
             fun getContentUri(): Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
