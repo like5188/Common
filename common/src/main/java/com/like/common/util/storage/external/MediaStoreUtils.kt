@@ -196,17 +196,6 @@ object MediaStoreUtils {
         return getEntities(context, VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder)
     }
 
-    /**
-     * 获取自己应用创建的媒体文件。
-     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的媒体文件
-     *
-     * 存储在 DCIM/、Movies/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
-     * 如果开启了分区存储，获取位置信息请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
-     *
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
-     */
     private suspend inline fun <reified T : BaseEntity> getEntities(
         context: Context,
         uri: Uri,
