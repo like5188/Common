@@ -37,23 +37,25 @@ object UriUtils {
      */
     @RequiresPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray? {
+    suspend fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray? {
         uri ?: return null
-        try {
-            // 更新 Uri
-            val photoUri = MediaStore.setRequireOriginal(uri)
-            context.contentResolver.openInputStream(photoUri)?.use { stream ->
-                val output = floatArrayOf(0f, 0f)
-                ExifInterface(stream).run {
-                    // If lat/long is null, fall back to the coordinates (0, 0).
-                    getLatLong(output)
+        return withContext(Dispatchers.IO) {
+            try {
+                // 更新 Uri
+                val photoUri = MediaStore.setRequireOriginal(uri)
+                context.contentResolver.openInputStream(photoUri)?.use { stream ->
+                    val output = floatArrayOf(0f, 0f)
+                    ExifInterface(stream).run {
+                        // If lat/long is null, fall back to the coordinates (0, 0).
+                        getLatLong(output)
+                    }
+                    output
                 }
-                return output
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
-        return null
     }
 
     suspend fun getBitmapFromUriByFileDescriptor(context: Context, uri: Uri?): Bitmap? {
@@ -120,31 +122,31 @@ object UriUtils {
     fun dumpImageMetaData(context: Context, imageUri: Uri, callback: (String, String) -> Unit) {
         // 获取图片信息
         context.contentResolver
-                .query(imageUri, null, null, null, null, null)
-                ?.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        val displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                        val size = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE))
-                        callback(displayName, size)
-                    }
+            .query(imageUri, null, null, null, null, null)
+            ?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    val size = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE))
+                    callback(displayName, size)
                 }
+            }
     }
 
     fun getUriByFile(context: Context, file: File): Uri =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                // android7.0 需要通过FileProvider来获取文件uri。并开始强制启用StrictMode“严苛模式”，这个策略禁止在app外暴露 “file://“URI。
-                // 为了与其他应用共享文件，你应该发送"content://"URI ，并授予临时访问权限。授予这个临时访问权限的最签单方法就是使用FileProvider类。
-                FileProvider.getUriForFile(context.applicationContext, context.packageName + ".fileprovider", file)
-            } else {
-                Uri.fromFile(file)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // android7.0 需要通过FileProvider来获取文件uri。并开始强制启用StrictMode“严苛模式”，这个策略禁止在app外暴露 “file://“URI。
+            // 为了与其他应用共享文件，你应该发送"content://"URI ，并授予临时访问权限。授予这个临时访问权限的最签单方法就是使用FileProvider类。
+            FileProvider.getUriForFile(context.applicationContext, context.packageName + ".fileprovider", file)
+        } else {
+            Uri.fromFile(file)
+        }
 
     fun getFilePathByUri(context: Context, uri: Uri): String =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                getFilePathAbove19(context, uri) ?: ""
-            } else {
-                getFilePathBelow19(context, uri)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getFilePathAbove19(context, uri) ?: ""
+        } else {
+            getFilePathBelow19(context, uri)
+        }
 
     /**
      * API19以下获取文件路径的方法

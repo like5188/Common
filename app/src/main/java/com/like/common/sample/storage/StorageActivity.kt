@@ -85,31 +85,31 @@ class StorageActivity : AppCompatActivity() {
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getFiles(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getFiles(this@StorageActivity))
         }
     }
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getImages(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getImages(this@StorageActivity))
         }
     }
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getAudios(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getAudios(this@StorageActivity))
         }
     }
 
     fun getVideos(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getVideos(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getVideos(this@StorageActivity))
         }
     }
 
     fun getDownloads(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getDownloads(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getDownloads(this@StorageActivity))
         }
     }
 
