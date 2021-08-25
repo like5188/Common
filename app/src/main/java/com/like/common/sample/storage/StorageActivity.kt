@@ -1,5 +1,6 @@
 package com.like.common.sample.storage
 
+import android.Manifest
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -85,7 +86,9 @@ class StorageActivity : AppCompatActivity() {
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getFiles(this@StorageActivity))
+            if (requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Logger.printCollection(MediaStoreUtils.getFiles(this@StorageActivity))
+            }
         }
     }
 

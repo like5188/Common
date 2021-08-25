@@ -115,7 +115,8 @@ object MediaStoreUtils {
     }
 
     /**
-     * 获取所有类型的媒体文件。
+     * 获取自己应用创建的媒体文件。
+     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的媒体文件
      *
      * 如果要显示特定文件夹中的文件，请求 READ_EXTERNAL_STORAGE 权限，根据 MediaColumns.DATA 的值检索媒体文件，该值包含磁盘上的媒体项的绝对文件系统路径。
      *
@@ -129,19 +130,13 @@ object MediaStoreUtils {
         selectionArgs: Array<String>? = null,
         sortOrder: String? = null
     ): List<FileEntity> {
-        val files = mutableListOf<FileEntity>()
-        withContext(Dispatchers.IO) {
-            context.contentResolver.query(FileEntity.getContentUri(), FileEntity.getProjections(), selection, selectionArgs, sortOrder)
-                ?.use { cursor ->
-                    while (cursor.moveToNext()) {
-                        files += FileEntity().apply { fill(cursor) }
-                    }
-                }
-        }
-        return files
+        return getEntities(context, FileEntity.getContentUri(), FileEntity.getProjections(), selection, selectionArgs, sortOrder)
     }
 
     /**
+     * 获取自己应用创建的下载文件。
+     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的下载文件
+     *
      * 存储在 Download/ 目录中。在搭载 Android 10（API 级别 29）及更高版本的设备上，这些文件存储在 MediaStore.Downloads 表格中。此表格在 Android 9（API 级别 28）及更低版本中不可用。
      *
      * @param selection         查询条件
@@ -157,32 +152,19 @@ object MediaStoreUtils {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             return emptyList()
         }
-
-        val files = mutableListOf<DownloadEntity>()
-        withContext(Dispatchers.IO) {
-            context.contentResolver.query(
-                DownloadEntity.getContentUri(),
-                DownloadEntity.getProjections(),
-                selection,
-                selectionArgs,
-                sortOrder
-            )?.use { cursor ->
-                while (cursor.moveToNext()) {
-                    files += DownloadEntity().apply { fill(cursor) }
-                }
-            }
-        }
-        return files
+        return getEntities(context, DownloadEntity.getContentUri(), DownloadEntity.getProjections(), selection, selectionArgs, sortOrder)
     }
 
     /**
+     * 获取自己应用创建的图片文件。
+     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的图片文件
+     * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
+     *
      * （包括照片和屏幕截图），存储在 DCIM/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Images 表格中。
      *
      * 您需要在应用的清单中声明 ACCESS_MEDIA_LOCATION 权限，然后在运行时请求此权限，应用才能从照片中检索未编辑的 Exif 元数据。
      * 用户在 Settings UI 里看不到这个权限，但是它属于运行时权限，所以必须要在 Manifest 里声明该权限，并在运行时同时请求该权限和读取外部存储权限
      * 一些照片在其 Exif 元数据中包含位置信息，以便用户查看照片的拍摄地点。但是，由于此位置信息属于敏感信息，如果应用使用了分区存储，默认情况下 Android 10 会对应用隐藏此信息。
-     *
-     * 如果开启了分区存储，获取位置信息请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
      *
      * @param selection         查询条件
      * @param selectionArgs     查询条件填充值
@@ -194,19 +176,13 @@ object MediaStoreUtils {
         selectionArgs: Array<String>? = null,
         sortOrder: String? = null
     ): List<ImageEntity> {
-        val files = mutableListOf<ImageEntity>()
-        withContext(Dispatchers.IO) {
-            context.contentResolver.query(ImageEntity.getContentUri(), ImageEntity.getProjections(), selection, selectionArgs, sortOrder)
-                ?.use { cursor ->
-                    while (cursor.moveToNext()) {
-                        files += ImageEntity().apply { fill(cursor) }
-                    }
-                }
-        }
-        return files
+        return getEntities(context, ImageEntity.getContentUri(), ImageEntity.getProjections(), selection, selectionArgs, sortOrder)
     }
 
     /**
+     * 获取自己应用创建的音频文件。
+     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的音频文件
+     *
      * 存储在 Alarms/、Audiobooks/、Music/、Notifications/、Podcasts/ 和 Ringtones/ 目录中，以及位于 Music/ 或 Movies/ 目录中的音频播放列表中。系统将这些文件添加到 MediaStore.Audio 表格中。
      *
      * @param selection         查询条件
@@ -219,21 +195,15 @@ object MediaStoreUtils {
         selectionArgs: Array<String>? = null,
         sortOrder: String? = null
     ): List<AudioEntity> {
-        val files = mutableListOf<AudioEntity>()
-        withContext(Dispatchers.IO) {
-            context.contentResolver.query(AudioEntity.getContentUri(), AudioEntity.getProjections(), selection, selectionArgs, sortOrder)
-                ?.use { cursor ->
-                    while (cursor.moveToNext()) {
-                        files += AudioEntity().apply { fill(cursor) }
-                    }
-                }
-        }
-        return files
+        return getEntities(context, AudioEntity.getContentUri(), AudioEntity.getProjections(), selection, selectionArgs, sortOrder)
     }
 
     /**
+     * 获取自己应用创建的视频文件。
+     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的视频文件
+     * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
+     *
      * 存储在 DCIM/、Movies/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
-     * 如果开启了分区存储，获取位置信息请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
      *
      * @param selection         查询条件
      * @param selectionArgs     查询条件填充值
@@ -245,12 +215,41 @@ object MediaStoreUtils {
         selectionArgs: Array<String>? = null,
         sortOrder: String? = null
     ): List<VideoEntity> {
-        val files = mutableListOf<VideoEntity>()
+        return getEntities(context, VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder)
+    }
+
+    /**
+     * 获取自己应用创建的媒体文件。
+     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的媒体文件
+     *
+     * 存储在 DCIM/、Movies/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
+     * 如果开启了分区存储，获取位置信息请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
+     *
+     * @param selection         查询条件
+     * @param selectionArgs     查询条件填充值
+     * @param sortOrder         排序依据
+     */
+    private suspend inline fun <reified T : BaseEntity> getEntities(
+        context: Context,
+        uri: Uri,
+        projection: Array<String>,
+        selection: String? = null,
+        selectionArgs: Array<String>? = null,
+        sortOrder: String? = null
+    ): List<T> {
+        val files = mutableListOf<T>()
         withContext(Dispatchers.IO) {
-            context.contentResolver.query(VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder)
+            context.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)
                 ?.use { cursor ->
                     while (cursor.moveToNext()) {
-                        files += VideoEntity().apply { fill(cursor) }
+                        files += when (T::class.java) {
+                            FileEntity::class.java -> FileEntity(cursor)
+                            ImageEntity::class.java -> ImageEntity(cursor)
+                            AudioEntity::class.java -> AudioEntity(cursor)
+                            VideoEntity::class.java -> VideoEntity(cursor)
+                            DownloadEntity::class.java -> DownloadEntity(cursor)
+                            else -> throw RuntimeException("get entities error")
+                        } as T
                     }
                 }
         }
@@ -549,10 +548,7 @@ object MediaStoreUtils {
         return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
     }
 
-    open class BaseEntity {
-        var id: Long? = null
-        var uri: Uri? = null
-
+    open class BaseEntity(cursor: Cursor) {
         companion object {
             val projection = arrayOf(
                 BaseColumns._ID
@@ -561,7 +557,10 @@ object MediaStoreUtils {
             fun getProjections() = projection
         }
 
-        open suspend fun fill(cursor: Cursor) {
+        var id: Long? = null
+        var uri: Uri? = null
+
+        init {
             with(cursor) {
                 id = getLongOrNull(getColumnIndexOrThrow(projection[0]))
                 uri = ContentUris.withAppendedId(
@@ -588,19 +587,7 @@ object MediaStoreUtils {
 
     }
 
-    open class MediaEntity : BaseEntity() {
-        var size: Int? = null
-        var displayName: String? = null
-        var title: String? = null
-        var mimeType: String? = null
-        var dateAdded: Date? = null
-        var width: Int? = null
-        var height: Int? = null
-        var orientation: Int? = null
-        var duration: Int? = null
-        var artist: String? = null
-        var album: String? = null
-
+    open class MediaEntity(cursor: Cursor) : BaseEntity(cursor) {
         companion object {
             val projection = arrayOf(
                 MediaStore.MediaColumns.SIZE,
@@ -627,8 +614,19 @@ object MediaStoreUtils {
             fun getProjections() = BaseEntity.getProjections() + projection + projectionQ + projectionR
         }
 
-        override suspend fun fill(cursor: Cursor) {
-            super.fill(cursor)
+        var size: Int? = null
+        var displayName: String? = null
+        var title: String? = null
+        var mimeType: String? = null
+        var dateAdded: Date? = null
+        var width: Int? = null
+        var height: Int? = null
+        var orientation: Int? = null
+        var duration: Int? = null
+        var artist: String? = null
+        var album: String? = null
+
+        init {
             with(cursor) {
                 size = getIntOrNull(getColumnIndexOrThrow(projection[0]))
                 displayName = getStringOrNull(getColumnIndexOrThrow(projection[1]))
@@ -656,7 +654,17 @@ object MediaStoreUtils {
 
     }
 
-    class FileEntity : MediaEntity() {
+    class FileEntity(cursor: Cursor) : MediaEntity(cursor) {
+        companion object {
+            val projection = arrayOf(
+                MediaStore.Files.FileColumns.MEDIA_TYPE
+            )
+
+            fun getProjections() = MediaEntity.getProjections() + projection
+
+            fun getContentUri(): Uri = MediaStore.Files.getContentUri("external")
+        }
+
         /**
         int MEDIA_TYPE_NONE = 0;
         int MEDIA_TYPE_IMAGE = 1;
@@ -668,18 +676,7 @@ object MediaStoreUtils {
          */
         var mediaType: Int? = null
 
-        companion object {
-            val projection = arrayOf(
-                MediaStore.Files.FileColumns.MEDIA_TYPE
-            )
-
-            fun getProjections() = MediaEntity.getProjections() + projection
-
-            fun getContentUri(): Uri = MediaStore.Files.getContentUri("external")
-        }
-
-        override suspend fun fill(cursor: Cursor) {
-            super.fill(cursor)
+        init {
             with(cursor) {
                 mediaType = getIntOrNull(getColumnIndex(projection[0]))
             }
@@ -701,13 +698,7 @@ object MediaStoreUtils {
 
     }
 
-    class ImageEntity : MediaEntity() {
-        var description: String? = null
-
-        // 如果开启了分区存储，获取位置信息请使用 [UriUtils.getLatLongFromImageUri()] 方法。
-        var latitude: Float? = null
-        var longitude: Float? = null
-
+    class ImageEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
             val projection = arrayOf(
                 MediaStore.Images.ImageColumns.DESCRIPTION,
@@ -720,8 +711,13 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
 
-        override suspend fun fill(cursor: Cursor) {
-            super.fill(cursor)
+        var description: String? = null
+
+        // 如果开启了分区存储，获取位置信息请使用 [UriUtils.getLatLongFromImageUri()] 方法。
+        var latitude: Float? = null
+        var longitude: Float? = null
+
+        init {
             with(cursor) {
                 description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
 
@@ -740,7 +736,7 @@ object MediaStoreUtils {
 
     }
 
-    class AudioEntity : MediaEntity() {
+    class AudioEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
 
             fun getProjections() = MediaEntity.getProjections()
@@ -753,13 +749,7 @@ object MediaStoreUtils {
         }
     }
 
-    class VideoEntity : MediaEntity() {
-        var description: String? = null
-
-        // 如果开启了分区存储，获取位置信息请使用 [UriUtils.getLatLongFromImageUri()] 方法。
-        var latitude: Float? = null
-        var longitude: Float? = null
-
+    class VideoEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
             val projection = arrayOf(
                 MediaStore.Video.VideoColumns.DESCRIPTION,
@@ -772,8 +762,13 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }
 
-        override suspend fun fill(cursor: Cursor) {
-            super.fill(cursor)
+        var description: String? = null
+
+        // 如果开启了分区存储，获取位置信息请使用 [UriUtils.getLatLongFromImageUri()] 方法。
+        var latitude: Float? = null
+        var longitude: Float? = null
+
+        init {
             with(cursor) {
                 description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
 
@@ -792,9 +787,7 @@ object MediaStoreUtils {
 
     }
 
-    class DownloadEntity : MediaEntity() {
-        var downloadUri: String? = null
-
+    class DownloadEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
             @RequiresApi(Build.VERSION_CODES.Q)
             val projectionQ = arrayOf(
@@ -807,8 +800,9 @@ object MediaStoreUtils {
             fun getContentUri(): Uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
         }
 
-        override suspend fun fill(cursor: Cursor) {
-            super.fill(cursor)
+        var downloadUri: String? = null
+
+        init {
             with(cursor) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     downloadUri = getStringOrNull(getColumnIndexOrThrow(projectionQ[0]))
