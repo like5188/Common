@@ -83,8 +83,8 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="updateFileInfo"
-                android:text="updateFileInfo"
+                android:onClick="updateFile"
+                android:text="updateFile"
                 android:textAllCaps="false" />
 
             <Button

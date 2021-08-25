@@ -133,7 +133,7 @@ class StorageActivity : AppCompatActivity() {
         }
     }
 
-    fun updateFileInfo(view: View) {
+    fun updateFile(view: View) {
         val uri = createdFileUri ?: return
         lifecycleScope.launch {
             Logger.d(
