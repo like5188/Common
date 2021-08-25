@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.*
-import com.like.common.util.storage.external.MediaUtils
+import com.like.common.util.storage.external.MediaStoreUtils
 import com.like.common.util.storage.external.SafUtils
 import kotlinx.coroutines.launch
 import java.io.FileOutputStream
@@ -72,7 +72,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun takePhoto(view: View) {
         lifecycleScope.launch {
-            MediaUtils.takePhoto(
+            MediaStoreUtils.takePhoto(
                 requestPermissionWrapper,
                 startActivityForResultWrapper,
                 startIntentSenderForResultWrapper,
@@ -85,38 +85,38 @@ class StorageActivity : AppCompatActivity() {
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaUtils.getFiles(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getFiles(requestPermissionWrapper))
         }
     }
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaUtils.getImages(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getImages(requestPermissionWrapper))
         }
     }
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaUtils.getAudios(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getAudios(requestPermissionWrapper))
         }
     }
 
     fun getVideos(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaUtils.getVideos(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getVideos(requestPermissionWrapper))
         }
     }
 
     fun getDownloads(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaUtils.getDownloads(requestPermissionWrapper))
+            Logger.printCollection(MediaStoreUtils.getDownloads(requestPermissionWrapper))
         }
     }
 
     private var createdFileUri: Uri? = null
     fun createFile(view: View) {
         lifecycleScope.launch {
-            createdFileUri = MediaUtils.createFile(
+            createdFileUri = MediaStoreUtils.createFile(
                 requestPermissionWrapper,
                 startIntentSenderForResultWrapper,
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -134,7 +134,7 @@ class StorageActivity : AppCompatActivity() {
     fun updateFileInfo(view: View) {
         lifecycleScope.launch {
             Logger.d(
-                MediaUtils.updateFile(
+                MediaStoreUtils.updateFile(
                     requestPermissionWrapper,
                     startIntentSenderForResultWrapper,
                     createdFileUri,
@@ -147,7 +147,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun deleteFile(view: View) {
         lifecycleScope.launch {
-            Logger.d(MediaUtils.deleteFile(requestPermissionWrapper, startIntentSenderForResultWrapper, createdFileUri))
+            Logger.d(MediaStoreUtils.deleteFile(requestPermissionWrapper, startIntentSenderForResultWrapper, createdFileUri))
         }
     }
 }

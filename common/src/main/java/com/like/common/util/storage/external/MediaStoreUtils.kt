@@ -75,7 +75,7 @@ import java.util.concurrent.TimeUnit
  * createDeleteRequest (ContentResolver, Collection)	用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
  * 系统在调用以上任何一个方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新或删除指定的媒体文件。
  */
-object MediaUtils {
+object MediaStoreUtils {
 
     /**
      * 拍照
