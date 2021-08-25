@@ -247,7 +247,11 @@ object MediaStoreUtils {
                             ImageEntity::class.java -> ImageEntity(cursor)
                             AudioEntity::class.java -> AudioEntity(cursor)
                             VideoEntity::class.java -> VideoEntity(cursor)
-                            DownloadEntity::class.java -> DownloadEntity(cursor)
+                            DownloadEntity::class.java -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                DownloadEntity(cursor)
+                            } else {
+                                throw RuntimeException("get entities error")
+                            }
                             else -> throw RuntimeException("get entities error")
                         } as T
                     }
@@ -611,7 +615,11 @@ object MediaStoreUtils {
                 MediaStore.MediaColumns.ALBUM
             )
 
-            fun getProjections() = BaseEntity.getProjections() + projection + projectionQ + projectionR
+            fun getProjections() = BaseEntity.getProjections() + projection + when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> projectionR
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> projectionQ
+                else -> emptyArray()
+            }
         }
 
         var size: Int? = null
@@ -786,16 +794,15 @@ object MediaStoreUtils {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     class DownloadEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
-            @RequiresApi(Build.VERSION_CODES.Q)
             val projectionQ = arrayOf(
                 MediaStore.DownloadColumns.DOWNLOAD_URI
             )
 
             fun getProjections() = MediaEntity.getProjections() + projectionQ
 
-            @RequiresApi(Build.VERSION_CODES.Q)
             fun getContentUri(): Uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
         }
 
@@ -803,9 +810,7 @@ object MediaStoreUtils {
 
         init {
             with(cursor) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    downloadUri = getStringOrNull(getColumnIndexOrThrow(projectionQ[0]))
-                }
+                downloadUri = getStringOrNull(getColumnIndexOrThrow(projectionQ[0]))
             }
         }
 
