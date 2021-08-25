@@ -127,19 +127,19 @@ class StorageActivity : AppCompatActivity() {
                 requestPermissionWrapper,
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 displayName = "6.jpg",
-                relativePath = "Pictures/like"
+                relativePath = "${Environment.DIRECTORY_PICTURES}/like"
             )
             Logger.d(createdFileUri)
         }
     }
 
     fun updateFileInfo(view: View) {
+        val uri = createdFileUri ?: return
         lifecycleScope.launch {
             Logger.d(
                 MediaStoreUtils.updateFile(
                     requestPermissionWrapper,
-                    startIntentSenderForResultWrapper,
-                    createdFileUri,
+                    uri,
                     displayName = "22.png",
                     relativePath = Environment.DIRECTORY_PICTURES
                 )

@@ -339,31 +339,22 @@ object MediaStoreUtils {
     /**
      * 更新文件。
      *
-     * @param relativePath  相对路径，>= android10 有效，用于移动文件。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
+     * @param relativePath  相对路径，>= android10 有效，用于移动文件。
      */
     suspend fun updateFile(
         requestPermissionWrapper: RequestPermissionWrapper,
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
-        uri: Uri?,
+        uri: Uri,
         displayName: String,
         relativePath: String = "",
         selection: String? = null,
         selectionArgs: Array<String>? = null
     ): Boolean {
-        uri ?: return false
         if (displayName.isEmpty()) {
             return false
         }
-        when {
-            Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                if (!createWriteRequest(startIntentSenderForResultWrapper, listOf(uri))) {
-                    return false
-                }
-            }
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
-                if (!requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return false
-                }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (!requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                return false
             }
         }
         return withContext(Dispatchers.IO) {
@@ -378,7 +369,9 @@ object MediaStoreUtils {
             } catch (securityException: SecurityException) {
                 // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                 // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                    !Environment.isExternalStorageLegacy()// 开启了分区存储
+                ) {
                     (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
                         requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                     }
