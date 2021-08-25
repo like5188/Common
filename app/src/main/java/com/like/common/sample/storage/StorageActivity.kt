@@ -2,6 +2,7 @@ package com.like.common.sample.storage
 
 import android.Manifest
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -94,7 +95,18 @@ class StorageActivity : AppCompatActivity() {
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getImages(this@StorageActivity))
+            if (requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                val images = MediaStoreUtils.getImages(this@StorageActivity)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&// android 10 及其以上
+                    !Environment.isExternalStorageLegacy() &&// 开启了分区存储
+                    requestPermissionWrapper.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
+                ) {
+                    images.forEach {
+                        UriUtils.getLatLongFromImageUri(this@StorageActivity, it.uri)
+                    }
+                }
+                Logger.printCollection(images)
+            }
         }
     }
 
