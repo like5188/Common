@@ -582,7 +582,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "BaseEntity(id=$id, uri=$uri)"
+            return "id=$id, uri=$uri"
         }
 
     }
@@ -649,7 +649,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "MediaEntity(size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, width=$width, height=$height, orientation=$orientation, duration=$duration, artist=$artist, album=$album) ${super.toString()}"
+            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, width=$width, height=$height, orientation=$orientation, duration=$duration, artist=$artist, album=$album"
         }
 
     }
@@ -693,7 +693,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "FileEntity(mediaType=${getMediaTypeString()}) ${super.toString()}"
+            return "FileEntity(${super.toString()}, mediaType=${getMediaTypeString()})"
         }
 
     }
@@ -731,7 +731,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "ImageEntity(description=$description, latitude=$latitude, longitude=$longitude) ${super.toString()}"
+            return "ImageEntity(${super.toString()}, description=$description, latitude=$latitude, longitude=$longitude)"
         }
 
     }
@@ -745,7 +745,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "AudioEntity() ${super.toString()}"
+            return "AudioEntity(${super.toString()})"
         }
     }
 
@@ -782,7 +782,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "VideoEntity(description=$description, latitude=$latitude, longitude=$longitude) ${super.toString()}"
+            return "VideoEntity(${super.toString()}, description=$description, latitude=$latitude, longitude=$longitude)"
         }
 
     }
@@ -811,7 +811,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "DownloadEntity(downloadUri=$downloadUri) ${super.toString()}"
+            return "DownloadEntity(${super.toString()}, downloadUri=$downloadUri)"
         }
 
     }
