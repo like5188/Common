@@ -16,7 +16,6 @@ import com.like.common.util.*
 import com.like.common.util.storage.external.MediaStoreUtils
 import com.like.common.util.storage.external.SafUtils
 import kotlinx.coroutines.launch
-import java.io.FileOutputStream
 
 class StorageActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -124,15 +123,12 @@ class StorageActivity : AppCompatActivity() {
     private var createdFileUri: Uri? = null
     fun createFile(view: View) {
         lifecycleScope.launch {
-            createdFileUri = MediaStoreUtils.createImage(
+            createdFileUri = MediaStoreUtils.createFile(
                 requestPermissionWrapper,
-                displayName = "1.png",
+                uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                displayName = "6.jpg",
                 relativePath = "Pictures/like"
-            ) {
-                FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
-                    it.write("0123456789")
-                }
-            }
+            )
             Logger.d(createdFileUri)
         }
     }

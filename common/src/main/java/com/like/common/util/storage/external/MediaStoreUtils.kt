@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.ParcelFileDescriptor
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import androidx.activity.result.IntentSenderRequest
@@ -25,6 +24,7 @@ import com.like.common.util.StartIntentSenderForResultWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import java.sql.Date
 import java.util.concurrent.TimeUnit
 
@@ -198,9 +198,9 @@ object MediaStoreUtils {
         context: Context,
         uri: Uri,
         projection: Array<String>,
-        selection: String? = null,
-        selectionArgs: Array<String>? = null,
-        sortOrder: String? = null
+        selection: String?,
+        selectionArgs: Array<String>?,
+        sortOrder: String?
     ): List<T> {
         val files = mutableListOf<T>()
         withContext(Dispatchers.IO) {
@@ -221,10 +221,12 @@ object MediaStoreUtils {
     }
 
     /**
-     * 创建图片
+     * 创建媒体文件
      *
-     * @param uri           content://media/<volumeName>/<Uri路径>
-     * 其中 volumeName 可以是：
+     * @param uri   External、可移动存储 类型的 URI
+     * 如果为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
+     *
+     * content://media/<volumeName>/<Uri路径> 其中 volumeName 可以是：
      * [android.provider.MediaStore.VOLUME_INTERNAL]
      * [android.provider.MediaStore.VOLUME_EXTERNAL]
      * [android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY]
@@ -254,76 +256,30 @@ object MediaStoreUtils {
     ■    可移动存储: MediaStore.Images.Media.getContentUri
     content://media/<volumeName>/images/media。
 
-     * @param displayName   文件名称。如果是 android10 以下，则必须要有后缀。android10 及以上版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会变成".png.jpg"
-     * @param relativePath  相对路径。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
-     * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
-     * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
+     * @param displayName   文件名称。
+     * 必须输入正确的后缀。
+     * 因为如果是 android10 以下或者 Android11，则必须要有后缀。
+     * android10 版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会自动变为".png.jpg"，当然，如果是".jpg"，那么就不会再自动加后缀了。
+     *
+     * @param relativePath  相对路径。格式：root/xxx。注意：根目录 root 必须是以下这些：
      * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
      * Video：[DCIM, Movies]
      * Image：[DCIM, Pictures]
-     * @param onWrite      写入数据的操作
-     */
-    suspend fun createImage(
-        requestPermissionWrapper: RequestPermissionWrapper,
-        displayName: String,
-        relativePath: String,
-        onWrite: ((ParcelFileDescriptor?) -> Unit)? = null
-    ): Uri? {
-        return createFile(requestPermissionWrapper, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, displayName, relativePath, onWrite)
-    }
-
-    /**
-     * 创建文件
      *
-     * @param uri           content://media/<volumeName>/<Uri路径>
-     * 其中 volumeName 可以是：
-     * [android.provider.MediaStore.VOLUME_INTERNAL]
-     * [android.provider.MediaStore.VOLUME_EXTERNAL]
-     * [android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY]
-     * [android.provider.MediaStore.getExternalVolumeNames]
-     *
-    ●  Audio
-    ■  Internal: MediaStore.Audio.Media.INTERNAL_CONTENT_URI
-    content://media/internal/audio/media。
-    ■  External: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-    content://media/external/audio/media。
-    ■  可移动存储: MediaStore.Audio.Media.getContentUri
-    content://media/<volumeName>/audio/media。
-
-    ●  Video
-    ■    Internal: MediaStore.Video.Media.INTERNAL_CONTENT_URI
-    content://media/internal/video/media。
-    ■    External: MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-    content://media/external/video/media。
-    ■    可移动存储: MediaStore.Video.Media.getContentUri
-    content://media/<volumeName>/video/media。
-
-    ●  Image
-    ■    Internal: MediaStore.Images.Media.INTERNAL_CONTENT_URI
-    content://media/internal/images/media。
-    ■    External: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-    content://media/external/images/media。
-    ■    可移动存储: MediaStore.Images.Media.getContentUri
-    content://media/<volumeName>/images/media。
-
-     * @param displayName   文件名称。如果是 android10 以下，则必须要有后缀。android10 及以上版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会变成".png.jpg"
-     * @param relativePath  相对路径。
-     * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
-     * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
-     * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
-     * Video：[DCIM, Movies]
-     * Image：[DCIM, Pictures]
-     * @param onWrite      写入数据的操作
+     * @param onWrite       写入数据的操作
      */
     @Suppress("BlockingMethodInNonBlockingContext")
-    private suspend fun createFile(
+    suspend fun createFile(
         requestPermissionWrapper: RequestPermissionWrapper,
         uri: Uri,
         displayName: String,
-        relativePath: String = "",
-        onWrite: ((ParcelFileDescriptor?) -> Unit)? = null
+        relativePath: String,
+        onWrite: ((FileOutputStream?) -> Unit)? = null
     ): Uri? {
         if (displayName.isEmpty()) {
+            return null
+        }
+        if (relativePath.isEmpty()) {
             return null
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
@@ -337,10 +293,8 @@ object MediaStoreUtils {
             try {
                 val values = ContentValues().apply {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        if (relativePath.isNotEmpty()) {
-                            // >= android10，那么此路径不存在也会自动创建
-                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        }
+                        // >= android10，那么此路径不存在也会自动创建
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                         put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                         if (onWrite != null) {
                             // 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。
@@ -349,11 +303,7 @@ object MediaStoreUtils {
                             put(MediaStore.MediaColumns.IS_PENDING, 1)
                         }
                     } else {
-                        val dir = if (relativePath.isEmpty()) {
-                            Environment.getExternalStorageDirectory().path
-                        } else {
-                            "${Environment.getExternalStorageDirectory().path}/$relativePath"
-                        }
+                        val dir = "${Environment.getExternalStorageDirectory().path}/$relativePath"
                         val file = File(dir)
                         if (!file.exists()) {
                             file.mkdirs()
@@ -366,7 +316,9 @@ object MediaStoreUtils {
                     if (onWrite != null) {
                         resolver.openFileDescriptor(it, "w", null).use { pfd ->
                             // Write data into the pending file.
-                            onWrite(pfd)
+                            FileOutputStream(pfd?.fileDescriptor).use { fos ->
+                                onWrite(fos)
+                            }
                         }
                         // Now that we're finished, release the "pending" status, and allow other apps
                         // to use.
