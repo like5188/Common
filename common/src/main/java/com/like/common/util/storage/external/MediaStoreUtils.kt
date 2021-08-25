@@ -558,7 +558,9 @@ object MediaStoreUtils {
                 BaseColumns._ID
             )
 
-            fun getProjections() = projection
+            fun getProjections(): Array<String> {
+                return projection
+            }
         }
 
         var id: Long? = null
@@ -615,11 +617,18 @@ object MediaStoreUtils {
                 MediaStore.MediaColumns.ALBUM
             )
 
-            fun getProjections() = BaseEntity.getProjections() + projection + when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> projectionR
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> projectionQ
-                else -> emptyArray()
+            fun getProjections(): Array<String> {
+                var projections = BaseEntity.getProjections() + projection
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    projections += projectionQ
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    projections += projectionR
+                }
+                return projections
             }
+
         }
 
         var size: Int? = null
@@ -668,7 +677,9 @@ object MediaStoreUtils {
                 MediaStore.Files.FileColumns.MEDIA_TYPE
             )
 
-            fun getProjections() = MediaEntity.getProjections() + projection
+            fun getProjections(): Array<String> {
+                return MediaEntity.getProjections() + projection
+            }
 
             fun getContentUri(): Uri = MediaStore.Files.getContentUri("external")
         }
@@ -714,7 +725,9 @@ object MediaStoreUtils {
                 MediaStore.Images.ImageColumns.LONGITUDE,
             )
 
-            fun getProjections() = MediaEntity.getProjections() + projection
+            fun getProjections(): Array<String> {
+                return MediaEntity.getProjections() + projection
+            }
 
             fun getContentUri(): Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
@@ -746,7 +759,9 @@ object MediaStoreUtils {
 
     class AudioEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
-            fun getProjections() = MediaEntity.getProjections()
+            fun getProjections(): Array<String> {
+                return MediaEntity.getProjections()
+            }
 
             fun getContentUri(): Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         }
@@ -764,7 +779,9 @@ object MediaStoreUtils {
                 MediaStore.Video.VideoColumns.LONGITUDE,
             )
 
-            fun getProjections() = MediaEntity.getProjections() + projection
+            fun getProjections(): Array<String> {
+                return MediaEntity.getProjections() + projection
+            }
 
             fun getContentUri(): Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }
@@ -801,7 +818,9 @@ object MediaStoreUtils {
                 MediaStore.DownloadColumns.DOWNLOAD_URI
             )
 
-            fun getProjections() = MediaEntity.getProjections() + projectionQ
+            fun getProjections(): Array<String> {
+                return MediaEntity.getProjections() + projectionQ
+            }
 
             fun getContentUri(): Uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
         }
