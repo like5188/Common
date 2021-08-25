@@ -181,7 +181,7 @@ object MediaStoreUtils {
      * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的视频文件
      * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
      *
-     * 存储在 DCIM/、Movies/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
+     * 存储在 Movies/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
      *
      * @param selection         查询条件
      * @param selectionArgs     查询条件填充值
