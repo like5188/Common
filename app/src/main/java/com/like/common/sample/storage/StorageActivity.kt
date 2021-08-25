@@ -77,7 +77,6 @@ class StorageActivity : AppCompatActivity() {
             MediaStoreUtils.takePhoto(
                 requestPermissionWrapper,
                 startActivityForResultWrapper,
-                startIntentSenderForResultWrapper,
                 false
             )?.let {
                 mBinding.iv.setImageBitmap(it)
@@ -125,12 +124,10 @@ class StorageActivity : AppCompatActivity() {
     private var createdFileUri: Uri? = null
     fun createFile(view: View) {
         lifecycleScope.launch {
-            createdFileUri = MediaStoreUtils.createFile(
+            createdFileUri = MediaStoreUtils.createImage(
                 requestPermissionWrapper,
-                startIntentSenderForResultWrapper,
-                uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                displayName = "21.png",
-                relativePath = "${Environment.DIRECTORY_PICTURES}/like"
+                displayName = "1.png",
+                relativePath = "Pictures/like"
             ) {
                 FileOutputStream(it?.fileDescriptor).bufferedWriter().use {
                     it.write("0123456789")

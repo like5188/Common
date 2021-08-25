@@ -5,7 +5,6 @@ import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
@@ -23,9 +22,9 @@ import androidx.core.database.getStringOrNull
 import com.like.common.util.RequestPermissionWrapper
 import com.like.common.util.StartActivityForResultWrapper
 import com.like.common.util.StartIntentSenderForResultWrapper
-import com.like.common.util.UriUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.sql.Date
 import java.util.concurrent.TimeUnit
 
@@ -85,33 +84,32 @@ object MediaStoreUtils {
     suspend fun takePhoto(
         requestPermissionWrapper: RequestPermissionWrapper,
         startActivityForResultWrapper: StartActivityForResultWrapper,
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
         isThumbnail: Boolean = false
     ): Bitmap? {
-        // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
-        if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
-            return null
-        }
-
-        val context = requestPermissionWrapper.activity.applicationContext
-        //android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        return if (isThumbnail) {
-            // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
-            startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
-        } else {
-            val imageUri = createFile(
-                requestPermissionWrapper,
-                startIntentSenderForResultWrapper,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                System.currentTimeMillis().toString(),
-                Environment.DIRECTORY_PICTURES
-            ) ?: return null
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
-            startActivityForResultWrapper.startActivityForResult(intent)
-            UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
-        }
+        return null
+//        // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
+//        if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
+//            return null
+//        }
+//
+//        val context = requestPermissionWrapper.activity.applicationContext
+//        //android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
+//        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        return if (isThumbnail) {
+//            // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
+//            startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
+//        } else {
+//            val imageUri = createFile(
+//                requestPermissionWrapper,
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                System.currentTimeMillis().toString(),
+//                Environment.DIRECTORY_PICTURES
+//            ) ?: return null
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+//            // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
+//            startActivityForResultWrapper.startActivityForResult(intent)
+//            UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
+//        }
     }
 
     /**
@@ -223,8 +221,7 @@ object MediaStoreUtils {
     }
 
     /**
-     * 创建文件
-     * 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
+     * 创建图片
      *
      * @param uri           content://media/<volumeName>/<Uri路径>
      * 其中 volumeName 可以是：
@@ -266,40 +263,84 @@ object MediaStoreUtils {
      * Image：[DCIM, Pictures]
      * @param onWrite      写入数据的操作
      */
-    suspend fun createFile(
+    suspend fun createImage(
         requestPermissionWrapper: RequestPermissionWrapper,
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
-        uri: Uri?,
         displayName: String,
         relativePath: String,
         onWrite: ((ParcelFileDescriptor?) -> Unit)? = null
     ): Uri? {
-        uri ?: return null
+        return createFile(requestPermissionWrapper, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, displayName, relativePath, onWrite)
+    }
+
+    /**
+     * 创建文件
+     *
+     * @param uri           content://media/<volumeName>/<Uri路径>
+     * 其中 volumeName 可以是：
+     * [android.provider.MediaStore.VOLUME_INTERNAL]
+     * [android.provider.MediaStore.VOLUME_EXTERNAL]
+     * [android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY]
+     * [android.provider.MediaStore.getExternalVolumeNames]
+     *
+    ●  Audio
+    ■  Internal: MediaStore.Audio.Media.INTERNAL_CONTENT_URI
+    content://media/internal/audio/media。
+    ■  External: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+    content://media/external/audio/media。
+    ■  可移动存储: MediaStore.Audio.Media.getContentUri
+    content://media/<volumeName>/audio/media。
+
+    ●  Video
+    ■    Internal: MediaStore.Video.Media.INTERNAL_CONTENT_URI
+    content://media/internal/video/media。
+    ■    External: MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+    content://media/external/video/media。
+    ■    可移动存储: MediaStore.Video.Media.getContentUri
+    content://media/<volumeName>/video/media。
+
+    ●  Image
+    ■    Internal: MediaStore.Images.Media.INTERNAL_CONTENT_URI
+    content://media/internal/images/media。
+    ■    External: MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+    content://media/external/images/media。
+    ■    可移动存储: MediaStore.Images.Media.getContentUri
+    content://media/<volumeName>/images/media。
+
+     * @param displayName   文件名称。如果是 android10 以下，则必须要有后缀。android10 及以上版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会变成".png.jpg"
+     * @param relativePath  相对路径。
+     * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
+     * 如果 uri 为 External、可移动存储 类型，那么 relativePath 格式：root/xxx。注意：根目录 root 必须是以下这些：
+     * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
+     * Video：[DCIM, Movies]
+     * Image：[DCIM, Pictures]
+     * @param onWrite      写入数据的操作
+     */
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun createFile(
+        requestPermissionWrapper: RequestPermissionWrapper,
+        uri: Uri,
+        displayName: String,
+        relativePath: String = "",
+        onWrite: ((ParcelFileDescriptor?) -> Unit)? = null
+    ): Uri? {
         if (displayName.isEmpty()) {
             return null
         }
-        if (relativePath.isEmpty()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+            !requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        ) {
             return null
         }
 
-        when {
-            Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                if (!createWriteRequest(startIntentSenderForResultWrapper, listOf(uri))) {
-                    return null
-                }
-            }
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
-                if (!requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return null
-                }
-            }
-        }
         val resolver = requestPermissionWrapper.activity.applicationContext.contentResolver
         return withContext(Dispatchers.IO) {
             try {
                 val values = ContentValues().apply {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        if (relativePath.isNotEmpty()) {
+                            // >= android10，那么此路径不存在也会自动创建
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                        }
                         put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                         if (onWrite != null) {
                             // 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。
@@ -308,10 +349,16 @@ object MediaStoreUtils {
                             put(MediaStore.MediaColumns.IS_PENDING, 1)
                         }
                     } else {
-                        put(
-                            MediaStore.MediaColumns.DATA,
-                            "${Environment.getExternalStorageDirectory().path}/$relativePath/$displayName"
-                        )
+                        val dir = if (relativePath.isEmpty()) {
+                            Environment.getExternalStorageDirectory().path
+                        } else {
+                            "${Environment.getExternalStorageDirectory().path}/$relativePath"
+                        }
+                        val file = File(dir)
+                        if (!file.exists()) {
+                            file.mkdirs()
+                        }
+                        put(MediaStore.MediaColumns.DATA, "$dir/$displayName")
                     }
                 }
 
