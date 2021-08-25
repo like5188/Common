@@ -134,28 +134,6 @@ object MediaStoreUtils {
     }
 
     /**
-     * 获取自己应用创建的下载文件。
-     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的下载文件
-     *
-     * 存储在 Download/ 目录中。在搭载 Android 10（API 级别 29）及更高版本的设备上，这些文件存储在 MediaStore.Downloads 表格中。此表格在 Android 9（API 级别 28）及更低版本中不可用。
-     *
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
-     */
-    suspend fun getDownloads(
-        context: Context,
-        selection: String? = null,
-        selectionArgs: Array<String>? = null,
-        sortOrder: String? = null
-    ): List<DownloadEntity> {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return emptyList()
-        }
-        return getEntities(context, DownloadEntity.getContentUri(), DownloadEntity.getProjections(), selection, selectionArgs, sortOrder)
-    }
-
-    /**
      * 获取自己应用创建的图片文件。
      * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的图片文件
      * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
@@ -247,11 +225,6 @@ object MediaStoreUtils {
                             ImageEntity::class.java -> ImageEntity(cursor)
                             AudioEntity::class.java -> AudioEntity(cursor)
                             VideoEntity::class.java -> VideoEntity(cursor)
-                            DownloadEntity::class.java -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                DownloadEntity(cursor)
-                            } else {
-                                throw RuntimeException("get entities error")
-                            }
                             else -> throw RuntimeException("get entities error")
                         } as T
                     }
@@ -295,18 +268,6 @@ object MediaStoreUtils {
     ■    可移动存储: MediaStore.Images.Media.getContentUri
     content://media/<volumeName>/images/media。
 
-    下面两种非媒体文件请使用 SAF 操作
-    ●  File
-    ■    MediaStore.Files.Media.getContentUri
-    content://media/<volumeName>/file。
-
-    ●  Downloads
-    ■    Internal: MediaStore.Downloads.INTERNAL_CONTENT_URI
-    content://media/internal/downloads。
-    ■    External: MediaStore.Downloads.EXTERNAL_CONTENT_URI
-    content://media/external/downloads。
-    ■    可移动存储: MediaStore.Downloads.getContentUri
-    content://media/<volumeName>/downloads。
      * @param displayName   文件名称。如果是 android10 以下，则必须要有后缀。android10 及以上版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会变成".png.jpg"
      * @param relativePath  相对路径。比如"Pictures/like"。如果 >= android10，那么此路径不存在也会自动创建；否则会报错。
      * 如果 uri 为 internal 类型，那么会报错：Writing exception to parcel java.lang.UnsupportedOperationException: Writing to internal storage is not supported.
@@ -314,8 +275,6 @@ object MediaStoreUtils {
      * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
      * Video：[DCIM, Movies]
      * Image：[DCIM, Pictures]
-     * File：[Download, Documents]
-     * Downloads：[Download]
      * @param onWrite      写入数据的操作
      */
     suspend fun createFile(
@@ -575,11 +534,6 @@ object MediaStoreUtils {
                         is ImageEntity -> ImageEntity.getContentUri()
                         is AudioEntity -> AudioEntity.getContentUri()
                         is VideoEntity -> VideoEntity.getContentUri()
-                        is DownloadEntity -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            DownloadEntity.getContentUri()
-                        } else {
-                            throw RuntimeException("get uri error")
-                        }
                         else -> throw RuntimeException("get uri error")
                     },
                     id ?: -1L
@@ -807,34 +761,6 @@ object MediaStoreUtils {
 
         override fun toString(): String {
             return "VideoEntity(${super.toString()}, description=$description, latitude=$latitude, longitude=$longitude)"
-        }
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    class DownloadEntity(cursor: Cursor) : MediaEntity(cursor) {
-        companion object {
-            val projectionQ = arrayOf(
-                MediaStore.DownloadColumns.DOWNLOAD_URI
-            )
-
-            fun getProjections(): Array<String> {
-                return MediaEntity.getProjections() + projectionQ
-            }
-
-            fun getContentUri(): Uri = MediaStore.Downloads.EXTERNAL_CONTENT_URI
-        }
-
-        var downloadUri: String? = null
-
-        init {
-            with(cursor) {
-                downloadUri = getStringOrNull(getColumnIndexOrThrow(projectionQ[0]))
-            }
-        }
-
-        override fun toString(): String {
-            return "DownloadEntity(${super.toString()}, downloadUri=$downloadUri)"
         }
 
     }
