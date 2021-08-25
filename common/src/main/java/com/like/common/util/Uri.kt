@@ -35,6 +35,7 @@ object UriUtils {
      * 但是，由于此位置信息属于敏感信息，如果应用使用了分区存储，默认情况下 Android 10 会对应用隐藏此信息。
      * 所以需要用此方法获取位置信息。
      */
+    @Suppress("BlockingMethodInNonBlockingContext")
     @RequiresPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
     @RequiresApi(Build.VERSION_CODES.Q)
     suspend fun getLatLongFromImageUri(context: Context, uri: Uri?): FloatArray? {
