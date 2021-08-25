@@ -292,10 +292,10 @@ object MediaStoreUtils {
         return withContext(Dispatchers.IO) {
             try {
                 val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         // >= android10，那么此路径不存在也会自动创建
                         put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                         if (onWrite != null) {
                             // 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。
                             // 在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。
@@ -360,10 +360,18 @@ object MediaStoreUtils {
         return withContext(Dispatchers.IO) {
             try {
                 val values = ContentValues().apply {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                    }
                     put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        // >= android10，那么此路径不存在也会自动创建
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+                    } else {
+                        val dir = "${Environment.getExternalStorageDirectory().path}/$relativePath"
+                        val file = File(dir)
+                        if (!file.exists()) {
+                            file.mkdirs()
+                        }
+                        put(MediaStore.MediaColumns.DATA, "$dir/$displayName")
+                    }
                 }
                 requestPermissionWrapper.activity.applicationContext.contentResolver.update(uri, values, selection, selectionArgs) > 0
             } catch (securityException: SecurityException) {
