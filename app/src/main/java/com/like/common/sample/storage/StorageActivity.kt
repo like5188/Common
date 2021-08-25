@@ -141,7 +141,7 @@ class StorageActivity : AppCompatActivity() {
                     requestPermissionWrapper,
                     uri,
                     displayName = "22.png",
-                    relativePath = Environment.DIRECTORY_PICTURES
+                    relativePath = "${Environment.DIRECTORY_PICTURES}/like1"
                 )
             )
         }
