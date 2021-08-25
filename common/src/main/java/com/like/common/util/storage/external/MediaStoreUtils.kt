@@ -352,10 +352,10 @@ object MediaStoreUtils {
         if (displayName.isEmpty()) {
             return false
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (!requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return false
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+            !requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        ) {
+            return false
         }
         return withContext(Dispatchers.IO) {
             try {
@@ -388,31 +388,24 @@ object MediaStoreUtils {
      */
     suspend fun deleteFile(
         requestPermissionWrapper: RequestPermissionWrapper,
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
-        uri: Uri?
+        uri: Uri
     ): Boolean {
-        uri ?: return false
-        when {
-            Build.VERSION.SDK_INT > Build.VERSION_CODES.Q -> {
-                if (!createDeleteRequest(startIntentSenderForResultWrapper, listOf(uri))) {
-                    return false
-                }
-            }
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q -> {
-                if (!requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    return false
-                }
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+            !requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        ) {
+            return false
         }
         return withContext(Dispatchers.IO) {
             try {
-                startIntentSenderForResultWrapper.activity.applicationContext.contentResolver.delete(uri, null, null) > 0
+                requestPermissionWrapper.activity.applicationContext.contentResolver.delete(uri, null, null) > 0
             } catch (securityException: SecurityException) {
                 // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                 // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                    !Environment.isExternalStorageLegacy()// 开启了分区存储
+                ) {
                     (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                        startIntentSenderForResultWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                     }
                 }
                 false
@@ -426,7 +419,7 @@ object MediaStoreUtils {
      * 系统在调用此方法后，会构建一个 PendingIntent 对象。应用调用此 intent 后，用户会看到一个对话框，请求用户同意应用更新指定的媒体文件。
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    private suspend fun createWriteRequest(
+    suspend fun createWriteRequest(
         startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
         uris: List<Uri>
     ): Boolean {
@@ -441,7 +434,7 @@ object MediaStoreUtils {
      * 用户立即永久删除指定的媒体文件（而不是先将其放入垃圾箱）的请求。
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    private suspend fun createDeleteRequest(
+    suspend fun createDeleteRequest(
         startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
         uris: List<Uri>
     ): Boolean {
@@ -458,7 +451,7 @@ object MediaStoreUtils {
      * @param isTrashed     注意：如果您的应用是设备 OEM 的预安装图库应用，您可以将文件放入垃圾箱而不显示对话框。如需执行该操作，请直接将 IS_TRASHED 设置为 1。及把参数设置为 true
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    private suspend fun createTrashRequest(
+    suspend fun createTrashRequest(
         startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
         uris: List<Uri>,
         isTrashed: Boolean
@@ -477,7 +470,7 @@ object MediaStoreUtils {
      * 用户将设备上指定的媒体文件标记为“收藏”的请求。对该文件具有读取访问权限的任何应用都可以看到用户已将该文件标记为“收藏”。
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    private suspend fun createFavoriteRequest(
+    suspend fun createFavoriteRequest(
         startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
         uris: List<Uri>,
         isFavorite: Boolean

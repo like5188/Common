@@ -148,8 +148,9 @@ class StorageActivity : AppCompatActivity() {
     }
 
     fun deleteFile(view: View) {
+        val uri = createdFileUri ?: return
         lifecycleScope.launch {
-            Logger.d(MediaStoreUtils.deleteFile(requestPermissionWrapper, startIntentSenderForResultWrapper, createdFileUri))
+            Logger.d(MediaStoreUtils.deleteFile(requestPermissionWrapper, uri))
         }
     }
 }
