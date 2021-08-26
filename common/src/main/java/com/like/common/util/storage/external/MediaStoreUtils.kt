@@ -339,6 +339,8 @@ object MediaStoreUtils {
     /**
      * 更新文件。
      *
+     * todo android 10 失败 java.lang.IllegalStateException: android.system.ErrnoException: rename failed: ENOENT (No such file or directory)
+     * todo android 11 失败 java.nio.file.NoSuchFileException: /storage/emulated/0/Pictures/like1/22.png.jpg
      * @param relativePath  相对路径，用于移动文件。
      */
     suspend fun updateFile(
