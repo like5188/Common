@@ -339,7 +339,7 @@ object MediaStoreUtils {
     /**
      * 更新文件。
      *
-     * @param relativePath  相对路径，>= android10 有效，用于移动文件。
+     * @param relativePath  相对路径，用于移动文件。
      */
     suspend fun updateFile(
         requestPermissionWrapper: RequestPermissionWrapper,
