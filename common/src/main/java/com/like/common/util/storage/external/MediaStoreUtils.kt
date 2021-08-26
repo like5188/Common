@@ -57,6 +57,7 @@ import java.util.concurrent.TimeUnit
  *      媒体共享：按照内容提供程序创建指南中的建议使用 content:// URI。如需在搭载 Android 10 的设备上访问共享存储空间中的其他文件，建议您在应用的清单文件中将 requestLegacyExternalStorage 设置为 true 以停用分区存储。
  *
  * Android 存储用例和最佳做法：https://developer.android.google.cn/training/data-storage/use-cases
+ * 访问共享存储空间中的媒体文件：https://developer.android.google.cn/training/data-storage/shared/media#toggle-pending-status
  *
  * MediaStore 是 android 系统提供的一个多媒体数据库，专门用于存放多媒体信息的，通过 ContentResolver.query() 获取 Cursor 即可对数据库进行操作。
  *
