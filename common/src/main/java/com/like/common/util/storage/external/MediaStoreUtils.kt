@@ -114,8 +114,9 @@ object MediaStoreUtils {
     }
 
     /**
-     * 获取自己应用创建的媒体文件。
-     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的媒体文件
+     * 获取文件：
+     * 如果启用了分区存储，只能获取自己应用创建的文件。如果拥有 READ_EXTERNAL_STORAGE 权限，才会返回所有应用的文件。
+     * 如果分区存储不可用或未使用，获得所有文件。
      *
      * 如果要显示特定文件夹中的文件，请求 READ_EXTERNAL_STORAGE 权限，根据 MediaColumns.DATA 的值检索媒体文件，该值包含磁盘上的媒体项的绝对文件系统路径。
      *
@@ -133,8 +134,9 @@ object MediaStoreUtils {
     }
 
     /**
-     * 获取自己应用创建的图片文件。
-     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的图片文件
+     * 获取图片文件：
+     * 如果启用了分区存储，只能获取自己应用创建的文件。如果拥有 READ_EXTERNAL_STORAGE 权限，才会返回所有应用的文件。
+     * 如果分区存储不可用或未使用，获得所有文件。
      * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
      *
      * （包括照片和屏幕截图），存储在 DCIM/ 和 Pictures/ 目录中。系统将这些文件添加到 MediaStore.Images 表格中。
@@ -157,8 +159,9 @@ object MediaStoreUtils {
     }
 
     /**
-     * 获取自己应用创建的音频文件。
-     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的音频文件
+     * 获取音频文件：
+     * 如果启用了分区存储，只能获取自己应用创建的文件。如果拥有 READ_EXTERNAL_STORAGE 权限，才会返回所有应用的文件。
+     * 如果分区存储不可用或未使用，获得所有文件。
      *
      * 存储在 Alarms/、Audiobooks/、Music/、Notifications/、Podcasts/ 和 Ringtones/ 目录中，以及位于 Music/ 或 Movies/ 目录中的音频播放列表中。系统将这些文件添加到 MediaStore.Audio 表格中。
      *
@@ -176,8 +179,9 @@ object MediaStoreUtils {
     }
 
     /**
-     * 获取自己应用创建的视频文件。
-     * 如果拥有 READ_EXTERNAL_STORAGE 权限，则会显示所有应用的视频文件
+     * 获取视频文件：
+     * 如果启用了分区存储，只能获取自己应用创建的文件。如果拥有 READ_EXTERNAL_STORAGE 权限，才会返回所有应用的文件。
+     * 如果分区存储不可用或未使用，获得所有文件。
      * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromImageUri()] 方法。
      *
      * 存储在 Movies/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
