@@ -119,10 +119,6 @@ object MediaStoreUtils {
      * 如果分区存储不可用或未使用，获得所有文件。
      *
      * 如果要显示特定文件夹中的文件，请求 READ_EXTERNAL_STORAGE 权限，根据 MediaColumns.DATA 的值检索媒体文件，该值包含磁盘上的媒体项的绝对文件系统路径。
-     *
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
      */
     suspend fun getFiles(
         context: Context,
@@ -144,10 +140,6 @@ object MediaStoreUtils {
      * 您需要在应用的清单中声明 ACCESS_MEDIA_LOCATION 权限，然后在运行时请求此权限，应用才能从照片中检索未编辑的 Exif 元数据。
      * 用户在 Settings UI 里看不到这个权限，但是它属于运行时权限，所以必须要在 Manifest 里声明该权限，并在运行时同时请求该权限和读取外部存储权限
      * 一些照片在其 Exif 元数据中包含位置信息，以便用户查看照片的拍摄地点。但是，由于此位置信息属于敏感信息，如果应用使用了分区存储，默认情况下 Android 10 会对应用隐藏此信息。
-     *
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
      */
     suspend fun getImages(
         context: Context,
@@ -164,10 +156,6 @@ object MediaStoreUtils {
      * 如果分区存储不可用或未使用，获得所有文件。
      *
      * 存储在 Alarms/、Audiobooks/、Music/、Notifications/、Podcasts/ 和 Ringtones/ 目录中，以及位于 Music/ 或 Movies/ 目录中的音频播放列表中。系统将这些文件添加到 MediaStore.Audio 表格中。
-     *
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
      */
     suspend fun getAudios(
         context: Context,
@@ -185,10 +173,6 @@ object MediaStoreUtils {
      * 如果开启了分区存储，要想获取位置信息，请单独使用 [UriUtils.getLatLongFromUri()] 方法。
      *
      * 存储在 Movies/ 目录中。系统将这些文件添加到 MediaStore.Video 表格中。
-     *
-     * @param selection         查询条件
-     * @param selectionArgs     查询条件填充值
-     * @param sortOrder         排序依据
      */
     suspend fun getVideos(
         context: Context,
@@ -199,6 +183,12 @@ object MediaStoreUtils {
         return getEntities(context, VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder)
     }
 
+    /**
+     * @param projection        需要返回的列。比如：arrayOf(MediaStore.Video.Media._ID,MediaStore.Video.Media.DISPLAY_NAME)
+     * @param selection         查询条件。比如："${MediaStore.Video.Media.DURATION} >= ?"
+     * @param selectionArgs     查询条件填充值。比如：arrayOf(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES).toString())
+     * @param sortOrder         排序依据。比如："${MediaStore.Video.Media.DISPLAY_NAME} ASC"
+     */
     private suspend inline fun <reified T : BaseEntity> getEntities(
         context: Context,
         uri: Uri,
