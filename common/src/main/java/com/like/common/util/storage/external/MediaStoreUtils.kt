@@ -263,9 +263,9 @@ object MediaStoreUtils {
      * android10 版本，最好不加后缀，因为有些后缀不能被识别，比如".png"，创建后的文件名会自动变为".png.jpg"，当然，如果是".jpg"，那么就不会再自动加后缀了。
      *
      * @param relativePath  相对路径。格式：root/xxx。注意：根目录 root 必须是以下这些：
-     * Audio：[Alarms, Music, Notifications, Podcasts, Ringtones]
-     * Video：[DCIM, Movies]
-     * Image：[DCIM, Pictures]
+     * MediaStore.Audio：[Alarms, Audiobooks, Music, Notifications, Podcasts, Ringtones]
+     * MediaStore.Video：[DCIM, Movies, Pictures]
+     * MediaStore.Images：[DCIM, Pictures]
      *
      * @param onWrite       写入数据的操作
      */
