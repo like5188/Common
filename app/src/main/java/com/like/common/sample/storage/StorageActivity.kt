@@ -100,7 +100,7 @@ class StorageActivity : AppCompatActivity() {
                     requestPermissionWrapper.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
                 ) {
                     images.forEach {
-                        UriUtils.getLatLongFromImageUri(this@StorageActivity, it.uri)
+                        UriUtils.getLatLongFromUri(this@StorageActivity, it.uri)
                     }
                 }
                 Logger.printCollection(images)
