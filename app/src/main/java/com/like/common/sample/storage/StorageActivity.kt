@@ -128,7 +128,7 @@ class StorageActivity : AppCompatActivity() {
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 displayName = "6.jpg",
                 relativePath = "${Environment.DIRECTORY_PICTURES}/like"
-            ){
+            ) {
                 it?.write(context.assets.open("image_2.jpg").readBytes())
             }
             Logger.d(createdFileUri)
@@ -138,16 +138,16 @@ class StorageActivity : AppCompatActivity() {
     fun updateFile(view: View) {
         val uri = createdFileUri ?: return
         lifecycleScope.launch {
-            Logger.d(
-                MediaStoreUtils.updateFile(
-                    requestPermissionWrapper,
-                    uri,
-                    displayName = "22.png",
-                    relativePath = "${Environment.DIRECTORY_PICTURES}/like1"
-                ){
-                    it?.write(context.assets.open("image_0.jpg").readBytes())
-                }
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Logger.d(
+                    MediaStoreUtils.updateFile(
+                        requestPermissionWrapper,
+                        uri,
+                        displayName = "22",
+                        relativePath = "${Environment.DIRECTORY_PICTURES}/like1"
+                    )
+                )
+            }
         }
     }
 

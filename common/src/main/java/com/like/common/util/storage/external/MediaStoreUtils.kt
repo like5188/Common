@@ -334,18 +334,16 @@ object MediaStoreUtils {
     /**
      * 更新文件。
      *
-     * todo android 10 失败 java.lang.IllegalStateException: android.system.ErrnoException: rename failed: ENOENT (No such file or directory)
-     * todo android 11 失败 java.nio.file.NoSuchFileException: /storage/emulated/0/Pictures/like1/22.png.jpg
      * @param relativePath  相对路径，用于移动文件。
      */
+    @RequiresApi(Build.VERSION_CODES.Q)// Q 以下会出现问题，比如原文件不会被删除，新文件没有内容等错误。
     suspend fun updateFile(
         requestPermissionWrapper: RequestPermissionWrapper,
         uri: Uri,
         displayName: String,
         relativePath: String = "",
         selection: String? = null,
-        selectionArgs: Array<String>? = null,
-        onWrite: ((FileOutputStream?) -> Unit)? = null
+        selectionArgs: Array<String>? = null
     ): Boolean {
         if (displayName.isEmpty()) {
             return false
@@ -360,44 +358,11 @@ object MediaStoreUtils {
             try {
                 val values = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        // >= android10，那么此路径不存在也会自动创建
-                        put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
-                        if (onWrite != null) {
-                            // 如果您的应用执行可能非常耗时的操作（例如写入媒体文件），那么在处理文件时对其进行独占访问非常有用。
-                            // 在搭载 Android 10 或更高版本的设备上，您的应用可以通过将 IS_PENDING 标记的值设为 1 来获取此独占访问权限。
-                            // 如此一来，只有您的应用可以查看该文件，直到您的应用将 IS_PENDING 的值改回 0。
-                            put(MediaStore.MediaColumns.IS_PENDING, 1)
-                        }
-                    } else {
-                        val dir = "${Environment.getExternalStorageDirectory().path}/$relativePath"
-                        val file = File(dir)
-                        if (!file.exists()) {
-                            file.mkdirs()
-                        }
-                        put(MediaStore.MediaColumns.DATA, "$dir/$displayName")
-                    }
+                    // >= android10，那么此路径不存在也会自动创建
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
                 }
 
-                val result = resolver.update(uri, values, selection, selectionArgs) > 0
-                if (result) {
-                    if (onWrite != null) {
-                        resolver.openFileDescriptor(uri, "w", null).use { pfd ->
-                            // Write data into the pending file.
-                            FileOutputStream(pfd?.fileDescriptor).use { fos ->
-                                onWrite(fos)
-                            }
-                        }
-                        // Now that we're finished, release the "pending" status, and allow other apps
-                        // to use.
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            values.clear()
-                            values.put(MediaStore.MediaColumns.IS_PENDING, 0)
-                            resolver.update(uri, values, null, null)
-                        }
-                    }
-                }
-                result
+                resolver.update(uri, values, selection, selectionArgs) > 0
             } catch (securityException: SecurityException) {
                 // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                 // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
