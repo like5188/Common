@@ -525,8 +525,6 @@ object MediaStoreUtils {
                 MediaStore.MediaColumns.TITLE,
                 MediaStore.MediaColumns.MIME_TYPE,
                 MediaStore.MediaColumns.DATE_ADDED,
-                MediaStore.MediaColumns.WIDTH,
-                MediaStore.MediaColumns.HEIGHT,
             )
 
             @RequiresApi(Build.VERSION_CODES.Q)
@@ -560,8 +558,6 @@ object MediaStoreUtils {
         var title: String? = null
         var mimeType: String? = null
         var dateAdded: Date? = null
-        var width: Int? = null
-        var height: Int? = null
         var orientation: Int? = null
         var duration: Int? = null
         var artist: String? = null
@@ -574,8 +570,6 @@ object MediaStoreUtils {
                 title = getStringOrNull(getColumnIndexOrThrow(projection[2]))
                 mimeType = getStringOrNull(getColumnIndexOrThrow(projection[3]))
                 dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[4]))))
-                width = getIntOrNull(getColumnIndexOrThrow(projection[5]))
-                height = getIntOrNull(getColumnIndexOrThrow(projection[6]))
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     orientation = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
@@ -590,7 +584,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, width=$width, height=$height, orientation=$orientation, duration=$duration, artist=$artist, album=$album"
+            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, orientation=$orientation, duration=$duration, artist=$artist, album=$album"
         }
 
     }
@@ -598,7 +592,9 @@ object MediaStoreUtils {
     class FileEntity(cursor: Cursor) : MediaEntity(cursor) {
         companion object {
             val projection = arrayOf(
-                MediaStore.Files.FileColumns.MEDIA_TYPE
+                MediaStore.Files.FileColumns.MEDIA_TYPE,
+                MediaStore.MediaColumns.WIDTH,
+                MediaStore.MediaColumns.HEIGHT,
             )
 
             fun getProjections(): Array<String> {
@@ -618,10 +614,14 @@ object MediaStoreUtils {
         int MEDIA_TYPE_DOCUMENT = 6;
          */
         var mediaType: Int? = null
+        var width: Int? = null
+        var height: Int? = null
 
         init {
             with(cursor) {
                 mediaType = getIntOrNull(getColumnIndexOrThrow(projection[0]))
+                width = getIntOrNull(getColumnIndexOrThrow(projection[1]))
+                height = getIntOrNull(getColumnIndexOrThrow(projection[2]))
             }
         }
 
@@ -636,7 +636,7 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "FileEntity(${super.toString()}, mediaType=${getMediaTypeString()})"
+            return "FileEntity(${super.toString()}, mediaType=${getMediaTypeString()}, width=$width, height=$height)"
         }
 
     }
@@ -645,6 +645,8 @@ object MediaStoreUtils {
         companion object {
             val projection = arrayOf(
                 MediaStore.Images.ImageColumns.DESCRIPTION,
+                MediaStore.MediaColumns.WIDTH,
+                MediaStore.MediaColumns.HEIGHT,
                 MediaStore.Images.ImageColumns.LATITUDE,
                 MediaStore.Images.ImageColumns.LONGITUDE,
             )
@@ -657,6 +659,8 @@ object MediaStoreUtils {
         }
 
         var description: String? = null
+        var width: Int? = null
+        var height: Int? = null
 
         // 如果开启了分区存储，获取位置信息请使用 [UriUtils.getLatLongFromImageUri()] 方法。
         var latitude: Float? = null
@@ -665,16 +669,18 @@ object MediaStoreUtils {
         init {
             with(cursor) {
                 description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+                width = getIntOrNull(getColumnIndexOrThrow(projection[1]))
+                height = getIntOrNull(getColumnIndexOrThrow(projection[2]))
 
                 if (!isScopedStorage()) {
-                    latitude = getFloatOrNull(getColumnIndexOrThrow(projection[1]))
-                    longitude = getFloatOrNull(getColumnIndexOrThrow(projection[2]))
+                    latitude = getFloatOrNull(getColumnIndexOrThrow(projection[3]))
+                    longitude = getFloatOrNull(getColumnIndexOrThrow(projection[4]))
                 }
             }
         }
 
         override fun toString(): String {
-            return "ImageEntity(${super.toString()}, description=$description, latitude=$latitude, longitude=$longitude)"
+            return "ImageEntity(${super.toString()}, description=$description, width=$width, height=$height, latitude=$latitude, longitude=$longitude)"
         }
 
     }
@@ -697,6 +703,8 @@ object MediaStoreUtils {
         companion object {
             val projection = arrayOf(
                 MediaStore.Video.VideoColumns.DESCRIPTION,
+                MediaStore.MediaColumns.WIDTH,
+                MediaStore.MediaColumns.HEIGHT,
                 MediaStore.Video.VideoColumns.LATITUDE,
                 MediaStore.Video.VideoColumns.LONGITUDE,
             )
@@ -709,6 +717,8 @@ object MediaStoreUtils {
         }
 
         var description: String? = null
+        var width: Int? = null
+        var height: Int? = null
 
         // 如果开启了分区存储，获取位置信息请使用 [UriUtils.getLatLongFromImageUri()] 方法。
         var latitude: Float? = null
@@ -717,16 +727,18 @@ object MediaStoreUtils {
         init {
             with(cursor) {
                 description = getStringOrNull(getColumnIndexOrThrow(projection[0]))
+                width = getIntOrNull(getColumnIndexOrThrow(projection[1]))
+                height = getIntOrNull(getColumnIndexOrThrow(projection[2]))
 
                 if (!isScopedStorage()) {
-                    latitude = getFloatOrNull(getColumnIndexOrThrow(ImageEntity.projection[1]))
-                    longitude = getFloatOrNull(getColumnIndexOrThrow(ImageEntity.projection[2]))
+                    latitude = getFloatOrNull(getColumnIndexOrThrow(ImageEntity.projection[3]))
+                    longitude = getFloatOrNull(getColumnIndexOrThrow(ImageEntity.projection[4]))
                 }
             }
         }
 
         override fun toString(): String {
-            return "VideoEntity(${super.toString()}, description=$description, latitude=$latitude, longitude=$longitude)"
+            return "VideoEntity(${super.toString()}, description=$description, width=$width, height=$height, latitude=$latitude, longitude=$longitude)"
         }
 
     }
