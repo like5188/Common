@@ -621,7 +621,7 @@ object MediaStoreUtils {
 
         init {
             with(cursor) {
-                mediaType = getIntOrNull(getColumnIndex(projection[0]))
+                mediaType = getIntOrNull(getColumnIndexOrThrow(projection[0]))
             }
         }
 
