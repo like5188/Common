@@ -374,6 +374,7 @@ object MediaStoreUtils {
             } catch (securityException: SecurityException) {
                 // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                 // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
+                // android 11 可以通过 createWriteRequest 进行批量操作，从而废弃这种靠异常来操作的方法。
                 if (isScopedStorage()) {
                     (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
                         requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
@@ -404,6 +405,7 @@ object MediaStoreUtils {
             } catch (securityException: SecurityException) {
                 // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                 // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
+                // android 11 可以通过 createWriteRequest 进行批量操作，从而废弃这种靠异常来操作的方法。
                 if (isScopedStorage()) {
                     (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
                         requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
