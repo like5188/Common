@@ -24,7 +24,6 @@ class StorageActivity : AppCompatActivity() {
 
     private val requestPermissionWrapper = RequestPermissionWrapper(this)
     private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
-    private val startIntentSenderForResultWrapper = StartIntentSenderForResultWrapper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
