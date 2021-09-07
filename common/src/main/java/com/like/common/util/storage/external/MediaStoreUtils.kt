@@ -232,7 +232,7 @@ object MediaStoreUtils {
     content://media/internal/audio/media。
     ■  External: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
     content://media/external/audio/media。
-    ■  可移动存储: MediaStore.Audio.Media.getContentUri
+    ■  可移动存储: MediaStore.Audio.Media.getContentUri  例如：（MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)）
     content://media/<volumeName>/audio/media。
 
     ●  Video
