@@ -385,13 +385,6 @@ object MediaStoreUtils {
     }
 
     /**
-     * 是否启用了分区存储
-     */
-    fun isScopedStorage(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageLegacy()
-    }
-
-    /**
      * 删除文件
      *
      * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
@@ -743,4 +736,10 @@ object MediaStoreUtils {
 
     }
 
+    /**
+     * 是否启用了分区存储
+     */
+    fun isScopedStorage(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageLegacy()
+    }
 }
