@@ -5,6 +5,7 @@ import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
@@ -21,6 +22,7 @@ import androidx.core.database.getStringOrNull
 import com.like.common.util.RequestPermissionWrapper
 import com.like.common.util.StartActivityForResultWrapper
 import com.like.common.util.StartIntentSenderForResultWrapper
+import com.like.common.util.UriUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -87,30 +89,29 @@ object MediaStoreUtils {
         startActivityForResultWrapper: StartActivityForResultWrapper,
         isThumbnail: Boolean = false
     ): Bitmap? {
-        return null
-//        // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
-//        if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
-//            return null
-//        }
-//
-//        val context = requestPermissionWrapper.activity.applicationContext
-//        //android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
-//        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        return if (isThumbnail) {
-//            // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
-//            startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
-//        } else {
-//            val imageUri = createFile(
-//                requestPermissionWrapper,
-//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//                System.currentTimeMillis().toString(),
-//                Environment.DIRECTORY_PICTURES
-//            ) ?: return null
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-//            // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
-//            startActivityForResultWrapper.startActivityForResult(intent)
-//            UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
-//        }
+        // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
+        if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
+            return null
+        }
+
+        val context = requestPermissionWrapper.activity.applicationContext
+        //android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        return if (isThumbnail) {
+            // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
+            startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
+        } else {
+            val imageUri = createFile(
+                requestPermissionWrapper,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                "${System.currentTimeMillis()}.jpg",
+                Environment.DIRECTORY_PICTURES
+            ) ?: return null
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
+            startActivityForResultWrapper.startActivityForResult(intent)
+            UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
+        }
     }
 
     /**
