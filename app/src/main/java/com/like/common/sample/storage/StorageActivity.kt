@@ -46,21 +46,18 @@ class StorageActivity : AppCompatActivity() {
         }
     }
 
+    private var documentUri: Uri? = null
     fun createDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("createDocument：${SafUtils.createDocument(startActivityForResultWrapper, "123.jpg", SafUtils.MimeType._jpg)}")
+            documentUri = SafUtils.createDocument(startActivityForResultWrapper, "123.jpg", SafUtils.MimeType._jpg)
+            Logger.d("createDocument：$documentUri")
         }
     }
 
     fun deleteDocument(view: View) {
         lifecycleScope.launch {
             Logger.d(
-                "deleteDocument：${
-                    SafUtils.deleteDocument(
-                        this@StorageActivity,
-                        Uri.parse("content://com.android.providers.downloads.documents/document/1")
-                    )
-                }"
+                "deleteDocument：${SafUtils.deleteDocument(this@StorageActivity, documentUri)}"
             )
         }
     }
