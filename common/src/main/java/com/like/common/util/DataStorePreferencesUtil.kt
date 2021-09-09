@@ -83,22 +83,22 @@ class DataStorePreferencesUtil private constructor() {
         return result
     }
 
-    inline fun <reified T> preferencesKey(name: String): Preferences.Key<T> {
+    inline fun <reified T> preferencesKey(key: String): Preferences.Key<T> {
         return when (T::class) {
             Int::class -> {
-                intPreferencesKey(name)
+                intPreferencesKey(key)
             }
             String::class -> {
-                stringPreferencesKey(name)
+                stringPreferencesKey(key)
             }
             Boolean::class -> {
-                booleanPreferencesKey(name)
+                booleanPreferencesKey(key)
             }
             Float::class -> {
-                floatPreferencesKey(name)
+                floatPreferencesKey(key)
             }
             Long::class -> {
-                longPreferencesKey(name)
+                longPreferencesKey(key)
             }
             Set::class -> {
                 throw IllegalArgumentException("Use `preferencesSetKey` to create keys for Sets.")
