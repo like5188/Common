@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 /**
@@ -25,7 +25,7 @@ class DataStorePreferencesUtil private constructor() {
     }
 
     private object Holder {
-        val instance = DataStorePreferencesUtil()
+        val instance by lazy { DataStorePreferencesUtil() }
     }
 
     lateinit var context: Context
@@ -37,70 +37,34 @@ class DataStorePreferencesUtil private constructor() {
         this.context = context
     }
 
-    suspend fun <T> get(key: String, default: T): T {
+    suspend inline fun <reified T> get(key: String, default: T): T {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         return context.dataStore.data.map { preferences ->
-            when (default) {
-                is Int -> preferences[intPreferencesKey(key)]
-                is Double -> preferences[doublePreferencesKey(key)]
-                is String -> preferences[stringPreferencesKey(key)]
-                is Boolean -> preferences[booleanPreferencesKey(key)]
-                is Float -> preferences[floatPreferencesKey(key)]
-                is Long -> preferences[longPreferencesKey(key)]
-                else -> throw UnsupportedOperationException("DataStore 不支持的数据类型")
-            }
-        }.firstOrNull() as? T ?: default
+            preferences[preferencesKey<T>(key)] ?: default
+        }.first()
     }
 
-    suspend fun <T> put(key: String, value: T) {
+    suspend inline fun <reified T> put(key: String, value: T) {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         context.dataStore.edit { mutablePreferences ->
-            when (value) {
-                is Int -> mutablePreferences[intPreferencesKey(key)] = value
-                is Double -> mutablePreferences[doublePreferencesKey(key)] = value
-                is String -> mutablePreferences[stringPreferencesKey(key)] = value
-                is Boolean -> mutablePreferences[booleanPreferencesKey(key)] = value
-                is Float -> mutablePreferences[floatPreferencesKey(key)] = value
-                is Long -> mutablePreferences[longPreferencesKey(key)] = value
-                else -> throw UnsupportedOperationException("DataStore 不支持的数据类型")
-            }
+            mutablePreferences[preferencesKey<T>(key)] = value
         }
     }
 
-    suspend inline fun <reified T : Any> contains(key: String): Boolean {
+    suspend inline fun <reified T> contains(key: String): Boolean {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         var result = false
         context.dataStore.edit { mutablePreferences ->
-            result = mutablePreferences.contains(
-                when (T::class.java) {
-                    Int::class.java -> intPreferencesKey(key)
-                    Double::class.java -> doublePreferencesKey(key)
-                    String::class.java -> stringPreferencesKey(key)
-                    Boolean::class.java -> booleanPreferencesKey(key)
-                    Float::class.java -> floatPreferencesKey(key)
-                    Long::class.java -> longPreferencesKey(key)
-                    else -> throw UnsupportedOperationException("DataStore 不支持的数据类型")
-                }
-            )
+            result = mutablePreferences.contains(preferencesKey<T>(key))
         }
         return result
     }
 
-    suspend inline fun <reified T : Any> remove(key: String): T? {
+    suspend inline fun <reified T> remove(key: String): T? {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         var result: T? = null
         context.dataStore.edit { mutablePreferences ->
-            result = mutablePreferences.remove(
-                when (T::class.java) {
-                    Int::class.java -> intPreferencesKey(key)
-                    Double::class.java -> doublePreferencesKey(key)
-                    String::class.java -> stringPreferencesKey(key)
-                    Boolean::class.java -> booleanPreferencesKey(key)
-                    Float::class.java -> floatPreferencesKey(key)
-                    Long::class.java -> longPreferencesKey(key)
-                    else -> throw UnsupportedOperationException("DataStore 不支持的数据类型")
-                }
-            ) as? T
+            result = mutablePreferences.remove(preferencesKey(key))
         }
         return result
     }
@@ -118,4 +82,31 @@ class DataStorePreferencesUtil private constructor() {
         }
         return result
     }
+
+    inline fun <reified T> preferencesKey(name: String): Preferences.Key<T> {
+        return when (T::class) {
+            Int::class -> {
+                intPreferencesKey(name)
+            }
+            String::class -> {
+                stringPreferencesKey(name)
+            }
+            Boolean::class -> {
+                booleanPreferencesKey(name)
+            }
+            Float::class -> {
+                floatPreferencesKey(name)
+            }
+            Long::class -> {
+                longPreferencesKey(name)
+            }
+            Set::class -> {
+                throw IllegalArgumentException("Use `preferencesSetKey` to create keys for Sets.")
+            }
+            else -> {
+                throw IllegalArgumentException("Type not supported: ${T::class.java}")
+            }
+        } as Preferences.Key<T>
+    }
+
 }
