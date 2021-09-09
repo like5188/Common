@@ -52,7 +52,8 @@ class SerializableActivity : AppCompatActivity() {
 //        SPUtils.getInstance().put(KEY_SP_STRING1, 2222)
 //        SPUtils.getInstance().put(KEY_SP_STRING2, "string2")
         lifecycleScope.launch {
-            DataStorePreferencesUtil.getInstance().put(KEY_SP_STRING1, "1111")
+            DataStorePreferencesUtil.getInstance().put(KEY_SP_STRING1, "1")
+            DataStorePreferencesUtil.getInstance().put(KEY_SP_STRING2, "2")
         }
     }
 

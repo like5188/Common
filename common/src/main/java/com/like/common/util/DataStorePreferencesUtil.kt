@@ -53,11 +53,9 @@ class DataStorePreferencesUtil private constructor() {
 
     suspend inline fun <reified T> contains(key: String): Boolean {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
-        var result = false
-        context.dataStore.edit { mutablePreferences ->
-            result = mutablePreferences.contains(preferencesKey<T>(key))
-        }
-        return result
+        return context.dataStore.data.map { preferences ->
+            preferences.contains(preferencesKey<T>(key))
+        }.first()
     }
 
     suspend inline fun <reified T> remove(key: String): T? {
@@ -76,11 +74,9 @@ class DataStorePreferencesUtil private constructor() {
     }
 
     suspend fun getAll(): Map<String, Any> {
-        var result: Map<String, Any> = emptyMap()
-        context.dataStore.edit { mutablePreferences ->
-            result = mutablePreferences.asMap().mapKeys { it.key.name }
-        }
-        return result
+        return context.dataStore.data.map { preferences ->
+            preferences.asMap().mapKeys { it.key.name }
+        }.first()
     }
 
     inline fun <reified T> preferencesKey(key: String): Preferences.Key<T> {
