@@ -19,7 +19,7 @@ object HttpProxyCacheServerFactory {
 
         val created = HttpProxyCacheServer.Builder(context)
                 .maxCacheFilesCount(20)
-                .cacheDirectory(InternalStorageUtils.InternalStorageHelper.getCacheDir(context))
+                .cacheDirectory(InternalStorageUtils.getCacheDir(context))
                 .build()
         proxy = created
         return created
