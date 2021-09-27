@@ -42,12 +42,12 @@ suspend fun <ResultType> successIfAllSuccess(
  */
 @Throws(Exception::class)
 suspend fun successIfOneSuccess(
-    vararg suspendFunctions: suspend () -> Any
-): List<Any> = supervisorScope {
+    vararg suspendFunctions: suspend () -> Any?
+): List<Any?> = supervisorScope {
     if (suspendFunctions.size < 2) {
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
-    val result = mutableListOf<Any>()
+    val result = mutableListOf<Any?>()
     var exception: Throwable? = null
     suspendFunctions.map {
         async(Dispatchers.IO) {
