@@ -14,12 +14,12 @@ import kotlinx.coroutines.*
  */
 /**
  * 合并多个 suspend 方法：
- * ①、全部为 Success，则按顺序组合所有成功的结果并返回。
+ * ①、全部为 Success，则按[suspendFunctions]顺序返回结果集合。
  * ②、只要有一个 Error，则抛出异常。
  */
 @Throws(Exception::class)
 suspend fun <ResultType> successIfAllSuccess(
-        vararg suspendFunctions: suspend () -> ResultType
+    vararg suspendFunctions: suspend () -> ResultType
 ): List<ResultType> = coroutineScope {
     if (suspendFunctions.size < 2) {
         throw IllegalArgumentException("at least 2 suspend functions are required")
@@ -37,17 +37,17 @@ suspend fun <ResultType> successIfAllSuccess(
 
 /**
  * 合并多个 suspend 方法：
- * ①、只要有一个 Success，则按顺序组合所有成功的结果并返回。
+ * ①、只要有一个 Success，则按[suspendFunctions]顺序返回结果集合。其中失败部分对应的结果为 Exception。
  * ②、全部为 Error，则抛出异常。
  */
 @Throws(Exception::class)
-suspend fun <ResultType> successIfOneSuccess(
-        vararg suspendFunctions: suspend () -> ResultType
-): List<ResultType> = supervisorScope {
+suspend fun successIfOneSuccess(
+    vararg suspendFunctions: suspend () -> Any
+): List<Any> = supervisorScope {
     if (suspendFunctions.size < 2) {
         throw IllegalArgumentException("at least 2 suspend functions are required")
     }
-    val result = mutableListOf<ResultType>()
+    val result = mutableListOf<Any>()
     var exception: Throwable? = null
     suspendFunctions.map {
         async(Dispatchers.IO) {
@@ -57,6 +57,7 @@ suspend fun <ResultType> successIfOneSuccess(
         try {
             result.add(deferred.await())
         } catch (e: Exception) {
+            result.add(e)
             if (exception == null) {
                 exception = e
             } else {
