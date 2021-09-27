@@ -1,4 +1,4 @@
-package com.like.wanandroid.util
+package com.like.common.util
 
 import kotlinx.coroutines.*
 
