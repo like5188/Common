@@ -40,14 +40,14 @@ class DataStorePreferencesUtil private constructor() {
     suspend inline fun <reified T> get(key: String, default: T): T {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         return context.dataStore.data.map { preferences ->
-            preferences[preferencesKey<T>(key)] ?: default
+            preferences[preferencesKey(key)] ?: default
         }.first()
     }
 
     suspend inline fun <reified T> put(key: String, value: T) {
         require(key.isNotEmpty()) { KEY_IS_EMPTY_EXCEPTION }
         context.dataStore.edit { mutablePreferences ->
-            mutablePreferences[preferencesKey<T>(key)] = value
+            mutablePreferences[preferencesKey(key)] = value
         }
     }
 
@@ -95,6 +95,9 @@ class DataStorePreferencesUtil private constructor() {
             }
             Long::class -> {
                 longPreferencesKey(key)
+            }
+            Double::class -> {
+                doublePreferencesKey(key)
             }
             Set::class -> {
                 throw IllegalArgumentException("Use `preferencesSetKey` to create keys for Sets.")
