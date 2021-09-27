@@ -23,7 +23,7 @@ class ImageActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityImageBinding>(this, R.layout.activity_image)
     }
     private val file: File by lazy {
-        File(InternalStorageUtils.InternalStorageHelper.getCacheDir(this), "cache3.jpg")
+        File(InternalStorageUtils.getCacheDir(this), "cache3.jpg")
     }
     private val bitmap: Bitmap by lazy {
         BitmapFactory.decodeFile(file.absolutePath)
@@ -67,7 +67,7 @@ class ImageActivity : AppCompatActivity() {
     fun quality(view: View) {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
-            val compressFile = File(InternalStorageUtils.InternalStorageHelper.getCacheDir(this@ImageActivity), "cache2.jpg")
+            val compressFile = File(InternalStorageUtils.getCacheDir(this@ImageActivity), "cache2.jpg")
             ImageUtils.compressByQualityAndStore(this@ImageActivity, bitmap, 1000, compressFile)
             mBinding.ivCompress.load(BitmapFactory.decodeFile(compressFile.absolutePath))
         }
