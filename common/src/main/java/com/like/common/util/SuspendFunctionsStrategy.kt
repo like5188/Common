@@ -1,4 +1,4 @@
-package com.like.common.util
+package com.like.wanandroid.util
 
 import kotlinx.coroutines.*
 
@@ -13,7 +13,7 @@ import kotlinx.coroutines.*
  * 2、[coroutineScope]的根协程中，或者[supervisorScope]的子协程中。
  */
 /**
- * 合并多个 suspend 方法：
+ * 合并多个 suspend 方法，并在所有方法执行完毕后返回结果：
  * ①、全部为 Success，则按[suspendFunctions]顺序返回结果集合。
  * ②、只要有一个 Error，则抛出异常。
  */
@@ -36,7 +36,7 @@ suspend fun <ResultType> successIfAllSuccess(
 }
 
 /**
- * 合并多个 suspend 方法：
+ * 合并多个 suspend 方法，并在所有方法执行完毕后返回结果：
  * ①、只要有一个 Success，则按[suspendFunctions]顺序返回结果集合。其中失败部分对应的结果为 Exception。
  * ②、全部为 Error，则抛出异常。
  */
@@ -67,7 +67,7 @@ suspend fun successIfOneSuccess(
     }
     exception?.let {
         if (it.suppressed.size + 1 == suspendFunctions.size) {//全部失败
-            throw exception!!
+            throw it
         }
     }
     result
