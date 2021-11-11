@@ -2,6 +2,7 @@ package com.like.common.util
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import com.like.common.R
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
@@ -96,32 +97,74 @@ PictureSelector.create(this)
    .forResult();//结果回调分两种方式onActivityResult()和OnResultCallbackListener方式
  */
 
-suspend fun Activity.selectSinglePhoto(): Pair<String, String>? = PictureSelector.create(this).selectSinglePhoto()
+fun Activity.previewPhotos(medias: List<LocalMedia>?, position: Int = 0) {
+    PictureSelector.create(this).previewPhotos(medias, position)
+}
 
-suspend fun Fragment.selectSinglePhoto(): Pair<String, String>? = PictureSelector.create(this).selectSinglePhoto()
+fun Fragment.previewPhotos(medias: List<LocalMedia>?, position: Int = 0) {
+    PictureSelector.create(this).previewPhotos(medias, position)
+}
 
-suspend fun Activity.selectMultiplePhoto(
-    selectionData: List<LocalMedia>? = null,
-    maxSelectNum: Int = Int.MAX_VALUE
-): List<Pair<String, String>>? = PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+suspend fun Activity.selectSinglePhoto(): LocalMedia? = PictureSelector.create(this).selectSinglePhoto()
 
-suspend fun Fragment.selectMultiplePhoto(
-    selectionData: List<LocalMedia>? = null,
-    maxSelectNum: Int = Int.MAX_VALUE
-): List<Pair<String, String>>? = PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+suspend fun Fragment.selectSinglePhoto(): LocalMedia? = PictureSelector.create(this).selectSinglePhoto()
+
+suspend fun Activity.selectMultiplePhoto(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+
+suspend fun Fragment.selectMultiplePhoto(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+
+/**
+ * 预览图片
+ * @param medias    数据源
+ * @param position  从第几张图片开始预览
+ */
+private fun PictureSelector.previewPhotos(medias: List<LocalMedia>?, position: Int) {
+    if (medias.isNullOrEmpty()) return
+    // 预览图片 可自定长按保存路径
+    // 注意 .themeStyle(R.style.theme)；里面的参数不可删，否则闪退...
+    this.themeStyle(R.style.picture_default_style)
+        .isNotPreviewDownload(true)
+        .imageEngine(CoilEngine.instance) // 请参考Demo GlideEngine.java
+        .openExternalPreview(position, medias)
+}
+
+/**
+ * 选择1张照片
+ * 对com.github.LuckSiege.PictureSelector库进行了封装
+ */
+private suspend fun PictureSelector.selectSinglePhoto(): LocalMedia? = withContext(Dispatchers.IO) {
+    suspendCoroutine { continuation ->
+        this@selectSinglePhoto.openGallery(PictureMimeType.ofImage())
+            .imageEngine(CoilEngine.instance)
+            .selectionMode(PictureConfig.SINGLE)
+            .isCompress(true)//是否压缩
+            .compressQuality(80)
+            .minimumCompressSize(1024)// 小于多少kb的图片不压缩
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: MutableList<LocalMedia>?) {
+                    result.print()//打印结果
+                    continuation.resume(result?.firstOrNull())
+                }
+
+                override fun onCancel() {
+                    continuation.resume(null)
+                }
+            })
+    }
+}
 
 /**
  * 选择多张照片
  * 对com.github.LuckSiege.PictureSelector库进行了封装
  * @param selectionData     已经选择的照片数据
  * @param maxSelectNum      允许最多选择的照片数量
- *
- * @return 成功返回照片数据集合 List<Pair<String, String>>。集合中的第一个参数是压缩图地址、第二个参数为上传图地址。如果没有选择就返回 null
  */
 private suspend fun PictureSelector.selectMultiplePhoto(
     selectionData: List<LocalMedia>?,
     maxSelectNum: Int
-): List<Pair<String, String>>? = withContext(Dispatchers.IO) {
+): List<LocalMedia>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectMultiplePhoto.openGallery(PictureMimeType.ofImage())
             .imageEngine(CoilEngine.instance)
@@ -139,17 +182,7 @@ private suspend fun PictureSelector.selectMultiplePhoto(
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: MutableList<LocalMedia>?) {
                     result.print()//打印结果
-                    if (result.isNullOrEmpty()) {
-                        continuation.resume(null)
-                        return
-                    }
-                    continuation.resume(result.map {
-                        //压缩文件路径
-                        val compressPath = it.compressPath
-                        //上传文件路径
-                        val uploadPath = it.getUploadPath()
-                        Pair(compressPath, uploadPath)
-                    })
+                    continuation.resume(result)
                 }
 
                 override fun onCancel() {
@@ -161,50 +194,14 @@ private suspend fun PictureSelector.selectMultiplePhoto(
 }
 
 /**
- * 选择1张照片
- * 对com.github.LuckSiege.PictureSelector库进行了封装
- *
- * @return 成功返回Pair<String, String>类型数据。其中第一个参数是压缩图地址、第二个参数为上传图地址。如果没有选择就返回 null
+ * 上传文件路径
  */
-private suspend fun PictureSelector.selectSinglePhoto(): Pair<String, String>? = withContext(Dispatchers.IO) {
-    suspendCoroutine { continuation ->
-        this@selectSinglePhoto.openGallery(PictureMimeType.ofImage())
-            .imageEngine(CoilEngine.instance)
-            .selectionMode(PictureConfig.SINGLE)
-            .isCompress(true)//是否压缩
-            .compressQuality(80)
-            .minimumCompressSize(1024)// 小于多少kb的图片不压缩
-            .forResult(object : OnResultCallbackListener<LocalMedia> {
-                override fun onResult(result: MutableList<LocalMedia>?) {
-                    result.print()//打印结果
-                    if (result.isNullOrEmpty()) {
-                        continuation.resume(null)
-                        return
-                    }
-                    val media: LocalMedia = result[0]
-                    //压缩文件路径
-                    val compressPath = media.compressPath
-                    //上传文件路径
-                    val uploadPath = media.getUploadPath()
-                    continuation.resume(Pair(compressPath, uploadPath))
-                }
-
-                override fun onCancel() {
-                    continuation.resume(null)
-                }
-
-            })
+val LocalMedia.uploadPath
+    get() = when {
+        !androidQToPath.isNullOrEmpty() -> androidQToPath
+        !path.isNullOrEmpty() -> path
+        else -> compressPath
     }
-}
-
-/**
- * 获取上传文件路径
- */
-fun LocalMedia.getUploadPath() = when {
-    !androidQToPath.isNullOrEmpty() -> androidQToPath
-    !path.isNullOrEmpty() -> path
-    else -> compressPath
-}
 
 /**
  * 打印 LocalMedia 列表
