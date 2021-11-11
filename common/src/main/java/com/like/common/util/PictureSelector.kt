@@ -96,23 +96,83 @@ PictureSelector.create(this)
    .forResult();//结果回调分两种方式onActivityResult()和OnResultCallbackListener方式
  */
 
-suspend fun Activity.selectPhoto(): Pair<String, String>? = PictureSelector.create(this).selectPhoto()
+suspend fun Activity.selectSinglePhoto(): Pair<String, String>? = PictureSelector.create(this).selectSinglePhoto()
 
-suspend fun Fragment.selectPhoto(): Pair<String, String>? = PictureSelector.create(this).selectPhoto()
+suspend fun Fragment.selectSinglePhoto(): Pair<String, String>? = PictureSelector.create(this).selectSinglePhoto()
+
+suspend fun Activity.selectMultiplePhoto(
+    selectionData: List<LocalMedia>? = null,
+    maxSelectNum: Int = Int.MAX_VALUE
+): List<Pair<String, String>>? = PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+
+suspend fun Fragment.selectMultiplePhoto(
+    selectionData: List<LocalMedia>? = null,
+    maxSelectNum: Int = Int.MAX_VALUE
+): List<Pair<String, String>>? = PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
 
 /**
- * 选择照片
+ * 选择多张照片
+ * 对com.github.LuckSiege.PictureSelector库进行了封装
+ * @param selectionData     已经选择的照片数据
+ * @param maxSelectNum      允许最多选择的照片数量
+ *
+ * @return 成功返回照片数据集合 List<Pair<String, String>>。集合中的第一个参数是压缩图地址、第二个参数为上传图地址。如果没有选择就返回 null
+ */
+private suspend fun PictureSelector.selectMultiplePhoto(
+    selectionData: List<LocalMedia>?,
+    maxSelectNum: Int
+): List<Pair<String, String>>? = withContext(Dispatchers.IO) {
+    suspendCoroutine { continuation ->
+        this@selectMultiplePhoto.openGallery(PictureMimeType.ofImage())
+            .imageEngine(CoilEngine.instance)
+            .selectionMode(PictureConfig.MULTIPLE)
+            .isCompress(true)//是否压缩
+            .compressQuality(80)
+            .minimumCompressSize(1024)// 小于多少kb的图片不压缩
+            .maxSelectNum(maxSelectNum)
+            .selectionData(selectionData)
+            .imageSpanCount(3)// 每行显示个数 int
+            .isPreviewImage(true)// 是否可预览图片 true or false
+            .isCamera(true)// 是否显示拍照按钮 true or false
+            .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+            .isPreviewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: MutableList<LocalMedia>?) {
+                    result.print()//打印结果
+                    if (result.isNullOrEmpty()) {
+                        continuation.resume(null)
+                        return
+                    }
+                    continuation.resume(result.map {
+                        //压缩文件路径
+                        val compressPath = it.compressPath
+                        //上传文件路径
+                        val uploadPath = it.getUploadPath()
+                        Pair(compressPath, uploadPath)
+                    })
+                }
+
+                override fun onCancel() {
+                    continuation.resume(null)
+                }
+
+            })
+    }
+}
+
+/**
+ * 选择1张照片
  * 对com.github.LuckSiege.PictureSelector库进行了封装
  *
- * @return 成功返回Pair<String, String>类型数据。其中第一个参数是压缩图地址、第二个参数为上传图地址。失败返回null
+ * @return 成功返回Pair<String, String>类型数据。其中第一个参数是压缩图地址、第二个参数为上传图地址。如果没有选择就返回 null
  */
-private suspend fun PictureSelector.selectPhoto(): Pair<String, String>? = withContext(Dispatchers.IO) {
+private suspend fun PictureSelector.selectSinglePhoto(): Pair<String, String>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
-        this@selectPhoto.openGallery(PictureMimeType.ofImage())
+        this@selectSinglePhoto.openGallery(PictureMimeType.ofImage())
             .imageEngine(CoilEngine.instance)
             .selectionMode(PictureConfig.SINGLE)
             .isCompress(true)//是否压缩
-            .compressQuality(100)
+            .compressQuality(80)
             .minimumCompressSize(1024)// 小于多少kb的图片不压缩
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: MutableList<LocalMedia>?) {
@@ -124,10 +184,6 @@ private suspend fun PictureSelector.selectPhoto(): Pair<String, String>? = withC
                     val media: LocalMedia = result[0]
                     //压缩文件路径
                     val compressPath = media.compressPath
-                    if (compressPath.isNullOrEmpty()) {
-                        continuation.resume(null)
-                        return
-                    }
                     //上传文件路径
                     val uploadPath = media.getUploadPath()
                     continuation.resume(Pair(compressPath, uploadPath))
