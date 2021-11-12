@@ -4,5 +4,9 @@
         <item name="android:windowBackground">@color/common_transparent</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
-
+    <!--RatioShapeableImageView的现状样式：圆形图片-->
+    <style name="CircleRatioShapeableImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
