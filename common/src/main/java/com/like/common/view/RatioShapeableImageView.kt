@@ -6,7 +6,9 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.like.common.R
 
 /**
- * 可以设置宽高比、形状的 ImageView。
+ * 1、宽度尺寸必须设置。
+ * 2、可以设置宽高比。
+ * 3、可以设置形状。
  */
 /*
 <com.like.common.view.RatioShapeableImageView
