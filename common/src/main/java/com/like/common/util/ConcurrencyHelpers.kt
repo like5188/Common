@@ -11,9 +11,9 @@ import java.util.concurrent.atomic.AtomicReference
  * 协程处理并发问题的工具类
  *
  * 有三个基本的模式可以让我们确保在同一时间只会有一次请求进行:
- *  1、在启动更多协程之前取消之前的任务；
- *  2、让下一个任务排队等待前一个任务执行完成；
- *  3、如果有一个任务正在执行，返回该任务，而不是启动一个新的任务。
+ *  1、排队等待当前任务完成再执行；
+ *  2、取消当前任务，执行新任务并返回结果；
+ *  3、忽略新任务，直接返回当前任务结果。
  */
 
 /**
@@ -90,7 +90,7 @@ class ControlledRunner<T> {
     private val activeTask = AtomicReference<Deferred<T>?>(null)
 
     /**
-     * 取消之前的任务
+     * 取消当前任务，执行新任务并返回结果
      * Cancel all previous tasks before calling block.
      *
      * When several coroutines call cancelPreviousThenRun at the same time, only one will run and
@@ -164,7 +164,7 @@ class ControlledRunner<T> {
     }
 
     /**
-     * 复用前一个任务
+     * 忽略新任务，直接返回当前任务结果
      * Don't run the new block if a previous block is running, instead wait for the previous block
      * and return it's result.
      *
