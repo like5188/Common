@@ -30,7 +30,8 @@ class SingleRunner {
     private val mutex = Mutex()
 
     /**
-     * 让下一个任务排队等待
+     * 排队等待当前正在执行的任务完成后，再执行新任务并返回其结果。
+     *
      * Ensure that the block will only be executed after all previous work has completed.
      *
      * When several coroutines call afterPrevious at the same time, they will queue up in the order
@@ -90,7 +91,8 @@ class ControlledRunner<T> {
     private val activeTask = AtomicReference<Deferred<T>?>(null)
 
     /**
-     * 取消当前任务，执行新任务并返回结果
+     * 先取消当前任务(如果有任务正在执行)，再执行新任务并返回其结果。
+     *
      * Cancel all previous tasks before calling block.
      *
      * When several coroutines call cancelPreviousThenRun at the same time, only one will run and
@@ -164,7 +166,8 @@ class ControlledRunner<T> {
     }
 
     /**
-     * 忽略新任务，直接返回当前任务结果
+     * 如果有任务正在执行，则忽略新任务，直接返回当前正在执行的任务的结果。否则就执行新任务并返回其结果。
+     *
      * Don't run the new block if a previous block is running, instead wait for the previous block
      * and return it's result.
      *
