@@ -40,36 +40,36 @@ class ImageActivity : AppCompatActivity() {
         }
     }
 
-    fun matrix1(view: View) {
+    fun compressByMatrix1(view: View) {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
-            val compressBitmap = ImageUtils.scaleByMatrix(this@ImageActivity, bitmap, 1000)
+            val compressBitmap = ImageUtils.compressByMatrix(this@ImageActivity, bitmap, 1000)
             mBinding.ivCompress.load(compressBitmap)
         }
     }
 
-    fun matrix2(view: View) {
+    fun compressByMatrix2(view: View) {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
-            val compressBitmap = ImageUtils.scaleByMatrix(this@ImageActivity, bitmap, 480, 800)
+            val compressBitmap = ImageUtils.compressByMatrix(this@ImageActivity, bitmap, 480, 800)
             mBinding.ivCompress.load(compressBitmap)
         }
     }
 
-    fun options(view: View) {
+    fun compressByInSampleSize(view: View) {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
-            val compressBitmap = ImageUtils.scaleByOptions(this@ImageActivity, file.absolutePath, 480, 800)
+            val compressBitmap = ImageUtils.compressByInSampleSize(this@ImageActivity, file.absolutePath, 480, 800)
             mBinding.ivCompress.load(compressBitmap)
         }
     }
 
-    fun quality(view: View) {
+    fun compressByQuality(view: View) {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
-            val compressFile = File(InternalStorageUtils.getCacheDir(this@ImageActivity), "cache2.jpg")
-            ImageUtils.compressByQualityAndStore(this@ImageActivity, bitmap, 1000, compressFile)
-            mBinding.ivCompress.load(BitmapFactory.decodeFile(compressFile.absolutePath))
+            ImageUtils.compressByQuality(this@ImageActivity, bitmap, 1000)?.apply {
+                mBinding.ivCompress.load(BitmapFactory.decodeFile(absolutePath))
+            }
         }
     }
 
