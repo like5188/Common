@@ -180,7 +180,7 @@ object ImageUtils {
             }
 
             it.toByteArray().apply {
-                logCompress(bitmap, this)
+                logCompress(context, this)
             }
         }
     }
@@ -188,7 +188,6 @@ object ImageUtils {
     /**
      * 采样率压缩（会减小宽高、内存大小、磁盘大小）。
      * 通过设置 BitmapFactory.Options.inSampleSize，来减小图片的分辨率，进而减小图片所占用的磁盘空间和内存大小。
-     * 注意：该方法只能让宽和高这二者之一达到目标值。
      *
      * 相比直接使用 scale 方法压缩，效率较高，解析速度快。
      * 但是采样率 inSampleSize 的取值只能是 2 的次方数(例如:inSampleSize = 15,实际取值为 8;
@@ -340,7 +339,6 @@ object ImageUtils {
         return@withContext false
     }
 
-
     /**
      * 把图片数据存储到本地磁盘
      */
@@ -380,12 +378,11 @@ object ImageUtils {
 
     fun getFileLengthKB(file: File): Double = file.length() / 1024.0
 
-    private suspend fun logOrigin(context: Context, bitmap: Bitmap?) {
+    private fun logOrigin(context: Context, bitmap: Bitmap?) {
         if (null == bitmap || bitmap.isRecycled) {
             Log.i(TAG, "原图：$bitmap")
         } else {
-            val file = File(context.externalCacheDir, "cache1.jpg")
-            store(bitmap, file)
+            val imageDataSize = bitmap2Bytes(bitmap)?.size ?: 0
             Log.v(
                 TAG,
                 "原图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap).maximumFractionDigits(2)}KB ${
@@ -393,19 +390,17 @@ object ImageUtils {
                         2
                     )
                 }MB，所占磁盘大小：${
-                    getFileLengthKB(file).maximumFractionDigits(2)
-                }KB ${getFileLengthMB(file).maximumFractionDigits(2)}MB"
+                    (imageDataSize / 1024.0).maximumFractionDigits(2)
+                }KB ${(imageDataSize / 1024.0 / 1024.0).maximumFractionDigits(2)}MB"
             )
-            file.delete()
         }
     }
 
-    private suspend fun logCompress(context: Context, bitmap: Bitmap?) {
+    private fun logCompress(context: Context, bitmap: Bitmap?) {
         if (null == bitmap || bitmap.isRecycled) {
             Log.d(TAG, "缩略图：$bitmap")
         } else {
-            val file = File(context.externalCacheDir, "cache2.jpg")
-            store(bitmap, file)
+            val imageDataSize = bitmap2Bytes(bitmap)?.size ?: 0
             Log.w(
                 TAG,
                 "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap).maximumFractionDigits(2)}KB ${
@@ -413,17 +408,19 @@ object ImageUtils {
                         bitmap
                     ).maximumFractionDigits(2)
                 }MB，所占磁盘大小：${
-                    getFileLengthKB(file).maximumFractionDigits(2)
-                }KB ${getFileLengthMB(file).maximumFractionDigits(2)}MB"
+                    (imageDataSize / 1024.0).maximumFractionDigits(2)
+                }KB ${(imageDataSize / 1024.0 / 1024.0).maximumFractionDigits(2)}MB"
             )
-            file.delete()
         }
     }
 
-    private fun logCompress(bitmap: Bitmap?, data: ByteArray) {
+    private fun logCompress(context: Context, data: ByteArray?) {
+        data ?: return
+        val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
         if (null == bitmap || bitmap.isRecycled) {
             Log.d(TAG, "缩略图：$bitmap")
         } else {
+            val imageDataSize = data?.size ?: 0
             Log.w(
                 TAG,
                 "缩略图：${bitmap.width} X ${bitmap.height}，所占内存大小：${getBitmapSizeKB(bitmap).maximumFractionDigits(2)}KB ${
@@ -431,8 +428,8 @@ object ImageUtils {
                         bitmap
                     ).maximumFractionDigits(2)
                 }MB，所占磁盘大小：${
-                    (data.size / 1024.0).maximumFractionDigits(2)
-                }KB ${(data.size / 1024.0 / 1024.0).maximumFractionDigits(2)}MB"
+                    (imageDataSize / 1024.0).maximumFractionDigits(2)
+                }KB ${(imageDataSize / 1024.0 / 1024.0).maximumFractionDigits(2)}MB"
             )
         }
     }
