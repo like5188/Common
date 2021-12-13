@@ -208,7 +208,7 @@ object ImageUtils {
             // 开始读入图片，当inJustDecodeBounds设置为true的时候，BitmapFactory通过decodeXXXX解码图片时，将会返回空(null)的Bitmap对象，这样可以避免Bitmap的内存分配，但是它可以返回Bitmap的宽度、高度以及MimeType。
             options.inJustDecodeBounds = true
             BitmapFactory.decodeFile(imagePath, options)
-            options.inSampleSize = calculateInSampleSize(options.outWidth, options.outHeight, reqWidth, reqHeight)//设置缩放比例
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)//设置缩放比例
             options.inJustDecodeBounds = false
             // 得到的图片的宽或者高会比期望值大一点。
             BitmapFactory.decodeFile(imagePath, options)?.apply {
@@ -219,22 +219,27 @@ object ImageUtils {
     /**
      * 计算采样率
      *
-     * @param srcWidth  原图的宽度 px
-     * @param srcHeight 原图的高度 px
+     * @param options   原图的 BitmapFactory.Options
      * @param reqWidth  目标的宽度 px
      * @param reqHeight 目标的高度 px
      */
-    private fun calculateInSampleSize(srcWidth: Int, srcHeight: Int, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        // Raw height and width of image
+        val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
-        if (srcHeight > reqHeight || srcWidth > reqWidth) {
-            val halfHeight = srcHeight / 2
-            val halfWidth = srcWidth / 2
+
+        if (height > reqHeight || width > reqWidth) {
+
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
-            while (halfHeight / inSampleSize > reqHeight && halfWidth / inSampleSize > reqWidth) {
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
                 inSampleSize *= 2
             }
         }
+
         return inSampleSize
     }
 
