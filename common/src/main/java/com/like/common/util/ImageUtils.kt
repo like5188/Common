@@ -15,7 +15,6 @@ import android.widget.ImageView
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Target
-import com.like.common.util.storage.internal.InternalStorageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -150,7 +149,7 @@ object ImageUtils {
     }
 
     /**
-     * 质量压缩，并存储到磁盘。（宽高及内存大小都不变、只改变磁盘大小）。
+     * 质量压缩。（宽高及内存大小都不变、只改变磁盘大小）。
      * 通过 quality 逐渐减小循环进行压缩，直到达到目标尺寸或者 quality 小于等于 0 为止。
      * 使用场景：将图片压缩后将图片上传到服务器，或者保存到本地，根据实际需求
      *
@@ -160,11 +159,11 @@ object ImageUtils {
      * 注意：由于png是无损压缩，所以设置quality无效；此方法是通过修改图片的其它比如透明度等属性，使得图片大小变化而已，所以它就无法无限压缩，到达一个值之后就不会继续变小了。
      *
      * @param bitmap            源图片资源
-     * @param outFileMaxSize    压缩后的文件最大尺寸  单位:KB
-     * @return 压缩后的文件
+     * @param maxSize           压缩后的文件最大尺寸  单位:KB
+     * @return 压缩后的图片数据
      */
-    suspend fun compressByQuality(context: Context, bitmap: Bitmap?, outFileMaxSize: Int): File? = withContext(Dispatchers.IO) {
-        if (null == bitmap || bitmap.isRecycled || outFileMaxSize <= 0) return@withContext null
+    suspend fun compressByQuality(context: Context, bitmap: Bitmap?, maxSize: Int): ByteArray? = withContext(Dispatchers.IO) {
+        if (null == bitmap || bitmap.isRecycled || maxSize <= 0) return@withContext null
         logOrigin(context, bitmap)
 
         var quality = 100
@@ -173,17 +172,16 @@ object ImageUtils {
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it)
 
             // 循环判断压缩后图片是否超过限制大小
-            while (it.toByteArray().size / 1024 > outFileMaxSize && quality > 0) {
+            while (it.toByteArray().size / 1024 > maxSize && quality > 0) {
                 quality -= 10
                 // 清空baos
                 it.reset()
                 bitmap.compress(Bitmap.CompressFormat.JPEG, quality, it)
             }
-        }
 
-        File(InternalStorageUtils.getCacheDir(context), "compressByQuality_${System.currentTimeMillis()}.jpg").apply {
-            store(bitmap, this, quality)
-            logCompress(bitmap, this)
+            it.toByteArray().apply {
+                logCompress(bitmap, this)
+            }
         }
     }
 
@@ -254,7 +252,7 @@ object ImageUtils {
         if (null == bitmap || bitmap.isRecycled || maxSize <= 0) return@withContext null
 
         val r = bitmap.height.toFloat() / bitmap.width.toFloat()
-        // 这里/4是因为默认采用的Config.ARGB_8888格式。此时大小=宽*高*4(ARGB_8888格式每个像素占用的空间为4个byte；RGB_565是2个byte)
+        // 这里/4是因为默认采用的Config.ARGB_8888格式。此时大小=宽*高*4(ARGB_8888 格式每个像素占用的空间为 4 bytes；RGB_565 是 2 bytes)
         val newWidth = Math.sqrt(maxSize * 1024.0 / 4 / r).toInt()
         val newHeight = (newWidth * r).toInt()
         compressByMatrix(context, bitmap, newWidth, newHeight)
@@ -342,6 +340,24 @@ object ImageUtils {
         return@withContext false
     }
 
+
+    /**
+     * 把图片数据存储到本地磁盘
+     */
+    suspend fun store(data: ByteArray, outFile: File): Boolean = withContext(Dispatchers.IO) {
+        if (outFile.isDirectory) return@withContext false
+        try {
+            if (!outFile.exists()) outFile.createNewFile()
+            FileOutputStream(outFile).use {
+                it.write(data)
+                return@withContext true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return@withContext false
+    }
+
     /**
      * 根据视频网络地址获取第一帧图片
      */
@@ -404,7 +420,7 @@ object ImageUtils {
         }
     }
 
-    private fun logCompress(bitmap: Bitmap?, file: File) {
+    private fun logCompress(bitmap: Bitmap?, data: ByteArray) {
         if (null == bitmap || bitmap.isRecycled) {
             Log.d(TAG, "缩略图：$bitmap")
         } else {
@@ -415,8 +431,8 @@ object ImageUtils {
                         bitmap
                     ).maximumFractionDigits(2)
                 }MB，所占磁盘大小：${
-                    getFileLengthKB(file).maximumFractionDigits(2)
-                }KB ${getFileLengthMB(file).maximumFractionDigits(2)}MB"
+                    (data.size / 1024.0).maximumFractionDigits(2)
+                }KB ${(data.size / 1024.0 / 1024.0).maximumFractionDigits(2)}MB"
             )
         }
     }

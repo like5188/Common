@@ -68,7 +68,7 @@ class ImageActivity : AppCompatActivity() {
         lifecycleScope.launch {
             mBinding.ivOrigin.load(bitmap)
             ImageUtils.compressByQuality(this@ImageActivity, bitmap, 1000)?.apply {
-                mBinding.ivCompress.load(BitmapFactory.decodeFile(absolutePath))
+                mBinding.ivCompress.load(BitmapFactory.decodeByteArray(this, 0, size))
             }
         }
     }
