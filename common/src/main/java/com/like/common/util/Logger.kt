@@ -138,6 +138,7 @@ object Logger {
         for ((i, stackTrace) in stackTraces.withIndex()) {
             if (stackTrace.className.endsWith(TAG) && i + 1 < stackTraces.size) {
                 val className = stackTraces[i + 1].className
+                if (className.endsWith(TAG)) continue
                 val startIndex = className.lastIndexOf(".")
                 val endIndex = className.length
                 return className.substring(startIndex + 1, endIndex)
