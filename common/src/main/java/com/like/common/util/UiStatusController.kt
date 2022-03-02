@@ -35,6 +35,11 @@ open class UiStatusController(private val contentView: View) {
         statusMap.clear()
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <T : ViewDataBinding> getDataBinding(tag: String): T? {
+        return statusMap[tag]?.dataBinding as? T
+    }
+
     fun showContent() {
         hideUiStatus()
         if (contentView.visibility != View.VISIBLE)
