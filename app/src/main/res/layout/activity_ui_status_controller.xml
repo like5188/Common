@@ -16,6 +16,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="content"
                 android:text="content"
                 android:textAllCaps="false" />
 
@@ -23,6 +24,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="empty"
                 android:text="empty"
                 android:textAllCaps="false" />
 
@@ -30,6 +32,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="loading"
                 android:text="loading"
                 android:textAllCaps="false" />
 
@@ -44,6 +47,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="error"
                 android:text="error"
                 android:textAllCaps="false" />
 
@@ -51,6 +55,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="notFoundError"
                 android:text="notFoundError"
                 android:textAllCaps="false" />
 
@@ -58,6 +63,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="networkError"
                 android:text="networkError"
                 android:textAllCaps="false" />
 
