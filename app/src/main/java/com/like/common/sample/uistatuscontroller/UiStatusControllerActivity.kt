@@ -9,8 +9,8 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityUiStatusControllerBinding
 import com.like.common.sample.databinding.CommonViewUiStatusBinding
 import com.like.common.util.CoilImageLoaderFactory
-import com.tgf.kcwc.common.util.UiStatus
-import com.tgf.kcwc.common.util.UiStatusController
+import com.like.common.util.UiStatus
+import com.like.common.util.UiStatusController
 
 class UiStatusControllerActivity : AppCompatActivity() {
     companion object {

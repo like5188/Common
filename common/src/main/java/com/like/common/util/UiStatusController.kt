@@ -1,4 +1,4 @@
-package com.tgf.kcwc.common.util
+package com.like.common.util
 
 import android.content.Context
 import android.view.LayoutInflater
