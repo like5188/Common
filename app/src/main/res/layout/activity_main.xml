@@ -91,6 +91,13 @@
                     android:src="@drawable/dialog_close" />
 
                 <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="showUiStatusController"
+                    android:text="showUiStatusController"
+                    android:textAllCaps="false" />
+
+                <Button
                     android:id="@+id/btn_tint_test"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

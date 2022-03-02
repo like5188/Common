@@ -29,6 +29,7 @@ import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.storage.StorageActivity
+import com.like.common.sample.uistatuscontroller.UiStatusControllerActivity
 import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
 import com.like.common.view.TimerTextView
@@ -179,6 +180,11 @@ class MainActivity : AppCompatActivity() {
         mBinding.viewFlipper.flipInterval = 3000
         mBinding.viewFlipper.startFlipping()
     }
+
+    fun showUiStatusController(view: View) {
+        startActivity(Intent(this, UiStatusControllerActivity::class.java))
+    }
+
 
     fun gotoAnimActivity(view: View) {
         startActivity(Intent(this, AnimActivity::class.java))
