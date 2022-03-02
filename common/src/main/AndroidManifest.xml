@@ -41,10 +41,12 @@
 
         <activity
             android:name=".view.dragview.activity.DragPhotoViewActivity"
+            android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/translucent" />
         <activity
             android:name=".view.dragview.activity.DragVideoViewActivity"
+            android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/translucent" />
 

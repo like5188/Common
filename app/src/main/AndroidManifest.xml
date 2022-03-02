@@ -14,6 +14,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,35 +22,73 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".letterlistview.SidebarViewActivity" />
-        <activity android:name=".checkradio.CheckAndRadioActivity" />
-        <activity android:name=".drag.DragViewTestActivity" />
-        <activity android:name=".image.ImageActivity" />
-        <activity android:name=".coroutines.CoroutinesActivity" />
-        <activity android:name=".flexbox.FlexBoxActivity" />
-        <activity android:name=".notification.NotificationActivity" />
-        <activity android:name=".serializable.SerializableActivity" />
-        <activity android:name=".dialog.DialogActivity" />
+        <activity
+            android:name=".letterlistview.SidebarViewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".checkradio.CheckAndRadioActivity"
+            android:exported="true" />
+        <activity
+            android:name=".drag.DragViewTestActivity"
+            android:exported="true" />
+        <activity
+            android:name=".image.ImageActivity"
+            android:exported="true" />
+        <activity
+            android:name=".coroutines.CoroutinesActivity"
+            android:exported="true" />
+        <activity
+            android:name=".flexbox.FlexBoxActivity"
+            android:exported="true" />
+        <activity
+            android:name=".notification.NotificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".serializable.SerializableActivity"
+            android:exported="true" />
+        <activity
+            android:name=".dialog.DialogActivity"
+            android:exported="true" />
         <activity
             android:name=".activitytest.TestActivity"
+            android:exported="true"
             android:launchMode="singleTop" />
-        <activity android:name=".activitytest.TestActivity1" />
+        <activity
+            android:name=".activitytest.TestActivity1"
+            android:exported="true" />
         <activity
             android:name=".activitytest.TestActivity2"
+            android:exported="true"
             android:theme="@style/Base.Theme.AppCompat.Dialog" />
         <activity
             android:name=".activitytest.TestActivity3"
+            android:exported="true"
             android:theme="@style/translucent" />
-        <activity android:name=".zxing.ZXingActivity" />
-        <activity android:name=".autowired.AutoWiredActivity" />
+        <activity
+            android:name=".zxing.ZXingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".autowired.AutoWiredActivity"
+            android:exported="true" />
         <activity
             android:name=".activitytest.LaunchModeActivity1"
+            android:exported="true"
             android:launchMode="singleTask" />
-        <activity android:name=".activitytest.LaunchModeActivity2" />
-        <activity android:name=".activitytest.LaunchModeActivity3" />
-        <activity android:name=".fragmenttest.FragmentContainer" />
-        <activity android:name=".storage.StorageActivity" />
-        <activity android:name=".anim.AnimActivity" />
+        <activity
+            android:name=".activitytest.LaunchModeActivity2"
+            android:exported="true" />
+        <activity
+            android:name=".activitytest.LaunchModeActivity3"
+            android:exported="true" />
+        <activity
+            android:name=".fragmenttest.FragmentContainer"
+            android:exported="true" />
+        <activity
+            android:name=".storage.StorageActivity"
+            android:exported="true" />
+        <activity
+            android:name=".anim.AnimActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

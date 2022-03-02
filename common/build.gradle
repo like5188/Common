@@ -1,15 +1,15 @@
 plugins {
-    id("com.android.library")// 引用二进制插件，二进制插件一般都是被打包在一个jar里独立发布的
-    id("kotlin-android")
-    id("kotlin-kapt")
+    id 'com.android.library'// 引用二进制插件，二进制插件一般都是被打包在一个jar里独立发布的
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -47,7 +47,8 @@ dependencies {
     implementation("com.google.android:flexbox:2.0.1")
     implementation("com.google.zxing:core:3.3.3")// zxing 3.4.0：要求最低api等级为24
     implementation("androidx.palette:palette-ktx:1.0.0")
-    implementation("org.koin:koin-androidx-viewmodel:2.2.2")// koin 依赖注入库。如果升级到 2.2.2 版本，那么此库引入的 androidx.activity:activity 库会和 activity-ktx 冲突
+    implementation("org.koin:koin-androidx-viewmodel:2.2.2")
+// koin 依赖注入库。如果升级到 2.2.2 版本，那么此库引入的 androidx.activity:activity 库会和 activity-ktx 冲突
     implementation("io.github.lucksiege:pictureselector:v2.7.3-rc05")
     implementation("com.contrarywind:Android-PickerView:4.1.9")// 选择器
     implementation("com.danikula:videocache:2.7.1")// VideoView 视频边播放边缓存
