@@ -92,6 +92,9 @@
         <activity
             android:name=".uistatuscontroller.UiStatusControllerActivity"
             android:exported="true" />
+        <activity
+            android:name=".timertextview.TimerTextViewActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

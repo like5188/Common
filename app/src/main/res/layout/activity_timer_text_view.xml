@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <EditText
+            android:id="@+id/etPhone"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/common_transparent"
+            android:hint="请输入手机号码"
+            android:inputType="phone"
+            android:maxLength="11"
+            android:paddingStart="15dp"
+            android:textColorHint="#C6C9CC"
+            android:textSize="16sp" />
+
+        <com.like.common.view.TimerTextView
+            android:id="@+id/ttv"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="@string/ttv_onStart"
+            android:textColor="@drawable/selector_timer_text_color_36a95d"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</layout>

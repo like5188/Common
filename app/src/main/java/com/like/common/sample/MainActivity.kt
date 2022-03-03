@@ -29,6 +29,7 @@ import com.like.common.sample.letterlistview.SidebarViewActivity
 import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.storage.StorageActivity
+import com.like.common.sample.timertextview.TimerTextViewActivity
 import com.like.common.sample.uistatuscontroller.UiStatusControllerActivity
 import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
@@ -185,6 +186,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, UiStatusControllerActivity::class.java))
     }
 
+    fun gotoTimerTextViewActivity(view: View) {
+        startActivity(Intent(this, TimerTextViewActivity::class.java))
+    }
 
     fun gotoAnimActivity(view: View) {
         startActivity(Intent(this, AnimActivity::class.java))
