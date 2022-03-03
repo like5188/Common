@@ -71,7 +71,7 @@ suspend fun <ResultType> successIfAllSuccess(
 /**
  * 合并多个 suspend 方法，并在所有方法执行完毕后返回结果：
  * ①、只要有一个 Success，则按[suspendFunctions]顺序返回结果集合。其中失败部分对应的结果为 Exception。
- * ②、全部为 Error，则抛出异常。
+ * ②、全部为 Error，则抛出异常。（所以当不是全部为 Error 时，不会触发 flow 的 retryWhen 操作。比如使用：block.asFlow().retryWhen 进行 token 无效刷新操作，并且在刷新 token 失败时跳转到登录。此时使用 successIfOneSuccess 方法就无法跳转到登录页面）
  */
 @Throws(Exception::class)
 suspend fun successIfOneSuccess(
