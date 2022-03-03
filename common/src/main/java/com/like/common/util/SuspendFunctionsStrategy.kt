@@ -1,8 +1,11 @@
 package com.like.common.util
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 
-/**
+/*
  * [launch]：未捕获异常，自动传播，直到根协程。
  * [async]：向用户暴露异常。会捕获所有异常并将其表示在结果 [Deferred] 对象中，用户最终通过 [await] 来消费异常。
  * [coroutineScope]：它的子协程会把异常委托给其父协程，这样一直向上直到根协程。
@@ -11,7 +14,37 @@ import kotlinx.coroutines.*
  * [CoroutineExceptionHandler]：
  * 1、只针对 [launch]。
  * 2、[coroutineScope]的根协程中，或者[supervisorScope]的子协程中。
+ *
+ * 注意：如果这样使用会出错：
+    successIfAllSuccess(
+        ::method1, ::method2
+    ).asFlow()
+    .catch { throwable ->
+     // 如果successIfAllSuccess中报错，那么此处不可能捕获到错误。
+     // 因为successIfAllSuccess报错会造成asFlow根本没有成功生成flow。
+    }
+ * 正确的使用方式：
+    suspend {
+        successIfAllSuccess(
+            ::method1, ::method2
+        )
+    }.asFlow()
+    .catch { throwable ->
+    }
+ * 或者
+    flow {
+        emit(
+            successIfAllSuccess(
+                ::method1, ::method2
+            )
+        )
+    }.asFlow()
+    .catch { throwable ->
+    }
  */
+
+
+
 /**
  * 合并多个 suspend 方法，并在所有方法执行完毕后返回结果：
  * ①、全部为 Success，则按[suspendFunctions]顺序返回结果集合。

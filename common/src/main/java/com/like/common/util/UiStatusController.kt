@@ -9,8 +9,31 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
+/*
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--SwipeRefreshLayout 中的子视图在使用 UiStatusController 进行状态管理时，必须在 xml 文件中多加一层，否则状态不会显示-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="内容"
+                android:textSize="30sp" />
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+ */
+
 /**
  * 界面状态控制器。
+ * 注意：SwipeRefreshLayout 中的子视图在使用 UiStatusController 进行状态管理时，
+ * 必须在 xml 文件中多加一层，否则状态不会正常显示。（见顶部注释）
  *
  * @author like 2022-03-02
  * @param contentView           需要显示的内容视图
