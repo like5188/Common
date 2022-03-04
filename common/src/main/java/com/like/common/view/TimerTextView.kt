@@ -52,7 +52,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     private var tickListener: OnTickListener? = null
     private val timerTask = object : TimerTask() {
         override fun run() {
-            post {
+            post {// 主线程进行
                 when {
                     remainingTime == totalTime -> {
                         this@TimerTextView.isEnabled = false
