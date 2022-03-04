@@ -33,13 +33,13 @@ import com.like.common.sample.timertextview.TimerTextViewActivity
 import com.like.common.sample.uistatuscontroller.UiStatusControllerActivity
 import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
-import com.like.common.view.TimerTextView
 import com.like.common.view.toolbar.CustomToolbarMenu
 import com.like.common.view.toolbar.CustomToolbarMenuActionProvider
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -53,23 +53,6 @@ class MainActivity : AppCompatActivity() {
         initCustomMenuToolbar()
         SPUtils.getInstance().init(this)
         initMarqueeView()
-        mBinding.timerTextView.setOnTickListener(object : TimerTextView.OnTickListener {
-            override fun onStart(time: Long) {
-                mBinding.timerTextView.text = "开始倒计时 ${time / 1000} 秒"
-            }
-
-            override fun onTick(time: Long) {
-                Logger.w("TimerTextView", "time=$time time/1000=${time / 1000}")
-                mBinding.timerTextView.text = "剩余 ${time / 1000} 秒"
-            }
-
-            override fun onEnd() {
-                mBinding.timerTextView.text = "重新获取验证码"
-            }
-        })
-        mBinding.timerTextView.setOnClickListener {
-            mBinding.timerTextView.start(15000)
-        }
         mBinding.ivTintTest.setSelectorSrcResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.ivTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.rbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)

@@ -49,29 +49,16 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     )
     private var remainingTime: Long = 0L// 剩余时长(毫秒)
     private var timer: Timer? = null
-    private var tickListener: OnTickListener? = null
-    private val timerTask = object : TimerTask() {
-        override fun run() {
-            post {// 主线程进行
-                when {
-                    remainingTime == totalTime -> {
-                        this@TimerTextView.isEnabled = false
-                        tickListener?.onStart(remainingTime)
-                    }
-                    remainingTime < step -> {
-                        this@TimerTextView.isEnabled = true
-                        tickListener?.onEnd()
-                        destroy()
-                    }
-                    else -> {
-                        this@TimerTextView.isEnabled = false
-                        tickListener?.onTick(remainingTime)
-                    }
-                }
-                remainingTime -= step
-            }
-        }
+    var tickListener: OnTickListener? = null
+
+    fun updateEnable() {
+        this@TimerTextView.isEnabled = true
     }
+
+    /**
+     * 是否能 enable 的条件
+     */
+    var canEnable: () -> Boolean = { true }
 
     init {
         if (context is LifecycleOwner) {
@@ -84,8 +71,12 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         }
         if (hasRemainingTime()) {
             timer = Timer()
-            timer?.schedule(timerTask, 0, step)
+            timer?.schedule(createTimerTask(), 0, step)
         }
+    }
+
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled && canEnable())
     }
 
     /**
@@ -105,7 +96,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
             step = stepTime
             startTime = System.currentTimeMillis()
         }
-        timer?.schedule(timerTask, 0, step)
+        timer?.schedule(createTimerTask(), 0, step)
     }
 
     private fun hasRemainingTime(): Boolean {
@@ -115,16 +106,31 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     }
 
     private fun destroy() {
-        timerTask.cancel()
         timer?.cancel()
         timer = null
     }
 
-    /**
-     * @param tickListener 倒计时回调
-     */
-    fun setOnTickListener(tickListener: OnTickListener) {
-        this.tickListener = tickListener
+    private fun createTimerTask() = object : TimerTask() {
+        override fun run() {
+            post {// 主线程进行
+                when {
+                    remainingTime == totalTime -> {
+                        tickListener?.onStart(remainingTime)
+                        this@TimerTextView.isEnabled = false
+                    }
+                    remainingTime < step -> {
+                        tickListener?.onEnd()
+                        this@TimerTextView.isEnabled = true
+                        destroy()
+                    }
+                    else -> {
+                        tickListener?.onTick(remainingTime)
+                        this@TimerTextView.isEnabled = false
+                    }
+                }
+                remainingTime -= step
+            }
+        }
     }
 
     interface OnTickListener {

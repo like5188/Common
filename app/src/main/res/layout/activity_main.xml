@@ -60,12 +60,6 @@
                     android:inAnimation="@anim/marquee_anim_bottom_in"
                     android:outAnimation="@anim/marquee_anim_top_out" />
 
-                <com.like.common.view.TimerTextView
-                    android:id="@+id/timerTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="获取验证码" />
-
                 <RadioButton
                     android:id="@+id/rb_tint_test"
                     android:layout_width="wrap_content"

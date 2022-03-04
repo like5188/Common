@@ -16,9 +16,14 @@ class TimerTextViewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding.etPhone.doAfterTextChanged {
-            mBinding.ttv.isEnabled = it?.length == 11
+            mBinding.ttv.updateEnable()
         }
-        mBinding.ttv.setOnTickListener(object : TimerTextView.OnTickListener {
+        mBinding.ttv.canEnable = {
+            mBinding.etPhone.length() == 11 &&
+                    (mBinding.ttv.text == resources.getString(R.string.ttv_onStart) ||
+                            mBinding.ttv.text == resources.getString(R.string.ttv_onEnd))
+        }
+        mBinding.ttv.tickListener = object : TimerTextView.OnTickListener {
             override fun onStart(time: Long) {
             }
 
@@ -32,7 +37,7 @@ class TimerTextViewActivity : AppCompatActivity() {
             override fun onEnd() {
                 mBinding.ttv.text = resources.getString(R.string.ttv_onEnd)
             }
-        })
+        }
         mBinding.ttv.setOnClickListener {
             mBinding.ttv.start(10000L)
         }
