@@ -19,8 +19,8 @@ import java.util.*
  *
  * 倒计时不会因为关闭app而停止。重新打开后会继续倒计时。
  *
- * 在xml布局文件中直接使用。
- *
+ * 在xml布局文件中直接使用。然后调用[init]方法初始化。
+ * [start]方法是启动倒计时的。
  */
 class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     // 倒计时总时长(毫秒)
@@ -75,14 +75,17 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         if (hasRemainingTime()) {
             performStart()
         }
+    }
 
-        this.setOnClickListener {
-            if (!hasRemainingTime()) {// 上次时间已经走完了
-                remainingTime = totalTime
-                startTime = System.currentTimeMillis()
-            }
-            performStart()
+    /**
+     * 开始倒计时
+     */
+    fun start() {
+        if (!hasRemainingTime()) {// 上次时间已经走完了
+            remainingTime = totalTime
+            startTime = System.currentTimeMillis()
         }
+        performStart()
     }
 
     /**

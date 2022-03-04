@@ -13,7 +13,12 @@ class TimerTextViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding.ttv.init(tvPhone = mBinding.etPhone, length = 10000L, step = 1000L)
+        mBinding.ttv.apply {
+            init(tvPhone = mBinding.etPhone, length = 10000L, step = 1000L)
+            setOnClickListener {
+                start()
+            }
+        }
     }
 
 }
