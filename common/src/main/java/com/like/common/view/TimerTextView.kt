@@ -55,7 +55,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     private val phoneValidator by lazy {
         ValidatorFactory.createPhoneValidator()
     }
-    private lateinit var tvPhone: TextView
+    private var tvPhone: TextView? = null
 
     init {
         (context as? LifecycleOwner)?.lifecycle?.addObserver(object : LifecycleObserver {
@@ -86,17 +86,17 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     }
 
     /**
-     * @param tvPhone   电话号码文本框，如果设置了，那么当其中输入了正确的验证码时，enable 才有可能为 true
+     * @param tvPhone   电话号码文本框，如果设置了，那么当其中输入了正确的电话号码时，enable 才有可能为 true
      * @param length    倒计时总时长，毫秒
      * @param step      倒计时的步长，毫秒
      */
-    fun init(tvPhone: TextView, length: Long = 60000L, step: Long = 1000L) {
+    fun init(tvPhone: TextView? = null, length: Long = 60000L, step: Long = 1000L) {
         if (length <= 0 || step <= 0 || length < step) throw IllegalArgumentException("length or step is invalid")
         this.tvPhone = tvPhone
         this.totalTime = length
         this.step = step
 
-        tvPhone.doAfterTextChanged {
+        tvPhone?.doAfterTextChanged {
             // 更新 enable 状态。
             isEnabled = true
         }
@@ -147,8 +147,12 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(
             enabled &&
-                    phoneValidator.validate(tvPhone.text.toString().trim()) &&
-                    (text == onStartText || text == onEndText)
+                    (text == onStartText || text == onEndText) &&
+                    if (tvPhone != null) {
+                        phoneValidator.validate(tvPhone!!.text.toString().trim())
+                    } else {
+                        true
+                    }
         )
     }
 
