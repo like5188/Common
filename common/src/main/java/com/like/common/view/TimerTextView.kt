@@ -49,7 +49,21 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     )
     private var remainingTime: Long = 0L// 剩余时长(毫秒)
     private var timer: Timer? = null
-    var tickListener: OnTickListener? = null
+
+    /**
+     * 计时开始回调
+     */
+    var onStart: ((Long) -> Unit)? = null
+
+    /**
+     * 计时中回调
+     */
+    var onTick: ((Long) -> Unit)? = null
+
+    /**
+     * 计时结束回调
+     */
+    var onEnd: (() -> Unit)? = null
 
     fun updateEnable() {
         this@TimerTextView.isEnabled = true
@@ -115,28 +129,22 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
             post {// 主线程进行
                 when {
                     remainingTime == totalTime -> {
-                        tickListener?.onStart(remainingTime)
+                        onStart?.invoke(remainingTime)
                         this@TimerTextView.isEnabled = false
                     }
                     remainingTime < step -> {
-                        tickListener?.onEnd()
+                        onEnd?.invoke()
                         this@TimerTextView.isEnabled = true
                         destroy()
                     }
                     else -> {
-                        tickListener?.onTick(remainingTime)
+                        onTick?.invoke(remainingTime)
                         this@TimerTextView.isEnabled = false
                     }
                 }
                 remainingTime -= step
             }
         }
-    }
-
-    interface OnTickListener {
-        fun onStart(time: Long)
-        fun onTick(time: Long)
-        fun onEnd()
     }
 
 }
