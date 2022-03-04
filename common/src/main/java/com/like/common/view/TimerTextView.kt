@@ -14,13 +14,34 @@ import com.like.common.util.SharedPreferencesDelegate
 import com.like.common.util.validator.ValidatorFactory
 import java.util.*
 
+/*
+xml：
+<com.like.common.view.TimerTextView
+    android:id="@+id/ttv"
+    android:layout_width="100dp"
+    android:layout_height="match_parent"
+    android:enabled="false"
+    android:gravity="center"
+    android:text="@string/ttv_onStart"
+    app:onStartText="@string/ttv_onStart"
+    app:onTickPrefixText="@string/ttv_onTickPrefix"
+    app:onTickSuffixText="@string/ttv_onTickSuffix"
+    app:onEndText="@string/ttv_onEnd"
+    android:textColor="@drawable/selector_timer_text_color_36a95d"
+    android:textSize="14sp" />
+
+代码：
+mBinding.ttv.apply {
+    init(tvPhone = mBinding.etPhone, length = 10000L, step = 1000L)
+    setOnClickListener {
+        start()
+    }
+}
+ */
+
 /**
  * 显示倒计时的AppCompatTextView
- *
  * 倒计时不会因为关闭app而停止。重新打开后会继续倒计时。
- *
- * 在xml布局文件中直接使用。然后调用[init]方法初始化。
- * [start]方法是启动倒计时的。
  */
 class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     // 倒计时总时长(毫秒)
@@ -150,7 +171,9 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(
             enabled &&
+                    // 在倒计时的时候不能设置
                     (text == onStartText || text == onEndText) &&
+                    // 电话号码不正确不能设置
                     if (tvPhone != null) {
                         phoneValidator.validate(tvPhone!!.text.toString().trim())
                     } else {
