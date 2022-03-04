@@ -18,9 +18,7 @@ import java.util.*
  * 在xml布局文件中直接使用。然后调用start()方法启动倒计时
  */
 class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
-    /**
-     * 倒计时总时长(毫秒)
-     */
+    // 倒计时总时长(毫秒)
     private var totalTime: Long by SharedPreferencesDelegate(
         context,
         "${context.packageName}${this::class.java.simpleName}",
@@ -28,9 +26,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         0L
     )
 
-    /**
-     * 开始倒计时的时间（毫秒），用于退出界面后，重新计时时候的计算。
-     */
+    // 开始倒计时的时间（毫秒），用于退出界面后，重新计时时候的计算。
     private var startTime: Long by SharedPreferencesDelegate(
         context,
         "${context.packageName}${this::class.java.simpleName}",
@@ -38,9 +34,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         0L
     )
 
-    /**
-     * 倒计时的步长（毫秒）
-     */
+    // 倒计时的步长（毫秒）
     private var step: Long by SharedPreferencesDelegate(
         context,
         "${context.packageName}${this::class.java.simpleName}",
@@ -66,14 +60,6 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     var onEnd: (() -> Unit)? = null
 
     /**
-     * 更新 enable 状态
-     * 比如在电话号码输入的时候调用
-     */
-    fun updateEnable() {
-        this@TimerTextView.isEnabled = true
-    }
-
-    /**
      * 是否能 enable 的条件
      * 比如要求电话号码格式正确
      */
@@ -86,35 +72,43 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
                 destroy()
             }
         })
+
         if (hasRemainingTime()) {
-            timer = Timer().apply {
-                schedule(createTimerTask(), 0, step)
-            }
+            performStart()
         }
     }
 
-    override fun setEnabled(enabled: Boolean) {
-        super.setEnabled(enabled && canEnable())
+    /**
+     * 更新 enable 状态
+     * 比如在电话号码输入的时候调用
+     */
+    fun updateEnable() {
+        this@TimerTextView.isEnabled = true
     }
 
     /**
      * 开始倒计时
      *
-     * @param length 倒计时总时长，毫秒
-     * @param stepTime 倒计时的步长，毫秒
+     * @param length    倒计时总时长，毫秒
+     * @param step      倒计时的步长，毫秒
      */
-    fun start(length: Long, stepTime: Long = 1000L) {
-        if (length <= 0 || stepTime <= 0 || length < stepTime) return
-
-        timer = Timer()
+    fun start(length: Long, step: Long = 1000L) {
+        if (length <= 0 || step <= 0 || length < step) return
 
         if (!hasRemainingTime()) {// 上次时间已经走完了
             remainingTime = length
             totalTime = length
-            step = stepTime
+            this.step = step
             startTime = System.currentTimeMillis()
         }
-        timer?.schedule(createTimerTask(), 0, step)
+
+        performStart()
+    }
+
+    private fun performStart() {
+        timer = Timer().apply {
+            schedule(createTimerTask(), 0, step)
+        }
     }
 
     private fun hasRemainingTime(): Boolean {
@@ -134,16 +128,16 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
                 when {
                     remainingTime == totalTime -> {
                         onStart?.invoke(remainingTime)
-                        this@TimerTextView.isEnabled = false
+                        isEnabled = false
                     }
                     remainingTime < step -> {
                         onEnd?.invoke()
-                        this@TimerTextView.isEnabled = true
+                        isEnabled = true
                         destroy()
                     }
                     else -> {
                         onTick?.invoke(remainingTime)
-                        this@TimerTextView.isEnabled = false
+                        isEnabled = false
                     }
                 }
                 remainingTime -= step
@@ -151,4 +145,7 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         }
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled && canEnable())
+    }
 }
