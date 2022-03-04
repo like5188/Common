@@ -65,27 +65,31 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
      */
     var onEnd: (() -> Unit)? = null
 
+    /**
+     * 更新 enable 状态
+     * 比如在电话号码输入的时候调用
+     */
     fun updateEnable() {
         this@TimerTextView.isEnabled = true
     }
 
     /**
      * 是否能 enable 的条件
+     * 比如要求电话号码格式正确
      */
     var canEnable: () -> Boolean = { true }
 
     init {
-        if (context is LifecycleOwner) {
-            (context as LifecycleOwner).lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    destroy()
-                }
-            })
-        }
+        (context as? LifecycleOwner)?.lifecycle?.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onDestroy() {
+                destroy()
+            }
+        })
         if (hasRemainingTime()) {
-            timer = Timer()
-            timer?.schedule(createTimerTask(), 0, step)
+            timer = Timer().apply {
+                schedule(createTimerTask(), 0, step)
+            }
         }
     }
 

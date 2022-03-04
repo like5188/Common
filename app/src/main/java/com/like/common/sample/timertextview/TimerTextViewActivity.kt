@@ -6,6 +6,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTimerTextViewBinding
+import com.like.common.util.validator.ValidatorFactory
 
 class TimerTextViewActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -18,8 +19,9 @@ class TimerTextViewActivity : AppCompatActivity() {
             mBinding.ttv.updateEnable()
         }
         with(mBinding.ttv) {
+            val phoneValidator = ValidatorFactory.createPhoneValidator()
             canEnable = {
-                mBinding.etPhone.length() == 11 &&
+                phoneValidator.validate(mBinding.etPhone.text.toString().trim()) &&
                         (mBinding.ttv.text == resources.getString(R.string.ttv_onStart) ||
                                 mBinding.ttv.text == resources.getString(R.string.ttv_onEnd))
             }
