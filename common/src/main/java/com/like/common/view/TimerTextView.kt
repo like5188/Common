@@ -69,10 +69,10 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     )
     private var remainingTime: Long = 0L// 剩余时长(毫秒)
     private var timer: Timer? = null
-    private val onStartText: String?
-    private val onTickPrefixText: String?
-    private val onTickSuffixText: String?
-    private val onEndText: String?
+    private val onStartText: String
+    private val onTickPrefixText: String
+    private val onTickSuffixText: String
+    private val onEndText: String
     private val phoneValidator by lazy {
         ValidatorFactory.createPhoneValidator()
     }
@@ -87,10 +87,10 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
         })
 
         val a = context.obtainStyledAttributes(attrs, R.styleable.TimerTextView)
-        onStartText = a.getString(R.styleable.TimerTextView_onStartText)
-        onTickPrefixText = a.getString(R.styleable.TimerTextView_onTickPrefixText)
-        onTickSuffixText = a.getString(R.styleable.TimerTextView_onTickSuffixText)
-        onEndText = a.getString(R.styleable.TimerTextView_onEndText)
+        onStartText = a.getString(R.styleable.TimerTextView_onStartText) ?: ""
+        onTickPrefixText = a.getString(R.styleable.TimerTextView_onTickPrefixText) ?: ""
+        onTickSuffixText = a.getString(R.styleable.TimerTextView_onTickSuffixText) ?: ""
+        onEndText = a.getString(R.styleable.TimerTextView_onEndText) ?: ""
         a.recycle()
 
         if (hasRemainingTime()) {
