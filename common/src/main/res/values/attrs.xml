@@ -16,4 +16,12 @@
             <flag name="center_horizontal" value="1" />
         </attr>
     </declare-styleable>
+
+    <!--TimerTextView显示文本-->
+    <declare-styleable name="TimerTextView">
+        <attr name="onStartText" format="string" />
+        <attr name="onTickPrefixText" format="string" />
+        <attr name="onTickSuffixText" format="string" />
+        <attr name="onEndText" format="string" />
+    </declare-styleable>
 </resources>

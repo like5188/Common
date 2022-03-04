@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Common</string>
     <string name="ttv_onStart">发送验证码</string>
-    <string name="ttv_onTick">%1$sS</string>
+    <string name="ttv_onTickPrefix">剩余</string>
+    <string name="ttv_onTickSuffix">S</string>
     <string name="ttv_onEnd">重新发送</string>
 </resources>

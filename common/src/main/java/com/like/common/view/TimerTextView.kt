@@ -2,12 +2,16 @@ package com.like.common.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.EditText
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.like.common.R
 import com.like.common.util.SharedPreferencesDelegate
+import com.like.common.util.validator.ValidatorFactory
 import java.util.*
 
 /**
@@ -15,7 +19,8 @@ import java.util.*
  *
  * 倒计时不会因为关闭app而停止。重新打开后会继续倒计时。
  *
- * 在xml布局文件中直接使用。然后调用start()方法启动倒计时
+ * 在xml布局文件中直接使用。
+ *
  */
 class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     // 倒计时总时长(毫秒)
@@ -43,27 +48,14 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     )
     private var remainingTime: Long = 0L// 剩余时长(毫秒)
     private var timer: Timer? = null
-
-    /**
-     * 计时开始回调
-     */
-    var onStart: ((Long) -> Unit)? = null
-
-    /**
-     * 计时中回调
-     */
-    var onTick: ((Long) -> Unit)? = null
-
-    /**
-     * 计时结束回调
-     */
-    var onEnd: (() -> Unit)? = null
-
-    /**
-     * 是否能 enable 的条件
-     * 比如要求电话号码格式正确
-     */
-    var canEnable: () -> Boolean = { true }
+    private val onStartText: String?
+    private val onTickPrefixText: String?
+    private val onTickSuffixText: String?
+    private val onEndText: String?
+    private val phoneValidator by lazy {
+        ValidatorFactory.createPhoneValidator()
+    }
+    private lateinit var etPhone: EditText
 
     init {
         (context as? LifecycleOwner)?.lifecycle?.addObserver(object : LifecycleObserver {
@@ -73,36 +65,41 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
             }
         })
 
+        val a = context.obtainStyledAttributes(attrs, R.styleable.TimerTextView)
+        onStartText = a.getString(R.styleable.TimerTextView_onStartText)
+        onTickPrefixText = a.getString(R.styleable.TimerTextView_onTickPrefixText)
+        onTickSuffixText = a.getString(R.styleable.TimerTextView_onTickSuffixText)
+        onEndText = a.getString(R.styleable.TimerTextView_onEndText)
+        a.recycle()
+
         if (hasRemainingTime()) {
+            performStart()
+        }
+
+        this.setOnClickListener {
+            if (!hasRemainingTime()) {// 上次时间已经走完了
+                remainingTime = totalTime
+                startTime = System.currentTimeMillis()
+            }
             performStart()
         }
     }
 
     /**
-     * 更新 enable 状态
-     * 比如在电话号码输入的时候调用
-     */
-    fun updateEnable() {
-        this@TimerTextView.isEnabled = true
-    }
-
-    /**
-     * 开始倒计时
-     *
+     * @param etPhone   电话号码编辑框
      * @param length    倒计时总时长，毫秒
      * @param step      倒计时的步长，毫秒
      */
-    fun start(length: Long, step: Long = 1000L) {
-        if (length <= 0 || step <= 0 || length < step) return
+    fun init(etPhone: EditText, length: Long = 60000L, step: Long = 1000L) {
+        if (length <= 0 || step <= 0 || length < step) throw IllegalArgumentException("length or step is invalid")
+        this.etPhone = etPhone
+        this.totalTime = length
+        this.step = step
 
-        if (!hasRemainingTime()) {// 上次时间已经走完了
-            remainingTime = length
-            totalTime = length
-            this.step = step
-            startTime = System.currentTimeMillis()
+        etPhone.doAfterTextChanged {
+            // 更新 enable 状态。
+            isEnabled = true
         }
-
-        performStart()
     }
 
     private fun performStart() {
@@ -127,16 +124,16 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
             post {// 主线程进行
                 when {
                     remainingTime == totalTime -> {
-                        onStart?.invoke(remainingTime)
+                        text = onStartText
                         isEnabled = false
                     }
                     remainingTime < step -> {
-                        onEnd?.invoke()
+                        text = onEndText
                         isEnabled = true
                         destroy()
                     }
                     else -> {
-                        onTick?.invoke(remainingTime)
+                        text = "$onTickPrefixText${remainingTime / 1000}$onTickSuffixText"
                         isEnabled = false
                     }
                 }
@@ -146,6 +143,10 @@ class TimerTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     }
 
     override fun setEnabled(enabled: Boolean) {
-        super.setEnabled(enabled && canEnable())
+        super.setEnabled(
+            enabled && phoneValidator.validate(etPhone.text.toString().trim()) &&
+                    (text == onStartText || text == onEndText)
+        )
     }
+
 }
