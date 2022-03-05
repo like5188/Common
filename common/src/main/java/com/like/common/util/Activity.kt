@@ -15,6 +15,32 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+/*
+ * 注意：创建 Wrapper 时不能用 by lazy{}，只能直接 new，否则会报错。比如：
+ * private val requestPermissionWrapper = RequestPermissionWrapper(this)
+ * requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
+            //注意：从 Android 30 开始，没有不再提示选择，系统会在拒绝两次后直接不再提示。
+            //如果返回true表示用户点了禁止获取权限，但没有勾选不再提示。
+            //返回false表示用户点了禁止获取权限，并勾选不再提示。
+            //我们可以通过该方法判断是否要继续申请权限
+            if (!it && !ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
+                // 用户选择 "不再询问" 后的提示方案
+                AlertDialog.Builder(this)
+                    .setTitle("授权失败")
+                    .setMessage("您需要授权此权限才能使用此功能")
+                    .setPositiveButton("去授权") { dialog, which -> // 跳转到设置界面
+                        val intent = Intent()
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.action = "android.settings.APPLICATION_DETAILS_SETTINGS"
+                        intent.data = Uri.fromParts("package", packageName, null)
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("取消") { dialog, which -> }
+                    .create().show()
+            }
+        }
+ */
+
 val ActivityResultCaller.activity: Activity
     get() {
         return when (this) {

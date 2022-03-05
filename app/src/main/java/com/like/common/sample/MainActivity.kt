@@ -1,14 +1,17 @@
 package com.like.common.sample
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -41,10 +44,12 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+
 class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
+    private val requestPermissionWrapper = RequestPermissionWrapper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +77,30 @@ class MainActivity : AppCompatActivity() {
                     Logger.w("搜索成功：$it")
                 }
         }
-        lifecycleScope.launch {
-            PhoneUtils.print(this@MainActivity)
+        requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
+            //注意：从 Android 30 开始，没有不再提示选择，系统会在拒绝两次后直接不再提示。
+            //如果返回true表示用户点了禁止获取权限，但没有勾选不再提示。
+            //返回false表示用户点了禁止获取权限，并勾选不再提示。
+            //我们可以通过该方法判断是否要继续申请权限
+            if (!it && !ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
+                // 用户选择 "不再询问" 后的提示方案
+                AlertDialog.Builder(this)
+                    .setTitle("授权失败")
+                    .setMessage("您需要授权此权限才能使用此功能")
+                    .setPositiveButton("去授权") { dialog, which -> // 跳转到设置界面
+                        val intent = Intent()
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.action = "android.settings.APPLICATION_DETAILS_SETTINGS"
+                        intent.data = Uri.fromParts("package", packageName, null)
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("取消") { dialog, which -> }
+                    .create().show()
+            }
         }
+//        lifecycleScope.launch {
+//            PhoneUtils.print(this@MainActivity)
+//        }
     }
 
     private fun initOriginToolBar() {
