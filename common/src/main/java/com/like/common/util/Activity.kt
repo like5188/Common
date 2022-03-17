@@ -54,6 +54,9 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
     startActivity(createIntent<T>(*params))
 }
 
+/*
+注意：startActivityForResult 启动的界面时，会忽略目标界面的 launchMode 设置。
+ */
 class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
     private var continuation: Continuation<Intent?>? = null
@@ -69,7 +72,7 @@ class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     }
 
     suspend inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>): Intent? =
-            startActivityForResult(activity.createIntent<T>(*params))
+        startActivityForResult(activity.createIntent<T>(*params))
 
     suspend fun startActivityForResult(intent: Intent): Intent? = withContext(Dispatchers.Main) {
         suspendCoroutine {
