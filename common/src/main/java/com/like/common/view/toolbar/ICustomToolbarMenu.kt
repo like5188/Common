@@ -3,6 +3,7 @@ package com.like.common.view.toolbar
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import com.like.common.view.BadgeView
 
 interface ICustomToolbarMenu {
     fun getView(): View
@@ -45,24 +46,6 @@ interface ICustomToolbarMenu {
      */
     fun setIcon(@DrawableRes iconResId: Int)
 
-    /**
-     * 设置消息数
-     *
-     * @param messageCount      消息数
-     * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
-     * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
-     * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
-     */
-    fun setMessageCount(
-        messageCount: Int,
-        @ColorInt textColor: Int? = null,
-        textSize: Float? = null,
-        @ColorInt backgroundColor: Int? = null
-    )
-
-    /**
-     * 获取显示的消息数
-     */
-    fun getMessageCount(): Int
+    fun getBadgeView(): BadgeView
 
 }

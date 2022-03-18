@@ -158,37 +158,6 @@ class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
         }
     }
 
-    /**
-     * 设置消息数
-     *
-     * @param messageCount      消息数
-     * @param textColor         文本颜色。默认为null，表示不设置，保持原样。
-     * @param textSize          文本字体大小，sp。默认为null，表示不设置，保持原样。
-     * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
-     */
-    override fun setMessageCount(
-        messageCount: Int,
-        @ColorInt textColor: Int?,
-        textSize: Float?,
-        @ColorInt backgroundColor: Int?
-    ) {
-        textColor?.let {
-            mBadgeView.setTextColor(it)
-        }
-        textSize?.let {
-            mBadgeView.setTextSize(it)
-        }
-        backgroundColor?.let {
-            mBadgeView.setBackgroundColor(it)
-        }
-        mBadgeView.count = messageCount
-    }
-
-    /**
-     * 获取显示的消息数
-     */
-    override fun getMessageCount(): Int {
-        return mBadgeView.count
-    }
+    override fun getBadgeView(): BadgeView = mBadgeView
 
 }

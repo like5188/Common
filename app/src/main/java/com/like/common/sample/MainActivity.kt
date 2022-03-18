@@ -150,7 +150,11 @@ class MainActivity : AppCompatActivity() {
             setOnClickListener { ToastUtils.show("返回") }
             setMargin(42, 10, 20, 10)
             setContentPadding(0, 0, 30, 0)
-            setMessageCount(100, Color.WHITE, 10f, Color.GRAY)
+            getBadgeView().apply {
+                count = 100
+                setBackgroundColor(Color.GRAY)
+                setTextColor(Color.WHITE)
+            }
         }
 
         mBinding.toolbar2.inflateMenu(R.menu.custom_toolbar_right_menu_main)
@@ -159,17 +163,27 @@ class MainActivity : AppCompatActivity() {
             setIcon(R.drawable.icon_back)
             setOnClickListener { ToastUtils.show("菜单0") }
             setText("菜单0", Color.BLACK, 12f)
-            setMessageCount(2, Color.WHITE, 10f, Color.GREEN)
             setMargin(0, 10, 0, 10)
             setContentPadding(30, 0, 30, 0)
+            getBadgeView().apply {
+                count = 2
+                setBackgroundColor(Color.GREEN)
+                setTextColor(Color.WHITE)
+                textSize = 8f
+            }
         }
         (MenuItemCompat.getActionProvider(mBinding.toolbar2.menu.findItem(R.id.action_1)) as? CustomToolbarMenuActionProvider)?.apply {
             setIcon(R.drawable.icon_back)
             setOnClickListener { ToastUtils.show("菜单1") }
             setText("菜单1", Color.BLACK, 12f)
-            setMessageCount(22, Color.WHITE, 10f, Color.RED)
             setMargin(0, 10, 0, 10)
             setContentPadding(30, 0, 30, 0)
+            getBadgeView().apply {
+                count = 22
+                setBackgroundColor(Color.RED)
+                setTextColor(Color.WHITE)
+                textSize = 18f
+            }
         }
     }
 

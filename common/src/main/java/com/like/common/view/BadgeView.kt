@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.like.common.util.dp
-import com.like.common.util.sp
 import kotlin.math.abs
 
 open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
@@ -31,7 +30,7 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
             )
         }
 
-        this.textSize = 12f.sp
+        this.textSize = 12f
         this.setTextColor(Color.WHITE)
         this.setBackgroundColor(Color.RED)
         gravity = Gravity.CENTER
