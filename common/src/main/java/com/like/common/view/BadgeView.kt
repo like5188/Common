@@ -38,56 +38,6 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
         count = 0
     }
 
-    override fun setBackgroundColor(color: Int) {
-        val radius = Float.MAX_VALUE
-        val roundRect = RoundRectShape(
-            floatArrayOf(
-                radius,
-                radius,
-                radius,
-                radius,
-                radius,
-                radius,
-                radius,
-                radius
-            ), null, null
-        )
-        val bgDrawable = ShapeDrawable(roundRect)
-        bgDrawable.paint.color = color
-        background = bgDrawable
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val w = measuredWidth
-        val h = measuredHeight
-        if (hide()) return
-        val padding: Int
-        if (text.length < 2) { // 只有1个字符，就画圆
-            padding = abs(h - w) / 2
-            super.setMeasuredDimension(h, h)
-        } else {
-            padding = 4.dp
-            super.setMeasuredDimension(w + padding * 2, h)
-        }
-        setPadding(padding, 0, padding, 0)
-    }
-
-    private fun hide(): Boolean = text.isNullOrEmpty() || text.toString() == "0"
-
-    override fun setText(text: CharSequence?, type: BufferType) {
-        visibility = if (hide()) {
-            GONE
-        } else {
-            VISIBLE
-        }
-        super.setText(text, type)
-    }
-
-    open fun transformCountToText(count: Int): String? {
-        return count.toString()
-    }
-
     fun setTargetView(target: View?) {
         if (parent != null) {
             (parent as ViewGroup).removeView(this)
@@ -122,5 +72,61 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
             }
         }
     }
+
+    override fun setBackgroundColor(color: Int) {
+        val radius = Float.MAX_VALUE
+        val roundRect = RoundRectShape(
+            floatArrayOf(
+                radius,
+                radius,
+                radius,
+                radius,
+                radius,
+                radius,
+                radius,
+                radius
+            ), null, null
+        )
+        val bgDrawable = ShapeDrawable(roundRect)
+        bgDrawable.paint.color = color
+        background = bgDrawable
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        if (hide()) return
+        val w = measuredWidth
+        val h = measuredHeight
+        val padding: Int
+        if (text.length < 2) { // 只有1个字符，就画圆
+            padding = abs(h - w) / 2
+            super.setMeasuredDimension(h, h)
+        } else {
+            padding = 4.dp
+            super.setMeasuredDimension(w + padding * 2, h)
+        }
+        setPadding(padding, 0, padding, 0)
+    }
+
+    override fun setText(text: CharSequence?, type: BufferType) {
+        visibility = if (hide()) {
+            GONE
+        } else {
+            VISIBLE
+        }
+        super.setText(text, type)
+    }
+
+    /**
+     * 把数字转换成字符串供 [BadgeView] 显示
+     */
+    open fun transformCountToText(count: Int): String? {
+        return count.toString()
+    }
+
+    /**
+     * 在什么时候隐藏 [BadgeView]
+     */
+    open fun hide(): Boolean = text.isNullOrEmpty() || text.toString() == "0"
 
 }
