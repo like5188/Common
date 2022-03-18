@@ -64,7 +64,7 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
         val h = measuredHeight
         if (hide()) return
         val padding: Int
-        if (text.length < 2) { // 宽小于高，并且只有1个字符，就画圆
+        if (text.length < 2) { // 只有1个字符，就画圆
             padding = abs(h - w) / 2
             super.setMeasuredDimension(h, h)
         } else {
