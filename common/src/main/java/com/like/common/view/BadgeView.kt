@@ -13,6 +13,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.like.common.util.dp
 import kotlin.math.abs
 
+/**
+ * 数字角标
+ */
 open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     AppCompatTextView(context, attrs, defStyle) {
     var count = 0
@@ -120,7 +123,11 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
      * 把数字转换成字符串供 [BadgeView] 显示
      */
     open fun transformCountToText(count: Int): String? {
-        return count.toString()
+        return when {
+            count <= 0 -> null
+            count < 100 -> count.toString()
+            else -> "99+"
+        }
     }
 
     /**

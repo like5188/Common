@@ -31,19 +31,7 @@ class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
         )
     }
     private val mBadgeView by lazy {
-        object : BadgeView(context) {
-            override fun transformCountToText(count: Int): String? {
-                return when {
-                    count <= 0 -> null
-                    count < 100 -> {
-                        count.toString()
-                    }
-                    else -> {
-                        "99+"
-                    }
-                }
-            }
-        }.apply {
+        BadgeView(context).apply {
             setTargetView(mBinding.cl)
         }
     }
