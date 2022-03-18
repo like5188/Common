@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
             getBadgeView().apply {
                 count = 2
                 setBackgroundColor(Color.GREEN)
-                setTextColor(Color.WHITE)
+                setTextColor(Color.BLACK)
                 textSize = 8f
             }
         }
