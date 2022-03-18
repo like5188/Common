@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -89,23 +88,6 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
         return count.toString()
     }
 
-//    /*
-//     * Attach the BadgeView to the TabWidget
-//     *
-//     * @param target the TabWidget to attach the BadgeView
-//     *
-//     * @param tabIndex index of the tab
-//     */
-//    fun setTargetView(target: TabWidget, tabIndex: Int) {
-//        val tabView = target.getChildTabViewAt(tabIndex)
-//        setTargetView(tabView)
-//    }
-
-    /*
-     * Attach the BadgeView to the target dragPhotoView
-     *
-     * @param target the dragPhotoView to attach the BadgeView
-     */
     fun setTargetView(target: View?) {
         if (parent != null) {
             (parent as ViewGroup).removeView(this)
@@ -118,22 +100,25 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
                 (target.parent as FrameLayout).addView(this)
             }
             is ViewGroup -> {
-                // use a new Framelayout container for adding badge
+                // use a new FrameLayout container for adding badge
                 val parentContainer = target.parent as ViewGroup
                 val groupIndex = parentContainer.indexOfChild(target)
                 parentContainer.removeView(target)
-                val badgeContainer = FrameLayout(context)
-                val parentLayoutParams = target.layoutParams
-                badgeContainer.layoutParams = parentLayoutParams
-                target.layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+
+                val oldTargetLayoutParams = target.layoutParams
+                target.layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
                 )
-                parentContainer.addView(badgeContainer, groupIndex, parentLayoutParams)
-                badgeContainer.addView(target)
-                badgeContainer.addView(this)
+
+                FrameLayout(context).apply {
+                    layoutParams = oldTargetLayoutParams
+                    addView(target)
+                    addView(this@BadgeView)
+                    parentContainer.addView(this, groupIndex, oldTargetLayoutParams)
+                }
             }
             null -> {
-                Log.e(javaClass.simpleName, "ParentView is needed")
+                throw IllegalArgumentException("BadgeView setTargetView failure! parent of target is null")
             }
         }
     }
