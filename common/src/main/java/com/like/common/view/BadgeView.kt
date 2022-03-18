@@ -4,20 +4,17 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
-import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.like.common.util.dp
-import kotlin.math.abs
 
 /**
  * 数字角标
  */
-open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
-    AppCompatTextView(context, attrs, defStyle) {
+open class BadgeView(context: Context) : AppCompatTextView(context) {
     var count = 0
         set(value) {
             field = value
@@ -36,7 +33,6 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
         this.textSize = 12f
         this.setTextColor(Color.WHITE)
         this.setBackgroundColor(Color.RED)
-        gravity = Gravity.CENTER
         count = 0
     }
 
@@ -101,7 +97,7 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
         val h = measuredHeight
         val padding: Int
         if (text.length < 2) { // 只有1个字符，就画圆
-            padding = abs(h - w) / 2
+            padding = (h - w) / 2
             super.setMeasuredDimension(h, h)
         } else {
             padding = 4.dp
