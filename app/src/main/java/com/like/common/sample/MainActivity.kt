@@ -63,7 +63,16 @@ class MainActivity : AppCompatActivity() {
         mBinding.rbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.cbTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
         mBinding.btnTintTest.setSelectorBackgroundResource(R.color.common_divider_gray, R.color.common_text_red_0)
-
+        mBinding.badgeView.apply {
+            count = 2
+            setBackgroundColor(Color.GRAY)
+            setTextColor(Color.WHITE)
+        }
+        mBinding.badgeView1.apply {
+            count = 2
+            setBackgroundColor(Color.GRAY)
+            setTextColor(Color.WHITE)
+        }
         lifecycleScope.launch {
             mBinding.etSearch.search()
                 .filter {
