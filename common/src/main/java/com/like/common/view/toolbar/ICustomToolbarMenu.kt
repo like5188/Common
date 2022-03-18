@@ -11,7 +11,7 @@ interface ICustomToolbarMenu {
      * 设置自定义视图的内容的 padding
      *
      * 自定义视图的root为第一层，那么真正的内容在第二层显示，
-     * 这里其实是设置第二层的margin，用于配合[com.like.common.view.badgeview.BadgeView]来显示消息并调整其位置
+     * 这里其实是设置第二层的margin，用于配合[com.like.common.view.BadgeView]来显示消息并调整其位置
      */
     fun setContentPadding(left: Int = 0, top: Int = 0, right: Int = 0, bottom: Int = 0)
 
