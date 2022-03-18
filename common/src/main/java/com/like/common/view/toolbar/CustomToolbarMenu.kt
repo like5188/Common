@@ -16,7 +16,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.R
 import com.like.common.databinding.ViewCustomToolbarMenuBinding
 import com.like.common.util.onPreDrawListener
-import com.like.common.view.badgeview.BadgeViewManager
+import com.like.common.view.BadgeView
 
 /**
  * 自定义的 Toolbar 菜单视图。
@@ -30,8 +30,22 @@ class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
             null, false
         )
     }
-    private val mBadgeViewHelper: BadgeViewManager by lazy {
-        BadgeViewManager(context, mBinding.cl)
+    private val mBadgeView by lazy {
+        object : BadgeView(context) {
+            override fun transformCountToText(count: Int): String? {
+                return when {
+                    count <= 0 -> null
+                    count < 100 -> {
+                        count.toString()
+                    }
+                    else -> {
+                        "99+"
+                    }
+                }
+            }
+        }.apply {
+            setTargetView(mBinding.cl)
+        }
     }
 
     init {
@@ -153,19 +167,28 @@ class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
      * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
      */
     override fun setMessageCount(
-        messageCount: String,
+        messageCount: Int,
         @ColorInt textColor: Int?,
         textSize: Int?,
         @ColorInt backgroundColor: Int?
     ) {
-        mBadgeViewHelper.setMessageCount(messageCount, textColor, textSize, backgroundColor)
+        textColor?.let {
+            mBadgeView.setBadgeTextColor(it)
+        }
+        textSize?.let {
+            mBadgeView.setBadgeTextSize(it)
+        }
+        backgroundColor?.let {
+            mBadgeView.setBadgeBackgroundColor(it)
+        }
+        mBadgeView.badgeCount = messageCount
     }
 
     /**
      * 获取显示的消息数
      */
-    override fun getMessageCount(): String {
-        return mBadgeViewHelper.getMessageCount()
+    override fun getMessageCount(): Int {
+        return mBadgeView.badgeCount
     }
 
 }

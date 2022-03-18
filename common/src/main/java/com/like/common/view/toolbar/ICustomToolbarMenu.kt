@@ -54,7 +54,7 @@ interface ICustomToolbarMenu {
      * @param backgroundColor   背景颜色。默认为null，表示不设置，保持原样。
      */
     fun setMessageCount(
-        messageCount: String,
+        messageCount: Int,
         @ColorInt textColor: Int? = null,
         textSize: Int? = null,
         @ColorInt backgroundColor: Int? = null
@@ -63,6 +63,6 @@ interface ICustomToolbarMenu {
     /**
      * 获取显示的消息数
      */
-    fun getMessageCount(): String
+    fun getMessageCount(): Int
 
 }

@@ -1,4 +1,4 @@
-package com.like.common.view.badgeview;
+package com.like.common.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -16,9 +16,8 @@ import android.widget.TabWidget;
 
 public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
     private int backgroundColor;
-    private boolean mHideOnNull = true;
-    private String text;
     private int dpRadius;
+    private int count;
 
     public BadgeView(Context context) {
         this(context, null);
@@ -52,8 +51,6 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
 
         setBadgeBackground(200);
 
-        // default values
-        setHideOnNull(true);
         setBadgeCount(0);
     }
 
@@ -74,7 +71,7 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
         int w = getMeasuredWidth();
         int h = getMeasuredHeight();
         int padding;
-        if (w <= h && text != null && text.length() < 2) {// 宽小于高，并且只有1个字符，就画圆
+        if (w <= h && getText() != null && getText().length() < 2) {// 宽小于高，并且只有1个字符，就画圆
             padding = (h - w) / 2;
             if (padding < 2) {
                 padding = 2;
@@ -103,21 +100,6 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
         setTextColor(textColor);
     }
 
-    /**
-     * @return Returns true if view is hidden on badge value 0 or null;
-     */
-    public boolean isHideOnNull() {
-        return mHideOnNull;
-    }
-
-    /**
-     * @param hideOnNull the hideOnNull to set
-     */
-    public void setHideOnNull(boolean hideOnNull) {
-        mHideOnNull = hideOnNull;
-        setText(getText());
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -125,8 +107,7 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
      */
     @Override
     public void setText(CharSequence text, BufferType type) {
-        this.text = text == null ? "" : text.toString();
-        if (isHideOnNull() && (text == null || text.toString().equalsIgnoreCase("0"))) {
+        if (text == null || text == "" || text.toString().equalsIgnoreCase("0")) {
             setVisibility(View.GONE);
         } else {
             setVisibility(View.VISIBLE);
@@ -134,25 +115,17 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
         super.setText(text, type);
     }
 
+    public String transformCountToText(int count) {
+        return String.valueOf(count);
+    }
+
     public void setBadgeCount(int count) {
-        setText(String.valueOf(count));
+        this.count = count;
+        setText(transformCountToText(count));
     }
 
-    public void setBadgeCount(String count) {
-        setText(count);
-    }
-
-    public Integer getBadgeCount() {
-        if (getText() == null) {
-            return null;
-        }
-
-        String text = getText().toString();
-        try {
-            return Integer.parseInt(text);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+    public int getBadgeCount() {
+        return count;
     }
 
     public void setBadgeGravity(int gravity) {
@@ -185,16 +158,11 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
     }
 
     public void incrementBadgeCount(int increment) {
-        Integer count = getBadgeCount();
-        if (count == null) {
-            setBadgeCount(increment);
-        } else {
-            setBadgeCount(increment + count);
-        }
+        setBadgeCount(increment + getBadgeCount());
     }
 
     public void decrementBadgeCount(int decrement) {
-        incrementBadgeCount(-decrement);
+        setBadgeCount(getBadgeCount() - decrement);
     }
 
     /*
