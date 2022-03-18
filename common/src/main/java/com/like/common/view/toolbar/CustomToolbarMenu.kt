@@ -169,17 +169,17 @@ class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
     override fun setMessageCount(
         messageCount: Int,
         @ColorInt textColor: Int?,
-        textSize: Int?,
+        textSize: Float?,
         @ColorInt backgroundColor: Int?
     ) {
         textColor?.let {
-            mBadgeView.setBadgeTextColor(it)
+            mBadgeView.setTextColor(it)
         }
         textSize?.let {
-            mBadgeView.setBadgeTextSize(it)
+            mBadgeView.setTextSize(it)
         }
         backgroundColor?.let {
-            mBadgeView.setBadgeBackgroundColor(it)
+            mBadgeView.setBackgroundColor(it)
         }
         mBadgeView.badgeCount = messageCount
     }

@@ -56,7 +56,7 @@ interface ICustomToolbarMenu {
     fun setMessageCount(
         messageCount: Int,
         @ColorInt textColor: Int? = null,
-        textSize: Int? = null,
+        textSize: Float? = null,
         @ColorInt backgroundColor: Int? = null
     )
 

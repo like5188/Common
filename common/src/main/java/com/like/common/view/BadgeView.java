@@ -15,8 +15,7 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.TabWidget;
 
 public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
-    private int backgroundColor;
-    private int dpRadius;
+    private static int dpRadius = 1000;
     private int count;
 
     public BadgeView(Context context) {
@@ -42,26 +41,24 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
             setLayoutParams(layoutParams);
         }
 
-        backgroundColor = Color.RED;
-
         // set default font
         setTextColor(Color.WHITE);
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         setGravity(Gravity.CENTER);
 
-        setBadgeBackground(200);
+        setBackgroundColor(Color.RED);
 
         setBadgeCount(0);
     }
 
-    private void setBadgeBackground(int dpRadius) {
-        this.dpRadius = dpRadius;
+    @Override
+    public void setBackgroundColor(int color) {
         int radius = dp2Px(dpRadius);
         float[] radiusArray = new float[]{radius, radius, radius, radius, radius, radius, radius, radius};
 
         RoundRectShape roundRect = new RoundRectShape(radiusArray, null, null);
         ShapeDrawable bgDrawable = new ShapeDrawable(roundRect);
-        bgDrawable.getPaint().setColor(backgroundColor);
+        bgDrawable.getPaint().setColor(color);
         setBackground(bgDrawable);
     }
 
@@ -84,27 +81,6 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
         setPadding(padding, 0, padding, 0);
     }
 
-    public void setBadgeBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-        setBadgeBackground(dpRadius);
-    }
-
-    /**
-     * @param textSize 单位sp
-     */
-    public void setBadgeTextSize(int textSize) {
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
-    }
-
-    public void setBadgeTextColor(int textColor) {
-        setTextColor(textColor);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.widget.TextView#setText(java.lang.CharSequence, android.widget.TextView.BufferType)
-     */
     @Override
     public void setText(CharSequence text, BufferType type) {
         if (text == null || text == "" || text.toString().equalsIgnoreCase("0")) {
