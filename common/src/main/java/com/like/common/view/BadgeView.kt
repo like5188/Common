@@ -57,16 +57,16 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null, defStyle: In
                 val groupIndex = parentContainer.indexOfChild(target)
                 parentContainer.removeView(target)
 
-                val oldTargetLayoutParams = target.layoutParams
-                target.layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
-                )
-
                 FrameLayout(context).apply {
-                    layoutParams = oldTargetLayoutParams
+                    layoutParams = target.layoutParams
+
+                    target.layoutParams = FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
+                    )
                     addView(target)
+
                     addView(this@BadgeView)
-                    parentContainer.addView(this, groupIndex, oldTargetLayoutParams)
+                    parentContainer.addView(this, groupIndex)
                 }
             }
             null -> {
