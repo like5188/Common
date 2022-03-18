@@ -181,14 +181,14 @@ class CustomToolbarMenu(context: Context) : ICustomToolbarMenu {
         backgroundColor?.let {
             mBadgeView.setBackgroundColor(it)
         }
-        mBadgeView.badgeCount = messageCount
+        mBadgeView.count = messageCount
     }
 
     /**
      * 获取显示的消息数
      */
     override fun getMessageCount(): Int {
-        return mBadgeView.badgeCount
+        return mBadgeView.count
     }
 
 }

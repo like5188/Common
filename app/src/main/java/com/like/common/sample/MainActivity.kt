@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
             setIcon(R.drawable.icon_back)
             setOnClickListener { ToastUtils.show("菜单0") }
             setText("菜单0", Color.BLACK, 12f)
-            setMessageCount(0, Color.WHITE, 10f, Color.GREEN)
+            setMessageCount(2, Color.WHITE, 10f, Color.GREEN)
             setMargin(0, 10, 0, 10)
             setContentPadding(30, 0, 30, 0)
         }
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             setIcon(R.drawable.icon_back)
             setOnClickListener { ToastUtils.show("菜单1") }
             setText("菜单1", Color.BLACK, 12f)
-            setMessageCount(1, Color.WHITE, 10f, Color.RED)
+            setMessageCount(22, Color.WHITE, 10f, Color.RED)
             setMargin(0, 10, 0, 10)
             setContentPadding(30, 0, 30, 0)
         }
