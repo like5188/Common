@@ -15,7 +15,6 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.TabWidget;
 
 public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
-    private static int dpRadius = 1000;
     private int count;
 
     public BadgeView(Context context) {
@@ -53,7 +52,7 @@ public class BadgeView extends androidx.appcompat.widget.AppCompatTextView {
 
     @Override
     public void setBackgroundColor(int color) {
-        int radius = dp2Px(dpRadius);
+        int radius = dp2Px(Integer.MAX_VALUE);
         float[] radiusArray = new float[]{radius, radius, radius, radius, radius, radius, radius, radius};
 
         RoundRectShape roundRect = new RoundRectShape(radiusArray, null, null);
