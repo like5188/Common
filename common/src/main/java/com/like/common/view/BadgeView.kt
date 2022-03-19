@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
-import com.like.common.util.dp
+import kotlin.math.abs
 
 /**
  * 数字角标
@@ -101,9 +101,9 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
             super.setMeasuredDimension(h, h)
             setPadding(padding, 0, padding, 0)
         } else {
-            val padding = 6.dp
-            super.setMeasuredDimension(w + padding * 2, h)
-            setPadding(padding * 2, 0, 0, 0)
+            val padding = (abs(paint.fontMetrics.top - paint.fontMetrics.ascent) * 4).toInt()
+            super.setMeasuredDimension(w + padding, h)
+            setPadding(padding, 0, 0, 0)// 此处不知道原因，只有设置left才能居中。
         }
     }
 
