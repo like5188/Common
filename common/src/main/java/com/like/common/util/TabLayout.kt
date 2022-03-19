@@ -5,6 +5,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.tabs.TabLayout
 import com.like.common.view.BadgeView
 
+/**
+ * 便于 [TabLayout.Tab] 设置 [BadgeView] 的工具类。
+ */
+
 fun TabLayout.Tab.getTextView(): AppCompatTextView? {
     return view.getChildAt(1) as? AppCompatTextView
 }
