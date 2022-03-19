@@ -165,10 +165,10 @@ class MainActivity : AppCompatActivity() {
             setMargin(0, 10, 0, 10)
             setContentPadding(30, 0, 30, 0)
             getBadgeView().apply {
-                count = 2
                 setBackgroundColor(Color.GREEN)
                 setTextColor(Color.BLACK)
-                textSize = 8f
+                setTextSize(8f.dp)
+                count = 2
             }
         }
         (MenuItemCompat.getActionProvider(mBinding.toolbar2.menu.findItem(R.id.action_1)) as? CustomToolbarMenuActionProvider)?.apply {
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
                 count = 22
                 setBackgroundColor(Color.RED)
                 setTextColor(Color.WHITE)
-                textSize = 18f
+                setTextSize(18f.dp)
             }
         }
     }

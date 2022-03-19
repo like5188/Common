@@ -1,40 +1,67 @@
 package com.like.common.view
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.RoundRectShape
+import android.graphics.*
+import android.text.TextPaint
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatTextView
-import kotlin.math.abs
+import com.like.common.util.dp
+import com.like.common.util.sp
 
 /**
  * 数字角标
+ * 注意：设置[count]需要反正最后，触发绘制。
  */
-open class BadgeView(context: Context) : AppCompatTextView(context) {
+open class BadgeView(context: Context) : View(context) {
+    private val textPaint by lazy {
+        TextPaint().apply {
+            isAntiAlias = true
+            color = Color.WHITE
+            textSize = 12f.sp
+        }
+    }
+    private val bgPaint by lazy {
+        Paint().apply {
+            isAntiAlias = true
+            color = Color.RED
+        }
+    }
+    private lateinit var textBounds: Rect
+    private lateinit var bgRect: RectF
+    private var verticalPadding = 0f.dp// 垂直padding
+    private var horizontalPadding = 0f.dp// 水平padding
+    private var text = ""
     var count = 0
         set(value) {
+            if (field == value) {
+                return
+            }
+            val needRequestLayout = transformCountToText(value).length != transformCountToText(field).length
             field = value
-            text = transformCountToText(value)
+            visibility = if (hide()) {
+                GONE
+            } else {
+                text = transformCountToText(value)
+                textBounds = Rect().apply {
+                    textPaint.getTextBounds(text, 0, text.length, this)
+                }
+                VISIBLE
+            }
+            if (needRequestLayout) {// 需要重新onMeasure、onDraw
+                requestLayout()
+            } else {// 需要重新onDraw
+                invalidate()
+            }
         }
 
     init {
-        if (layoutParams !is FrameLayout.LayoutParams) {
-            this.layoutParams = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.END or Gravity.TOP
-            )
-        }
-
-        this.textSize = 12f
-        this.setTextColor(Color.WHITE)
-        this.setBackgroundColor(Color.RED)
-        count = 0
-        gravity = Gravity.CENTER
+        this.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            Gravity.END or Gravity.TOP
+        )
     }
 
     fun setTargetView(target: View?) {
@@ -72,48 +99,48 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
         }
     }
 
+    fun setTextColor(color: Int) {
+        textPaint.color = color
+    }
+
+    fun setTextSize(size: Float) {
+        textPaint.textSize = size
+    }
+
     override fun setBackgroundColor(color: Int) {
-        val radius = Float.MAX_VALUE
-        val roundRect = RoundRectShape(
-            floatArrayOf(
-                radius,
-                radius,
-                radius,
-                radius,
-                radius,
-                radius,
-                radius,
-                radius
-            ), null, null
-        )
-        val bgDrawable = ShapeDrawable(roundRect)
-        bgDrawable.paint.color = color
-        background = bgDrawable
+        bgPaint.color = color
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (hide()) return
-        val w = measuredWidth
-        val h = measuredHeight
+        verticalPadding = textPaint.fontMetrics.descent / 2f
+        val w = textPaint.measureText(text).toInt()
+        val h =
+            (textPaint.fontMetrics.descent - textPaint.fontMetrics.ascent - textPaint.fontMetrics.leading).toInt() + (verticalPadding * 2).toInt()
         if (text.length < 2) { // 只有1个字符，就画圆
-            val padding = (h - w) / 2
+            horizontalPadding = (h - w) / 2f
             super.setMeasuredDimension(h, h)
-            setPadding(padding, 0, padding, 0)
         } else {
-            val padding = (abs(paint.fontMetrics.top - paint.fontMetrics.ascent) * 4).toInt()
-            super.setMeasuredDimension(w + padding, h)
-            setPadding(padding, 0, 0, 0)// 此处不知道原因，只有设置left才能居中。
+            horizontalPadding = textPaint.fontMetrics.descent * 2f
+            super.setMeasuredDimension(w + (horizontalPadding * 2f).toInt(), h)
         }
     }
 
-    override fun setText(text: CharSequence?, type: BufferType) {
-        visibility = if (hide()) {
-            GONE
-        } else {
-            VISIBLE
-        }
-        super.setText(text, type)
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        bgRect = RectF(0f, 0f, width.toFloat(), height.toFloat())
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        if (hide()) return
+        canvas.drawRoundRect(bgRect, height / 2f, height / 2f, bgPaint)
+        canvas.drawText(
+            text,
+            horizontalPadding,
+            -textPaint.fontMetrics.ascent - textPaint.fontMetrics.leading + verticalPadding,
+            textPaint
+        )
     }
 
     /**
