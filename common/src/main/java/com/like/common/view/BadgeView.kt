@@ -34,6 +34,7 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
         this.setTextColor(Color.WHITE)
         this.setBackgroundColor(Color.RED)
         count = 0
+        gravity = Gravity.CENTER
     }
 
     fun setTargetView(target: View?) {
@@ -45,7 +46,7 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
         }
         when (target.parent) {
             is FrameLayout -> {
-                (target.parent as FrameLayout).addView(this)
+                (target.parent as FrameLayout).addView(this@BadgeView)
             }
             is ViewGroup -> {
                 // use a new FrameLayout container for adding badge
@@ -95,15 +96,15 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
         if (hide()) return
         val w = measuredWidth
         val h = measuredHeight
-        val padding: Int
         if (text.length < 2) { // 只有1个字符，就画圆
-            padding = (h - w) / 2
+            val padding = (h - w) / 2
             super.setMeasuredDimension(h, h)
+            setPadding(padding, 0, padding, 0)
         } else {
-            padding = 4.dp
+            val padding = 6.dp
             super.setMeasuredDimension(w + padding * 2, h)
+            setPadding(padding * 2, 0, 0, 0)
         }
-        setPadding(padding, 0, padding, 0)
     }
 
     override fun setText(text: CharSequence?, type: BufferType) {
@@ -118,9 +119,9 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
     /**
      * 把数字转换成字符串供 [BadgeView] 显示
      */
-    open fun transformCountToText(count: Int): String? {
+    open fun transformCountToText(count: Int): String {
         return when {
-            count <= 0 -> null
+            count <= 0 -> ""
             count < 100 -> count.toString()
             else -> "99+"
         }
@@ -129,6 +130,6 @@ open class BadgeView(context: Context) : AppCompatTextView(context) {
     /**
      * 在什么时候隐藏 [BadgeView]
      */
-    open fun hide(): Boolean = text.isNullOrEmpty() || text.toString() == "0"
+    open fun hide(): Boolean = count <= 0
 
 }
