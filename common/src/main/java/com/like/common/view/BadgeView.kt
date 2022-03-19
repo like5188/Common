@@ -113,7 +113,6 @@ open class BadgeView(context: Context) : View(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        if (hide()) return
         verticalPadding = textPaint.fontMetrics.descent / 2f
         val w = textPaint.measureText(text).toInt()
         val h =
