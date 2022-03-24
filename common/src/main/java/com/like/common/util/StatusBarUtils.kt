@@ -19,7 +19,7 @@ import android.view.WindowManager
 object StatusBarUtils {
 
     /**
-     * 设置状态栏透明
+     * 设置状态栏为透明
      */
     fun setStatusBarTranslucent(activity: Activity?) {
         activity ?: return
@@ -38,32 +38,35 @@ object StatusBarUtils {
         }
     }
 
+    /**
+     * 对[view]增加状态栏高度的[paddingTop]
+     * 注意：如果[view]是[RelativeLayout]，那么增加[paddingTop]会影响到使用了[layout_centerVertical]、[layout_centerInParent]这两个在垂直方向上居中的属性的子view。
+     * 如果它的子view使用了这两个属性，那么需要自行处理，最好再包裹一层。
+     */
     fun fitStatusBarHeight(view: View) {
         val layoutParams = view.layoutParams
-        if (layoutParams.height == ViewGroup.LayoutParams.WRAP_CONTENT ||
-            layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT
-        ) {// 如果不是固定高度的控件，那么直接增加一个状态栏高度的paddingTop
-            view.setPadding(
-                view.paddingLeft,
-                view.paddingTop + getStatusBarHeight(view.context),
-                view.paddingRight,
-                view.paddingBottom
-            )
-        } else {// 如果是写死高度的控件，则需要同时给高度增加一个状态栏高度。
+        if (layoutParams.height != ViewGroup.LayoutParams.WRAP_CONTENT &&
+            layoutParams.height != ViewGroup.LayoutParams.MATCH_PARENT
+        ) {// 如果是固定高度的控件，则需要改变它的高度，为它增加一个状态栏高度。
             layoutParams.height += getStatusBarHeight(view.context)
-            view.setPadding(
-                view.paddingLeft,
-                view.paddingTop + getStatusBarHeight(view.context),
-                view.paddingRight,
-                view.paddingBottom
-            )
         }
+        view.setPadding(
+            view.paddingLeft,
+            view.paddingTop + getStatusBarHeight(view.context),
+            view.paddingRight,
+            view.paddingBottom
+        )
     }
 
-    fun setStatusBarLightMode(activity: Activity, isLightMode: Boolean) {
+    /**
+     * 设置状态栏的背景模式。
+     *
+     * 这样可以调节状态栏中的文字、图标颜色为暗色或者亮色。
+     */
+    fun setStatusBarLightMode(activity: Activity, lightMode: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             var option: Int = activity.window.decorView.systemUiVisibility
-            option = if (isLightMode) {
+            option = if (lightMode) {
                 option or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             } else {
                 option and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -74,9 +77,6 @@ object StatusBarUtils {
 
     /**
      * 获得状态栏高度
-     *
-     * @param context
-     * @return
      */
     fun getStatusBarHeight(context: Context): Int =
         context.resources.getDimensionPixelSize(
