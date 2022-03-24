@@ -20,8 +20,9 @@ object StatusBarUtils {
 
     /**
      * 设置状态栏为透明
+     * @param dark  是否设置状态栏中的文字、图标颜色为暗色，只在 api>=23 时有效。
      */
-    fun setStatusBarTranslucent(activity: Activity?) {
+    fun setStatusBarTransparent(activity: Activity?, dark: Boolean = false) {
         activity ?: return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // 5.x开始需要把颜色设置透明，否则导航栏会呈现系统默认的浅灰色
@@ -29,7 +30,11 @@ object StatusBarUtils {
                 clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
                 addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 // 两个 flag 要结合使用，表示让应用的主体内容占用系统状态栏的空间
-                decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                var option = decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                if (dark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    option = option or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                }
+                decorView.systemUiVisibility = option
                 statusBarColor = Color.TRANSPARENT
             }
         } else {
@@ -55,24 +60,6 @@ object StatusBarUtils {
             view.paddingRight,
             view.paddingBottom
         )
-    }
-
-    /**
-     * 设置状态栏中的文字、图标颜色为暗色或者亮色。
-     *
-     * @param lightMode true：设置状态栏字体颜色为暗色；false：设置状态栏字体颜色为亮色
-     */
-    fun setStatusBarLightMode(activity: Activity, lightMode: Boolean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            var option: Int = activity.window.decorView.systemUiVisibility
-            option = if (lightMode) {
-                // SYSTEM_UI_FLAG_LIGHT_STATUS_BAR 设置状态栏字体颜色为暗色
-                option or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            } else {
-                option and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            }
-            activity.window.decorView.systemUiVisibility = option
-        }
     }
 
     /**
