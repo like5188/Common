@@ -17,7 +17,7 @@ import android.view.WindowManager
 
 /**
  * 设置透明的状态栏
- * @param dark  是否设置状态栏中的文字、图标颜色为暗色，只在 api>=23 时有效。
+ * @param dark  true：设置状态栏中的文字、图标颜色为暗色，只在 api>=23 时有效；false：采用 Android 系统默认的模式，即亮色；
  */
 fun Activity.setTransparentStatusBar(dark: Boolean = false) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
