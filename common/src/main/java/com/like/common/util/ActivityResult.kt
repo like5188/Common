@@ -11,6 +11,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
@@ -89,17 +90,17 @@ open class BaseActivityResultLauncher<I, O, RealResult>(caller: ActivityResultCa
         return result as RealResult
     }
 
-    suspend fun launch(input: I): RealResult = withContext(Dispatchers.Main) {
+    suspend fun launch(input: I, options: ActivityOptionsCompat? = null): RealResult = withContext(Dispatchers.Main) {
         suspendCancellableCoroutine {
             continuation = it
-            launcher.launch(input)
+            launcher.launch(input, options)
         }
     }
 
     @MainThread
-    fun launch(input: I, callback: ActivityResultCallback<RealResult>) {
+    fun launch(input: I, options: ActivityOptionsCompat? = null, callback: ActivityResultCallback<RealResult>) {
         this.callback = callback
-        launcher.launch(input)
+        launcher.launch(input, options)
     }
 }
 
@@ -124,15 +125,19 @@ class StartActivityForResultLauncher(caller: ActivityResultCaller) :
         caller, ActivityResultContracts.StartActivityForResult()
     ) {
 
-    suspend inline fun <reified T : Activity> launch(vararg params: Pair<String, Any?>): ActivityResult =
-        launch(activity.createIntent<T>(*params))
+    suspend inline fun <reified T : Activity> launch(
+        vararg params: Pair<String, Any?>,
+        options: ActivityOptionsCompat? = null
+    ): ActivityResult =
+        launch(activity.createIntent<T>(*params), options)
 
     @MainThread
     inline fun <reified T : Activity> launch(
         vararg params: Pair<String, Any?>,
+        options: ActivityOptionsCompat? = null,
         callback: ActivityResultCallback<ActivityResult>
     ) {
-        launch(activity.createIntent<T>(*params), callback)
+        launch(activity.createIntent<T>(*params), options, callback)
     }
 
 }
