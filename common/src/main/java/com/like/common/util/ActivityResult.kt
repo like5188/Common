@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,22 +63,17 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
 
 class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
-    private var continuation: Continuation<Intent?>? = null
-    private var callback: ((Intent?) -> Unit)? = null
+    private var continuation: Continuation<ActivityResult>? = null
+    private var callback: ((ActivityResult) -> Unit)? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val intent = if (it.resultCode == Activity.RESULT_OK) {
-            it.data
-        } else {
-            null
-        }
-        callback?.invoke(intent)
-        continuation?.resume(intent)
+        callback?.invoke(it)
+        continuation?.resume(it)
     }
 
-    suspend inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>): Intent? =
+    suspend inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>): ActivityResult =
         startActivityForResult(activity.createIntent<T>(*params))
 
-    suspend fun startActivityForResult(intent: Intent): Intent? = withContext(Dispatchers.Main) {
+    suspend fun startActivityForResult(intent: Intent): ActivityResult = withContext(Dispatchers.Main) {
         suspendCoroutine {
             continuation = it
             launcher.launch(intent)
@@ -85,12 +81,15 @@ class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     }
 
     @MainThread
-    inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>, noinline callback: (Intent?) -> Unit) {
+    inline fun <reified T : Activity> startActivityForResult(
+        vararg params: Pair<String, Any?>,
+        noinline callback: (ActivityResult) -> Unit
+    ) {
         startActivityForResult(activity.createIntent<T>(*params), callback)
     }
 
     @MainThread
-    fun startActivityForResult(intent: Intent, callback: (Intent?) -> Unit) {
+    fun startActivityForResult(intent: Intent, callback: (ActivityResult) -> Unit) {
         this.callback = callback
         launcher.launch(intent)
     }
