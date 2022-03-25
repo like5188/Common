@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -64,9 +65,9 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
 class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
     private var continuation: Continuation<ActivityResult>? = null
-    private var callback: ((ActivityResult) -> Unit)? = null
+    private var callback: ActivityResultCallback<ActivityResult>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        callback?.invoke(it)
+        callback?.onActivityResult(it)
         continuation?.resume(it)
         callback = null
         continuation = null
@@ -85,13 +86,13 @@ class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     @MainThread
     inline fun <reified T : Activity> startActivityForResult(
         vararg params: Pair<String, Any?>,
-        noinline callback: (ActivityResult) -> Unit
+        callback: ActivityResultCallback<ActivityResult>
     ) {
         startActivityForResult(activity.createIntent<T>(*params), callback)
     }
 
     @MainThread
-    fun startActivityForResult(intent: Intent, callback: (ActivityResult) -> Unit) {
+    fun startActivityForResult(intent: Intent, callback: ActivityResultCallback<ActivityResult>) {
         this.callback = callback
         launcher.launch(intent)
     }
@@ -101,9 +102,9 @@ class StartActivityForResultWrapper(caller: ActivityResultCaller) {
 class RequestPermissionWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
     private var continuation: Continuation<Boolean>? = null
-    private var callback: ((Boolean) -> Unit)? = null
+    private var callback: ActivityResultCallback<Boolean>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        callback?.invoke(it)
+        callback?.onActivityResult(it)
         continuation?.resume(it)
         callback = null
         continuation = null
@@ -117,7 +118,7 @@ class RequestPermissionWrapper(caller: ActivityResultCaller) {
     }
 
     @MainThread
-    fun requestPermission(permission: String, callback: (Boolean) -> Unit) {
+    fun requestPermission(permission: String, callback: ActivityResultCallback<Boolean>) {
         this.callback = callback
         launcher.launch(permission)
     }
@@ -126,10 +127,10 @@ class RequestPermissionWrapper(caller: ActivityResultCaller) {
 class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
     private var continuation: Continuation<Boolean>? = null
-    private var callback: ((Boolean) -> Unit)? = null
+    private var callback: ActivityResultCallback<Boolean>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         val result = it.values.all { it }
-        callback?.invoke(result)
+        callback?.onActivityResult(result)
         continuation?.resume(result)
         callback = null
         continuation = null
@@ -143,7 +144,7 @@ class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
     }
 
     @MainThread
-    fun requestPermissions(vararg permissions: String, callback: (Boolean) -> Unit) {
+    fun requestPermissions(vararg permissions: String, callback: ActivityResultCallback<Boolean>) {
         this.callback = callback
         launcher.launch(permissions)
     }
@@ -152,9 +153,9 @@ class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
 class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
     private var continuation: Continuation<ActivityResult>? = null
-    private var callback: ((ActivityResult) -> Unit)? = null
+    private var callback: ActivityResultCallback<ActivityResult>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-        callback?.invoke(it)
+        callback?.onActivityResult(it)
         continuation?.resume(it)
         callback = null
         continuation = null
@@ -168,7 +169,7 @@ class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     }
 
     @MainThread
-    fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest, callback: (ActivityResult) -> Unit) {
+    fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest, callback: ActivityResultCallback<ActivityResult>) {
         this.callback = callback
         launcher.launch(intentSenderRequest)
     }
