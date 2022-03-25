@@ -110,7 +110,7 @@ class RequestPermissionLauncher(caller: ActivityResultCaller) :
     )
 
 class RequestMultiplePermissionsLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<Array<out String>, Map<String, Boolean>, Boolean>(
+    BaseActivityResultLauncher<Array<String>, Map<String, Boolean>, Boolean>(
         caller, ActivityResultContracts.RequestMultiplePermissions()
     ) {
 
