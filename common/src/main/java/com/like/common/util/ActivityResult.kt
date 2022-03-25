@@ -16,6 +16,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /*
+Activity 返回结果相关的跳转工具类
+ */
+/*
  * 注意：创建 Wrapper 时不能用 by lazy{}，只能直接 new，否则会报错。比如：
  * private val requestPermissionWrapper = RequestPermissionWrapper(this)
  * requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
