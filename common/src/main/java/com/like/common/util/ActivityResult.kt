@@ -16,10 +16,13 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /*
-Activity 返回结果相关的跳转工具类
- */
-/*
- * 注意：创建 Wrapper 时不能用 by lazy{}，只能直接 new，否则会报错。比如：
+ * Activity 返回结果相关的跳转工具类
+ * 注意：
+ * 1、注册必须在Activity#onStart()方法之前，所以创建 Wrapper 时不能用 by lazy{}，只能直接 new，否则会报错。
+ * 2、startActivityForResult 启动的界面时，会忽略目标界面的 launchMode 设置。
+ * 3、意外情况：Activity_A启动另一个activity_B，然后A意外被kill掉了，这时候从B返回了，A重新创建了，原先注册的地方不会执行回调。
+ *
+ * 使用例子：
  * private val requestPermissionWrapper = RequestPermissionWrapper(this)
  * requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
             //注意：从 Android 30 开始，没有不再提示选择，系统会在拒绝两次后直接不再提示。
@@ -57,9 +60,6 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
     startActivity(createIntent<T>(*params))
 }
 
-/*
-注意：startActivityForResult 启动的界面时，会忽略目标界面的 launchMode 设置。
- */
 class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
     private var continuation: Continuation<Intent?>? = null
