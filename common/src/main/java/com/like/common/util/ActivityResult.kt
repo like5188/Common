@@ -12,11 +12,11 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /*
  * Activity 返回结果相关的跳转工具类
@@ -70,13 +70,14 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
  */
 open class BaseActivityResultLauncher<I, O, RealResult>(caller: ActivityResultCaller, contract: ActivityResultContract<I, O>) {
     val activity = caller.activity
-    private var continuation: Continuation<RealResult>? = null
+    private var continuation: CancellableContinuation<RealResult>? = null
     private var callback: ActivityResultCallback<RealResult>? = null
     private val launcher = caller.registerForActivityResult(contract) {
         val realResult = transformResult(it)
         callback?.onActivityResult(realResult)
         callback = null
         continuation?.resume(realResult)
+        continuation?.cancel()
         continuation = null
     }
 
@@ -89,7 +90,7 @@ open class BaseActivityResultLauncher<I, O, RealResult>(caller: ActivityResultCa
     }
 
     suspend fun launch(input: I): RealResult = withContext(Dispatchers.Main) {
-        suspendCoroutine {
+        suspendCancellableCoroutine {
             continuation = it
             launcher.launch(input)
         }
