@@ -64,33 +64,19 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
     startActivity(createIntent<T>(*params))
 }
 
-/**
- * @param I             输入
- * @param O             Android 的 ActivityResult 框架返回值
- * @param RealResult    使用者需要的返回值
- */
-open class BaseActivityResultLauncher<I, O, RealResult>(caller: ActivityResultCaller, contract: ActivityResultContract<I, O>) {
+open class BaseActivityResultLauncher<I, O>(caller: ActivityResultCaller, contract: ActivityResultContract<I, O>) {
     val activity = caller.activity
-    private var continuation: CancellableContinuation<RealResult>? = null
-    private var callback: ActivityResultCallback<RealResult>? = null
+    private var continuation: CancellableContinuation<O>? = null
+    private var callback: ActivityResultCallback<O>? = null
     private val launcher = caller.registerForActivityResult(contract) {
-        val realResult = transformResult(it)
-        callback?.onActivityResult(realResult)
+        callback?.onActivityResult(it)
         callback = null
-        continuation?.resume(realResult)
+        continuation?.resume(it)
         continuation?.cancel()
         continuation = null
     }
 
-    /**
-     * 结果转换
-     */
-    open fun transformResult(result: O): RealResult {
-        @Suppress("UNCHECKED_CAST")
-        return result as RealResult
-    }
-
-    suspend fun launch(input: I, options: ActivityOptionsCompat? = null): RealResult = withContext(Dispatchers.Main) {
+    suspend fun launch(input: I, options: ActivityOptionsCompat? = null): O = withContext(Dispatchers.Main) {
         suspendCancellableCoroutine {
             continuation = it
             launcher.launch(input, options)
@@ -98,30 +84,24 @@ open class BaseActivityResultLauncher<I, O, RealResult>(caller: ActivityResultCa
     }
 
     @MainThread
-    fun launch(input: I, options: ActivityOptionsCompat? = null, callback: ActivityResultCallback<RealResult>) {
+    fun launch(input: I, options: ActivityOptionsCompat? = null, callback: ActivityResultCallback<O>) {
         this.callback = callback
         launcher.launch(input, options)
     }
 }
 
 class RequestPermissionLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<String, Boolean, Boolean>(
+    BaseActivityResultLauncher<String, Boolean>(
         caller, ActivityResultContracts.RequestPermission()
     )
 
 class RequestMultiplePermissionsLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<Array<String>, Map<String, Boolean>, Boolean>(
+    BaseActivityResultLauncher<Array<String>, Map<String, Boolean>>(
         caller, ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-
-    override fun transformResult(result: Map<String, Boolean>): Boolean {
-        return result.values.all { it }
-    }
-
-}
+    )
 
 class StartActivityForResultLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<Intent, ActivityResult, ActivityResult>(
+    BaseActivityResultLauncher<Intent, ActivityResult>(
         caller, ActivityResultContracts.StartActivityForResult()
     ) {
 
@@ -143,6 +123,6 @@ class StartActivityForResultLauncher(caller: ActivityResultCaller) :
 }
 
 class StartIntentSenderForResultLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<IntentSenderRequest, ActivityResult, ActivityResult>(
+    BaseActivityResultLauncher<IntentSenderRequest, ActivityResult>(
         caller, ActivityResultContracts.StartIntentSenderForResult()
     )
