@@ -1,6 +1,7 @@
 package com.like.common.util.storage.external
 
 import android.Manifest
+import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.ContentValues
@@ -99,7 +100,7 @@ object MediaStoreUtils {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         return if (isThumbnail) {
             // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
-            startActivityForResultWrapper.startActivityForResult(intent)?.getParcelableExtra("data")
+            startActivityForResultWrapper.startActivityForResult(intent).data?.getParcelableExtra("data")
         } else {
             val imageUri = createFile(
                 requestPermissionWrapper,
@@ -423,7 +424,7 @@ object MediaStoreUtils {
             MediaStore.createWriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
+        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     /**
@@ -438,7 +439,7 @@ object MediaStoreUtils {
             MediaStore.createDeleteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
+        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     /**
@@ -459,7 +460,7 @@ object MediaStoreUtils {
         )
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
+        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     /**
@@ -478,7 +479,7 @@ object MediaStoreUtils {
         )
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest)
+        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     open class BaseEntity(cursor: Cursor) {

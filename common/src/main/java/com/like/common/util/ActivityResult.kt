@@ -145,15 +145,14 @@ class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
 
 class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     val activity = caller.activity
-    private var continuation: Continuation<Boolean>? = null
-    private var callback: ((Boolean) -> Unit)? = null
+    private var continuation: Continuation<ActivityResult>? = null
+    private var callback: ((ActivityResult) -> Unit)? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-        val result = it.resultCode == Activity.RESULT_OK
-        callback?.invoke(result)
-        continuation?.resume(result)
+        callback?.invoke(it)
+        continuation?.resume(it)
     }
 
-    suspend fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): Boolean = withContext(Dispatchers.Main) {
+    suspend fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): ActivityResult = withContext(Dispatchers.Main) {
         suspendCoroutine {
             continuation = it
             launcher.launch(intentSenderRequest)
@@ -161,7 +160,7 @@ class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     }
 
     @MainThread
-    fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest, callback: (Boolean) -> Unit) {
+    fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest, callback: (ActivityResult) -> Unit) {
         this.callback = callback
         launcher.launch(intentSenderRequest)
     }

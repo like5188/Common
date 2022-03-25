@@ -43,7 +43,7 @@ object SafUtils {
     suspend fun selectFile(startActivityForResultWrapper: StartActivityForResultWrapper, mimeType: MimeType = MimeType._0): Intent? {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = mimeType.value
-        return startActivityForResultWrapper.startActivityForResult(intent)
+        return startActivityForResultWrapper.startActivityForResult(intent).data
     }
 
     /**
@@ -75,7 +75,7 @@ object SafUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
-        return startActivityForResultWrapper.startActivityForResult(intent)?.data
+        return startActivityForResultWrapper.startActivityForResult(intent).data?.data
     }
 
     /**
@@ -98,7 +98,7 @@ object SafUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
-        val treeUri = startActivityForResultWrapper.startActivityForResult(intent)?.data ?: return null
+        val treeUri = startActivityForResultWrapper.startActivityForResult(intent).data?.data ?: return null
         return DocumentFile.fromTreeUri(startActivityForResultWrapper.activity.applicationContext, treeUri)
     }
 
@@ -123,7 +123,7 @@ object SafUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
-        return startActivityForResultWrapper.startActivityForResult(intent)?.data
+        return startActivityForResultWrapper.startActivityForResult(intent).data?.data
     }
 
     /**
