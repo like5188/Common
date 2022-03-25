@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
@@ -25,8 +26,8 @@ import kotlin.coroutines.suspendCoroutine
  * 3、意外情况：Activity_A启动另一个activity_B，然后A意外被kill掉了，这时候从B返回了，A重新创建了，原先注册的地方不会执行回调。
  *
  * 使用例子：
- * private val requestPermissionWrapper = RequestPermissionWrapper(this)
- * requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
+ * private val requestPermissionLauncher = RequestPermissionLauncher(this)
+ * requestPermissionLauncher.launch(android.Manifest.permission.CAMERA) {
             //注意：从 Android 30 开始，没有不再提示选择，系统会在拒绝两次后直接不再提示。
             //如果返回true表示用户点了禁止获取权限，但没有勾选不再提示。
             //返回false表示用户点了禁止获取权限，并勾选不再提示。
@@ -62,115 +63,80 @@ inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<Stri
     startActivity(createIntent<T>(*params))
 }
 
-class StartActivityForResultWrapper(caller: ActivityResultCaller) {
+/**
+ * @param I             输入
+ * @param O             Android 的 ActivityResult 框架返回值
+ * @param RealResult    使用者需要的返回值
+ */
+open class BaseActivityResultLauncher<I, O, RealResult>(caller: ActivityResultCaller, contract: ActivityResultContract<I, O>) {
     val activity = caller.activity
-    private var continuation: Continuation<ActivityResult>? = null
-    private var callback: ActivityResultCallback<ActivityResult>? = null
-    private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        callback?.onActivityResult(it)
+    private var continuation: Continuation<RealResult>? = null
+    private var callback: ActivityResultCallback<RealResult>? = null
+    private val launcher = caller.registerForActivityResult(contract) {
+        val realResult = transformResult(it)
+        callback?.onActivityResult(realResult)
         callback = null
-        continuation?.resume(it)
+        continuation?.resume(realResult)
         continuation = null
     }
 
-    suspend inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>): ActivityResult =
-        startActivityForResult(activity.createIntent<T>(*params))
+    /**
+     * 结果转换
+     */
+    open fun transformResult(result: O): RealResult {
+        @Suppress("UNCHECKED_CAST")
+        return result as RealResult
+    }
 
-    suspend fun startActivityForResult(intent: Intent): ActivityResult = withContext(Dispatchers.Main) {
+    suspend fun launch(input: I): RealResult = withContext(Dispatchers.Main) {
         suspendCoroutine {
             continuation = it
-            launcher.launch(intent)
+            launcher.launch(input)
         }
     }
 
     @MainThread
-    inline fun <reified T : Activity> startActivityForResult(
+    fun launch(input: I, callback: ActivityResultCallback<RealResult>) {
+        this.callback = callback
+        launcher.launch(input)
+    }
+}
+
+class RequestPermissionLauncher(caller: ActivityResultCaller) :
+    BaseActivityResultLauncher<String, Boolean, Boolean>(
+        caller, ActivityResultContracts.RequestPermission()
+    )
+
+class RequestMultiplePermissionsLauncher(caller: ActivityResultCaller) :
+    BaseActivityResultLauncher<Array<out String>, Map<String, Boolean>, Boolean>(
+        caller, ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+
+    override fun transformResult(result: Map<String, Boolean>): Boolean {
+        return result.values.all { it }
+    }
+
+}
+
+class StartActivityForResultLauncher(caller: ActivityResultCaller) :
+    BaseActivityResultLauncher<Intent, ActivityResult, ActivityResult>(
+        caller, ActivityResultContracts.StartActivityForResult()
+    ) {
+
+    suspend inline fun <reified T : Activity> launch(vararg params: Pair<String, Any?>): ActivityResult =
+        launch(activity.createIntent<T>(*params))
+
+    @MainThread
+    inline fun <reified T : Activity> launch(
         vararg params: Pair<String, Any?>,
         callback: ActivityResultCallback<ActivityResult>
     ) {
-        startActivityForResult(activity.createIntent<T>(*params), callback)
-    }
-
-    @MainThread
-    fun startActivityForResult(intent: Intent, callback: ActivityResultCallback<ActivityResult>) {
-        this.callback = callback
-        launcher.launch(intent)
+        launch(activity.createIntent<T>(*params), callback)
     }
 
 }
 
-class RequestPermissionWrapper(caller: ActivityResultCaller) {
-    val activity = caller.activity
-    private var continuation: Continuation<Boolean>? = null
-    private var callback: ActivityResultCallback<Boolean>? = null
-    private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        callback?.onActivityResult(it)
-        callback = null
-        continuation?.resume(it)
-        continuation = null
-    }
-
-    suspend fun requestPermission(permission: String): Boolean = withContext(Dispatchers.Main) {
-        suspendCoroutine {
-            continuation = it
-            launcher.launch(permission)
-        }
-    }
-
-    @MainThread
-    fun requestPermission(permission: String, callback: ActivityResultCallback<Boolean>) {
-        this.callback = callback
-        launcher.launch(permission)
-    }
-}
-
-class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
-    val activity = caller.activity
-    private var continuation: Continuation<Boolean>? = null
-    private var callback: ActivityResultCallback<Boolean>? = null
-    private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        val result = it.values.all { it }
-        callback?.onActivityResult(result)
-        callback = null
-        continuation?.resume(result)
-        continuation = null
-    }
-
-    suspend fun requestPermissions(vararg permissions: String): Boolean = withContext(Dispatchers.Main) {
-        suspendCoroutine {
-            continuation = it
-            launcher.launch(permissions)
-        }
-    }
-
-    @MainThread
-    fun requestPermissions(vararg permissions: String, callback: ActivityResultCallback<Boolean>) {
-        this.callback = callback
-        launcher.launch(permissions)
-    }
-}
-
-class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
-    val activity = caller.activity
-    private var continuation: Continuation<ActivityResult>? = null
-    private var callback: ActivityResultCallback<ActivityResult>? = null
-    private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-        callback?.onActivityResult(it)
-        callback = null
-        continuation?.resume(it)
-        continuation = null
-    }
-
-    suspend fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): ActivityResult = withContext(Dispatchers.Main) {
-        suspendCoroutine {
-            continuation = it
-            launcher.launch(intentSenderRequest)
-        }
-    }
-
-    @MainThread
-    fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest, callback: ActivityResultCallback<ActivityResult>) {
-        this.callback = callback
-        launcher.launch(intentSenderRequest)
-    }
-}
+class StartIntentSenderForResultLauncher(caller: ActivityResultCaller) :
+    BaseActivityResultLauncher<IntentSenderRequest, ActivityResult, ActivityResult>(
+        caller, ActivityResultContracts.StartIntentSenderForResult()
+    )

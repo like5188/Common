@@ -20,9 +20,9 @@ import androidx.core.database.getFloatOrNull
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
-import com.like.common.util.RequestPermissionWrapper
-import com.like.common.util.StartActivityForResultWrapper
-import com.like.common.util.StartIntentSenderForResultWrapper
+import com.like.common.util.RequestPermissionLauncher
+import com.like.common.util.StartActivityForResultLauncher
+import com.like.common.util.StartIntentSenderForResultLauncher
 import com.like.common.util.UriUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -86,31 +86,31 @@ object MediaStoreUtils {
      * @param isThumbnail     表示返回值是否为缩略图
      */
     suspend fun takePhoto(
-        requestPermissionWrapper: RequestPermissionWrapper,
-        startActivityForResultWrapper: StartActivityForResultWrapper,
+        requestPermissionLauncher: RequestPermissionLauncher,
+        startActivityForResultLauncher: StartActivityForResultLauncher,
         isThumbnail: Boolean = false
     ): Bitmap? {
         // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
-        if (!requestPermissionWrapper.requestPermission(Manifest.permission.CAMERA)) {
+        if (!requestPermissionLauncher.launch(Manifest.permission.CAMERA)) {
             return null
         }
 
-        val context = requestPermissionWrapper.activity.applicationContext
+        val context = requestPermissionLauncher.activity.applicationContext
         //android 11 无法唤起第三方相机了，只能唤起系统相机.如果要使用特定的第三方相机应用来代表其捕获图片或视频，可以通过为intent设置软件包名称或组件来使这些intent变得明确。
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         return if (isThumbnail) {
             // 如果[MediaStore.EXTRA_OUTPUT]为 null，那么返回拍照的缩略图，可以通过下面的方法获取。
-            startActivityForResultWrapper.startActivityForResult(intent).data?.getParcelableExtra("data")
+            startActivityForResultLauncher.launch(intent).data?.getParcelableExtra("data")
         } else {
             val imageUri = createFile(
-                requestPermissionWrapper,
+                requestPermissionLauncher,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 "${System.currentTimeMillis()}.jpg",
                 Environment.DIRECTORY_PICTURES
             ) ?: return null
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
-            startActivityForResultWrapper.startActivityForResult(intent)
+            startActivityForResultLauncher.launch(intent)
             UriUtils.getBitmapFromUriByFileDescriptor(context, imageUri)
         }
     }
@@ -267,7 +267,7 @@ object MediaStoreUtils {
      */
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun createFile(
-        requestPermissionWrapper: RequestPermissionWrapper,
+        requestPermissionLauncher: RequestPermissionLauncher,
         uri: Uri,
         displayName: String,
         relativePath: String,
@@ -280,12 +280,12 @@ object MediaStoreUtils {
             return null
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            !requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         ) {
             return null
         }
 
-        val resolver = requestPermissionWrapper.activity.applicationContext.contentResolver
+        val resolver = requestPermissionLauncher.activity.applicationContext.contentResolver
         return withContext(Dispatchers.IO) {
             try {
                 val values = ContentValues().apply {
@@ -340,7 +340,7 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.Q)// Q 以下会出现问题，比如原文件不会被删除，新文件没有内容等错误。
     suspend fun updateFile(
-        requestPermissionWrapper: RequestPermissionWrapper,
+        requestPermissionLauncher: RequestPermissionLauncher,
         uri: Uri,
         displayName: String,
         relativePath: String = "",
@@ -351,11 +351,11 @@ object MediaStoreUtils {
             return false
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            !requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         ) {
             return false
         }
-        val resolver = requestPermissionWrapper.activity.applicationContext.contentResolver
+        val resolver = requestPermissionLauncher.activity.applicationContext.contentResolver
         return withContext(Dispatchers.IO) {
             try {
                 val values = ContentValues().apply {
@@ -371,7 +371,7 @@ object MediaStoreUtils {
                 // android 11 可以通过 createWriteRequest 进行批量操作，从而废弃这种靠异常来操作的方法。
                 if (isScopedStorage()) {
                     (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                        requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        requestPermissionLauncher.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                     }
                 }
                 false
@@ -385,24 +385,24 @@ object MediaStoreUtils {
      * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
      */
     suspend fun deleteFile(
-        requestPermissionWrapper: RequestPermissionWrapper,
+        requestPermissionLauncher: RequestPermissionLauncher,
         uri: Uri
     ): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !requestPermissionWrapper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            !requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         ) {
             return false
         }
         return withContext(Dispatchers.IO) {
             try {
-                requestPermissionWrapper.activity.applicationContext.contentResolver.delete(uri, null, null) > 0
+                requestPermissionLauncher.activity.applicationContext.contentResolver.delete(uri, null, null) > 0
             } catch (securityException: SecurityException) {
                 // 如果您的应用使用分区存储，它通常无法更新其他应用存放到媒体库中的媒体文件。
                 // 不过，您仍可通过捕获平台抛出的 RecoverableSecurityException 来征得用户同意修改文件。然后，您可以请求用户授予您的应用对此特定内容的写入权限。
                 // android 11 可以通过 createWriteRequest 进行批量操作，从而废弃这种靠异常来操作的方法。
                 if (isScopedStorage()) {
                     (securityException as? RecoverableSecurityException)?.userAction?.actionIntent?.intentSender?.let {
-                        requestPermissionWrapper.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
+                        requestPermissionLauncher.activity.startIntentSenderForResult(it, 0, null, 0, 0, 0, null)
                     }
                 }
                 false
@@ -417,14 +417,14 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createWriteRequest(
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+        startIntentSenderForResultLauncher: StartIntentSenderForResultLauncher,
         uris: List<Uri>
     ): Boolean {
         val pendingIntent =
-            MediaStore.createWriteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
+            MediaStore.createWriteRequest(startIntentSenderForResultLauncher.activity.applicationContext.contentResolver, uris)
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
+        return startIntentSenderForResultLauncher.launch(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     /**
@@ -432,14 +432,14 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createDeleteRequest(
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+        startIntentSenderForResultLauncher: StartIntentSenderForResultLauncher,
         uris: List<Uri>
     ): Boolean {
         val pendingIntent =
-            MediaStore.createDeleteRequest(startIntentSenderForResultWrapper.activity.applicationContext.contentResolver, uris)
+            MediaStore.createDeleteRequest(startIntentSenderForResultLauncher.activity.applicationContext.contentResolver, uris)
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
+        return startIntentSenderForResultLauncher.launch(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     /**
@@ -449,18 +449,18 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createTrashRequest(
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+        startIntentSenderForResultLauncher: StartIntentSenderForResultLauncher,
         uris: List<Uri>,
         isTrashed: Boolean
     ): Boolean {
         val pendingIntent = MediaStore.createTrashRequest(
-            startIntentSenderForResultWrapper.activity.applicationContext.contentResolver,
+            startIntentSenderForResultLauncher.activity.applicationContext.contentResolver,
             uris,
             isTrashed
         )
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
+        return startIntentSenderForResultLauncher.launch(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     /**
@@ -468,18 +468,18 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createFavoriteRequest(
-        startIntentSenderForResultWrapper: StartIntentSenderForResultWrapper,
+        startIntentSenderForResultLauncher: StartIntentSenderForResultLauncher,
         uris: List<Uri>,
         isFavorite: Boolean
     ): Boolean {
         val pendingIntent = MediaStore.createFavoriteRequest(
-            startIntentSenderForResultWrapper.activity.applicationContext.contentResolver,
+            startIntentSenderForResultLauncher.activity.applicationContext.contentResolver,
             uris,
             isFavorite
         )
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
-        return startIntentSenderForResultWrapper.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
+        return startIntentSenderForResultLauncher.launch(intentSenderRequest).resultCode == Activity.RESULT_OK
     }
 
     open class BaseEntity(cursor: Cursor) {

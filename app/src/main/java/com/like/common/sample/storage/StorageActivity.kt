@@ -22,8 +22,8 @@ class StorageActivity : AppCompatActivity() {
         DataBindingUtil.setContentView<ActivityStorageBinding>(this, R.layout.activity_storage)
     }
 
-    private val requestPermissionWrapper = RequestPermissionWrapper(this)
-    private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
+    private val requestPermissionLauncher = RequestPermissionLauncher(this)
+    private val startActivityForResultLauncher = StartActivityForResultLauncher(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +32,13 @@ class StorageActivity : AppCompatActivity() {
 
     fun openDocument(view: View) {
         lifecycleScope.launch {
-            Logger.d("openDocument：${SafUtils.openDocument(startActivityForResultWrapper)}")
+            Logger.d("openDocument：${SafUtils.openDocument(startActivityForResultLauncher)}")
         }
     }
 
     fun openDocumentTree(view: View) {
         lifecycleScope.launch {
-            val documentFile = SafUtils.openDocumentTree(startActivityForResultWrapper)
+            val documentFile = SafUtils.openDocumentTree(startActivityForResultLauncher)
             documentFile?.listFiles()?.forEach {
                 Logger.d("openDocumentTree：${it?.uri}")
             }
@@ -48,7 +48,7 @@ class StorageActivity : AppCompatActivity() {
     private var documentUri: Uri? = null
     fun createDocument(view: View) {
         lifecycleScope.launch {
-            documentUri = SafUtils.createDocument(startActivityForResultWrapper, "123.jpg", SafUtils.MimeType._jpg)
+            documentUri = SafUtils.createDocument(startActivityForResultLauncher, "123.jpg", SafUtils.MimeType._jpg)
             Logger.d("createDocument：$documentUri")
         }
     }
@@ -63,15 +63,15 @@ class StorageActivity : AppCompatActivity() {
 
     fun selectFile(view: View) {
         lifecycleScope.launch {
-            Logger.e(SafUtils.selectFile(startActivityForResultWrapper, SafUtils.MimeType._jpg))
+            Logger.e(SafUtils.selectFile(startActivityForResultLauncher, SafUtils.MimeType._jpg))
         }
     }
 
     fun takePhoto(view: View) {
         lifecycleScope.launch {
             MediaStoreUtils.takePhoto(
-                requestPermissionWrapper,
-                startActivityForResultWrapper,
+                requestPermissionLauncher,
+                startActivityForResultLauncher,
                 false
             )?.let {
                 mBinding.iv.setImageBitmap(it)
@@ -81,7 +81,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun getFiles(view: View) {
         lifecycleScope.launch {
-            if (requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 Logger.printCollection(MediaStoreUtils.getFiles(this@StorageActivity))
             }
         }
@@ -89,11 +89,11 @@ class StorageActivity : AppCompatActivity() {
 
     fun getImages(view: View) {
         lifecycleScope.launch {
-            if (requestPermissionWrapper.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 val images = MediaStoreUtils.getImages(this@StorageActivity)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&// android 10 及其以上
                     !Environment.isExternalStorageLegacy() &&// 开启了分区存储
-                    requestPermissionWrapper.requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
+                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
                 ) {
                     images.forEach {
                         UriUtils.getLatLongFromUri(this@StorageActivity, it.uri)
@@ -120,7 +120,7 @@ class StorageActivity : AppCompatActivity() {
     fun createFile(view: View) {
         lifecycleScope.launch {
             createdFileUri = MediaStoreUtils.createFile(
-                requestPermissionWrapper,
+                requestPermissionLauncher,
                 uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 displayName = "6.jpg",
                 relativePath = "${Environment.DIRECTORY_PICTURES}/like"
@@ -137,7 +137,7 @@ class StorageActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 Logger.d(
                     MediaStoreUtils.updateFile(
-                        requestPermissionWrapper,
+                        requestPermissionLauncher,
                         uri,
                         displayName = "22",
                         relativePath = "${Environment.DIRECTORY_PICTURES}/like1"
@@ -150,7 +150,7 @@ class StorageActivity : AppCompatActivity() {
     fun deleteFile(view: View) {
         val uri = createdFileUri ?: return
         lifecycleScope.launch {
-            Logger.d(MediaStoreUtils.deleteFile(requestPermissionWrapper, uri))
+            Logger.d(MediaStoreUtils.deleteFile(requestPermissionLauncher, uri))
         }
     }
 }

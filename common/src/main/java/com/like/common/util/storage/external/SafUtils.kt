@@ -8,7 +8,7 @@ import android.os.Build
 import android.provider.DocumentsContract
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
-import com.like.common.util.StartActivityForResultWrapper
+import com.like.common.util.StartActivityForResultLauncher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
@@ -40,10 +40,10 @@ object SafUtils {
     /**
      * 使用系统选择器选择指定类型的文件
      */
-    suspend fun selectFile(startActivityForResultWrapper: StartActivityForResultWrapper, mimeType: MimeType = MimeType._0): Intent? {
+    suspend fun selectFile(startActivityForResultLauncher: StartActivityForResultLauncher, mimeType: MimeType = MimeType._0): Intent? {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = mimeType.value
-        return startActivityForResultWrapper.startActivityForResult(intent).data
+        return startActivityForResultLauncher.launch(intent).data
     }
 
     /**
@@ -62,7 +62,7 @@ object SafUtils {
      * @return  返回的 Uri 为文件的
      */
     suspend fun openDocument(
-        startActivityForResultWrapper: StartActivityForResultWrapper,
+        startActivityForResultLauncher: StartActivityForResultLauncher,
         mimeType: MimeType = MimeType._0,
         pickerInitialUri: Uri? = null
     ): Uri? {
@@ -75,7 +75,7 @@ object SafUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
-        return startActivityForResultWrapper.startActivityForResult(intent).data?.data
+        return startActivityForResultLauncher.launch(intent).data?.data
     }
 
     /**
@@ -86,7 +86,7 @@ object SafUtils {
      * @return  返回文件夹 DocumentFile
      */
     suspend fun openDocumentTree(
-        startActivityForResultWrapper: StartActivityForResultWrapper,
+        startActivityForResultLauncher: StartActivityForResultLauncher,
         pickerInitialUri: Uri? = null
     ): DocumentFile? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -98,8 +98,8 @@ object SafUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
-        val treeUri = startActivityForResultWrapper.startActivityForResult(intent).data?.data ?: return null
-        return DocumentFile.fromTreeUri(startActivityForResultWrapper.activity.applicationContext, treeUri)
+        val treeUri = startActivityForResultLauncher.launch(intent).data?.data ?: return null
+        return DocumentFile.fromTreeUri(startActivityForResultLauncher.activity.applicationContext, treeUri)
     }
 
     /**
@@ -110,7 +110,7 @@ object SafUtils {
      * @return  返回的 Uri 为文件的
      */
     suspend fun createDocument(
-        startActivityForResultWrapper: StartActivityForResultWrapper,
+        startActivityForResultLauncher: StartActivityForResultLauncher,
         fileName: String,
         mimeType: MimeType = MimeType._0,
         pickerInitialUri: Uri? = null
@@ -123,7 +123,7 @@ object SafUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
-        return startActivityForResultWrapper.startActivityForResult(intent).data?.data
+        return startActivityForResultLauncher.launch(intent).data?.data
     }
 
     /**

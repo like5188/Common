@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
 import com.like.common.util.Logger
-import com.like.common.util.StartActivityForResultWrapper
+import com.like.common.util.StartActivityForResultLauncher
 
 /**
  * Activity 相关的测试
@@ -116,9 +116,9 @@ class TestActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
+    private val startActivityForResultLauncher = StartActivityForResultLauncher(this)
     fun click1(view: View) {
-        TestActivity1.start(startActivityForResultWrapper, "like123") {
+        TestActivity1.start(startActivityForResultLauncher, "like123") {
             Logger.e(it.data?.getStringExtra("name"))
         }
     }

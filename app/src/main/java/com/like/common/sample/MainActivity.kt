@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
-    private val requestPermissionWrapper = RequestPermissionWrapper(this)
+    private val requestPermissionLauncher = RequestPermissionLauncher(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     Logger.w("搜索成功：$it")
                 }
         }
-        requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
+        requestPermissionLauncher.launch(android.Manifest.permission.CAMERA) {
             //注意：从 Android 30 开始，没有不再提示选择，系统会在拒绝两次后直接不再提示。
             //如果返回true表示用户点了禁止获取权限，但没有勾选不再提示。
             //返回false表示用户点了禁止获取权限，并勾选不再提示。

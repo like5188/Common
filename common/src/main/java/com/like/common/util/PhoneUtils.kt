@@ -103,14 +103,14 @@ object PhoneUtils {
      * 获取电话号码
      */
     @SuppressLint("MissingPermission")
-    suspend fun getPhoneNumber(requestPermissionWrapper: RequestPermissionWrapper): String? {
+    suspend fun getPhoneNumber(requestPermissionLauncher: RequestPermissionLauncher): String? {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            requestPermissionWrapper.requestPermission(android.Manifest.permission.READ_PHONE_NUMBERS)
+            requestPermissionLauncher.launch(android.Manifest.permission.READ_PHONE_NUMBERS)
         } else {
-            requestPermissionWrapper.requestPermission(android.Manifest.permission.READ_PHONE_STATE)
+            requestPermissionLauncher.launch(android.Manifest.permission.READ_PHONE_STATE)
         }
         return if (permission) {
-            requestPermissionWrapper.activity.applicationContext.telephonyManager.line1Number
+            requestPermissionLauncher.activity.applicationContext.telephonyManager.line1Number
         } else {
             null
         }
@@ -129,7 +129,7 @@ object PhoneUtils {
                     "density=${getDensity(activity)} " +
                     "densityDpi=${getDensityDpi(activity)} " +
                     "scaledDensity=${getScaledDensity(activity)} " +
-                    "phoneNumber=${getPhoneNumber(RequestPermissionWrapper(activity))}"
+                    "phoneNumber=${getPhoneNumber(RequestPermissionLauncher(activity))}"
         )
     }
 

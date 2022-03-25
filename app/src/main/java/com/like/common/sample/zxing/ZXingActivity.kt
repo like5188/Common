@@ -3,24 +3,23 @@ package com.like.common.sample.zxing
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
-import com.like.common.util.RequestPermissionWrapper
+import com.like.common.util.RequestPermissionLauncher
 import com.like.common.util.ZXingUtils
 
 class ZXingActivity : AppCompatActivity() {
     private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityZxingBinding>(this, R.layout.activity_zxing)
     }
-    private val requestPermissionWrapper = RequestPermissionWrapper(this)
+    private val requestPermissionLauncher = RequestPermissionLauncher(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestPermissionWrapper.requestPermission(android.Manifest.permission.CAMERA) {
-            if (!it) return@requestPermission
+        requestPermissionLauncher.launch(android.Manifest.permission.CAMERA) {
+            if (!it) return@launch
             mBinding.sv.setViewFinder(ZXingUtils.DefaultViewFinder(this@ZXingActivity, heightWidthRatio = 1f))
 //            mBinding.sv.setEnableZXing(true)
 //            mBinding.sv.setEnableZBar(true)
