@@ -68,8 +68,8 @@ class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     private var callback: ActivityResultCallback<ActivityResult>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         callback?.onActivityResult(it)
-        continuation?.resume(it)
         callback = null
+        continuation?.resume(it)
         continuation = null
     }
 
@@ -105,8 +105,8 @@ class RequestPermissionWrapper(caller: ActivityResultCaller) {
     private var callback: ActivityResultCallback<Boolean>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         callback?.onActivityResult(it)
-        continuation?.resume(it)
         callback = null
+        continuation?.resume(it)
         continuation = null
     }
 
@@ -131,8 +131,8 @@ class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         val result = it.values.all { it }
         callback?.onActivityResult(result)
-        continuation?.resume(result)
         callback = null
+        continuation?.resume(result)
         continuation = null
     }
 
@@ -156,8 +156,8 @@ class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     private var callback: ActivityResultCallback<ActivityResult>? = null
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
         callback?.onActivityResult(it)
-        continuation?.resume(it)
         callback = null
+        continuation?.resume(it)
         continuation = null
     }
 
