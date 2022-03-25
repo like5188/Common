@@ -119,7 +119,7 @@ class TestActivity : AppCompatActivity() {
     private val startActivityForResultWrapper = StartActivityForResultWrapper(this)
     fun click1(view: View) {
         TestActivity1.start(startActivityForResultWrapper, "like123") {
-            Logger.e(it?.getStringExtra("name"))
+            Logger.e(it.data?.getStringExtra("name"))
         }
     }
 

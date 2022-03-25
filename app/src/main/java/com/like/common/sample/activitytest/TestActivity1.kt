@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.like.common.sample.R
@@ -35,7 +36,7 @@ class TestActivity1 : AppCompatActivity() {
     }
 
     companion object {
-        fun start(startActivityForResultWrapper: StartActivityForResultWrapper, name: String?, callback: (Intent?) -> Unit) {
+        fun start(startActivityForResultWrapper: StartActivityForResultWrapper, name: String?, callback: (ActivityResult) -> Unit) {
             startActivityForResultWrapper.startActivityForResult<TestActivity1>("name" to name, callback = callback)
         }
     }
