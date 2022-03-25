@@ -68,6 +68,8 @@ class StartActivityForResultWrapper(caller: ActivityResultCaller) {
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         callback?.invoke(it)
         continuation?.resume(it)
+        callback = null
+        continuation = null
     }
 
     suspend inline fun <reified T : Activity> startActivityForResult(vararg params: Pair<String, Any?>): ActivityResult =
@@ -103,6 +105,8 @@ class RequestPermissionWrapper(caller: ActivityResultCaller) {
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         callback?.invoke(it)
         continuation?.resume(it)
+        callback = null
+        continuation = null
     }
 
     suspend fun requestPermission(permission: String): Boolean = withContext(Dispatchers.Main) {
@@ -127,6 +131,8 @@ class RequestMultiplePermissionsWrapper(caller: ActivityResultCaller) {
         val result = it.values.all { it }
         callback?.invoke(result)
         continuation?.resume(result)
+        callback = null
+        continuation = null
     }
 
     suspend fun requestPermissions(vararg permissions: String): Boolean = withContext(Dispatchers.Main) {
@@ -150,6 +156,8 @@ class StartIntentSenderForResultWrapper(caller: ActivityResultCaller) {
     private val launcher = caller.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
         callback?.invoke(it)
         continuation?.resume(it)
+        callback = null
+        continuation = null
     }
 
     suspend fun startIntentSenderForResult(intentSenderRequest: IntentSenderRequest): ActivityResult = withContext(Dispatchers.Main) {
