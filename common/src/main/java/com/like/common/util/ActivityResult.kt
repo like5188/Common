@@ -90,16 +90,6 @@ open class BaseActivityResultLauncher<I, O>(caller: ActivityResultCaller, contra
     }
 }
 
-class RequestPermissionLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<String, Boolean>(
-        caller, ActivityResultContracts.RequestPermission()
-    )
-
-class RequestMultiplePermissionsLauncher(caller: ActivityResultCaller) :
-    BaseActivityResultLauncher<Array<String>, Map<String, Boolean>>(
-        caller, ActivityResultContracts.RequestMultiplePermissions()
-    )
-
 class StartActivityForResultLauncher(caller: ActivityResultCaller) :
     BaseActivityResultLauncher<Intent, ActivityResult>(
         caller, ActivityResultContracts.StartActivityForResult()
@@ -121,6 +111,16 @@ class StartActivityForResultLauncher(caller: ActivityResultCaller) :
     }
 
 }
+
+class RequestPermissionLauncher(caller: ActivityResultCaller) :
+    BaseActivityResultLauncher<String, Boolean>(
+        caller, ActivityResultContracts.RequestPermission()
+    )
+
+class RequestMultiplePermissionsLauncher(caller: ActivityResultCaller) :
+    BaseActivityResultLauncher<Array<String>, Map<String, Boolean>>(
+        caller, ActivityResultContracts.RequestMultiplePermissions()
+    )
 
 class StartIntentSenderForResultLauncher(caller: ActivityResultCaller) :
     BaseActivityResultLauncher<IntentSenderRequest, ActivityResult>(
