@@ -13,10 +13,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
-import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 
 /*
@@ -60,12 +61,21 @@ val ActivityResultCaller.activity: Activity
         }
     }
 
+val ActivityResultCaller.lifecycleOwner: LifecycleOwner
+    get() {
+        return when (this) {
+            is LifecycleOwner -> this
+            else -> throw IllegalStateException("$this must be androidx.lifecycle.LifecycleOwner")
+        }
+    }
+
 inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
     startActivity(createIntent<T>(*params))
 }
 
 open class BaseActivityResultLauncher<I, O>(caller: ActivityResultCaller, contract: ActivityResultContract<I, O>) {
     val activity = caller.activity
+    val lifecycleOwner = caller.lifecycleOwner
     private var continuation: CancellableContinuation<O>? = null
     private var callback: ActivityResultCallback<O>? = null
     private val launcher = caller.registerForActivityResult(contract) {
@@ -74,6 +84,18 @@ open class BaseActivityResultLauncher<I, O>(caller: ActivityResultCaller, contra
         continuation?.resume(it)
         continuation?.cancel()
         continuation = null
+    }
+
+    init {
+        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        launcher.unregister()
+                    }
+                }
+            })
+        }
     }
 
     suspend fun launch(input: I, options: ActivityOptionsCompat? = null): O = withContext(Dispatchers.Main) {
