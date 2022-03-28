@@ -25,17 +25,18 @@ object NavigationUtils {
         when {
             isAvailable(context, BAIDU_MAP_APP) ->
                 context.startActivity(Intent().apply {
-                    this.data = Uri.parse("baidumap://map/direction?mode=driving&destination=$endlatitude,$endlongitude&src=${context.packageName}")
+                    this.data =
+                        Uri.parse("baidumap://map/direction?mode=driving&destination=$endlatitude,$endlongitude&src=${context.packageName}")
                 })
-//            isAvailable(context, GAODE_MAP_APP) ->
-//                context.startActivity(Intent().apply {
-//                    this.data =
-//                        Uri.parse("amapuri://route/plan/?dlat=$endlatitude&dlon=$endlongitude&dev=0&t=0&sourceApplication=${context.packageName}")
-//                })
-//            isAvailable(context, QQ_MAP_APP) ->
-//                context.startActivity(Intent().apply {
-//                    this.data = Uri.parse("qqmap://map/routeplan?type=drive&tocoord=$endlatitude,$endlongitude")
-//                })
+            isAvailable(context, GAODE_MAP_APP) ->
+                context.startActivity(Intent().apply {
+                    this.data =
+                        Uri.parse("amapuri://route/plan/?dlat=$endlatitude&dlon=$endlongitude&dev=0&t=0&sourceApplication=${context.packageName}")
+                })
+            isAvailable(context, QQ_MAP_APP) ->
+                context.startActivity(Intent().apply {
+                    this.data = Uri.parse("qqmap://map/routeplan?type=drive&tocoord=$endlatitude,$endlongitude")
+                })
             else -> Toast.makeText(context, "您的手机尚未安装百度地图、高德地图、腾讯地图等软件，不能进行导航！", Toast.LENGTH_SHORT).show()
         }
     }
