@@ -4,11 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.like.activityresultlauncher.util.startActivity
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest3Binding
 import com.like.common.util.ApplicationHolder
-import com.like.common.util.createIntent
-import com.like.common.util.startActivity
 
 /**
  * 透明的 Activity

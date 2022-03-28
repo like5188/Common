@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.like.activityresultlauncher.RequestPermissionLauncher
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
-import com.like.common.util.RequestPermissionLauncher
 import com.like.common.util.ZXingUtils
 
 class ZXingActivity : AppCompatActivity() {

@@ -4,10 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.like.activityresultlauncher.util.startActivity
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest2Binding
 import com.like.common.util.ApplicationHolder
-import com.like.common.util.startActivity
 
 /**
  * 窗口模式的 Activity

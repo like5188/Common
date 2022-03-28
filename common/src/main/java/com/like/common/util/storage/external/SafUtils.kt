@@ -8,7 +8,7 @@ import android.os.Build
 import android.provider.DocumentsContract
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
-import com.like.common.util.StartActivityForResultLauncher
+import com.like.activityresultlauncher.StartActivityForResultLauncher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException

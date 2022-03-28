@@ -7,10 +7,10 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.like.activityresultlauncher.StartActivityForResultLauncher
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
 import com.like.common.util.Logger
-import com.like.common.util.StartActivityForResultLauncher
 
 /**
  * Activity 相关的测试

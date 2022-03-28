@@ -8,10 +8,10 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.like.activityresultlauncher.StartActivityForResultLauncher
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest1Binding
 import com.like.common.util.AutoWired
-import com.like.common.util.StartActivityForResultLauncher
 import com.like.common.util.injectForIntentExtras
 
 /**

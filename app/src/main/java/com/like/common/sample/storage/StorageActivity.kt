@@ -10,9 +10,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import com.like.activityresultlauncher.RequestPermissionLauncher
+import com.like.activityresultlauncher.StartActivityForResultLauncher
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
-import com.like.common.util.*
+import com.like.common.util.Logger
+import com.like.common.util.UriUtils
+import com.like.common.util.context
 import com.like.common.util.storage.external.MediaStoreUtils
 import com.like.common.util.storage.external.SafUtils
 import kotlinx.coroutines.launch
