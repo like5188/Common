@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+
 
 /*
 目前坐标系有三种，分别是WGS84、GCJ02、BD09，国内基本用的是后两种。
@@ -16,45 +18,90 @@ BD09：为百度坐标系，在GCJ02坐标系基础上再次加密。其中BD09l
  */
 /**
  * 导航工具。支持百度地图、高德地图、腾讯地图导航
+ * 注意：坐标系类型为"gcj02"
  */
 object NavigationUtils {
-    // 百度地图包名
-    private const val BAIDU_MAP_APP = "com.baidu.BaiduMap"
+    private val maps = mapOf(
+        "百度地图" to "com.baidu.BaiduMap",
+        "高德地图" to "com.autonavi.minimap",
+        "腾讯地图" to "com.tencent.map",
+    )
 
-    // 高德地图包名
-    private const val GAODE_MAP_APP = "com.autonavi.minimap"
-
-    // 腾讯地图包名
-    private const val QQ_MAP_APP = "com.tencent.map"
-
-    /**
-     * 从当前位置到指定定位点的路径规划。
-     * 注意：坐标系类型为"gcj02"
-     */
     fun navigation(context: Context, endlatitude: Double, endlongitude: Double) {
-        when {
-            isAvailable(context, BAIDU_MAP_APP) ->
-                context.startActivity(Intent().apply {
-                    this.data =
-                        Uri.parse("baidumap://map/direction?mode=driving&coord_type=gcj02&destination=$endlatitude,$endlongitude&src=${context.packageName}")
-                })
-            isAvailable(context, GAODE_MAP_APP) ->
-                context.startActivity(Intent().apply {
-                    this.data =
-                        Uri.parse("amapuri://route/plan/?dlat=$endlatitude&dlon=$endlongitude&dev=0&t=0&sourceApplication=${context.packageName}")
-                })
-            isAvailable(context, QQ_MAP_APP) ->
-                context.startActivity(Intent().apply {
-                    this.data = Uri.parse("qqmap://map/routeplan?type=drive&tocoord=$endlatitude,$endlongitude")
-                })
-            else -> Toast.makeText(context, "您的手机尚未安装百度地图、高德地图、腾讯地图等软件，不能进行导航！", Toast.LENGTH_SHORT).show()
+        val installedNames = getInstalledMapNames(context)
+        if (installedNames.isEmpty()) {
+            return
+        }
+        val names = maps.keys.toTypedArray()
+        if (installedNames.size == 1) {
+            when (installedNames[0]) {
+                names[0] -> navigationByBaiDuMap(context, endlatitude, endlongitude)
+                names[1] -> navigationByAMap(context, endlatitude, endlongitude)
+                names[2] -> navigationByQQMap(context, endlatitude, endlongitude)
+            }
+            return
+        }
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+            .setTitle("请选择地图")
+            .setItems(installedNames.toTypedArray()) { _, i ->
+                when (installedNames[i]) {
+                    names[0] -> navigationByBaiDuMap(context, endlatitude, endlongitude)
+                    names[1] -> navigationByAMap(context, endlatitude, endlongitude)
+                    names[2] -> navigationByQQMap(context, endlatitude, endlongitude)
+                }
+            }
+        builder.create().show()
+    }
+
+    fun getInstalledMapNames(context: Context): List<String> {
+        val names = mutableListOf<String>()
+        maps.forEach {
+            if (isInstalled(context, it.value)) {
+                names.add(it.key)
+            }
+        }
+        if (names.isEmpty()) {
+            Toast.makeText(context, "您的手机尚未安装百度地图、高德地图、腾讯地图！", Toast.LENGTH_SHORT).show()
+        }
+        return names
+    }
+
+    fun navigationByBaiDuMap(context: Context, endlatitude: Double, endlongitude: Double) {
+        if (isInstalled(context, maps.values.toTypedArray()[0])) {
+            context.startActivity(Intent().apply {
+                this.data =
+                    Uri.parse("baidumap://map/direction?mode=driving&coord_type=gcj02&destination=$endlatitude,$endlongitude&src=${context.packageName}")
+            })
+        } else {
+            Toast.makeText(context, "您的手机尚未安装百度地图！", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun navigationByAMap(context: Context, endlatitude: Double, endlongitude: Double) {
+        if (isInstalled(context, maps.values.toTypedArray()[1])) {
+            context.startActivity(Intent().apply {
+                this.data =
+                    Uri.parse("amapuri://route/plan/?dlat=$endlatitude&dlon=$endlongitude&dev=0&t=0&sourceApplication=${context.packageName}")
+            })
+        } else {
+            Toast.makeText(context, "您的手机尚未安装高德地图！", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun navigationByQQMap(context: Context, endlatitude: Double, endlongitude: Double) {
+        if (isInstalled(context, maps.values.toTypedArray()[2])) {
+            context.startActivity(Intent().apply {
+                this.data = Uri.parse("qqmap://map/routeplan?type=drive&tocoord=$endlatitude,$endlongitude")
+            })
+        } else {
+            Toast.makeText(context, "您的手机尚未安装腾讯地图！", Toast.LENGTH_SHORT).show()
         }
     }
 
     /**
      * 验证各种导航地图是否安装
      */
-    private fun isAvailable(context: Context, packageName: String): Boolean {
+    private fun isInstalled(context: Context, packageName: String): Boolean {
         //获取所有已安装程序的包信息
         val packageInfos = context.packageManager.getInstalledPackages(0)
         return packageInfos.any { it.packageName == packageName }
