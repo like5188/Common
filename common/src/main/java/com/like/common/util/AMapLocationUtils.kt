@@ -27,7 +27,7 @@ implementation 'com.amap.api:location:latest.integration'
 /**
  * 高德地图定位工具类
  */
-class LocationUtils(
+class AMapLocationUtils(
     lifecycleOwner: LifecycleOwner,
     private val requestMultiplePermissionsLauncher: RequestMultiplePermissionsLauncher
 ) {

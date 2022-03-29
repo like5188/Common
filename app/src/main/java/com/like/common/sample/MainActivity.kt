@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity() {
     private val requestMultiplePermissionsLauncher = RequestMultiplePermissionsLauncher(this)
     fun location(view: View) {
         lifecycleScope.launch {
-            val l = LocationUtils(this@MainActivity, requestMultiplePermissionsLauncher).location()
+            val l = AMapLocationUtils(this@MainActivity, requestMultiplePermissionsLauncher).location()
             Logger.e("${l?.latitude} ${l?.longitude}")
         }
 //        NavigationUtils.navigation(this@MainActivity, 29.512043, 106.499777)
