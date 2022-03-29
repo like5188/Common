@@ -16,6 +16,7 @@ import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.hjq.toast.ToastUtils
+import com.like.activityresultlauncher.RequestMultiplePermissionsLauncher
 import com.like.activityresultlauncher.RequestPermissionLauncher
 import com.like.common.sample.activitytest.TestActivity
 import com.like.common.sample.anim.AnimActivity
@@ -34,6 +35,7 @@ import com.like.common.sample.notification.NotificationActivity
 import com.like.common.sample.serializable.SerializableActivity
 import com.like.common.sample.storage.StorageActivity
 import com.like.common.sample.timertextview.TimerTextViewActivity
+import com.like.common.sample.uistatuscontroller.UiStatusControllerActivity
 import com.like.common.sample.zxing.ZXingActivity
 import com.like.common.util.*
 import com.like.common.view.toolbar.CustomToolbarMenu
@@ -204,9 +206,17 @@ class MainActivity : AppCompatActivity() {
         mBinding.viewFlipper.startFlipping()
     }
 
+    private val requestMultiplePermissionsLauncher = RequestMultiplePermissionsLauncher(this)
+    fun location(view: View) {
+        lifecycleScope.launch {
+            val l = LocationUtils(this@MainActivity, requestMultiplePermissionsLauncher).location()
+            Logger.e("${l?.latitude} ${l?.longitude}")
+        }
+//        NavigationUtils.navigation(this@MainActivity, 29.512043, 106.499777)
+    }
+
     fun showUiStatusController(view: View) {
-        NavigationUtils.navigation(this@MainActivity, 29.512043, 106.499777)
-//        startActivity(Intent(this, UiStatusControllerActivity::class.java))
+        startActivity(Intent(this, UiStatusControllerActivity::class.java))
     }
 
     fun gotoTimerTextViewActivity(view: View) {

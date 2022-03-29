@@ -23,7 +23,7 @@ android {
         // applicationId 配置我们的包名，包名是app的唯一标识，其实他跟AndroidManifest里面的package是可以不同的，他们之间并没有直接的关系。
         // package指的是代码目录下路径；applicationId指的是app对外发布的唯一标识，会在签名、申请第三方库、发布时候用到。
         // 修改applicationId只会修改当前程序的ID,而不会去修改源码中资源文件的引用。
-        applicationId "com.like.common.sample"
+        applicationId "com.tgf.kcwc"
         // 代表着最低版本，在编译的时候兼容到该参数指定最低版本api。
         // 如果系统的API level低于android:minSdkVersion设定的值，那么android系统会阻止用户安装这个应用
         // 请记住：你所使用的库，如 Support Library 或 Google Play services，可能有他们自己的 minSdkVersion 。你的应用设置的
@@ -45,7 +45,7 @@ android {
         // 配置了 multiDexEnabled true 后，会自动添加引用：androidx.multidex:multidex:2.0.0 和 androidx.multidex:multidex-instrumentation:2.0.0
         // api 21以下，还需要在 Application 的 attachBaseContext 方法中添加初始化代码：MultiDex.install(this)，或者直接继承 MultiDexApplication。否则会报错：Unable to get provider androidx.lifecycle.ProcessLifecycleOwnerInitializr
         multiDexEnabled true
-
+        manifestPlaceholders = [amap_apikey: "2259ff11f66c7edc3388c1e748412e70"]
     }
 
     lintOptions {
@@ -127,21 +127,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
-    implementation("com.google.android:flexbox:2.0.1")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    implementation("androidx.activity:activity-ktx:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
-    implementation("com.github.getActivity:ToastUtils:9.5")
-    implementation("org.koin:koin-androidx-viewmodel:2.2.2")
-    implementation("io.coil-kt:coil:1.4.0")
-    implementation("com.github.chrisbanes:PhotoView:2.3.0")
-    implementation("com.shouzhong:Scanner:1.1.3")
-    implementation("com.shouzhong:ScannerIdCardLib:1.0.4")
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    implementation 'com.google.android:flexbox:2.0.1'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'androidx.activity:activity-ktx:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+    implementation 'com.github.getActivity:ToastUtils:9.5'
+    implementation 'org.koin:koin-androidx-viewmodel:2.2.2'
+    implementation 'io.coil-kt:coil:1.4.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    implementation 'com.shouzhong:Scanner:1.1.3'
+    implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.github.like5188:activityresultlauncher:1.0.0'
+    implementation 'com.amap.api:location:latest.integration'
 
     implementation project(':common')
 }
