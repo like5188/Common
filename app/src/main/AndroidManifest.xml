@@ -95,6 +95,9 @@
         <activity
             android:name=".timertextview.TimerTextViewActivity"
             android:exported="true" />
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="2259ff11f66c7edc3388c1e748412e70" />
     </application>
 
 </manifest>

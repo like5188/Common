@@ -45,7 +45,6 @@ android {
         // 配置了 multiDexEnabled true 后，会自动添加引用：androidx.multidex:multidex:2.0.0 和 androidx.multidex:multidex-instrumentation:2.0.0
         // api 21以下，还需要在 Application 的 attachBaseContext 方法中添加初始化代码：MultiDex.install(this)，或者直接继承 MultiDexApplication。否则会报错：Unable to get provider androidx.lifecycle.ProcessLifecycleOwnerInitializr
         multiDexEnabled true
-        manifestPlaceholders = [amap_apikey: "2259ff11f66c7edc3388c1e748412e70"]
     }
 
     lintOptions {

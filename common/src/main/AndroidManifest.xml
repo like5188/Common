@@ -71,9 +71,6 @@
 
         <!--高德地图开始-->
         <service android:name="com.amap.api.location.APSService" />
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="${amap_apikey}" />
         <!--高德地图完毕-->
 
     </application>

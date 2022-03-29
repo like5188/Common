@@ -16,11 +16,9 @@ import kotlin.coroutines.resume
 
 /*
 使用时需要配置：
-android {
-    defaultConfig {
-        manifestPlaceholders = [amap_apikey: "你自己的apikey"]
-    }
-}
+<meta-data
+    android:name="com.amap.api.v2.apikey"
+    android:value="你自己的apikey" />
 implementation 'com.github.like5188:activityresultlauncher:1.0.0'
 implementation 'com.amap.api:location:latest.integration'
  */
