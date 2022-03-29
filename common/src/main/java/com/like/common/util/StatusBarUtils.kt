@@ -7,6 +7,7 @@ import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.doOnAttach
 
 /*
  * 状态栏工具类
@@ -44,11 +45,23 @@ fun Activity.setTransparentStatusBar(dark: Boolean = false) {
  * 如果它的子view使用了这两个属性，那么需要自行处理，最好再包裹一层。
  */
 fun View.fitStatusBar() {
-    layoutParams?.apply {
-        if (height != ViewGroup.LayoutParams.WRAP_CONTENT &&
-            height != ViewGroup.LayoutParams.MATCH_PARENT
-        ) {// 如果是固定高度的控件，则需要改变它的高度，为它增加一个状态栏高度。
-            height += context.statusBarHeight
+    if (layoutParams == null) {
+        doOnAttach {
+            layoutParams?.apply {
+                if (height != ViewGroup.LayoutParams.WRAP_CONTENT &&
+                    height != ViewGroup.LayoutParams.MATCH_PARENT
+                ) {// 如果是固定高度的控件，则需要改变它的高度，为它增加一个状态栏高度。
+                    height += context.statusBarHeight
+                }
+            }
+        }
+    } else {
+        layoutParams.apply {
+            if (height != ViewGroup.LayoutParams.WRAP_CONTENT &&
+                height != ViewGroup.LayoutParams.MATCH_PARENT
+            ) {// 如果是固定高度的控件，则需要改变它的高度，为它增加一个状态栏高度。
+                height += context.statusBarHeight
+            }
         }
     }
     setPadding(
