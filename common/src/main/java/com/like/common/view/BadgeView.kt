@@ -12,7 +12,7 @@ import com.like.common.util.sp
 
 /**
  * 数字角标
- * 注意：设置[count]需要反正最后，触发绘制。
+ * 注意：设置[count]需要放在最后，触发绘制。
  */
 open class BadgeView(context: Context) : View(context) {
     private val textPaint by lazy {
