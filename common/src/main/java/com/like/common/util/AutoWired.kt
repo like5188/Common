@@ -11,7 +11,7 @@ annotation class AutoWired
 
 /**
  * 在[Activity]中，通过反射从[android.content.Intent]中获取参数值，并赋值给被[AutoWired]注解的字段。
- * 例子：
+ * 例子：(var val 都可以使用)
  * @AutoWired
  * private var param4: Int? = null
  * @AutoWired
