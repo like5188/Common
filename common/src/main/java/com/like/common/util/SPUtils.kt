@@ -38,7 +38,10 @@ class SPUtils private constructor() {
     @JvmOverloads
     fun init(context: Context, sharedPreferencesFileName: String = context.packageName) {
         if (!::prefs.isInitialized) {
-            prefs = context.applicationContext.getSharedPreferences("$sharedPreferencesFileName$SHARED_PREFERENCES_FILE_SUFFIX", Context.MODE_PRIVATE)
+            prefs = context.applicationContext.getSharedPreferences(
+                "$sharedPreferencesFileName$SHARED_PREFERENCES_FILE_SUFFIX",
+                Context.MODE_PRIVATE
+            )
         }
     }
 
@@ -159,19 +162,21 @@ class SPUtils private constructor() {
  *
  * 示例：var xxx by SharedPreferencesDelegate()
  *
- * @property context
+ * @property context                    用于初始化工具类，如果这里不传，则需要单独调用 SPUtils.getInstance().init() 初始化
  * @property sharedPreferencesFileName  sharedPreferences对于的文件名字
  * @property key                        存储的key
  * @property default                    获取失败时，返回的默认值
  */
 class SharedPreferencesDelegate<T>(
-        private val context: Context,
-        private val sharedPreferencesFileName: String,
-        private val key: String,
-        private val default: T
+    private val context: Context? = null,
+    private val sharedPreferencesFileName: String,
+    private val key: String,
+    private val default: T
 ) : ReadWriteProperty<Any?, T> {
     init {
-        SPUtils.getInstance().init(context, sharedPreferencesFileName)
+        context?.applicationContext?.let {
+            SPUtils.getInstance().init(it, sharedPreferencesFileName)
+        }
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {

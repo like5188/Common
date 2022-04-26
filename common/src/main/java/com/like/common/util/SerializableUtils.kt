@@ -177,17 +177,19 @@ class SerializableUtils private constructor() {
  *
  * 示例：var xxx by Delegate()
  *
- * @property context
+ * @property context                    用于初始化工具类，如果这里不传，则需要单独调用 SerializableUtils.getInstance().init() 初始化
  * @property key                        存储的key
  * @property default                    获取失败时，返回的默认值
  */
 class SerializableDelegate<T>(
-        private val context: Context,
-        private val key: String,
-        private val default: T
+    private val context: Context? = null,
+    private val key: String,
+    private val default: T
 ) : ReadWriteProperty<Any?, T> {
     init {
-        SerializableUtils.getInstance().init(context)
+        context?.applicationContext?.let {
+            SerializableUtils.getInstance().init(it)
+        }
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
