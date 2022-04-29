@@ -16,7 +16,7 @@ import com.like.common.util.createIntent
 
 class FragmentContainer : FragmentActivity() {
     companion object {
-        private val TAG = TestActivity::class.java.simpleName
+        private val TAG = FragmentContainer::class.java.simpleName
         fun start(context: Context? = null) {
             val ctx = context ?: ApplicationHolder.application
             val intent = ctx.createIntent<FragmentContainer>()
