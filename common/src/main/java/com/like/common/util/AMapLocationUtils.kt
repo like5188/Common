@@ -1,7 +1,6 @@
 package com.like.common.util
 
 import android.Manifest
-import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -85,18 +84,13 @@ class AMapLocationUtils(
      */
     suspend fun location(): AMapLocation? {
         val locationClient = mLocationClient ?: return null
-        var permissions = arrayOf(
+        val requestPermissions = requestMultiplePermissionsLauncher.launch(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-        )
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            permissions += arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_PHONE_STATE
-            )
-        }
-        val requestPermissions = requestMultiplePermissionsLauncher.launch(*permissions).all { it.value }
+            Manifest.permission.READ_PHONE_STATE
+        ).all { it.value }
         if (!requestPermissions) {
             return null
         }
