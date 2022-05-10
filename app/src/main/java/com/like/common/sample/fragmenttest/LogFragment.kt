@@ -60,45 +60,45 @@ open class LogFragment : BaseLazyFragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.e(TAG, "onResume")
+        Log.w(TAG, "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.i(TAG, "onPause")
+        Log.w(TAG, "onPause")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.i(TAG, "onStop")
+        Log.w(TAG, "onStop")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.i(TAG, "onDestroyView")
+        Log.w(TAG, "onDestroyView")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.i(TAG, "onDetach")
+        Log.w(TAG, "onDetach")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i(TAG, "onDestroy")
+        Log.w(TAG, "onDestroy")
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        Log.v(TAG, "setUserVisibleHint:isVisibleToUser-->$isVisibleToUser")
+        Log.w(TAG, "setUserVisibleHint:isVisibleToUser-->$isVisibleToUser")
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        Log.v(TAG, "onHiddenChanged:shown-->${!hidden}")
+        Log.w(TAG, "onHiddenChanged:shown-->${!hidden}")
     }
 
     override fun onLazyLoadData() {
-        Log.i(TAG, "onLazyLoadData")
+        Log.w(TAG, "onLazyLoadData")
     }
 }
