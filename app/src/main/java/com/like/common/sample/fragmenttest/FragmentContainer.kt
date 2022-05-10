@@ -41,7 +41,7 @@ class FragmentContainer : FragmentActivity() {
 
         mBinding.vp.adapter = ViewPagerAdapter(fragments, this)
         mBinding.vp.offscreenPageLimit = fragments.size - 1// 避免fragment被销毁导致重新懒加载
-        Log.v(TAG, "onCreate")
+        Log.e(TAG, "onCreate")
     }
 
     fun showFragment1(view: View) {
@@ -66,34 +66,34 @@ class FragmentContainer : FragmentActivity() {
 
     override fun onStart() {
         super.onStart()
-        Log.v(TAG, "onStart")
+        Log.e(TAG, "onStart")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.v(TAG, "onResume")
+        Log.e(TAG, "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.v(TAG, "onPause")
+        Log.e(TAG, "onPause")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.v(TAG, "onStop")
+        Log.e(TAG, "onStop")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.v(TAG, "onDestroy")
+        Log.e(TAG, "onDestroy")
     }
 
     /***************************非生命周期方法，需要一定的条件来触发***************************/
     override fun onRestart() {
         super.onRestart()
         // 有 onStop() 状态恢复的时候触发
-        Log.v(TAG, "onRestart")
+        Log.e(TAG, "onRestart")
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -101,14 +101,14 @@ class FragmentContainer : FragmentActivity() {
         // 触发条件：首先是设置了启动模式，并且实例已经存在
         // 1、如果启动模式为 SingleTask 和 SingleInstance，再次启动该 Activity。
         // 2、这个实例位于栈顶，且启动模式为 SingleTop，再次启动该 Activity。
-        Log.v(TAG, "onNewIntent")
+        Log.e(TAG, "onNewIntent")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // 触发条件：
         // 1、当设置android:configChanges="orientation"时，横竖屏切换。注意：不会触发其它生命周期方法。
-        Log.v(TAG, "onConfigurationChanged")
+        Log.e(TAG, "onConfigurationChanged")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -118,13 +118,13 @@ class FragmentContainer : FragmentActivity() {
         // 2、按 home、menu、锁屏 键
         // 3、启动其它 Activity
         // 但是当用户主动去销毁一个 Activity 时，例如在应用中按返回键，onSaveInstanceState() 就不会被调用，所以用做数据的持久化保存，更应该在 onPause() 方法中进行。
-        Log.v(TAG, "onSaveInstanceState")
+        Log.e(TAG, "onSaveInstanceState")
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         // 触发条件：
         // 1、当不设置android:configChanges="orientation"时，横竖屏切换
-        Log.v(TAG, "onRestoreInstanceState")
+        Log.e(TAG, "onRestoreInstanceState")
     }
 }
