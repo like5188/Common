@@ -2,7 +2,6 @@ package com.like.common.util
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.*
 import androidx.activity.result.contract.ActivityResultContract
@@ -24,8 +23,7 @@ open class BaseActivityResultLauncher<I, O>(
         }
 
     fun launch(input: I, options: ActivityOptionsCompat? = null, callback: ActivityResultCallback<O>) {
-        val key = "com.like.activityresultlauncher.BaseActivityResultLauncher.${hashCode()}"
-        Log.e("TAG", key)
+        val key = "com.like.common.util.BaseActivityResultLauncher.${hashCode()}"
         var launcher: ActivityResultLauncher<I>? = null
         launcher = registry.register(key, contract) { result ->
             callback.onActivityResult(result)
