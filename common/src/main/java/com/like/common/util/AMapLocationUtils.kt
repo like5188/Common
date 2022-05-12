@@ -1,6 +1,7 @@
 package com.like.common.util
 
 import android.Manifest
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -8,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
-import com.like.activityresultlauncher.RequestMultiplePermissionsLauncher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -26,12 +26,11 @@ implementation 'com.amap.api:location:latest.integration'
  * 高德地图定位工具类
  */
 class AMapLocationUtils(
-    lifecycleOwner: LifecycleOwner,
-    private val requestMultiplePermissionsLauncher: RequestMultiplePermissionsLauncher
+    private val activity: ComponentActivity
 ) {
     //请在主线程中声明AMapLocationClient类对象，需要传Context类型的参数。推荐用getApplicationContext()方法获取全进程有效的context。
     private val mLocationClient by lazy {
-        val context = requestMultiplePermissionsLauncher.context.applicationContext
+        val context = activity.applicationContext
         // 高德地图隐私合规校验
         /* 设置包含隐私政策，并展示用户授权弹窗 <b>必须在AmapLocationClient实例化之前调用</b>
          *
@@ -66,8 +65,8 @@ class AMapLocationUtils(
     }
 
     init {
-        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-            lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
+        activity.lifecycleScope.launch(Dispatchers.Main) {
+            activity.lifecycle.addObserver(object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     if (event == Lifecycle.Event.ON_DESTROY) {
                         //销毁定位客户端，同时销毁本地定位服务。
@@ -84,14 +83,14 @@ class AMapLocationUtils(
      */
     suspend fun location(): AMapLocation? {
         val locationClient = mLocationClient ?: return null
-        val requestPermissions = requestMultiplePermissionsLauncher.launch(
+        val requestMultiplePermissions = activity.requestMultiplePermissions(
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE
         ).all { it.value }
-        if (!requestPermissions) {
+        if (!requestMultiplePermissions) {
             return null
         }
         return suspendCancellableCoroutine { continuation ->

@@ -8,6 +8,10 @@ import android.os.Bundle
 import android.os.Parcelable
 import java.io.Serializable
 
+inline fun <reified T : Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
+    startActivity(createIntent<T>(*params))
+}
+
 inline fun <reified T : Any> Context.createIntent(vararg params: Pair<String, Any?>): Intent {
     val intent = Intent(this, T::class.java)
     if (this !is Activity) intent.newTask()

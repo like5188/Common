@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.like.activityresultlauncher.StartActivityForResultLauncher
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTestBinding
 import com.like.common.util.Logger
@@ -21,7 +20,7 @@ class TestActivity : AppCompatActivity() {
     }
 
     private val mBinding: ActivityTestBinding by lazy {
-        DataBindingUtil.setContentView<ActivityTestBinding>(this, R.layout.activity_test)
+        DataBindingUtil.setContentView(this, R.layout.activity_test)
     }
 
     private fun initView() {
@@ -116,9 +115,8 @@ class TestActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private val startActivityForResultLauncher = StartActivityForResultLauncher(this)
     fun click1(view: View) {
-        TestActivity1.start(startActivityForResultLauncher, "like123") {
+        TestActivity1.start(this, "like123") {
             Logger.e(it.data?.getStringExtra("name"))
         }
     }

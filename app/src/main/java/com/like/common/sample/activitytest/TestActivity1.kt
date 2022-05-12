@@ -4,15 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.like.activityresultlauncher.StartActivityForResultLauncher
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest1Binding
 import com.like.common.util.AutoWired
 import com.like.common.util.injectForIntentExtras
+import com.like.common.util.startActivityForResult
 
 /**
  * 正常的 Activity
@@ -38,11 +39,11 @@ class TestActivity1 : AppCompatActivity() {
 
     companion object {
         fun start(
-            startActivityForResultLauncher: StartActivityForResultLauncher,
+            activity: ComponentActivity,
             name: String?,
             callback: ActivityResultCallback<ActivityResult>
         ) {
-            startActivityForResultLauncher.launch<TestActivity1>("name" to name, callback = callback)
+            activity.startActivityForResult<TestActivity1>("name" to name, callback = callback)
         }
     }
 }

@@ -5,8 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowInsets
-import androidx.appcompat.app.AppCompatActivity
-import com.like.activityresultlauncher.RequestPermissionLauncher
+import androidx.activity.ComponentActivity
 
 object PhoneUtils {
 
@@ -104,20 +103,20 @@ object PhoneUtils {
      * 获取电话号码
      */
     @SuppressLint("MissingPermission")
-    suspend fun getPhoneNumber(requestPermissionLauncher: RequestPermissionLauncher): String? {
+    suspend fun getPhoneNumber(activity: ComponentActivity): String? {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_PHONE_NUMBERS)
+            activity.requestPermission(android.Manifest.permission.READ_PHONE_NUMBERS)
         } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.READ_PHONE_STATE)
+            activity.requestPermission(android.Manifest.permission.READ_PHONE_STATE)
         }
         return if (permission) {
-            requestPermissionLauncher.activity.applicationContext.telephonyManager.line1Number
+            activity.applicationContext.telephonyManager.line1Number
         } else {
             null
         }
     }
 
-    suspend fun print(activity: AppCompatActivity) {
+    suspend fun print(activity: ComponentActivity) {
         Logger.d(
             "androidSystemVersion=${getAndroidSystemVersion()} " +
                     "phoneBrand=${getPhoneBrand()} " +
@@ -130,7 +129,7 @@ object PhoneUtils {
                     "density=${getDensity(activity)} " +
                     "densityDpi=${getDensityDpi(activity)} " +
                     "scaledDensity=${getScaledDensity(activity)} " +
-                    "phoneNumber=${getPhoneNumber(RequestPermissionLauncher(activity))}"
+                    "phoneNumber=${getPhoneNumber(activity)}"
         )
     }
 
