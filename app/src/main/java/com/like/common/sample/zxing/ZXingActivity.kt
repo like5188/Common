@@ -13,7 +13,7 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityZxingBinding
 import com.like.common.util.Logger
 import com.like.common.util.ZXingUtils
-import com.like.common.util.requestPermission
+import com.like.common.util.activityresultlauncher.requestPermission
 
 class ZXingActivity : AppCompatActivity() {
     private val mBinding by lazy {

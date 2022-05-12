@@ -22,9 +22,9 @@ import androidx.core.database.getIntOrNull
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import com.like.common.util.UriUtils
-import com.like.common.util.requestPermission
-import com.like.common.util.startActivityForResult
-import com.like.common.util.startIntentSenderForResult
+import com.like.common.util.activityresultlauncher.requestPermission
+import com.like.common.util.activityresultlauncher.startActivityForResult
+import com.like.common.util.activityresultlauncher.startIntentSenderForResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

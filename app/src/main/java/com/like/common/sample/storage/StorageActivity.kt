@@ -16,7 +16,7 @@ import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
 import com.like.common.util.UriUtils
 import com.like.common.util.context
-import com.like.common.util.requestPermission
+import com.like.common.util.activityresultlauncher.requestPermission
 import com.like.common.util.storage.external.MediaStoreUtils
 import com.like.common.util.storage.external.SafUtils
 import kotlinx.coroutines.launch

@@ -13,7 +13,7 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityTest1Binding
 import com.like.common.util.AutoWired
 import com.like.common.util.injectForIntentExtras
-import com.like.common.util.startActivityForResult
+import com.like.common.util.activityresultlauncher.startActivityForResult
 
 /**
  * 正常的 Activity

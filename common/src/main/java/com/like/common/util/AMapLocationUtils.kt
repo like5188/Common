@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
+import com.like.common.util.activityresultlauncher.requestMultiplePermissions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
