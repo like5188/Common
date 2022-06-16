@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-fun File.getUri(context: Context) = UriUtils.getUriByFile(context, this)
+fun File.getUri(context: Context, authority: String) = UriUtils.getUriByFile(context, authority, this)
 
 fun Uri.getFilePath(context: Context) = UriUtils.getFilePathByUri(context, this)
 
@@ -133,11 +133,11 @@ object UriUtils {
             }
     }
 
-    fun getUriByFile(context: Context, file: File): Uri =
+    fun getUriByFile(context: Context, authority: String, file: File): Uri =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // android7.0 需要通过FileProvider来获取文件uri。并开始强制启用StrictMode“严苛模式”，这个策略禁止在app外暴露 “file://“URI。
             // 为了与其他应用共享文件，你应该发送"content://"URI ，并授予临时访问权限。授予这个临时访问权限的最签单方法就是使用FileProvider类。
-            FileProvider.getUriForFile(context.applicationContext, context.packageName + ".fileprovider", file)
+            FileProvider.getUriForFile(context.applicationContext, authority, file)
         } else {
             Uri.fromFile(file)
         }

@@ -15,31 +15,14 @@
     -->
     <paths>
         <!--在android8.0以上的手机上，读取共享文件时，如apk更新的编程中，我们把apk下载后，要安装时，去读取这个apk文件就出现如下错误：Failed to find configured root that contains-->
-        <root-path
-            name="root_path"
-            path="." />
-        <!--拍照需要-->
         <external-path
-            name="camera_photos"
-            path="" />
-        <!--获取apk文件进行安装时需要-->
-        <external-path
-            name="external_storage_root"
-            path="." />
-        <files-path
-            name="files"
-            path="." />
-        <external-path
-            name="download"
-            path="" />
-        <external-files-path
-            name="Download"
-            path="" />
-        <external-path
-            name="my_images"
-            path="Pictures" />
-        <cache-path
-            name="my_download_file"
-            path="" />
+            name="name_xxx"
+            path="path_xxx" />
+        <!--
+        val filePath = File(Environment.getExternalStorageDirectory(), "path_xxx")
+        val file = File(filePath, "1.png")
+        FileProvider.getUriForFile(context.applicationContext, context.packageName + ".fileprovider", file)
+        得到的uri为：content://com.tgf.kcwc.fileprovider/name_xxx/1.png
+        -->
     </paths>
 </resources>
