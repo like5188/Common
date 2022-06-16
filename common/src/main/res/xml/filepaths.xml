@@ -13,16 +13,31 @@
     external-cache-path	    Context.getExternalCacheDir()
     external-media-path	    Context.getExternalMediaDirs()              this directory is only available on API 21+ devices.
     -->
+    <!--在android8.0以上的手机上，读取共享文件时，如apk更新的编程中，我们把apk下载后，要安装时，去读取这个apk文件就出现如下错误：Failed to find configured root that contains
     <paths>
-        <!--在android8.0以上的手机上，读取共享文件时，如apk更新的编程中，我们把apk下载后，要安装时，去读取这个apk文件就出现如下错误：Failed to find configured root that contains-->
         <external-path
-            name="name_xxx"
+            name="update_download_file_path"
             path="path_xxx" />
-        <!--
-        val filePath = File(Environment.getExternalStorageDirectory(), "path_xxx")
-        val file = File(filePath, "1.png")
-        FileProvider.getUriForFile(context.applicationContext, context.packageName + ".fileprovider", file)
-        得到的uri为：content://com.tgf.kcwc.fileprovider/name_xxx/1.png
-        -->
     </paths>
+    val filePath = File(Environment.getExternalStorageDirectory(), "path_xxx")
+    val file = File(filePath, "1.png")
+    FileProvider.getUriForFile(context.applicationContext, context.packageName + ".fileprovider", file)
+    得到的uri为：content://com.tgf.kcwc.fileprovider/name_xxx/1.png
+
+
+
+    在AndroidManifest.xml文件的application标签下中添加，一般拍照、获取apk文件进行安装时需要：
+    authorities URI 授权 前面为包名，后面为fileprovider固定值，使用包名便于区分
+    exported="false" 是否支持其它应用调用当前组件 ，要求为flase
+    @xml/filepaths 在res目录的xml目录下定义的filepaths.xml文件，名字可以自定义
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/filepaths" />
+    </provider>
+    -->
 </resources>
