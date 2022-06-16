@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-    name：指示 FileProvider 将路径段 name 添加到文件的内容 URI 中。
-    path：子目录。
+    name：这个访问路径的别名。指示 FileProvider 将路径段 name 添加到文件的内容 URI 中。
+    path：需要临时授权访问的路径（.代表所有路径）
 
     根目录：                 代表的路径
-    root-path	            .
+    root-path	            /
     files-path	            Context.getFilesDir()
     cache-path	            Context.getCacheDir()
     external-path	        Environment.getExternalStorageDirectory()
