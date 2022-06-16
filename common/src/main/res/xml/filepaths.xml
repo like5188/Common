@@ -16,7 +16,7 @@
     <!--在android8.0以上的手机上，读取共享文件时，如apk更新的编程中，我们把apk下载后，要安装时，去读取这个apk文件就出现如下错误：Failed to find configured root that contains
     <paths>
         <external-path
-            name="update_download_file_path"
+            name="name_xxx"
             path="path_xxx" />
     </paths>
     val filePath = File(Environment.getExternalStorageDirectory(), "path_xxx")
