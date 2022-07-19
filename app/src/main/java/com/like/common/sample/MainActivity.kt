@@ -50,6 +50,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
+        mBinding.badgeView.apply {
+            text = "h"
+            setBackgroundColor(Color.GRAY)
+            setBackgroundBorder(Color.RED, 1.dp)
+            setTextColor(Color.WHITE)
+        }
         initOriginToolBar()
         initCustomMenuToolbar()
         SPUtils.getInstance().init(this)
@@ -122,7 +128,7 @@ class MainActivity : AppCompatActivity() {
             setMargin(42, 10, 20, 10)
             setContentPadding(0, 0, 30, 0)
             getBadgeView().apply {
-                count = 100
+                text = getBadgeText(100)
                 setBackgroundColor(Color.GRAY)
                 setBackgroundBorder(Color.RED, 1.dp)
                 setTextColor(Color.WHITE)
@@ -141,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                 setBackgroundColor(Color.GREEN)
                 setTextColor(Color.BLACK)
                 setTextSize(8f.dp)
-                count = 2
+                text = getBadgeText(2)
             }
         }
         (MenuItemCompat.getActionProvider(mBinding.toolbar2.menu.findItem(R.id.action_1)) as? CustomToolbarMenuActionProvider)?.apply {
@@ -151,12 +157,18 @@ class MainActivity : AppCompatActivity() {
             setMargin(0, 10, 0, 10)
             setContentPadding(30, 0, 30, 0)
             getBadgeView().apply {
-                count = 22
+                text = getBadgeText(22)
                 setBackgroundColor(Color.RED)
                 setTextColor(Color.WHITE)
                 setTextSize(18f.dp)
             }
         }
+    }
+
+    private fun getBadgeText(count: Int) = when {
+        count <= 0 -> ""
+        count < 100 -> count.toString()
+        else -> "99+"
     }
 
     private fun initMarqueeView() {

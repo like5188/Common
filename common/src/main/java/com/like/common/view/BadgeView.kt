@@ -12,9 +12,9 @@ import com.like.common.util.dp
 import com.like.common.util.sp
 
 /**
- * 数字角标
+ * 角标
  * 注意：
- * 1、设置[count]需要放在最后，触发绘制。
+ * 1、如果用代码创建对象，则需要调用[setTargetView]方法。
  * 2、如果在xml中直接使用，则不需要调用[setTargetView]方法。
  */
 open class BadgeView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
@@ -38,20 +38,18 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null) : View(conte
     private lateinit var bgRect: RectF
     private var verticalPadding = 0f.dp// 垂直padding
     private var horizontalPadding = 0f.dp// 水平padding
-    private var text = ""
-    var count = 0
+    var text: String = ""
         set(value) {
             if (field == value) {
                 return
             }
-            val needRequestLayout = transformCountToText(value).length != transformCountToText(field).length
+            val needRequestLayout = value.length != field.length
             field = value
-            visibility = if (hide()) {
+            visibility = if (field.isEmpty()) {
                 GONE
             } else {
-                text = transformCountToText(value)
                 textBounds = Rect().apply {
-                    textPaint.getTextBounds(text, 0, text.length, this)
+                    textPaint.getTextBounds(field, 0, field.length, this)
                 }
                 VISIBLE
             }
@@ -152,7 +150,7 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null) : View(conte
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (hide()) return
+        if (text.isEmpty()) return
         if (backgroundBorderWidth > 0) {
             bgPaint.color = backgroundBorderColor
             bgPaint.strokeWidth = backgroundBorderWidth.toFloat()
@@ -169,21 +167,5 @@ open class BadgeView(context: Context, attrs: AttributeSet? = null) : View(conte
             textPaint
         )
     }
-
-    /**
-     * 把数字转换成字符串供 [BadgeView] 显示
-     */
-    open fun transformCountToText(count: Int): String {
-        return when {
-            count <= 0 -> ""
-            count < 100 -> count.toString()
-            else -> "99+"
-        }
-    }
-
-    /**
-     * 在什么时候隐藏 [BadgeView]
-     */
-    open fun hide(): Boolean = count <= 0
 
 }
