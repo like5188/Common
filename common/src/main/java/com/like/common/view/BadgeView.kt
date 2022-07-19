@@ -3,6 +3,7 @@ package com.like.common.view
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
+import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,11 @@ import com.like.common.util.sp
 
 /**
  * 数字角标
- * 注意：设置[count]需要放在最后，触发绘制。
+ * 注意：
+ * 1、设置[count]需要放在最后，触发绘制。
+ * 2、如果在xml中直接使用，则不需要调用[setTargetView]方法。
  */
-open class BadgeView(context: Context) : View(context) {
+open class BadgeView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
     private val textPaint by lazy {
         TextPaint().apply {
             isAntiAlias = true
