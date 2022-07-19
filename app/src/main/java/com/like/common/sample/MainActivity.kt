@@ -1,17 +1,14 @@
 package com.like.common.sample
 
-import android.Manifest
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -127,6 +124,7 @@ class MainActivity : AppCompatActivity() {
             getBadgeView().apply {
                 count = 100
                 setBackgroundColor(Color.GRAY)
+                setBackgroundBorder(Color.RED, 1.dp)
                 setTextColor(Color.WHITE)
             }
         }
