@@ -29,7 +29,7 @@ class PropertyCollector<UiState>(
     /**
      * 搜集[UiState]中的某个属性的[Value]，当其改变后触发[onValueChanged]
      */
-    inline fun <Value> collect(
+    inline fun <Value> collectProperty(
         property: KProperty1<UiState, Value>,
         crossinline onValueChanged: suspend (newValue: Value) -> Unit
     ) {
@@ -44,7 +44,7 @@ class PropertyCollector<UiState>(
     /**
      * 搜集[UiState]中的某个[Event]类型的属性的[Content]，当此[Event]未处理，则触发[onHandleEvent]去处理事件
      */
-    inline fun <Content> collectEvent(
+    inline fun <Content> collectEventProperty(
         property: KProperty1<UiState, Event<Content>?>,
         crossinline onHandleEvent: suspend (content: Content) -> Unit
     ) {
