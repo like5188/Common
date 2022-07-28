@@ -8,19 +8,28 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.reflect.KProperty1
 
+fun <UiState> Flow<UiState>.propertyCollector(
+    lifecycleOwner: LifecycleOwner,
+    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
+    action: PropertyCollector<UiState>.() -> Unit
+) {
+    PropertyCollector(lifecycleOwner, this, lifecycleState).action()
+}
+
 /**
- * UiState 搜集器
+ * 属性搜集器
+ * 通过反射搜集[UiState]中的某个属性
  */
-class UiStateCollector<UiState>(
+class PropertyCollector<UiState>(
     val lifecycleOwner: LifecycleOwner,
     val flow: Flow<UiState>,
     val lifecycleState: Lifecycle.State
 ) {
 
     /**
-     * 搜集[UiState]中的某个属性，当此属性改变后触发[onValueChanged]
+     * 搜集[UiState]中的某个属性的[Value]，当其改变后触发[onValueChanged]
      */
-    inline fun <Value> collectProperty(
+    inline fun <Value> collect(
         property: KProperty1<UiState, Value>,
         crossinline onValueChanged: suspend (newValue: Value) -> Unit
     ) {
@@ -33,30 +42,23 @@ class UiStateCollector<UiState>(
     }
 
     /**
-     * 搜集[UiState]中的某个事件属性，当此事件属性未处理，则触发[onHandleEvent]去处理事件
+     * 搜集[UiState]中的某个[Event]类型的属性的[Content]，当此[Event]未处理，则触发[onHandleEvent]去处理事件
      */
-    inline fun <Content> collectEventProperty(
+    inline fun <Content> collectEvent(
         property: KProperty1<UiState, Event<Content>?>,
         crossinline onHandleEvent: suspend (content: Content) -> Unit
     ) {
         lifecycleOwner.lifecycleScope.launch {
-            eventProperty(property)
-                .filterNotNull()// 事件属性未处理
+            property(property)
+                .mapNotNull { it?.getContentIfNotHandled() }// 事件属性未处理
                 .flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
                 .collect(onHandleEvent)
         }
     }
 
     /**
-     * 从[UiState]中获取某个属性
+     * 从[UiState]中获取某个属性的[Value]
      */
-    fun <Value> property(property: KProperty1<UiState, Value>): Flow<Value> =
-        flow.map { property.get(it) }
-
-    /**
-     * 从[UiState]中获取某个事件属性
-     */
-    fun <Content> eventProperty(property: KProperty1<UiState, Event<Content>?>): Flow<Content?> =
-        flow.map { property.get(it)?.getContentIfNotHandled() }
+    fun <Value> property(property: KProperty1<UiState, Value>): Flow<Value> = flow.map { property.get(it) }
 
 }

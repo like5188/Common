@@ -1,20 +1,9 @@
 package com.like.common.util.mvi
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import kotlinx.coroutines.flow.Flow
-
 /**
  * 事件包装器（用于 MVI 架构）
  */
-class Event<out Content>(private val content: Content) {
-    companion object {
-        /**
-         * 通知事件，没有内容
-         */
-        val NOTIFICATION = Event(Unit)
-    }
-
+open class Event<out Content>(private val content: Content) {
     private var hasBeenHandled = false
 
     /**
@@ -35,10 +24,7 @@ class Event<out Content>(private val content: Content) {
     fun peekContent(): Content = content
 }
 
-fun <UiState> Flow<UiState>.collectUiState(
-    lifecycleOwner: LifecycleOwner,
-    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
-    action: UiStateCollector<UiState>.() -> Unit
-) {
-    UiStateCollector(lifecycleOwner, this, lifecycleState).action()
-}
+/**
+ * 通知事件，没有内容
+ */
+class NotificationEvent : Event<Unit>(Unit)
