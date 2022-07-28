@@ -38,28 +38,40 @@ open class Event<out Content>(private val content: Content) {
  */
 class UnitEvent : Event<Unit>(Unit)
 
+/**
+ * 从[UiState]中获取某个属性
+ */
 fun <UiState, Value> Flow<UiState>.property(property: KProperty1<UiState, Value>): Flow<Value> =
     map { property.get(it) }.distinctUntilChanged()
 
-fun <UiState, Content> Flow<UiState>.eventProperty(property: KProperty1<UiState, Event<Content?>?>): Flow<Content> =
+/**
+ * 从[UiState]中获取某个事件属性
+ */
+fun <UiState, Content> Flow<UiState>.eventProperty(property: KProperty1<UiState, Event<Content>?>): Flow<Content> =
     map { property.get(it)?.getContentIfNotHandled() }.filterNotNull()
 
+/**
+ * 搜集[UiState]中的某个属性，当此属性改变后触发[onValueChanged]
+ */
 inline fun <UiState, Value> Flow<UiState>.collectProperty(
     owner: LifecycleOwner,
     property: KProperty1<UiState, Value>,
-    crossinline action: suspend (value: Value) -> Unit
+    crossinline onValueChanged: suspend (newValue: Value) -> Unit
 ) {
     owner.lifecycleScope.launch {
-        this@collectProperty.property(property).flowWithLifecycle(owner.lifecycle, Lifecycle.State.STARTED).collect(action)
+        this@collectProperty.property(property).flowWithLifecycle(owner.lifecycle, Lifecycle.State.STARTED).collect(onValueChanged)
     }
 }
 
+/**
+ * 搜集[UiState]中的某个事件属性，当此事件属性未处理，则触发[onHandleEvent]去处理事件
+ */
 inline fun <UiState, Content> Flow<UiState>.collectEventProperty(
     owner: LifecycleOwner,
-    property: KProperty1<UiState, Event<Content?>?>,
-    crossinline action: suspend (value: Content) -> Unit
+    property: KProperty1<UiState, Event<Content>?>,
+    crossinline onHandleEvent: suspend (content: Content) -> Unit
 ) {
     owner.lifecycleScope.launch {
-        this@collectEventProperty.eventProperty(property).flowWithLifecycle(owner.lifecycle, Lifecycle.State.STARTED).collect(action)
+        this@collectEventProperty.eventProperty(property).flowWithLifecycle(owner.lifecycle, Lifecycle.State.STARTED).collect(onHandleEvent)
     }
 }
