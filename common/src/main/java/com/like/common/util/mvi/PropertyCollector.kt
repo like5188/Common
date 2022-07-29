@@ -33,12 +33,10 @@ class PropertyCollector<UiState>(
         property: KProperty1<UiState, Value>,
         crossinline onValueChanged: suspend (newValue: Value) -> Unit
     ) {
-        lifecycleOwner.lifecycleScope.launch {
-            property(property)
-                .distinctUntilChanged()// 属性改变
-                .flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
-                .collect(onValueChanged)
-        }
+        collectWithLifecycle(
+            property(property).distinctUntilChanged(),// 属性改变
+            onValueChanged
+        )
     }
 
     /**
@@ -48,11 +46,16 @@ class PropertyCollector<UiState>(
         property: KProperty1<UiState, Event<Content>?>,
         crossinline onHandleEvent: suspend (content: Content) -> Unit
     ) {
+        collectWithLifecycle(
+            property(property).mapNotNull { it?.getContentIfNotHandled() },// 事件属性未处理
+            onHandleEvent
+        )
+    }
+
+    inline fun <T> collectWithLifecycle(flow: Flow<T>, crossinline action: suspend (value: T) -> Unit) {
         lifecycleOwner.lifecycleScope.launch {
-            property(property)
-                .mapNotNull { it?.getContentIfNotHandled() }// 事件属性未处理
-                .flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
-                .collect(onHandleEvent)
+            flow.flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
+                .collect(action)
         }
     }
 
