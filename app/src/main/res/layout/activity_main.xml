@@ -104,6 +104,13 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:onClick="gotoCoroutinesActivity"
+                    android:text="启动协程测试界面"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:onClick="location"
                     android:text="location"
                     android:textAllCaps="false" />
@@ -176,13 +183,6 @@
                     android:layout_height="wrap_content"
                     android:onClick="gotoFlexBoxActivity"
                     android:text="FlexBox测试"
-                    android:textAllCaps="false" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="gotoCoroutinesActivity"
-                    android:text="启动协程测试界面"
                     android:textAllCaps="false" />
 
                 <Button

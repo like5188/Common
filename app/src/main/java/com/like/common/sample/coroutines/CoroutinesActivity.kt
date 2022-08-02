@@ -9,11 +9,11 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityCoroutinesBinding
 import com.like.common.util.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.runningFold
-import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
+import kotlin.system.measureTimeMillis
 
 /**
  * 协程测试
@@ -27,6 +27,32 @@ class CoroutinesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding
+    }
+
+    private suspend fun a(): Int {
+        delay(1000)
+        throw IllegalArgumentException("error a")
+        return 1
+    }
+
+    private suspend fun b(): Int {
+        delay(2000)
+//        throw IllegalArgumentException("error b")
+        return 2
+    }
+
+    fun successIfOneSuccess(view: View) {
+        lifecycleScope.launch {
+            val cost = measureTimeMillis {
+                supervisorScope {
+                    flowOf(::a.asFlow(), ::b.asFlow()).flattenMerge().toList().forEach {
+                        Logger.v(it)
+                    }
+                }
+
+            }
+            Logger.d(cost)
+        }
     }
 
     fun scan(view: View) {
