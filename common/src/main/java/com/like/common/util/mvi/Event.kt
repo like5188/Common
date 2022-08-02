@@ -1,5 +1,8 @@
 package com.like.common.util.mvi
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
+
 /**
  * 事件包装器（用于 MVI 架构）
  */
@@ -28,3 +31,9 @@ open class Event<out Content>(private val content: Content) {
  * 通知事件，没有内容
  */
 class NotificationEvent : Event<Unit>(Unit)
+
+/**
+ * 从一个流 Flow<Event<T>?> 中获取内容的流 Flow<T>
+ * 如果事件未处理，那么就返回[Event.content]。否则就不会返回
+ */
+fun <T> Flow<Event<T>?>.toContent(): Flow<T> = mapNotNull { it?.getContentIfNotHandled() }// 事件属性未处理

@@ -4,7 +4,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.reflect.KProperty1
 
@@ -33,10 +36,9 @@ class PropertyCollector<UiState>(
         property: KProperty1<UiState, Value>,
         crossinline onValueChanged: suspend (newValue: Value) -> Unit
     ) {
-        collectWithLifecycle(
-            property(property).distinctUntilChanged(),// 属性改变
-            onValueChanged
-        )
+        flow.property(property)
+            .distinctUntilChanged()
+            .collectWithLifecycle(lifecycleOwner, lifecycleState, onValueChanged)
     }
 
     /**
@@ -46,22 +48,24 @@ class PropertyCollector<UiState>(
         property: KProperty1<UiState, Event<Content>?>,
         crossinline onHandleEvent: suspend (content: Content) -> Unit
     ) {
-        collectWithLifecycle(
-            property(property).mapNotNull { it?.getContentIfNotHandled() },// 事件属性未处理
-            onHandleEvent
-        )
+        flow.property(property)
+            .toContent()
+            .collectWithLifecycle(lifecycleOwner, lifecycleState, onHandleEvent)
     }
-
-    inline fun <T> collectWithLifecycle(flow: Flow<T>, crossinline action: suspend (value: T) -> Unit) {
-        lifecycleOwner.lifecycleScope.launch {
-            flow.flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
-                .collect(action)
-        }
-    }
-
-    /**
-     * 从[UiState]中获取某个属性的[Value]
-     */
-    fun <Value> property(property: KProperty1<UiState, Value>): Flow<Value> = flow.map { property.get(it) }
 
 }
+
+inline fun <T> Flow<T>.collectWithLifecycle(
+    lifecycleOwner: LifecycleOwner,
+    lifecycleState: Lifecycle.State,
+    crossinline action: suspend (value: T) -> Unit
+) {
+    lifecycleOwner.lifecycleScope.launch {
+        flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState).collect(action)
+    }
+}
+
+/**
+ * 从一个流 Flow<T> 中获取某个属性的流 Flow<R>
+ */
+fun <T, R> Flow<T>.property(property: KProperty1<T, R>): Flow<R> = map { property.get(it) }
