@@ -4,15 +4,23 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityCoroutinesBinding
-import kotlinx.coroutines.*
+import com.like.common.util.Logger
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.runningFold
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.launch
 
 /**
  * 协程测试
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class CoroutinesActivity : AppCompatActivity() {
-    private val mBinding: ActivityCoroutinesBinding by lazy {
+    private val mBinding by lazy {
         DataBindingUtil.setContentView<ActivityCoroutinesBinding>(this, R.layout.activity_coroutines)
     }
 
@@ -21,41 +29,21 @@ class CoroutinesActivity : AppCompatActivity() {
         mBinding
     }
 
-    fun test0(view: View) {
-        GlobalScope.launch {
-            println("1 ${Thread.currentThread().name}") // 在延迟后打印输出
-            launch(Dispatchers.Main) {
-                println("2 ${Thread.currentThread().name}") // 在延迟后打印输出
+    fun scan(view: View) {
+        lifecycleScope.launch {
+            flowOf(1, 2, 3).scan(0) { acc, value -> acc + value }.collect {
+                Logger.v(it)
             }
-            println("3 ${Thread.currentThread().name}") // 在延迟后打印输出
-            delay(100)
-            launch(Dispatchers.Main) {
-                delay(100)
-                println("4 ${Thread.currentThread().name}") // 在延迟后打印输出
+            flowOf(1, 2, 3).scan("a") { acc, value -> acc + value }.collect {
+                Logger.d(it)
             }
-            println("5 ${Thread.currentThread().name}") // 在延迟后打印输出
+            flowOf(1, 2, 3).runningFold(emptyList<Int>()) { acc, value -> acc + value }.collect {
+                Logger.i(it)
+            }
+            flowOf(1, 2, 3).runningFold(listOf(0)) { acc, value -> acc + value }.collect {
+                Logger.w(it)
+            }
         }
     }
 
-    fun test1(view: View) {
-        GlobalScope.launch {
-            // 在后台启动一个新的协程并继续
-            delay(1000L)
-            println("World!")
-        }
-        println("Hello,") // 主线程中的代码会立即执行
-        runBlocking {
-            // 但是这个函数阻塞了主线程。在主线程中调用了 runBlocking， 阻塞 会持续到 runBlocking 中的协程执行完毕。
-            delay(2000L)  // ……我们延迟2秒来保证 JVM 的存活
-        }
-    }
-
-    fun test2(view: View) {
-    }
-
-    fun test3(view: View) {
-    }
-
-    fun test4(view: View) {
-    }
 }
