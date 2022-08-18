@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 我们使用扩展方法 [addFragments] 添加 Fragment ，用 [showFragment] 控制显示指定的 Fragment。
  */
 abstract class BaseLazyFragment : Fragment() {
-    private val isLoaded = AtomicBoolean(false)
+    protected val isLoaded = AtomicBoolean(false)
 
     override fun onResume() {
         super.onResume()
