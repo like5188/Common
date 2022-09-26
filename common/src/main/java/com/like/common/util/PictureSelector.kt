@@ -174,7 +174,6 @@ private suspend fun PictureSelector.selectMultiplePhoto(
             .minimumCompressSize(1024)// 小于多少kb的图片不压缩
             .maxSelectNum(maxSelectNum)
             .selectionData(selectionData)
-            .imageSpanCount(3)// 每行显示个数 int
             .isPreviewImage(true)// 是否可预览图片 true or false
             .isCamera(true)// 是否显示拍照按钮 true or false
             .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
@@ -201,15 +200,25 @@ fun Fragment.previewVideo(path: String?) {
     PictureSelector.create(this).previewVideo(path)
 }
 
-suspend fun Activity.selectSingleVideo(): LocalMedia? = PictureSelector.create(this).selectSingleVideo()
+suspend fun Activity.selectSingleVideo(videoMaxSecond: Int = 60): LocalMedia? =
+    PictureSelector.create(this).selectSingleVideo(videoMaxSecond)
 
-suspend fun Fragment.selectSingleVideo(): LocalMedia? = PictureSelector.create(this).selectSingleVideo()
+suspend fun Fragment.selectSingleVideo(videoMaxSecond: Int = 60): LocalMedia? =
+    PictureSelector.create(this).selectSingleVideo(videoMaxSecond)
 
-suspend fun Activity.selectMultipleVideo(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
-    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum)
+suspend fun Activity.selectMultipleVideo(
+    selectionData: List<LocalMedia>? = null,
+    maxSelectNum: Int = Int.MAX_VALUE,
+    videoMaxSecond: Int = 60
+): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum, videoMaxSecond)
 
-suspend fun Fragment.selectMultipleVideo(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
-    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum)
+suspend fun Fragment.selectMultipleVideo(
+    selectionData: List<LocalMedia>? = null,
+    maxSelectNum: Int = Int.MAX_VALUE,
+    videoMaxSecond: Int = 60
+): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum, videoMaxSecond)
 
 /**
  * 预览视频
@@ -223,10 +232,13 @@ private fun PictureSelector.previewVideo(path: String?) {
 /**
  * 选择1个视频
  * 对com.github.LuckSiege.PictureSelector库进行了封装
+ * @param videoMaxSecond    查询多少秒以内的视频
  */
-private suspend fun PictureSelector.selectSingleVideo(): LocalMedia? = withContext(Dispatchers.IO) {
+private suspend fun PictureSelector.selectSingleVideo(videoMaxSecond: Int): LocalMedia? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectSingleVideo.openGallery(PictureMimeType.ofVideo())
+            .imageEngine(CoilEngine.instance)
+            .videoMaxSecond(videoMaxSecond)
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: MutableList<LocalMedia>?) {
                     result.print()//打印结果
@@ -245,16 +257,19 @@ private suspend fun PictureSelector.selectSingleVideo(): LocalMedia? = withConte
  * 对com.github.LuckSiege.PictureSelector库进行了封装
  * @param selectionData     已经选择的数据
  * @param maxSelectNum      允许最多选择的数量
+ * @param videoMaxSecond    查询多少秒以内的视频
  */
 private suspend fun PictureSelector.selectMultipleVideo(
     selectionData: List<LocalMedia>?,
-    maxSelectNum: Int
+    maxSelectNum: Int,
+    videoMaxSecond: Int
 ): List<LocalMedia>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectMultipleVideo.openGallery(PictureMimeType.ofVideo())
+            .imageEngine(CoilEngine.instance)
+            .videoMaxSecond(videoMaxSecond)
             .maxVideoSelectNum(maxSelectNum)
             .selectionData(selectionData)
-            .imageSpanCount(3)// 每行显示个数 int
             .isCamera(true)// 是否显示拍照按钮 true or false
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: MutableList<LocalMedia>?) {

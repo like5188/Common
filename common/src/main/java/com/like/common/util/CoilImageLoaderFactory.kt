@@ -7,6 +7,7 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
+import coil.decode.VideoFrameDecoder
 import coil.fetch.VideoFrameFileFetcher
 import coil.fetch.VideoFrameUriFetcher
 
@@ -17,20 +18,20 @@ object CoilImageLoaderFactory {
     imageView.load(File(url), CoilImageLoaderFactory.createGifImageLoader(context))
      */
     fun createGifImageLoader(context: Context): ImageLoader = ImageLoader.Builder(context.applicationContext)
-            .componentRegistry {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder())
-                } else {
-                    add(GifDecoder())
-                }
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                add(ImageDecoderDecoder(context.applicationContext))
+            } else {
+                add(GifDecoder())
             }
-            .build()
+        }
+        .build()
 
     fun createSvgImageLoader(context: Context): ImageLoader = ImageLoader.Builder(context.applicationContext)
-            .componentRegistry {
-                add(SvgDecoder(context.applicationContext))
-            }
-            .build()
+        .componentRegistry {
+            add(SvgDecoder(context.applicationContext))
+        }
+        .build()
 
     /*
     imageView.load(File("/path/to/video.mp4"), CoilImageLoaderFactory.createVideoFrameImageLoader(context)) {
@@ -38,9 +39,10 @@ object CoilImageLoaderFactory {
     }
      */
     fun createVideoFrameImageLoader(context: Context): ImageLoader = ImageLoader.Builder(context)
-            .componentRegistry {
-                add(VideoFrameFileFetcher(context.applicationContext))
-                add(VideoFrameUriFetcher(context.applicationContext))
-            }
-            .build()
+        .componentRegistry {
+            add(VideoFrameFileFetcher(context.applicationContext))
+            add(VideoFrameUriFetcher(context.applicationContext))
+            add(VideoFrameDecoder(context.applicationContext))
+        }
+        .build()
 }
