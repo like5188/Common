@@ -141,6 +141,7 @@ dependencies {
     implementation 'com.shouzhong:ScannerIdCardLib:1.0.4'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.amap.api:location:latest.integration'
+    implementation 'io.github.lucksiege:pictureselector:v2.7.3-rc05'
 
     implementation project(':common')
 }

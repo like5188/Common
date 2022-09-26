@@ -189,6 +189,30 @@ class MainActivity : AppCompatActivity() {
         mBinding.viewFlipper.startFlipping()
     }
 
+    fun selectSinglePhoto(view: View) {
+        lifecycleScope.launch {
+            this@MainActivity.selectSinglePhoto()
+        }
+    }
+
+    fun selectMultiplePhoto(view: View) {
+        lifecycleScope.launch {
+            this@MainActivity.selectMultiplePhoto()
+        }
+    }
+
+    fun selectSingleVideo(view: View) {
+        lifecycleScope.launch {
+            this@MainActivity.selectSingleVideo()
+        }
+    }
+
+    fun selectMultipleVideo(view: View) {
+        lifecycleScope.launch {
+            this@MainActivity.selectMultipleVideo()
+        }
+    }
+
     fun location(view: View) {
         lifecycleScope.launch {
             val l = AMapLocationUtils(this@MainActivity).location()

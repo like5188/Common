@@ -193,6 +193,83 @@ private suspend fun PictureSelector.selectMultiplePhoto(
     }
 }
 
+fun Activity.previewVideo(path: String?) {
+    PictureSelector.create(this).previewVideo(path)
+}
+
+fun Fragment.previewVideo(path: String?) {
+    PictureSelector.create(this).previewVideo(path)
+}
+
+suspend fun Activity.selectSingleVideo(): LocalMedia? = PictureSelector.create(this).selectSingleVideo()
+
+suspend fun Fragment.selectSingleVideo(): LocalMedia? = PictureSelector.create(this).selectSingleVideo()
+
+suspend fun Activity.selectMultipleVideo(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum)
+
+suspend fun Fragment.selectMultipleVideo(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum)
+
+/**
+ * 预览视频
+ * @param path  视频路径
+ */
+private fun PictureSelector.previewVideo(path: String?) {
+    if (path.isNullOrEmpty()) return
+    this.externalPictureVideo(path)
+}
+
+/**
+ * 选择1个视频
+ * 对com.github.LuckSiege.PictureSelector库进行了封装
+ */
+private suspend fun PictureSelector.selectSingleVideo(): LocalMedia? = withContext(Dispatchers.IO) {
+    suspendCoroutine { continuation ->
+        this@selectSingleVideo.openGallery(PictureMimeType.ofVideo())
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: MutableList<LocalMedia>?) {
+                    result.print()//打印结果
+                    continuation.resume(result?.firstOrNull())
+                }
+
+                override fun onCancel() {
+                    continuation.resume(null)
+                }
+            })
+    }
+}
+
+/**
+ * 选择多个视频
+ * 对com.github.LuckSiege.PictureSelector库进行了封装
+ * @param selectionData     已经选择的数据
+ * @param maxSelectNum      允许最多选择的数量
+ */
+private suspend fun PictureSelector.selectMultipleVideo(
+    selectionData: List<LocalMedia>?,
+    maxSelectNum: Int
+): List<LocalMedia>? = withContext(Dispatchers.IO) {
+    suspendCoroutine { continuation ->
+        this@selectMultipleVideo.openGallery(PictureMimeType.ofVideo())
+            .maxVideoSelectNum(maxSelectNum)
+            .selectionData(selectionData)
+            .imageSpanCount(3)// 每行显示个数 int
+            .isCamera(true)// 是否显示拍照按钮 true or false
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: MutableList<LocalMedia>?) {
+                    result.print()//打印结果
+                    continuation.resume(result)
+                }
+
+                override fun onCancel() {
+                    continuation.resume(null)
+                }
+
+            })
+    }
+}
+
 /**
  * 上传文件路径
  */

@@ -55,7 +55,7 @@
                 <com.like.common.view.BadgeView
                     android:id="@+id/badgeView"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
                 <ViewFlipper
                     android:id="@+id/view_flipper"
@@ -100,6 +100,34 @@
                     android:id="@+id/et_search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="selectSinglePhoto"
+                    android:text="选择单个图片"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="selectMultiplePhoto"
+                    android:text="选择多个图片"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="selectSingleVideo"
+                    android:text="选择单个视频"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="selectMultipleVideo"
+                    android:text="选择多个视频"
+                    android:textAllCaps="false" />
 
                 <Button
                     android:layout_width="match_parent"
