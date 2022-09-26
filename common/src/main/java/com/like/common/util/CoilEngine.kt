@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.view.View
 import android.widget.ImageView
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
@@ -13,6 +11,7 @@ import coil.ImageLoader
 import coil.load
 import coil.request.ImageRequest
 import com.like.common.R
+import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.engine.ImageEngine
 import com.luck.picture.lib.listener.OnImageCompleteCallback
 import com.luck.picture.lib.tools.MediaUtils
@@ -171,14 +170,10 @@ class CoilEngine private constructor() : ImageEngine {
         imageLoader: ImageLoader = CoilImageLoaderFactory.createVideoFrameImageLoader(context),
         builder: ImageRequest.Builder.() -> Unit = {},
     ) {
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
-            if (url.startsWith("content://")) {
-                load(Uri.parse(url), imageLoader, builder)
-            } else {
-                load(url, imageLoader, builder)
-            }
+        if (PictureMimeType.isContent(url) || url.startsWith("http") || url.startsWith("https")) {
+            load(Uri.parse(url), imageLoader, builder)
         } else {
-            load(File(url), imageLoader, builder)
+            load(Uri.fromFile(File(url)), imageLoader, builder)
         }
     }
 

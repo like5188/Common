@@ -197,7 +197,9 @@ class MainActivity : AppCompatActivity() {
 
     fun selectMultiplePhoto(view: View) {
         lifecycleScope.launch {
-            this@MainActivity.selectMultiplePhoto()
+            val selectedLocalMediaList = this@MainActivity.selectMultiplePhoto()
+            delay(1000)
+            this@MainActivity.previewPhotos(selectedLocalMediaList, 0)
         }
     }
 
