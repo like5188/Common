@@ -127,7 +127,7 @@ private fun PictureSelector.previewPhotos(medias: List<LocalMedia>?, position: I
     this.themeStyle(R.style.picture_default_style)
         .isNotPreviewDownload(true)
         .imageEngine(CoilEngine.instance) // 请参考Demo GlideEngine.java
-        .openExternalPreview(position, medias)
+        .openExternalPreview(position, medias.toMutableList())
 }
 
 /**
