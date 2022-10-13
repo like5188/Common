@@ -18,7 +18,8 @@ PictureSelector.create(this)
    .openGallery()//相册 媒体类型 PictureMimeType.ofAll()、ofImage()、ofVideo()、ofAudio()
  //.openCamera()//单独使用相机 媒体类型 PictureMimeType.ofImage()、ofVideo()
    .theme()// xml样式配制 R.style.picture_default_style、picture_WeChat_style or 更多参考Demo
-   .loadImageEngine()// 图片加载引擎 需要 implements ImageEngine接口
+   .imageEngine()// 图片加载引擎 需要 implements ImageEngine接口
+   .compressEngine() // 自定义图片压缩引擎
    .selectionMode()//单选or多选 PictureConfig.SINGLE PictureConfig.MULTIPLE
    .isPageStrategy()//开启分页模式，默认开启另提供两个参数；pageSize每页总数；isFilterInvalidFile是否过滤损坏图片
    .isSingleDirectReturn()//PictureConfig.SINGLE模式下是否直接返回
@@ -29,6 +30,9 @@ PictureSelector.create(this)
    .isCamera()//列表是否显示拍照按钮
    .isZoomAnim()//图片选择缩放效果
    .imageFormat()//拍照图片格式后缀,默认jpeg, PictureMimeType.PNG，Android Q使用PictureMimeType.PNG_Q
+   .setCameraImageFormat(PictureMimeType.JPEG)// 相机图片格式后缀,默认.jpeg
+   .setCameraVideoFormat(PictureMimeType.MP4)// 相机视频格式后缀,默认.mp4
+   .setCameraAudioFormat(PictureMimeType.AMR)// 录音音频格式后缀,默认.amr
    .maxSelectNum()//最大选择数量,默认9张
    .minSelectNum()// 最小选择数量
    .maxVideoSelectNum()//视频最大选择数量
@@ -39,6 +43,9 @@ PictureSelector.create(this)
    .openClickSound()//是否开启点击声音
    .selectionMedia()//是否传入已选图片
    .recordVideoSecond()//录制视频秒数 默认60s
+   .filterMinFileSize() // 过滤最小的文件
+   .filterMaxFileSize() // 过滤最大的文件
+   .queryMimeTypeConditions(PictureMimeType.ofJPEG()) // 只查询什么类型的文件
    .previewEggs()//预览图片时是否增强左右滑动图片体验
    .cropCompressQuality()// 注：已废弃 改用cutOutQuality()
    .isGif()//是否显示gif
@@ -51,6 +58,8 @@ PictureSelector.create(this)
    .withAspectRatio()//裁剪比例
    .cutOutQuality()// 裁剪输出质量 默认100
    .freeStyleCropEnabled()//裁剪框是否可拖拽
+   .freeStyleCropMode(OverlayView.DEFAULT_FREESTYLE_CROP_MODE)// 裁剪框拖动模式
+   .isCropDragSmoothToCenter(true)// 裁剪框拖动时图片自动跟随居中
    .circleDimmedLayer()// 是否开启圆形裁剪
    .setCircleDimmedColor()//设置圆形裁剪背景色值
    .setCircleDimmedBorderColor()//设置圆形裁剪边框色值
@@ -63,6 +72,7 @@ PictureSelector.create(this)
    .hideBottomControls()//显示底部uCrop工具栏
    .basicUCropConfig()//对外提供ucrop所有的配制项
    .compress()//是否压缩
+   .compressEngine()// 自定义压缩引擎
    .compressFocusAlpha()//压缩后是否保持图片的透明通道
    .minimumCompressSize()// 小于多少kb的图片不压缩
    .videoQuality()//视频录制质量 0 or 1
@@ -94,6 +104,8 @@ PictureSelector.create(this)
    .isAutomaticTitleRecyclerTop()//图片列表超过一屏连续点击顶部标题栏快速回滚至顶部
    .loadCacheResourcesCallback()//获取ImageEngine缓存图片，参考Demo
    .setOutputCameraPath()// 自定义相机输出目录只针对Android Q以下版本，具体参考Demo
+   .setQuerySandboxDirectory()// 查询自定义相机输出目录,正常情况下跟.setOutputCameraPath()方法配套使用
+   .isGetOnlySandboxDirectory(false) // 是否只显示某个目录下的资源；需与setQuerySandboxDirectory相对应
    .forResult();//结果回调分两种方式onActivityResult()和OnResultCallbackListener方式
  */
 
@@ -105,15 +117,23 @@ fun Fragment.previewPhotos(medias: List<LocalMedia>?, position: Int = 0) {
     PictureSelector.create(this).previewPhotos(medias, position)
 }
 
-suspend fun Activity.selectSinglePhoto(): LocalMedia? = PictureSelector.create(this).selectSinglePhoto()
+suspend fun Activity.selectSinglePhoto(maxFileKbSize: Long = 0): LocalMedia? = PictureSelector.create(this).selectSinglePhoto(maxFileKbSize)
 
-suspend fun Fragment.selectSinglePhoto(): LocalMedia? = PictureSelector.create(this).selectSinglePhoto()
+suspend fun Fragment.selectSinglePhoto(maxFileKbSize: Long = 0): LocalMedia? = PictureSelector.create(this).selectSinglePhoto(maxFileKbSize)
 
-suspend fun Activity.selectMultiplePhoto(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
-    PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+suspend fun Activity.selectMultiplePhoto(
+    selectionData: List<LocalMedia>? = null,
+    maxSelectNum: Int = Int.MAX_VALUE,
+    maxFileKbSize: Long = 0
+): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum, maxFileKbSize)
 
-suspend fun Fragment.selectMultiplePhoto(selectionData: List<LocalMedia>? = null, maxSelectNum: Int = Int.MAX_VALUE): List<LocalMedia>? =
-    PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum)
+suspend fun Fragment.selectMultiplePhoto(
+    selectionData: List<LocalMedia>? = null,
+    maxSelectNum: Int = Int.MAX_VALUE,
+    maxFileKbSize: Long = 0
+): List<LocalMedia>? =
+    PictureSelector.create(this).selectMultiplePhoto(selectionData, maxSelectNum, maxFileKbSize)
 
 /**
  * 预览图片
@@ -133,14 +153,16 @@ private fun PictureSelector.previewPhotos(medias: List<LocalMedia>?, position: I
 /**
  * 选择1张照片
  * 对com.github.LuckSiege.PictureSelector库进行了封装
+ * @param maxFileKbSize     最大文件限制
  */
-private suspend fun PictureSelector.selectSinglePhoto(): LocalMedia? = withContext(Dispatchers.IO) {
+private suspend fun PictureSelector.selectSinglePhoto(maxFileKbSize: Long): LocalMedia? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectSinglePhoto.openGallery(PictureMimeType.ofImage())
             .imageEngine(CoilEngine.instance)
             .selectionMode(PictureConfig.SINGLE)
             .isCompress(true)//是否压缩
             .compressQuality(80)
+            .filterMaxFileSize(maxFileKbSize)
             .minimumCompressSize(1024)// 小于多少kb的图片不压缩
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: MutableList<LocalMedia>?) {
@@ -160,10 +182,12 @@ private suspend fun PictureSelector.selectSinglePhoto(): LocalMedia? = withConte
  * 对com.github.LuckSiege.PictureSelector库进行了封装
  * @param selectionData     已经选择的照片数据
  * @param maxSelectNum      允许最多选择的照片数量
+ * @param maxFileKbSize     最大文件限制
  */
 private suspend fun PictureSelector.selectMultiplePhoto(
     selectionData: List<LocalMedia>?,
-    maxSelectNum: Int
+    maxSelectNum: Int,
+    maxFileKbSize: Long
 ): List<LocalMedia>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectMultiplePhoto.openGallery(PictureMimeType.ofImage())
@@ -173,6 +197,7 @@ private suspend fun PictureSelector.selectMultiplePhoto(
             .compressQuality(80)
             .minimumCompressSize(1024)// 小于多少kb的图片不压缩
             .maxSelectNum(maxSelectNum)
+            .filterMaxFileSize(maxFileKbSize)
             .selectionData(selectionData)
             .isPreviewImage(true)// 是否可预览图片 true or false
             .isCamera(true)// 是否显示拍照按钮 true or false
@@ -200,25 +225,33 @@ fun Fragment.previewVideo(path: String?) {
     PictureSelector.create(this).previewVideo(path)
 }
 
-suspend fun Activity.selectSingleVideo(videoMaxSecond: Int = 60): LocalMedia? =
-    PictureSelector.create(this).selectSingleVideo(videoMaxSecond)
+suspend fun Activity.selectSingleVideo(
+    videoMaxSecond: Int = 60,
+    maxFileKbSize: Long = 0
+): LocalMedia? =
+    PictureSelector.create(this).selectSingleVideo(videoMaxSecond, maxFileKbSize)
 
-suspend fun Fragment.selectSingleVideo(videoMaxSecond: Int = 60): LocalMedia? =
-    PictureSelector.create(this).selectSingleVideo(videoMaxSecond)
+suspend fun Fragment.selectSingleVideo(
+    videoMaxSecond: Int = 60,
+    maxFileKbSize: Long = 0
+): LocalMedia? =
+    PictureSelector.create(this).selectSingleVideo(videoMaxSecond, maxFileKbSize)
 
 suspend fun Activity.selectMultipleVideo(
     selectionData: List<LocalMedia>? = null,
     maxSelectNum: Int = Int.MAX_VALUE,
-    videoMaxSecond: Int = 60
+    videoMaxSecond: Int = 60,
+    maxFileKbSize: Long = 0
 ): List<LocalMedia>? =
-    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum, videoMaxSecond)
+    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum, videoMaxSecond, maxFileKbSize)
 
 suspend fun Fragment.selectMultipleVideo(
     selectionData: List<LocalMedia>? = null,
     maxSelectNum: Int = Int.MAX_VALUE,
-    videoMaxSecond: Int = 60
+    videoMaxSecond: Int = 60,
+    maxFileKbSize: Long = 0
 ): List<LocalMedia>? =
-    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum, videoMaxSecond)
+    PictureSelector.create(this).selectMultipleVideo(selectionData, maxSelectNum, videoMaxSecond, maxFileKbSize)
 
 /**
  * 预览视频
@@ -233,12 +266,17 @@ private fun PictureSelector.previewVideo(path: String?) {
  * 选择1个视频
  * 对com.github.LuckSiege.PictureSelector库进行了封装
  * @param videoMaxSecond    查询多少秒以内的视频
+ * @param maxFileKbSize     最大文件限制
  */
-private suspend fun PictureSelector.selectSingleVideo(videoMaxSecond: Int): LocalMedia? = withContext(Dispatchers.IO) {
+private suspend fun PictureSelector.selectSingleVideo(
+    videoMaxSecond: Int,
+    maxFileKbSize: Long
+): LocalMedia? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectSingleVideo.openGallery(PictureMimeType.ofVideo())
             .imageEngine(CoilEngine.instance)
             .videoMaxSecond(videoMaxSecond)
+            .filterMaxFileSize(maxFileKbSize)
             .forResult(object : OnResultCallbackListener<LocalMedia> {
                 override fun onResult(result: MutableList<LocalMedia>?) {
                     result.print()//打印结果
@@ -258,17 +296,20 @@ private suspend fun PictureSelector.selectSingleVideo(videoMaxSecond: Int): Loca
  * @param selectionData     已经选择的数据
  * @param maxSelectNum      允许最多选择的数量
  * @param videoMaxSecond    查询多少秒以内的视频
+ * @param maxFileKbSize     最大文件限制
  */
 private suspend fun PictureSelector.selectMultipleVideo(
     selectionData: List<LocalMedia>?,
     maxSelectNum: Int,
-    videoMaxSecond: Int
+    videoMaxSecond: Int,
+    maxFileKbSize: Long
 ): List<LocalMedia>? = withContext(Dispatchers.IO) {
     suspendCoroutine { continuation ->
         this@selectMultipleVideo.openGallery(PictureMimeType.ofVideo())
             .imageEngine(CoilEngine.instance)
-            .videoMaxSecond(videoMaxSecond)
             .maxVideoSelectNum(maxSelectNum)
+            .videoMaxSecond(videoMaxSecond)
+            .filterMaxFileSize(maxFileKbSize)
             .selectionData(selectionData)
             .isCamera(true)// 是否显示拍照按钮 true or false
             .forResult(object : OnResultCallbackListener<LocalMedia> {
