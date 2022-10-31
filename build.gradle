@@ -21,7 +21,7 @@ buildscript {
 // 而子项目可以配置自己的repositories以获取自己独需的依赖包。
 allprojects {
     repositories {
-//        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         google()
         mavenCentral()
         jcenter()
