@@ -30,9 +30,32 @@ class PropertyCollector<UiState>(
 ) {
 
     /**
-     * 搜集[UiState]中的某个属性的[Value]，当其改变后触发[onValueChanged]
+     * 搜集[UiState]中的某个属性的[Value]，不管它是否改变，都会触发[onValueCollected]
      */
     inline fun <Value> collectProperty(
+        property: KProperty1<UiState, Value>,
+        crossinline onValueCollected: suspend (newValue: Value) -> Unit
+    ) {
+        flow.property(property)
+            .collectWithLifecycle(lifecycleOwner, lifecycleState, onValueCollected)
+    }
+
+    /**
+     * 搜集[UiState]中的某个[Event]类型的属性的[Content]，不管[Event]是否处理，都会触发[onEventCollected]去处理事件
+     */
+    inline fun <Content> collectEventProperty(
+        property: KProperty1<UiState, Event<Content>?>,
+        crossinline onEventCollected: suspend (content: Content) -> Unit
+    ) {
+        flow.property(property)
+            .toContent()
+            .collectWithLifecycle(lifecycleOwner, lifecycleState, onEventCollected)
+    }
+
+    /**
+     * 搜集[UiState]中的某个属性的[Value]，当其改变后触发[onValueChanged]
+     */
+    inline fun <Value> collectDistinctProperty(
         property: KProperty1<UiState, Value>,
         crossinline onValueChanged: suspend (newValue: Value) -> Unit
     ) {
@@ -42,15 +65,15 @@ class PropertyCollector<UiState>(
     }
 
     /**
-     * 搜集[UiState]中的某个[Event]类型的属性的[Content]，当此[Event]未处理，则触发[onHandleEvent]去处理事件
+     * 搜集[UiState]中的某个[Event]类型的属性的[Content]，当此[Event]未处理，则触发[onNotHandledEventCollected]去处理事件
      */
-    inline fun <Content> collectEventProperty(
+    inline fun <Content> collectNotHandledEventProperty(
         property: KProperty1<UiState, Event<Content>?>,
-        crossinline onHandleEvent: suspend (content: Content) -> Unit
+        crossinline onNotHandledEventCollected: suspend (content: Content) -> Unit
     ) {
         flow.property(property)
-            .toContent()
-            .collectWithLifecycle(lifecycleOwner, lifecycleState, onHandleEvent)
+            .toNotHandledContent()
+            .collectWithLifecycle(lifecycleOwner, lifecycleState, onNotHandledEventCollected)
     }
 
 }

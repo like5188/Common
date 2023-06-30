@@ -36,4 +36,10 @@ class NotificationEvent : Event<Unit>(Unit)
  * 从一个流 Flow<Event<T>?> 中获取内容的流 Flow<T>
  * 如果事件未处理，那么就返回[Event.content]。否则就不会返回
  */
-fun <T> Flow<Event<T>?>.toContent(): Flow<T> = mapNotNull { it?.getContentIfNotHandled() }// 事件属性未处理
+fun <T> Flow<Event<T>?>.toNotHandledContent(): Flow<T> = mapNotNull { it?.getContentIfNotHandled() }// 事件属性未处理
+
+/**
+ * 从一个流 Flow<Event<T>?> 中获取内容的流 Flow<T>
+ * 不管事件是否处理，都返回[Event.content]。
+ */
+fun <T> Flow<Event<T>?>.toContent(): Flow<T> = mapNotNull { it?.peekContent() }// 事件属性未处理
