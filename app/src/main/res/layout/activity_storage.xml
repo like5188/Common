@@ -41,6 +41,13 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="selectMultiFile"
+                android:text="selectMultiFile"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:onClick="selectFile"
                 android:text="selectFile"
                 android:textAllCaps="false" />

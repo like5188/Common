@@ -15,8 +15,8 @@ import com.like.common.sample.R
 import com.like.common.sample.databinding.ActivityStorageBinding
 import com.like.common.util.Logger
 import com.like.common.util.UriUtils
-import com.like.common.util.context
 import com.like.common.util.activityresultlauncher.requestPermission
+import com.like.common.util.context
 import com.like.common.util.storage.external.MediaStoreUtils
 import com.like.common.util.storage.external.SafUtils
 import kotlinx.coroutines.launch
@@ -62,17 +62,25 @@ class StorageActivity : AppCompatActivity() {
         }
     }
 
+    fun selectMultiFile(view: View) {
+        lifecycleScope.launch {
+            val uriList = SafUtils.selectMultiFile(this@StorageActivity, SafUtils.MimeType._0)
+            uriList.forEach {
+                Logger.e(it)
+            }
+        }
+    }
+
     fun selectFile(view: View) {
         lifecycleScope.launch {
-            Logger.e(SafUtils.selectFile(this@StorageActivity, SafUtils.MimeType._jpg))
+            Logger.e(SafUtils.selectFile(this@StorageActivity, SafUtils.MimeType._0))
         }
     }
 
     fun takePhoto(view: View) {
         lifecycleScope.launch {
             MediaStoreUtils.takePhoto(
-                this@StorageActivity,
-                false
+                this@StorageActivity, false
             )?.let {
                 mBinding.iv.setImageBitmap(it)
             }
@@ -138,10 +146,7 @@ class StorageActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 Logger.d(
                     MediaStoreUtils.updateFile(
-                        this@StorageActivity,
-                        uri,
-                        displayName = "22",
-                        relativePath = "${Environment.DIRECTORY_PICTURES}/like1"
+                        this@StorageActivity, uri, displayName = "22", relativePath = "${Environment.DIRECTORY_PICTURES}/like1"
                     )
                 )
             }

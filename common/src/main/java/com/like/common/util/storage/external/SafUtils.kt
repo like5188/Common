@@ -39,12 +39,32 @@ import java.io.InputStream
 object SafUtils {
 
     /**
-     * 使用系统选择器选择指定类型的文件
+     * 使用系统选择器选择指定类型的文件（支持长按多选）
      */
-    suspend fun selectFile(activity: ComponentActivity, mimeType: MimeType = MimeType._0): Intent? {
+    suspend fun selectMultiFile(activity: ComponentActivity, mimeType: MimeType = MimeType._0): List<Uri?> {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = mimeType.value
-        return activity.startActivityForResult(intent).data
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        val data = activity.startActivityForResult(intent).data
+        val clipData = data?.clipData
+        return if (clipData == null) {
+            // 只是单选
+            listOf(data?.data)
+        } else {
+            // 触发了多选（长按）。但是也可能只勾选了1个文件
+            (0 until clipData.itemCount).map {
+                clipData.getItemAt(it).uri
+            }
+        }
+    }
+
+    /**
+     * 使用系统选择器选择指定类型的文件
+     */
+    suspend fun selectFile(activity: ComponentActivity, mimeType: MimeType = MimeType._0): Uri? {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = mimeType.value
+        return activity.startActivityForResult(intent).data?.data
     }
 
     /**
