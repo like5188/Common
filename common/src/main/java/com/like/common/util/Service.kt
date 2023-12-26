@@ -27,8 +27,10 @@ fun Service.startForeground(
     channelName: String = this::class.java.simpleName,
     channelId: String = "${channelName}_id",
 ) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        notificationManager.createNotificationChannel(NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW))
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager.getNotificationChannel(channelId) == null) {
+        notificationManager.createNotificationChannel(
+            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+        )
     }
     startForeground(
         id,
