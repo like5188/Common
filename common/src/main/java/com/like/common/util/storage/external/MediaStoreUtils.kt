@@ -207,6 +207,7 @@ object MediaStoreUtils {
      * @param sortOrder         排序依据。比如："${MediaStore.Video.Media.DISPLAY_NAME} ASC"
      * @param limit             需要返回的数量
      * @param offset            跳过数量
+     * 注意：[limit]、[offset]这两个参数在[Build.VERSION_CODES.O]以下时，必须配合[sortOrder]使用，因为它们是拼接在[sortOrder]字符串中的。
      */
     private suspend inline fun <reified T : BaseEntity> getEntities(
         context: Context,
