@@ -105,7 +105,11 @@ class StorageActivity : AppCompatActivity() {
                     requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
                 ) {
                     images.forEach {
-                        UriUtils.getLatLongFromUri(this@StorageActivity, it.uri)
+                        val latLong = UriUtils.getLatLongFromUri(this@StorageActivity, it.uri)
+                        if (latLong != null && latLong.size >= 2) {
+                            it.latitude = latLong[0]
+                            it.longitude = latLong[1]
+                        }
                     }
                 }
                 Logger.printCollection(images)
