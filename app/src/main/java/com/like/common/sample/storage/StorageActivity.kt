@@ -100,7 +100,13 @@ class StorageActivity : AppCompatActivity() {
     fun getImages(view: View) {
         lifecycleScope.launch {
             if (requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                val images = MediaStoreUtils.getImages(this@StorageActivity)
+                val images = MediaStoreUtils.getImages(
+                    this@StorageActivity,
+                    selection = "${MediaStore.MediaColumns.DATE_ADDED} >= ?",
+                    selectionArgs = arrayOf(TimeUnit.MILLISECONDS.toSeconds(1665604934000).toString()),
+                    sortOrder = "${MediaStore.MediaColumns.DATE_MODIFIED} DESC",
+                    limit = 1
+                )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&// android 10 及其以上
                     !Environment.isExternalStorageLegacy() &&// 开启了分区存储
                     requestPermission(Manifest.permission.ACCESS_MEDIA_LOCATION)
@@ -126,7 +132,8 @@ class StorageActivity : AppCompatActivity() {
                         this@StorageActivity,
                         selection = "${MediaStore.MediaColumns.DATE_ADDED} >= ?",
                         selectionArgs = arrayOf(TimeUnit.MILLISECONDS.toSeconds(1705293023000).toString()),
-                        sortOrder = "${MediaStore.MediaColumns.DATE_MODIFIED} DESC"
+                        sortOrder = "${MediaStore.MediaColumns.DATE_MODIFIED} ASC",
+                        limit = 3
                     )
                 )
             }

@@ -3,6 +3,7 @@ package com.like.common.util.storage.external
 import android.Manifest
 import android.app.Activity
 import android.app.RecoverableSecurityException
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -11,6 +12,7 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.provider.BaseColumns
 import android.provider.MediaStore
@@ -88,8 +90,7 @@ object MediaStoreUtils {
      * @param isThumbnail     表示返回值是否为缩略图
      */
     suspend fun takePhoto(
-        activity: ComponentActivity,
-        isThumbnail: Boolean = false
+        activity: ComponentActivity, isThumbnail: Boolean = false
     ): Bitmap? {
         // 如果你的应用没有配置android.permission.CAMERA权限，则不会出现下面的问题。如果你的应用配置了android.permission.CAMERA权限，那么你的应用必须获得该权限的授权，否则会出错
         if (!activity.requestPermission(Manifest.permission.CAMERA)) {
@@ -104,10 +105,7 @@ object MediaStoreUtils {
             activity.startActivityForResult(intent).data?.getParcelableExtra("data")
         } else {
             val imageUri = createFile(
-                activity,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                "${System.currentTimeMillis()}.jpg",
-                Environment.DIRECTORY_PICTURES
+                activity, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "${System.currentTimeMillis()}.jpg", Environment.DIRECTORY_PICTURES
             ) ?: return null
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             // 如果[MediaStore.EXTRA_OUTPUT]不为 null，那么返回值不为 null，表示拍照成功返回，其中 imageUri 参数则是照片的 Uri。
@@ -127,9 +125,13 @@ object MediaStoreUtils {
         context: Context,
         selection: String? = null,
         selectionArgs: Array<String>? = null,
-        sortOrder: String? = null
+        sortOrder: String? = null,
+        limit: Int = 0,
+        offset: Int = 0
     ): List<FileEntity> {
-        return getEntities(context, FileEntity.getContentUri(), FileEntity.getProjections(), selection, selectionArgs, sortOrder)
+        return getEntities(
+            context, FileEntity.getContentUri(), FileEntity.getProjections(), selection, selectionArgs, sortOrder, limit, offset
+        )
     }
 
     /**
@@ -148,9 +150,13 @@ object MediaStoreUtils {
         context: Context,
         selection: String? = null,
         selectionArgs: Array<String>? = null,
-        sortOrder: String? = null
+        sortOrder: String? = null,
+        limit: Int = 0,
+        offset: Int = 0
     ): List<ImageEntity> {
-        return getEntities(context, ImageEntity.getContentUri(), ImageEntity.getProjections(), selection, selectionArgs, sortOrder)
+        return getEntities(
+            context, ImageEntity.getContentUri(), ImageEntity.getProjections(), selection, selectionArgs, sortOrder, limit, offset
+        )
     }
 
     /**
@@ -164,9 +170,13 @@ object MediaStoreUtils {
         context: Context,
         selection: String? = null,
         selectionArgs: Array<String>? = null,
-        sortOrder: String? = null
+        sortOrder: String? = null,
+        limit: Int = 0,
+        offset: Int = 0
     ): List<AudioEntity> {
-        return getEntities(context, AudioEntity.getContentUri(), AudioEntity.getProjections(), selection, selectionArgs, sortOrder)
+        return getEntities(
+            context, AudioEntity.getContentUri(), AudioEntity.getProjections(), selection, selectionArgs, sortOrder, limit, offset
+        )
     }
 
     /**
@@ -181,9 +191,13 @@ object MediaStoreUtils {
         context: Context,
         selection: String? = null,
         selectionArgs: Array<String>? = null,
-        sortOrder: String? = null
+        sortOrder: String? = null,
+        limit: Int = 0,
+        offset: Int = 0
     ): List<VideoEntity> {
-        return getEntities(context, VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder)
+        return getEntities(
+            context, VideoEntity.getContentUri(), VideoEntity.getProjections(), selection, selectionArgs, sortOrder, limit, offset
+        )
     }
 
     /**
@@ -191,6 +205,8 @@ object MediaStoreUtils {
      * @param selection         查询条件。比如："${MediaStore.Video.Media.DURATION} >= ?"
      * @param selectionArgs     查询条件填充值。比如：arrayOf(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES).toString())
      * @param sortOrder         排序依据。比如："${MediaStore.Video.Media.DISPLAY_NAME} ASC"
+     * @param limit             需要返回的数量
+     * @param offset            跳过数量
      */
     private suspend inline fun <reified T : BaseEntity> getEntities(
         context: Context,
@@ -198,22 +214,53 @@ object MediaStoreUtils {
         projection: Array<String>,
         selection: String?,
         selectionArgs: Array<String>?,
-        sortOrder: String?
+        sortOrder: String?,
+        limit: Int = 0,
+        offset: Int = 0
     ): List<T> {
         val files = mutableListOf<T>()
         withContext(Dispatchers.IO) {
-            context.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)
-                ?.use { cursor ->
-                    while (cursor.moveToNext()) {
-                        files += when (T::class.java) {
-                            FileEntity::class.java -> FileEntity(cursor)
-                            ImageEntity::class.java -> ImageEntity(cursor)
-                            AudioEntity::class.java -> AudioEntity(cursor)
-                            VideoEntity::class.java -> VideoEntity(cursor)
-                            else -> throw RuntimeException("get entities error")
-                        } as T
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val queryArgs = Bundle()
+                if (selection != null) {
+                    queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SELECTION, selection)
+                }
+                if (selectionArgs != null) {
+                    queryArgs.putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, selectionArgs)
+                }
+                if (sortOrder != null) {
+                    queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, sortOrder)
+                }
+                if (limit > 0) {
+                    queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, limit)
+                }
+                if (offset > 0) {
+                    queryArgs.putInt(ContentResolver.QUERY_ARG_OFFSET, offset)
+                }
+                context.contentResolver.query(uri, projection, queryArgs, null)
+            } else {
+                val sb = StringBuilder()
+                if (!sortOrder.isNullOrEmpty()) {
+                    sb.append(sortOrder)
+                    if (limit > 0) {
+                        sb.append(" LIMIT $limit")
+                    }
+                    if (offset > 0) {
+                        sb.append(" OFFSET $offset")
                     }
                 }
+                context.contentResolver.query(uri, projection, selection, selectionArgs, sb.toString())
+            }?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    files += when (T::class.java) {
+                        FileEntity::class.java -> FileEntity(cursor)
+                        ImageEntity::class.java -> ImageEntity(cursor)
+                        AudioEntity::class.java -> AudioEntity(cursor)
+                        VideoEntity::class.java -> VideoEntity(cursor)
+                        else -> throw RuntimeException("get entities error")
+                    } as T
+                }
+            }
         }
         return files
     }
@@ -268,11 +315,7 @@ object MediaStoreUtils {
      */
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun createFile(
-        activity: ComponentActivity,
-        uri: Uri,
-        displayName: String,
-        relativePath: String,
-        onWrite: ((FileOutputStream?) -> Unit)? = null
+        activity: ComponentActivity, uri: Uri, displayName: String, relativePath: String, onWrite: ((FileOutputStream?) -> Unit)? = null
     ): Uri? {
         if (displayName.isEmpty()) {
             return null
@@ -280,9 +323,7 @@ object MediaStoreUtils {
         if (relativePath.isEmpty()) {
             return null
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !activity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !activity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             return null
         }
 
@@ -351,9 +392,7 @@ object MediaStoreUtils {
         if (displayName.isEmpty()) {
             return false
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !activity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !activity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             return false
         }
         val resolver = activity.applicationContext.contentResolver
@@ -386,12 +425,9 @@ object MediaStoreUtils {
      * 如果启用了分区存储，您就需要为应用要移除的每个文件捕获 RecoverableSecurityException
      */
     suspend fun deleteFile(
-        activity: ComponentActivity,
-        uri: Uri
+        activity: ComponentActivity, uri: Uri
     ): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            !activity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        ) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !activity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             return false
         }
         return withContext(Dispatchers.IO) {
@@ -418,11 +454,9 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createWriteRequest(
-        activity: ComponentActivity,
-        uris: List<Uri>
+        activity: ComponentActivity, uris: List<Uri>
     ): Boolean {
-        val pendingIntent =
-            MediaStore.createWriteRequest(activity.applicationContext.contentResolver, uris)
+        val pendingIntent = MediaStore.createWriteRequest(activity.applicationContext.contentResolver, uris)
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
         return activity.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
@@ -433,11 +467,9 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createDeleteRequest(
-        activity: ComponentActivity,
-        uris: List<Uri>
+        activity: ComponentActivity, uris: List<Uri>
     ): Boolean {
-        val pendingIntent =
-            MediaStore.createDeleteRequest(activity.applicationContext.contentResolver, uris)
+        val pendingIntent = MediaStore.createDeleteRequest(activity.applicationContext.contentResolver, uris)
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
         return activity.startIntentSenderForResult(intentSenderRequest).resultCode == Activity.RESULT_OK
@@ -450,14 +482,10 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createTrashRequest(
-        activity: ComponentActivity,
-        uris: List<Uri>,
-        isTrashed: Boolean
+        activity: ComponentActivity, uris: List<Uri>, isTrashed: Boolean
     ): Boolean {
         val pendingIntent = MediaStore.createTrashRequest(
-            activity.applicationContext.contentResolver,
-            uris,
-            isTrashed
+            activity.applicationContext.contentResolver, uris, isTrashed
         )
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
@@ -469,14 +497,10 @@ object MediaStoreUtils {
      */
     @RequiresApi(Build.VERSION_CODES.R)
     suspend fun createFavoriteRequest(
-        activity: ComponentActivity,
-        uris: List<Uri>,
-        isFavorite: Boolean
+        activity: ComponentActivity, uris: List<Uri>, isFavorite: Boolean
     ): Boolean {
         val pendingIntent = MediaStore.createFavoriteRequest(
-            activity.applicationContext.contentResolver,
-            uris,
-            isFavorite
+            activity.applicationContext.contentResolver, uris, isFavorite
         )
         val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent).build()
         // Launch a system prompt requesting user permission for the operation.
@@ -507,8 +531,7 @@ object MediaStoreUtils {
                         is AudioEntity -> AudioEntity.getContentUri()
                         is VideoEntity -> VideoEntity.getContentUri()
                         else -> throw RuntimeException("get uri error")
-                    },
-                    id ?: -1L
+                    }, id ?: -1L
                 )
             }
         }
@@ -538,8 +561,7 @@ object MediaStoreUtils {
 
             @RequiresApi(Build.VERSION_CODES.R)
             val projectionR = arrayOf(
-                MediaStore.MediaColumns.ARTIST,
-                MediaStore.MediaColumns.ALBUM
+                MediaStore.MediaColumns.ARTIST, MediaStore.MediaColumns.ALBUM
             )
 
             fun getProjections(): Array<String> {
