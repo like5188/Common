@@ -119,7 +119,9 @@ class StorageActivity : AppCompatActivity() {
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
-            Logger.printCollection(MediaStoreUtils.getAudios(this@StorageActivity))
+            if (requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Logger.printCollection(MediaStoreUtils.getAudios(this@StorageActivity))
+            }
         }
     }
 
