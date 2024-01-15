@@ -29,7 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 // 分区存储改变了应用在设备的外部存储设备中存储和访问文件的方式。
@@ -526,6 +527,7 @@ object MediaStoreUtils {
                 MediaStore.MediaColumns.TITLE,
                 MediaStore.MediaColumns.MIME_TYPE,
                 MediaStore.MediaColumns.DATE_ADDED,
+                MediaStore.MediaColumns.DATE_MODIFIED,
             )
 
             @RequiresApi(Build.VERSION_CODES.Q)
@@ -554,11 +556,14 @@ object MediaStoreUtils {
 
         }
 
+        private val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
         var size: Int? = null
         var displayName: String? = null
         var title: String? = null
         var mimeType: String? = null
-        var dateAdded: Date? = null
+        var dateAdded: Long? = null
+        var dateModified: Long? = null
         var orientation: Int? = null
         var duration: Int? = null
         var artist: String? = null
@@ -570,7 +575,8 @@ object MediaStoreUtils {
                 displayName = getStringOrNull(getColumnIndexOrThrow(projection[1]))
                 title = getStringOrNull(getColumnIndexOrThrow(projection[2]))
                 mimeType = getStringOrNull(getColumnIndexOrThrow(projection[3]))
-                dateAdded = Date(TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[4]))))
+                dateAdded = TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[4])))
+                dateModified = TimeUnit.SECONDS.toMillis(getLong(getColumnIndexOrThrow(projection[5])))
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     orientation = getIntOrNull(getColumnIndexOrThrow(projectionQ[0]))
@@ -585,7 +591,15 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded, orientation=$orientation, duration=$duration, artist=$artist, album=$album"
+            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=${
+                sdf.format(
+                    Date(dateAdded ?: 0)
+                )
+            }, dateModified=${
+                sdf.format(
+                    Date(dateModified ?: 0)
+                )
+            }, orientation=$orientation, duration=$duration, artist=$artist, album=$album"
         }
 
     }
