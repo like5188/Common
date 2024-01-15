@@ -20,6 +20,7 @@ import com.like.common.util.context
 import com.like.common.util.storage.external.MediaStoreUtils
 import com.like.common.util.storage.external.SafUtils
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class StorageActivity : AppCompatActivity() {
     private val mBinding by lazy {
@@ -120,7 +121,14 @@ class StorageActivity : AppCompatActivity() {
     fun getAudios(view: View) {
         lifecycleScope.launch {
             if (requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Logger.printCollection(MediaStoreUtils.getAudios(this@StorageActivity))
+                Logger.printCollection(
+                    MediaStoreUtils.getAudios(
+                        this@StorageActivity,
+                        selection = "${MediaStore.MediaColumns.DATE_ADDED} >= ?",
+                        selectionArgs = arrayOf(TimeUnit.MILLISECONDS.toSeconds(1705293023000).toString()),
+                        sortOrder = "${MediaStore.MediaColumns.DATE_MODIFIED} DESC"
+                    )
+                )
             }
         }
     }

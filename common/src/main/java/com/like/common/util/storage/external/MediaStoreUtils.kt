@@ -591,11 +591,11 @@ object MediaStoreUtils {
         }
 
         override fun toString(): String {
-            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=${
+            return "${super.toString()}, size=$size, displayName=$displayName, title=$title, mimeType=$mimeType, dateAdded=$dateAdded ${
                 sdf.format(
                     Date(dateAdded ?: 0)
                 )
-            }, dateModified=${
+            }, dateModified=$dateModified ${
                 sdf.format(
                     Date(dateModified ?: 0)
                 )
