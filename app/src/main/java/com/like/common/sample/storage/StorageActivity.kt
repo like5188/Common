@@ -126,6 +126,7 @@ class StorageActivity : AppCompatActivity() {
 
     fun getAudios(view: View) {
         lifecycleScope.launch {
+            // 版本>=33时，需要READ_MEDIA_AUDIO权限。READ_EXTERNAL_STORAGE在33时被废弃。
             if (requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 Logger.printCollection(
                     MediaStoreUtils.getAudios(
